@@ -14,21 +14,22 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**PR 2 — Reusable Core + Visual Foundation**
+**PR 3 — Core Movement + Cozy Ship**
 
-This milestone builds on the merged Web bootstrap with:
+This milestone turns the visual/core foundation into the first directly playable interaction:
 
-- an explicit `AppRoot` and small reusable core-service layer;
-- build/platform/settings/save/audio/input/routing services;
-- versioned save envelope;
-- executable Godot structural-contract tests in CI;
-- curated imports from Kenney UI Pack - Sci-Fi, Space Shooter Remastered and Simple Space;
-- provenance/license records for every imported third-party source;
-- reusable OCC palette, Theme, panel frame and action-button foundations;
-- a clean responsive Operations screen that establishes the game's UI language;
-- localization preserved across English, Brazilian Portuguese and Spanish.
+- mouse steering with center deadzone and distance-based thrust;
+- WASD and arrow-key fallback;
+- one-finger touch/drag steering without a virtual joystick;
+- tuned acceleration, deceleration and max speed through a reusable Resource;
+- smooth ship facing and visual turn compression;
+- engine glow and persistent trail feedback;
+- camera smoothing, directional lead and light collision shake;
+- non-damaging asteroid bump response with sparks;
+- a curated ambient training space for movement evaluation;
+- executable steering/scene contracts in CI.
 
-The next focused milestone is **Core Movement + Cozy Ship**.
+The next focused milestone is **Salvage Loop**.
 
 ## Visual direction
 

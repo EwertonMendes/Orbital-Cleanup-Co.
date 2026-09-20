@@ -3,8 +3,8 @@
 The project is intentionally delivered as focused PRs with playable previews.
 
 1. ✅ **Project Bootstrap + Web CI** — merged.
-2. 🚧 **Reusable Core + Visual Foundation** — current PR: services, curated Kenney assets, reusable OCC UI language, real scene-contract validation.
-3. **Core Movement + Cozy Ship** — pointer/keyboard/touch movement, camera, acceleration/friction, trail, bump behavior.
+2. ✅ **Reusable Core + Visual Foundation** — merged.
+3. 🚧 **Core Movement + Cozy Ship** — current PR: pointer/keyboard/touch steering, tuned acceleration/friction, visual tilt, engine trail, camera lead/shake, ambient training space and non-damaging bump behavior.
 4. **Salvage Loop** — generic salvage, Tractor Beam, cargo, unload, Credits, HUD/VFX/SFX.
 5. **Data-Driven Sector Engine** — definitions, schemas, validators, deterministic generation, biomes, tables, landmarks, modifiers, difficulty scaler.
 6. **Contracts + Economy + Progression** — cleanup contract, payouts, Company XP/ranks, upgrades.

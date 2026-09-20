@@ -75,3 +75,21 @@ msgstr "SELECCIONAR CONTRATO"
 
 msgid "OPS_UNSELECT"
 msgstr "QUITAR SELECCIÓN"
+
+msgid "OPS_DEPLOY"
+msgstr "INICIAR ENTRENAMIENTO"
+
+msgid "FLIGHT_EYEBROW"
+msgstr "VUELO DE ENTRENAMIENTO"
+
+msgid "FLIGHT_TITLE"
+msgstr "Órbita de la Tierra · Ruta 01"
+
+msgid "FLIGHT_RETURN"
+msgstr "VOLVER A OPERACIONES"
+
+msgid "FLIGHT_HINT_POINTER"
+msgstr "Apunta para pilotar · WASD / flechas también funcionan"
+
+msgid "FLIGHT_HINT_TOUCH"
+msgstr "Toca y arrastra en cualquier lugar para pilotar"

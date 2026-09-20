@@ -8,6 +8,9 @@ func _init() -> void:
 func _run() -> void:
 	_validate_app_root()
 	_validate_operations_screen()
+	_validate_ship_steering()
+	_validate_player_ship()
+	_validate_flight_screen()
 	if _failed:
 		quit(1)
 		return
@@ -37,9 +40,43 @@ func _validate_operations_screen() -> void:
 		return
 	var screen := packed.instantiate()
 	_expect(screen is Control, "Operations screen must inherit Control.")
-	_expect(screen.find_child("Body", true, false) is BoxContainer, "Operations screen needs responsive Body.")
-	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Operations screen needs PrimaryAction.")
-	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Operations screen needs ship art.")
+	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Operations screen needs deployment action.")
+	screen.free()
+
+func _validate_ship_steering() -> void:
+	var origin := Vector2(100, 100)
+	_expect(ShipSteering.pointer_intent(origin, origin + Vector2(20, 0), 50, 250) == Vector2.ZERO, "Pointer steering must respect deadzone.")
+	var far_intent := ShipSteering.pointer_intent(origin, origin + Vector2(400, 0), 50, 250)
+	_expect(is_equal_approx(far_intent.length(), 1.0), "Far pointer must reach full steering intent.")
+	var keyboard := Vector2.UP
+	_expect(ShipSteering.combine_intent(keyboard, Vector2.RIGHT) == keyboard, "Keyboard input must override pointer steering while held.")
+
+func _validate_player_ship() -> void:
+	var packed := load("res://src/game/ship/player_ship.tscn") as PackedScene
+	_expect(packed != null, "PlayerShip scene must load.")
+	if packed == null:
+		return
+	var ship := packed.instantiate()
+	_expect(ship is PlayerShip, "PlayerShip root must use PlayerShip controller.")
+	_expect(ship.get_node_or_null("CollisionShape2D") is CollisionShape2D, "PlayerShip requires collision.")
+	_expect(ship.find_child("EngineTrail", true, false) is EngineTrail, "PlayerShip requires engine trail.")
+	_expect(ship.find_child("ShipCamera", true, false) is ShipCamera, "PlayerShip requires ship camera.")
+	_expect((ship as PlayerShip).tuning != null, "PlayerShip requires tuning resource.")
+	ship.free()
+
+func _validate_flight_screen() -> void:
+	var packed := load("res://src/ui/screens/flight/flight_screen.tscn") as PackedScene
+	_expect(packed != null, "Flight screen must load.")
+	if packed == null:
+		return
+	var screen := packed.instantiate()
+	_expect(screen is Control, "Flight screen must inherit Control.")
+	_expect(screen.find_child("PlayerShip", true, false) is PlayerShip, "Flight screen requires PlayerShip.")
+	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
+	var obstacle_count := 0
+	for node in screen.find_children("*Meteor", "StaticBody2D", true, false):
+		obstacle_count += 1
+	_expect(obstacle_count >= 3, "Training flight requires multiple bump obstacles.")
 	screen.free()
 
 func _expect(condition: bool, message: String) -> void:

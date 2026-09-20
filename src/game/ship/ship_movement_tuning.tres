@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ShipMovementTuning" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/game/ship/ship_movement_tuning.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+max_speed = 330.0
+acceleration = 720.0
+deceleration = 860.0
+turn_response = 8.5
+pointer_deadzone = 54.0
+pointer_full_thrust_distance = 285.0
+bump_speed_retention = 0.58
+bump_minimum_speed = 92.0
+camera_lead_distance = 72.0
+camera_lead_response = 5.5
+camera_shake_strength = 5.0
