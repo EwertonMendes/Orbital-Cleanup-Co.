@@ -40,6 +40,29 @@ async function activateAt(page, point, touch) {
   }
 }
 
+async function dragTouch(page, viewport) {
+  const session = await page.context().newCDPSession(page);
+  const start = {
+    x: Math.round(viewport.width * 0.66),
+    y: Math.round(viewport.height * 0.52),
+    radiusX: 1,
+    radiusY: 1,
+    force: 1,
+    id: 0,
+  };
+  const end = {
+    ...start,
+    x: Math.round(viewport.width * 0.84),
+    y: Math.round(viewport.height * 0.47),
+  };
+
+  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [start] });
+  await page.waitForTimeout(100);
+  await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [end] });
+  await page.waitForTimeout(320);
+  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+}
+
 async function openBuild(viewport, label, deployPoint, touch = false) {
   const page = await browser.newPage({ viewport, hasTouch: touch, isMobile: touch });
   watch(page, label);
@@ -71,7 +94,7 @@ async function openBuild(viewport, label, deployPoint, touch = false) {
   await page.waitForTimeout(300);
 
   if (touch) {
-    await page.touchscreen.tap(Math.round(viewport.width * 0.78), Math.round(viewport.height * 0.52));
+    await dragTouch(page, viewport);
   } else {
     await page.mouse.move(Math.round(viewport.width * 0.80), Math.round(viewport.height * 0.50));
     await page.keyboard.down('d');
