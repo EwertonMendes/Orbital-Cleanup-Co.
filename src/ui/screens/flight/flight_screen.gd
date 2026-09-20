@@ -72,6 +72,7 @@ func _ready() -> void:
 	_contract_session.cleanliness_changed.connect(_on_cleanliness_changed)
 	_contract_session.target_reached.connect(_on_contract_target_reached)
 	_contract_session.perfect_cleanup_reached.connect(_on_perfect_cleanup_reached)
+	_contract_session.start()
 
 	toast_panel.modulate.a = 0.0
 	beam_progress.value = 0.0
