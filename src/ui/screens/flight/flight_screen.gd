@@ -23,7 +23,7 @@ func configure(context: Dictionary) -> void:
 	assert(_input_service != null, "FlightScreen requires InputService.")
 	player_ship = get_node("World/PlayerShip") as PlayerShip
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
-	player_ship.configure(_input_service)
+	player_ship.configure(_input_service, TrainingSpace.PLAY_BOUNDS)
 
 func _ready() -> void:
 	_validate_contracts()
@@ -50,6 +50,7 @@ func _validate_contracts() -> void:
 	assert(return_button != null, "FlightScreen requires ReturnButton.")
 	assert(hint_panel != null and hint_label != null, "FlightScreen requires steering hint.")
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
+	assert(TrainingSpace.PLAY_BOUNDS.size.x > 0.0 and TrainingSpace.PLAY_BOUNDS.size.y > 0.0, "Training play bounds must be valid.")
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
@@ -87,5 +88,5 @@ func _schedule_hint_fade() -> void:
 	if _hint_tween != null and _hint_tween.is_valid():
 		_hint_tween.kill()
 	_hint_tween = create_tween()
-	_hint_tween.tween_interval(2.6)
-	_hint_tween.tween_property(hint_panel, "modulate:a", 0.18, 0.7)
+	_hint_tween.tween_interval(2.3)
+	_hint_tween.tween_property(hint_panel, "modulate:a", 0.12, 0.65)

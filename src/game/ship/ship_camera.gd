@@ -10,7 +10,7 @@ var _rng := RandomNumberGenerator.new()
 func _ready() -> void:
 	_rng.seed = 20260920
 	position_smoothing_enabled = true
-	position_smoothing_speed = 5.5
+	position_smoothing_speed = 7.0
 
 func configure(tuning: ShipMovementTuning) -> void:
 	assert(tuning != null, "ShipCamera requires movement tuning.")
@@ -23,7 +23,7 @@ func set_motion_velocity(value: Vector2) -> void:
 func add_bump_shake(intensity: float) -> void:
 	_shake_energy = maxf(_shake_energy, clampf(intensity, 0.0, 1.0))
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if _tuning == null:
 		return
 
@@ -35,7 +35,7 @@ func _process(delta: float) -> void:
 	var lead_weight := 1.0 - exp(-_tuning.camera_lead_response * delta)
 	_lead_offset = _lead_offset.lerp(desired_lead, lead_weight)
 
-	_shake_energy = move_toward(_shake_energy, 0.0, delta * 4.8)
+	_shake_energy = move_toward(_shake_energy, 0.0, delta * 5.8)
 	var shake := Vector2.ZERO
 	if _shake_energy > 0.001:
 		shake = Vector2(_rng.randf_range(-1.0, 1.0), _rng.randf_range(-1.0, 1.0))

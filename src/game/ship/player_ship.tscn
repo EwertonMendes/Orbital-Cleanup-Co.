@@ -54,7 +54,7 @@ position = Vector2(0, 48)
 [node name="EngineTrail" type="Line2D" parent="."]
 unique_name_in_owner = true
 z_index = -2
-width = 11.0
+width = 9.0
 gradient = SubResource("TrailGradient")
 joint_mode = 2
 begin_cap_mode = 2
@@ -62,8 +62,8 @@ end_cap_mode = 2
 antialiased = true
 script = ExtResource("7")
 source_path = NodePath("../FeedbackRoot/SteeringVisual/EngineAnchor")
-sample_lifetime = 0.42
-sample_distance = 8.0
+sample_lifetime = 0.36
+sample_distance = 10.0
 max_samples = 28
 
 [node name="BumpParticles" type="CPUParticles2D" parent="."]
@@ -93,6 +93,7 @@ unique_name_in_owner = true
 enabled = true
 ignore_rotation = true
 position_smoothing_enabled = true
-position_smoothing_speed = 5.5
+position_smoothing_speed = 7.0
+process_callback = 0
 zoom = Vector2(1.12, 1.12)
 script = ExtResource("8")

@@ -4,14 +4,19 @@
 
 [resource]
 script = ExtResource("1")
-max_speed = 330.0
-acceleration = 720.0
-deceleration = 860.0
-turn_response = 8.5
-pointer_deadzone = 54.0
-pointer_full_thrust_distance = 285.0
-bump_speed_retention = 0.58
-bump_minimum_speed = 92.0
-camera_lead_distance = 72.0
-camera_lead_response = 5.5
-camera_shake_strength = 5.0
+max_speed = 300.0
+acceleration = 560.0
+deceleration = 720.0
+turn_response = 6.2
+pointer_steering_response = 5.4
+pointer_deadzone = 82.0
+pointer_full_thrust_distance = 420.0
+bump_speed_retention = 0.52
+bump_minimum_speed = 78.0
+camera_lead_distance = 46.0
+camera_lead_response = 7.0
+camera_shake_strength = 3.6
+boundary_soft_margin = 320.0
+boundary_push_acceleration = 760.0
+boundary_outward_damping = 8.0
+boundary_hard_padding = 42.0
