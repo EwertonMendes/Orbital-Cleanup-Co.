@@ -7,5 +7,8 @@
     environment: '__OCC_ENVIRONMENT__',
     workflowRun: '__OCC_WORKFLOW_RUN__',
     builtAt: '__OCC_BUILT_AT__',
+    providerSettings: Object.freeze({
+      gameMonetizeGameId: '__OCC_GAMEMONETIZE_GAME_ID__',
+    }),
   });
 })();
