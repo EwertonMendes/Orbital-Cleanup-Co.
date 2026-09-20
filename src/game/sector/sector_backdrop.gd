@@ -42,19 +42,32 @@ func _draw() -> void:
 		_background_color
 	)
 
-	var nebula_soft := Color(_nebula_color, 0.16)
-	var nebula_faint := Color(_nebula_color, 0.085)
-	draw_circle(Vector2(0, 80), 2300.0, nebula_soft)
-	draw_circle(Vector2(3000, -1900), 1700.0, nebula_faint)
-	draw_circle(Vector2(-3400, 2100), 1900.0, nebula_faint)
+	_draw_soft_cloud(Vector2(0, 80), 2650.0, _nebula_color, 0.16)
+	_draw_soft_cloud(Vector2(3000, -1900), 1850.0, _nebula_color, 0.085)
+	_draw_soft_cloud(Vector2(-3400, 2100), 2050.0, _nebula_color, 0.075)
 
 	for star in _stars:
 		var star_color := Color(1.0, 0.86, 0.55, float(star["alpha"])) if bool(star["warm"]) else Color(0.66, 0.90, 1.0, float(star["alpha"]))
 		draw_circle(star["position"], float(star["radius"]), star_color)
 
-	draw_arc(Vector2(1150, -650), 1100.0, deg_to_rad(192.0), deg_to_rad(342.0), 96, Color(_accent_color, 0.13), 2.0, true)
-	draw_arc(Vector2(-1800, 1300), 920.0, deg_to_rad(8.0), deg_to_rad(176.0), 84, Color(_accent_color, 0.07), 1.5, true)
+	draw_arc(Vector2(1150, -650), 1100.0, deg_to_rad(192.0), deg_to_rad(342.0), 96, Color(_accent_color, 0.16), 2.0, true)
+	draw_arc(Vector2(-1800, 1300), 920.0, deg_to_rad(8.0), deg_to_rad(176.0), 84, Color(_accent_color, 0.09), 1.5, true)
+	draw_arc(Vector2(450, 260), 3200.0, deg_to_rad(208.0), deg_to_rad(304.0), 120, Color(_accent_color, 0.045), 1.0, true)
+	_draw_glint(Vector2(2200, 980), 10.0, Color(_accent_color, 0.5))
+	_draw_glint(Vector2(-2850, -1250), 7.0, Color(1.0, 0.82, 0.5, 0.42))
 	_draw_perimeter()
+
+func _draw_soft_cloud(center: Vector2, radius: float, color: Color, strength: float) -> void:
+	for layer in range(8, 0, -1):
+		var ratio := float(layer) / 8.0
+		var layer_radius := radius * (0.34 + ratio * 0.66)
+		var alpha := strength * (0.018 + (1.0 - ratio) * 0.026)
+		draw_circle(center, layer_radius, Color(color, alpha))
+
+func _draw_glint(position: Vector2, size: float, color: Color) -> void:
+	draw_line(position - Vector2(size, 0), position + Vector2(size, 0), color, 1.2, true)
+	draw_line(position - Vector2(0, size), position + Vector2(0, size), color, 1.2, true)
+	draw_circle(position, 2.0, Color(color, minf(color.a + 0.22, 1.0)))
 
 func _draw_perimeter() -> void:
 	var outer := _play_bounds

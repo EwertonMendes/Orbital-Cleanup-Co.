@@ -22,6 +22,21 @@ Use the shared foundations before creating screen-local styling:
 
 If a reusable component already owns a pattern, do not copy its style into a new scene.
 
+## Gameplay world readability
+
+World objects use a semantic visual language that must remain consistent across every biome:
+
+- **recoverable salvage** uses cool recovery brackets/halo plus a rarity pip;
+- **collision hazards** use segmented warm/amber hazard rings and a darker neutral body treatment;
+- **landmarks** use broad, low-contrast environmental arcs and must read as scenery rather than pickups;
+- the cargo depot uses mint/green recovery language and is visually distinct from both salvage and hazards.
+
+Shape and motion carry the first distinction; color reinforces it. Important gameplay categories must never rely on color alone.
+
+Meteor/asteroid silhouettes are reserved for hazards. Salvage definitions must not use meteor sprites, even for items named scrap, rock, shielding or regolith. CI enforces this rule in `tools/validate_content.py`.
+
+New categories should extend `WorldVisualLanguage` rather than introducing screen-local colors or one-off object effects. New salvage automatically inherits the shared `SalvageMarker`; new hazards and landmarks inherit their corresponding marker components.
+
 ## Typography
 
 Oxanium is the default UI family and is configured once in the shared Theme. Do not assign the font path independently in each screen. Use size, weight hierarchy and color to differentiate title/value/label roles while keeping the family consistent.
