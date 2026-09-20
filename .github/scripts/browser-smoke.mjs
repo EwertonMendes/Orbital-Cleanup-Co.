@@ -32,9 +32,18 @@ function waitForConsole(page, marker, timeout = 60000) {
   });
 }
 
-async function openBuild(viewport, label) {
-  const page = await browser.newPage({ viewport });
+async function activateAt(page, point, touch) {
+  if (touch) {
+    await page.touchscreen.tap(point.x, point.y);
+  } else {
+    await page.mouse.click(point.x, point.y);
+  }
+}
+
+async function openBuild(viewport, label, deployPoint, touch = false) {
+  const page = await browser.newPage({ viewport, hasTouch: touch, isMobile: touch });
   watch(page, label);
+
   const ready = waitForConsole(page, '[OCC] READY');
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForSelector('canvas', { state: 'visible', timeout: 60000 });
@@ -56,16 +65,44 @@ async function openBuild(viewport, label) {
     throw new Error('Missing debug OCC_BUILD metadata');
   }
 
-  await page.keyboard.press('ArrowRight');
-  await page.waitForTimeout(120);
+  const flightReady = waitForConsole(page, '[Flight] READY', 15000);
+  await activateAt(page, deployPoint, touch);
+  await flightReady;
+  await page.waitForTimeout(300);
+
+  if (touch) {
+    await page.touchscreen.tap(Math.round(viewport.width * 0.78), Math.round(viewport.height * 0.52));
+  } else {
+    await page.mouse.move(Math.round(viewport.width * 0.80), Math.round(viewport.height * 0.50));
+    await page.keyboard.down('d');
+    await page.waitForTimeout(260);
+    await page.keyboard.up('d');
+  }
+
+  await page.waitForTimeout(420);
   await page.screenshot({ path: `build/smoke-${label}.png`, fullPage: true });
   await page.close();
 }
 
 try {
-  await openBuild({ width: 1280, height: 720 }, 'desktop-1280x720');
-  await openBuild({ width: 844, height: 390 }, 'mobile-landscape-844x390');
-  await openBuild({ width: 390, height: 844 }, 'mobile-portrait-390x844');
+  await openBuild(
+    { width: 1280, height: 720 },
+    'desktop-1280x720',
+    { x: 330, y: 648 },
+    false,
+  );
+  await openBuild(
+    { width: 844, height: 390 },
+    'mobile-landscape-844x390',
+    { x: 218, y: 350 },
+    true,
+  );
+  await openBuild(
+    { width: 390, height: 844 },
+    'mobile-portrait-390x844',
+    { x: 194, y: 414 },
+    true,
+  );
 
   if (runtimeErrors.length) {
     throw new Error(runtimeErrors.join('\n'));
