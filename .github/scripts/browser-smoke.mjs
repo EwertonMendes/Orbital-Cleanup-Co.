@@ -88,6 +88,11 @@ async function openBuild(viewport, label, deployPoint, touch = false) {
     throw new Error('Missing debug OCC_BUILD metadata');
   }
 
+  // Capture the player-facing operations screen before deployment so visual
+  // QA covers the menu chrome as well as gameplay.
+  await page.waitForTimeout(250);
+  await page.screenshot({ path: `build/smoke-operations-${label}.png`, fullPage: true });
+
   const flightReady = waitForConsole(page, '[Flight] READY', 15000);
   await activateAt(page, deployPoint, touch);
   await flightReady;
