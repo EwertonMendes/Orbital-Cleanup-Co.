@@ -50,6 +50,7 @@ Kenney assets are raw material. They must be composed into Orbital Cleanup Co.'s
 - A square 128×128 panel must never be stretched into a wide header/card frame.
 - The current 384×128 header/blade assets are treated as 3:1 plates and rendered at 3:1.
 - Large resizable surfaces should use OCC StyleBox/PanelContainer styling, with Kenney art as accents instead of distorted backgrounds.
+- Interactive chrome must use OCC StyleBox-based components. Do not use a bright texture as the full surface of tabs, selectors or primary actions; Kenney UI textures are accents, not the button system.
 - Do not mix arbitrary color families from the pack on one screen.
 - Prefer blue/cyan structure, mint success/ready states and amber emphasis.
 - Do not use combat-oriented assets such as enemy ships, guns or lasers for this game.
