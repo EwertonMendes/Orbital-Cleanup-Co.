@@ -1,19 +1,29 @@
 extends Node2D
-class_name TrainingSpace
+class_name SectorBackdrop
 
-const PLAY_BOUNDS := Rect2(-4800.0, -3000.0, 9600.0, 6000.0)
-const BACKGROUND_EXTENT := 16000.0
-const STAR_EXTENT := 10000.0
-const STAR_COUNT := 1500
+const BACKGROUND_EXTENT := 18000.0
+const STAR_EXTENT := 11500.0
+const STAR_COUNT := 1650
 
+var _play_bounds := Rect2(-4800.0, -3000.0, 9600.0, 6000.0)
+var _background_color := Color("#040b13")
+var _nebula_color := Color("#0b3d4d")
+var _accent_color := Color("#53d7f1")
 var _stars: Array[Dictionary] = []
 
-func _ready() -> void:
-	RenderingServer.set_default_clear_color(Color("#040b13"))
+func configure(play_bounds: Rect2, palette: Dictionary) -> void:
+	assert(play_bounds.size.x > 0.0 and play_bounds.size.y > 0.0, "SectorBackdrop requires valid bounds.")
+	_play_bounds = play_bounds
+	_background_color = Color(String(palette.get("background", "#040b13")))
+	_nebula_color = Color(String(palette.get("nebula", "#0b3d4d")))
+	_accent_color = Color(String(palette.get("accent", "#53d7f1")))
+	RenderingServer.set_default_clear_color(_background_color)
+	queue_redraw()
 
+func _ready() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 31051999
-	for index in range(STAR_COUNT):
+	for _index in range(STAR_COUNT):
 		var bright := rng.randf() > 0.82
 		_stars.append({
 			"position": Vector2(
@@ -29,30 +39,29 @@ func _ready() -> void:
 func _draw() -> void:
 	draw_rect(
 		Rect2(-BACKGROUND_EXTENT, -BACKGROUND_EXTENT, BACKGROUND_EXTENT * 2.0, BACKGROUND_EXTENT * 2.0),
-		Color("#040b13")
+		_background_color
 	)
 
-	draw_circle(Vector2(0, 80), 2100.0, Color(0.025, 0.12, 0.18, 0.20))
-	draw_circle(Vector2(2800, -1900), 1600.0, Color(0.03, 0.28, 0.34, 0.11))
-	draw_circle(Vector2(-3200, 2200), 1800.0, Color(0.08, 0.24, 0.30, 0.09))
-	draw_circle(Vector2(1500, 3600), 1500.0, Color(0.08, 0.34, 0.28, 0.06))
+	var nebula_soft := Color(_nebula_color, 0.16)
+	var nebula_faint := Color(_nebula_color, 0.085)
+	draw_circle(Vector2(0, 80), 2300.0, nebula_soft)
+	draw_circle(Vector2(3000, -1900), 1700.0, nebula_faint)
+	draw_circle(Vector2(-3400, 2100), 1900.0, nebula_faint)
 
 	for star in _stars:
 		var star_color := Color(1.0, 0.86, 0.55, float(star["alpha"])) if bool(star["warm"]) else Color(0.66, 0.90, 1.0, float(star["alpha"]))
 		draw_circle(star["position"], float(star["radius"]), star_color)
 
-	draw_arc(Vector2(1150, -650), 1100.0, deg_to_rad(192.0), deg_to_rad(342.0), 96, Color(0.25, 0.73, 0.86, 0.13), 2.0, true)
-	draw_arc(Vector2(-1800, 1300), 920.0, deg_to_rad(8.0), deg_to_rad(176.0), 84, Color(0.56, 0.95, 0.81, 0.08), 1.5, true)
-	draw_arc(Vector2(400, 300), 1650.0, deg_to_rad(225.0), deg_to_rad(292.0), 72, Color(0.32, 0.64, 0.78, 0.06), 1.0, true)
+	draw_arc(Vector2(1150, -650), 1100.0, deg_to_rad(192.0), deg_to_rad(342.0), 96, Color(_accent_color, 0.13), 2.0, true)
+	draw_arc(Vector2(-1800, 1300), 920.0, deg_to_rad(8.0), deg_to_rad(176.0), 84, Color(_accent_color, 0.07), 1.5, true)
+	_draw_perimeter()
 
-	_draw_training_perimeter()
+func _draw_perimeter() -> void:
+	var outer := _play_bounds
+	var inner := _play_bounds.grow(-180.0)
 
-func _draw_training_perimeter() -> void:
-	var outer := PLAY_BOUNDS
-	var inner := PLAY_BOUNDS.grow(-180.0)
-
-	draw_rect(outer, Color(0.20, 0.74, 0.89, 0.16), false, 3.0, true)
-	draw_rect(inner, Color(0.20, 0.74, 0.89, 0.05), false, 1.0, true)
+	draw_rect(outer, Color(_accent_color, 0.16), false, 3.0, true)
+	draw_rect(inner, Color(_accent_color, 0.05), false, 1.0, true)
 
 	var corner := 180.0
 	var color := Color(1.0, 0.78, 0.28, 0.46)

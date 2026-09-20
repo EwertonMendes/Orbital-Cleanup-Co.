@@ -1,0 +1,25 @@
+{
+  "id": "earth_training",
+  "entries": [
+    {
+      "salvage": "scrap_fragment",
+      "weight": 34
+    },
+    {
+      "salvage": "service_scrap",
+      "weight": 28
+    },
+    {
+      "salvage": "sensor_pod",
+      "weight": 18
+    },
+    {
+      "salvage": "satellite_panel",
+      "weight": 12
+    },
+    {
+      "salvage": "dense_composite",
+      "weight": 8
+    }
+  ]
+}

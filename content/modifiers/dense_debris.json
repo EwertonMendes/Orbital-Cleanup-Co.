@@ -1,0 +1,9 @@
+{
+  "id": "dense_debris",
+  "display_name_key": "MODIFIER_DENSE_DEBRIS",
+  "runtime": {
+    "salvage_count_multiplier": 1.2,
+    "obstacle_count_multiplier": 1.35,
+    "rare_weight_multiplier": 1.05
+  }
+}

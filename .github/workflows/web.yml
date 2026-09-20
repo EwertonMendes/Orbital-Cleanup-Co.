@@ -64,6 +64,10 @@ jobs:
         shell: bash
         run: python3 tools/validate_bootstrap.py
 
+      - name: Validate authored content
+        shell: bash
+        run: python3 tools/validate_content.py
+
       - name: Restore Godot Web toolchain cache
         id: godot-toolchain
         uses: actions/cache@v4
@@ -104,7 +108,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .godot/imported
-          key: occ-imported-${{ runner.os }}-${{ env.GODOT_VERSION }}-${{ hashFiles('project.godot', '**/*.gd', '**/*.tscn', '**/*.tres', 'assets/**/*', 'i18n/**/*') }}
+          key: occ-imported-${{ runner.os }}-${{ env.GODOT_VERSION }}-${{ hashFiles('project.godot', '**/*.gd', '**/*.tscn', '**/*.tres', 'content/**/*.json', 'schemas/**/*.json', 'assets/**/*', 'i18n/**/*') }}
           restore-keys: |
             occ-imported-${{ runner.os }}-${{ env.GODOT_VERSION }}-
 
