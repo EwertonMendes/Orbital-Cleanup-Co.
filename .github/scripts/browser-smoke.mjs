@@ -88,6 +88,15 @@ async function openBuild(viewport, label, touch = false) {
   await page.waitForTimeout(250);
   await page.screenshot({ path: `build/smoke-operations-${label}.png`, fullPage: true });
 
+  const adStarted = waitForConsole(page, '[Ads] START kind=interstitial placement=qa_browser provider=debug', 10000);
+  const adResult = waitForConsole(page, '[Ads] RESULT kind=interstitial placement=qa_browser completed=true', 10000);
+  const requestId = await page.evaluate(() => window.OCCPlatform.showInterstitial('qa_browser'));
+  if (!requestId || !String(requestId).startsWith('debug-interstitial-')) {
+    throw new Error('Debug provider did not return a stable interstitial request id');
+  }
+  await adStarted;
+  await adResult;
+
   // Runtime smoke intentionally uses the debug deep link instead of pixel
   // coordinates. Godot UI is rendered inside one canvas, so coordinate-click
   // tests couple CI to a specific visual layout and break on valid redesigns.

@@ -34,6 +34,7 @@ func _validate_app_root() -> void:
 	var root := packed.instantiate()
 	_expect(root.get_node_or_null("Services/BuildInfo") is BuildInfo, "AppRoot must own BuildInfo.")
 	_expect(root.get_node_or_null("Services/PlatformService") is PlatformService, "AppRoot must own PlatformService.")
+	_expect(root.get_node_or_null("Services/AdService") is AdService, "AppRoot must own AdService.")
 	_expect(root.get_node_or_null("Services/SettingsService") is SettingsService, "AppRoot must own SettingsService.")
 	_expect(root.get_node_or_null("Services/SaveService") is SaveService, "AppRoot must own SaveService.")
 	_expect(root.get_node_or_null("Services/AudioService") is AudioService, "AppRoot must own AudioService.")

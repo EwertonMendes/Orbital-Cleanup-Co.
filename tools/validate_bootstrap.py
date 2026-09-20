@@ -14,7 +14,12 @@ REQUIRED = [
     "export_presets.cfg",
     "web/shell/index.html",
     "web/platform/platform-config.js",
+    "web/platform/provider-utils.js",
+    "web/platform/null-provider.js",
     "web/platform/debug-provider.js",
+    "web/platform/crazygames-provider.js",
+    "web/platform/gamepix-provider.js",
+    "web/platform/gamemonetize-provider.js",
     "web/platform/platform-loader.js",
     "i18n/en.po",
     "i18n/pt_BR.po",
@@ -27,6 +32,7 @@ REQUIRED = [
     "src/core/save/save_service.gd",
     "src/core/settings/settings_service.gd",
     "src/core/platform/platform_service.gd",
+    "src/core/platform/ad_service.gd",
     "src/core/build/build_info.gd",
     "src/game/progression/progression_service.gd",
     "src/game/contracts/contract_session.gd",
@@ -178,6 +184,20 @@ def validate_provider_boundary() -> None:
     debug_provider = (ROOT / "web/platform/debug-provider.js").read_text(encoding="utf-8").lower()
     if "fetch(" in debug_provider or "xmlhttprequest" in debug_provider:
         fail("DebugWebProvider must not call remote ad/network APIs")
+
+    loader = (ROOT / "web/platform/platform-loader.js").read_text(encoding="utf-8")
+    if "OCCProviders.null" not in loader:
+        fail("Unknown production providers must degrade to NullProvider, never DebugWebProvider")
+
+    provider_expectations = {
+        "crazygames-provider.js": "crazygames-sdk-v3.js",
+        "gamepix-provider.js": "gamepix.sdk.js",
+        "gamemonetize-provider.js": "api.gamemonetize.com/sdk.js",
+    }
+    for filename, marker in provider_expectations.items():
+        text = (ROOT / "web" / "platform" / filename).read_text(encoding="utf-8").lower()
+        if marker not in text:
+            fail(f"{filename} is missing its documented provider SDK endpoint")
 
 
 def validate_asset_provenance() -> None:

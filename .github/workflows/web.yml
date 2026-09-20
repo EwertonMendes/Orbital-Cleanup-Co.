@@ -68,6 +68,10 @@ jobs:
         shell: bash
         run: python3 tools/validate_content.py
 
+      - name: Validate portal provider contracts
+        shell: bash
+        run: node .github/scripts/platform-provider-smoke.mjs
+
       - name: Restore Godot Web toolchain cache
         id: godot-toolchain
         uses: actions/cache@v4
@@ -135,6 +139,7 @@ jobs:
           OCC_ENVIRONMENT: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
           OCC_COMMIT: ${{ steps.source.outputs.sha }}
           OCC_WORKFLOW_RUN: ${{ github.run_id }}
+          OCC_GAMEMONETIZE_GAME_ID: ""
         run: |
           set -euo pipefail
           mkdir -p build/web
@@ -148,7 +153,7 @@ jobs:
           cp assets/branding/orbital_cleanup_icon.svg build/web/favicon.svg
           VERSION="$(tr -d '\r\n' < VERSION)"
           BUILT_AT="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          sed -i             -e "s|__OCC_PROVIDER__|${OCC_PROVIDER}|g"             -e "s|__OCC_VERSION__|${VERSION}|g"             -e "s|__OCC_COMMIT__|${OCC_COMMIT}|g"             -e "s|__OCC_ENVIRONMENT__|${OCC_ENVIRONMENT}|g"             -e "s|__OCC_WORKFLOW_RUN__|${OCC_WORKFLOW_RUN}|g"             -e "s|__OCC_BUILT_AT__|${BUILT_AT}|g"             build/web/platform/platform-config.js
+          sed -i             -e "s|__OCC_PROVIDER__|${OCC_PROVIDER}|g"             -e "s|__OCC_VERSION__|${VERSION}|g"             -e "s|__OCC_COMMIT__|${OCC_COMMIT}|g"             -e "s|__OCC_ENVIRONMENT__|${OCC_ENVIRONMENT}|g"             -e "s|__OCC_WORKFLOW_RUN__|${OCC_WORKFLOW_RUN}|g"             -e "s|__OCC_BUILT_AT__|${BUILT_AT}|g"             -e "s|__OCC_GAMEMONETIZE_GAME_ID__|${OCC_GAMEMONETIZE_GAME_ID}|g"             build/web/platform/platform-config.js
 
           test -s build/web/index.html
           test -s build/web/index.js
