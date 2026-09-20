@@ -67,6 +67,7 @@ async function openBuild(viewport, label, deployPoint, touch = false) {
   const page = await browser.newPage({ viewport, hasTouch: touch, isMobile: touch });
   watch(page, label);
 
+  const hqReady = waitForConsole(page, '[HQ] READY tab=contracts');
   const ready = waitForConsole(page, '[OCC] READY');
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForSelector('canvas', { state: 'visible', timeout: 60000 });
@@ -88,7 +89,6 @@ async function openBuild(viewport, label, deployPoint, touch = false) {
     throw new Error('Missing debug OCC_BUILD metadata');
   }
 
-  const hqReady = waitForConsole(page, '[HQ] READY tab=contracts', 15000);
   await hqReady;
 
   // Capture the player-facing headquarters before deployment so visual
