@@ -13,7 +13,14 @@ function watch(page, label) {
   page.on('console', message => {
     const text = message.text();
     if (message.type() === 'error' || text.includes('[OCC] WEB_BOOT_FAILED')) {
-      runtimeErrors.push(`${label} console: ${text}`);
+      const location = message.location();
+      const source = location?.url ? ` [${location.url}:${location.lineNumber ?? 0}]` : '';
+      runtimeErrors.push(`${label} console: ${text}${source}`);
+    }
+  });
+  page.on('response', response => {
+    if (response.status() >= 400) {
+      runtimeErrors.push(`${label} http ${response.status()}: ${response.url()}`);
     }
   });
 }
