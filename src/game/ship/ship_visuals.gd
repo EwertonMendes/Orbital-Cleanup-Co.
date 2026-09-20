@@ -13,22 +13,18 @@ func update_motion(
 	speed_ratio: float,
 	thrust_ratio: float,
 	facing_rotation: float,
-	turn_amount: float,
-	delta: float
+	_turn_amount: float,
+	_delta: float
 ) -> void:
+	# Keep the ship silhouette rigid. Continuous skew/scale changes on a small
+	# raster sprite cause visible shimmer while steering in Web builds.
 	steering_visual.rotation = facing_rotation
+	steering_visual.skew = 0.0
+	steering_visual.scale = Vector2.ONE
 
-	var visual_weight := 1.0 - exp(-8.0 * delta)
-	var target_skew := -turn_amount * 0.055
-	steering_visual.skew = lerpf(steering_visual.skew, target_skew, visual_weight)
-
-	var turn_compression := absf(turn_amount) * 0.03
-	var target_scale := Vector2(1.0 - turn_compression, 1.0 + turn_compression * 0.35)
-	steering_visual.scale = steering_visual.scale.lerp(target_scale, visual_weight)
-
-	var engine_strength := clampf(maxf(thrust_ratio, speed_ratio * 0.40), 0.0, 1.0)
-	engine_glow.modulate.a = lerpf(0.10, 0.68, engine_strength)
-	engine_glow.scale = Vector2(0.82 + engine_strength * 0.22, 0.72 + engine_strength * 0.45)
+	var engine_strength := clampf(maxf(thrust_ratio, speed_ratio * 0.52), 0.0, 1.0)
+	engine_glow.modulate.a = lerpf(0.16, 0.76, engine_strength)
+	engine_glow.scale = Vector2(0.84 + engine_strength * 0.18, 0.78 + engine_strength * 0.42)
 	engine_trail.set_intensity(engine_strength)
 
 func play_bump(intensity: float, normal: Vector2) -> void:
@@ -37,13 +33,13 @@ func play_bump(intensity: float, normal: Vector2) -> void:
 	if _impact_tween != null and _impact_tween.is_valid():
 		_impact_tween.kill()
 
-	scale = Vector2(1.0 + 0.055 * strength, 1.0 - 0.045 * strength)
-	ship_sprite.modulate = Color(1.0, 0.88, 0.62, 1.0)
+	scale = Vector2(1.0 + 0.04 * strength, 1.0 - 0.035 * strength)
+	ship_sprite.modulate = Color(1.0, 0.90, 0.68, 1.0)
 
 	_impact_tween = create_tween()
 	_impact_tween.set_parallel(true)
-	_impact_tween.tween_property(self, "scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	_impact_tween.tween_property(ship_sprite, "modulate", Color.WHITE, 0.17)
+	_impact_tween.tween_property(self, "scale", Vector2.ONE, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_impact_tween.tween_property(ship_sprite, "modulate", Color.WHITE, 0.16)
 
 	bump_particles.global_rotation = normal.angle()
 	bump_particles.amount = 6 + int(round(strength * 6.0))

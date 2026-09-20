@@ -43,11 +43,6 @@ REQUIRED = [
     "src/game/ship/ship_camera.gd",
     "src/game/sector/training_space.gd",
     "src/ui/screens/operations/operations_backdrop.gd",
-    "src/ui/components/occ_panel_frame.tscn",
-    "src/ui/components/occ_panel_frame.gd",
-    "src/ui/components/occ_action_button.gd",
-    "src/ui/components/occ_chrome_button.tscn",
-    "src/ui/components/occ_chrome_button.gd",
     "src/ui/themes/occ_theme.tres",
     "src/ui/themes/occ_palette.gd",
     "tools/validate_core_contracts.gd",
@@ -58,8 +53,8 @@ REQUIRED = [
 
 REQUIRED_ASSETS = [
     "assets/third_party/kenney_ui_sci_fi/ui/panel_glass_notches.png",
-    "assets/third_party/kenney_ui_sci_fi/ui/panel_rectangle_screws.png",
     "assets/third_party/kenney_ui_sci_fi/ui/button_header_blade.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png",
     "assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png",
     "assets/third_party/kenney_space_shooter/effects/engine_speed.png",
     "assets/third_party/kenney_simple_space/scenery/station_a.png",
@@ -84,9 +79,10 @@ def validate_required_files() -> None:
 
 def validate_main_scene() -> None:
     project = (ROOT / "project.godot").read_text(encoding="utf-8")
-    expected = 'run/main_scene="res://src/core/app/app_root.tscn"'
-    if expected not in project:
+    if 'run/main_scene="res://src/core/app/app_root.tscn"' not in project:
         fail("project.godot must route through AppRoot")
+    if "common/physics_interpolation=true" not in project:
+        fail("2D movement builds must keep physics interpolation enabled")
 
 
 def validate_translations() -> None:
@@ -149,19 +145,26 @@ def validate_asset_provenance() -> None:
 
 
 def validate_visual_foundation() -> None:
-    screen = (ROOT / "src" / "ui" / "screens" / "operations" / "operations_screen.tscn").read_text(encoding="utf-8")
-    component_markers = (
-        "occ_panel_frame.tscn",
-        "occ_chrome_button.tscn",
-        "kenney_ui_sci_fi",
+    operations = (ROOT / "src" / "ui" / "screens" / "operations" / "operations_screen.tscn").read_text(encoding="utf-8")
+    flight = (ROOT / "src" / "ui" / "screens" / "flight" / "flight_screen.tscn").read_text(encoding="utf-8")
+
+    required_markers = (
+        "button_header_blade.png",
+        "bar_round_gloss_large.png",
         "kenney_space_shooter",
         "kenney_simple_space",
     )
-    missing = [marker for marker in component_markers if marker not in screen]
+    missing = [marker for marker in required_markers if marker not in operations]
     if missing:
         fail("Operations screen is missing visual foundation references: " + ", ".join(missing))
 
-    if "Provider:" in screen or "Build:" in screen:
+    if "panel_glass_tab_blade.png" in operations or "panel_glass_tab_blade.png" in flight:
+        fail("Square Kenney tab assets must not be stretched into wide HUD/card frames")
+
+    if 'scale = Vector2(1.15, 1.15)' in (ROOT / "src" / "game" / "ship" / "player_ship.tscn").read_text(encoding="utf-8"):
+        fail("Player ship must render at native scale in gameplay")
+
+    if "Provider:" in operations or "Build:" in operations:
         fail("Player-facing Operations UI must not expose debug/provider build metadata")
 
     theme = (ROOT / "src" / "ui" / "themes" / "occ_theme.tres").read_text(encoding="utf-8")

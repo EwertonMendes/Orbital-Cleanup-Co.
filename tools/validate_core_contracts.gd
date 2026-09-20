@@ -12,6 +12,7 @@ func _run() -> void:
 	_validate_player_ship()
 	_validate_flight_screen()
 	_validate_training_bounds()
+	_validate_render_quality()
 	if _failed:
 		quit(1)
 		return
@@ -41,7 +42,8 @@ func _validate_operations_screen() -> void:
 		return
 	var screen := packed.instantiate()
 	_expect(screen is Control, "Operations screen must inherit Control.")
-	_expect(screen.find_child("PrimaryAction", true, false) is OccChromeButton, "Operations deployment action must use OCC chrome.")
+	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Operations screen needs deployment action.")
+	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Operations screen requires ship preview.")
 	screen.free()
 
 func _validate_ship_steering() -> void:
@@ -60,8 +62,19 @@ func _validate_player_ship() -> void:
 	var ship := packed.instantiate()
 	_expect(ship is PlayerShip, "PlayerShip root must use PlayerShip controller.")
 	_expect(ship.get_node_or_null("CollisionShape2D") is CollisionShape2D, "PlayerShip requires collision.")
-	_expect(ship.find_child("EngineTrail", true, false) is EngineTrail, "PlayerShip requires engine trail.")
-	_expect(ship.find_child("ShipCamera", true, false) is ShipCamera, "PlayerShip requires ship camera.")
+	var sprite := ship.find_child("ShipSprite", true, false) as Sprite2D
+	_expect(sprite != null, "PlayerShip requires ShipSprite.")
+	if sprite != null:
+		_expect(sprite.scale == Vector2.ONE, "Gameplay ship sprite must stay at native raster scale.")
+	var trail := ship.find_child("EngineTrail", true, false) as EngineTrail
+	_expect(trail != null, "PlayerShip requires engine trail.")
+	if trail != null:
+		_expect(trail.sample_interval <= 0.03, "Engine trail must sample frequently enough to stay continuous.")
+		_expect(trail.minimum_sample_distance <= 2.0, "Engine trail cannot depend on large movement jumps.")
+	var camera := ship.find_child("ShipCamera", true, false) as ShipCamera
+	_expect(camera != null, "PlayerShip requires ship camera.")
+	if camera != null:
+		_expect(camera.zoom == Vector2.ONE, "Gameplay camera must avoid raster-magnifying zoom.")
 	var tuning := (ship as PlayerShip).tuning
 	_expect(tuning != null, "PlayerShip requires tuning resource.")
 	if tuning != null:
@@ -78,7 +91,8 @@ func _validate_flight_screen() -> void:
 	var screen := packed.instantiate()
 	_expect(screen is Control, "Flight screen must inherit Control.")
 	_expect(screen.find_child("PlayerShip", true, false) is PlayerShip, "Flight screen requires PlayerShip.")
-	_expect(screen.find_child("ReturnButton", true, false) is OccChromeButton, "Flight return action must use OCC chrome.")
+	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
+	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
 	var obstacle_count := 0
 	for node in screen.find_children("*Meteor", "StaticBody2D", true, false):
 		obstacle_count += 1
@@ -86,8 +100,11 @@ func _validate_flight_screen() -> void:
 	screen.free()
 
 func _validate_training_bounds() -> void:
-	_expect(TrainingSpace.PLAY_BOUNDS.size.x >= 3000.0, "Training area should provide meaningful horizontal room.")
-	_expect(TrainingSpace.PLAY_BOUNDS.size.y >= 1800.0, "Training area should provide meaningful vertical room.")
+	_expect(TrainingSpace.PLAY_BOUNDS.size.x >= 9000.0, "Training area should provide a substantially larger horizontal route.")
+	_expect(TrainingSpace.PLAY_BOUNDS.size.y >= 5500.0, "Training area should provide a substantially larger vertical route.")
+
+func _validate_render_quality() -> void:
+	_expect(bool(ProjectSettings.get_setting("physics/common/physics_interpolation", false)), "Physics interpolation must remain enabled for smooth Web movement.")
 
 func _expect(condition: bool, message: String) -> void:
 	if condition:

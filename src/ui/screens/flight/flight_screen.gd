@@ -3,6 +3,7 @@ extends Control
 const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.tscn"
 
 @onready var safe_area: MarginContainer = %SafeArea
+@onready var top_bar: BoxContainer = %TopBar
 @onready var return_button: Button = %ReturnButton
 @onready var hint_panel: Control = %HintPanel
 @onready var hint_label: Label = %HintLabel
@@ -47,6 +48,7 @@ func _exit_tree() -> void:
 
 func _validate_contracts() -> void:
 	assert(safe_area != null, "FlightScreen requires SafeArea.")
+	assert(top_bar != null, "FlightScreen requires responsive TopBar.")
 	assert(return_button != null, "FlightScreen requires ReturnButton.")
 	assert(hint_panel != null and hint_label != null, "FlightScreen requires steering hint.")
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
@@ -54,8 +56,11 @@ func _validate_contracts() -> void:
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
-	var horizontal_margin := 18 if portrait else 28
-	var vertical_margin := 16 if portrait else 22
+	var compact := portrait or size.x < 640.0
+	top_bar.vertical = compact
+
+	var horizontal_margin := 14 if compact else 24
+	var vertical_margin := 14 if compact else 20
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
@@ -88,5 +93,5 @@ func _schedule_hint_fade() -> void:
 	if _hint_tween != null and _hint_tween.is_valid():
 		_hint_tween.kill()
 	_hint_tween = create_tween()
-	_hint_tween.tween_interval(2.3)
-	_hint_tween.tween_property(hint_panel, "modulate:a", 0.12, 0.65)
+	_hint_tween.tween_interval(2.4)
+	_hint_tween.tween_property(hint_panel, "modulate:a", 0.10, 0.65)

@@ -1,17 +1,14 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_backdrop.gd" id="2"]
 [ext_resource type="Theme" path="res://src/ui/themes/occ_theme.tres" id="3"]
-[ext_resource type="PackedScene" path="res://src/ui/components/occ_panel_frame.tscn" id="4"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/button_header_blade.png" id="6"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="7"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png" id="8"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/effects/engine_speed.png" id="9"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/station_a.png" id="10"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/satellite_b.png" id="11"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png" id="12"]
-[ext_resource type="PackedScene" path="res://src/ui/components/occ_chrome_button.tscn" id="13"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/button_header_blade.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png" id="6"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/station_a.png" id="7"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/satellite_b.png" id="8"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png" id="9"]
 
 [node name="OperationsScreen" type="Control"]
 layout_mode = 3
@@ -43,48 +40,44 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Station" type="TextureRect" parent="Scenery"]
-modulate = Color(0.55, 0.82, 0.95, 0.08)
+modulate = Color(0.55, 0.82, 0.95, 0.055)
 layout_mode = 1
-anchor_left = 0.73
-anchor_top = 0.56
+anchor_left = 0.77
+anchor_top = 0.60
 anchor_right = 0.98
-anchor_bottom = 0.94
-offset_left = -30.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+anchor_bottom = 0.92
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("10")
+texture = ExtResource("7")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Satellite" type="TextureRect" parent="Scenery"]
-modulate = Color(0.62, 0.9, 1, 0.10)
+modulate = Color(0.62, 0.9, 1, 0.075)
 layout_mode = 1
-anchor_left = 0.83
-anchor_top = 0.12
-anchor_right = 0.94
-anchor_bottom = 0.28
+anchor_left = 0.84
+anchor_top = 0.11
+anchor_right = 0.93
+anchor_bottom = 0.24
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("11")
+texture = ExtResource("8")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="Meteor" type="TextureRect" parent="Scenery"]
-modulate = Color(0.62, 0.75, 0.82, 0.08)
+modulate = Color(0.62, 0.75, 0.82, 0.055)
 layout_mode = 1
 anchor_left = 0.04
-anchor_top = 0.68
-anchor_right = 0.13
-anchor_bottom = 0.84
+anchor_top = 0.72
+anchor_right = 0.12
+anchor_bottom = 0.86
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("12")
+texture = ExtResource("9")
 expand_mode = 1
 stretch_mode = 5
 
@@ -97,17 +90,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 32
-theme_override_constants/margin_top = 24
+theme_override_constants/margin_top = 22
 theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_bottom = 22
 
 [node name="Layout" type="VBoxContainer" parent="SafeArea"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 12
 
 [node name="Header" type="HBoxContainer" parent="SafeArea/Layout"]
 layout_mode = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 16
 
 [node name="Brand" type="VBoxContainer" parent="SafeArea/Layout/Header"]
 layout_mode = 2
@@ -135,25 +128,25 @@ theme_override_constants/separation = 6
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.51, 0.68, 0.75, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 11
 text = "LANGUAGE"
 vertical_alignment = 1
 
 [node name="EnglishButton" type="Button" parent="SafeArea/Layout/Header/LanguageGroup"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(48, 36)
+custom_minimum_size = Vector2(46, 36)
 layout_mode = 2
 text = "EN"
 
 [node name="PortugueseButton" type="Button" parent="SafeArea/Layout/Header/LanguageGroup"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(58, 36)
+custom_minimum_size = Vector2(50, 36)
 layout_mode = 2
 text = "PT"
 
 [node name="SpanishButton" type="Button" parent="SafeArea/Layout/Header/LanguageGroup"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(48, 36)
+custom_minimum_size = Vector2(46, 36)
 layout_mode = 2
 text = "ES"
 
@@ -164,249 +157,224 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 18
+theme_override_constants/separation = 16
 vertical = false
 
-[node name="ContractCard" type="Control" parent="SafeArea/Layout/Body"]
-custom_minimum_size = Vector2(0, 270)
+[node name="ContractCard" type="PanelContainer" parent="SafeArea/Layout/Body"]
+custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Frame" parent="SafeArea/Layout/Body/ContractCard" instance=ExtResource("4")]
-modulate = Color(0.34, 0.78, 0.96, 0.56)
-layout_mode = 1
-variant = 2
+[node name="ContractMargin" type="MarginContainer" parent="SafeArea/Layout/Body/ContractCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 18
 
-[node name="ContractTab" type="TextureRect" parent="SafeArea/Layout/Body/ContractCard"]
-modulate = Color(0.34, 0.86, 0.98, 0.62)
-layout_mode = 1
-anchor_left = 0.03
-anchor_top = 0.025
-anchor_right = 0.43
-anchor_bottom = 0.13
-mouse_filter = 2
-texture = ExtResource("6")
-expand_mode = 1
-stretch_mode = 5
+[node name="ContractContent" type="VBoxContainer" parent="SafeArea/Layout/Body/ContractCard/ContractMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
 
-[node name="ContentMargin" type="MarginContainer" parent="SafeArea/Layout/Body/ContractCard"]
+[node name="ContractHeader" type="Control" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
+custom_minimum_size = Vector2(180, 60)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Plate" type="TextureRect" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent/ContractHeader"]
+modulate = Color(0.36, 0.83, 0.98, 0.78)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = 30.0
-offset_right = -28.0
-offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Content" type="VBoxContainer" parent="SafeArea/Layout/Body/ContractCard/ContentMargin"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="ContractState" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
+[node name="ContractState" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent/ContractHeader"]
 unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.34, 0.86, 0.98, 1)
-theme_override_font_sizes/font_size = 12
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_right = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.90, 0.98, 1, 1)
+theme_override_font_sizes/font_size = 11
 text = "TRAINING CONTRACT"
+vertical_alignment = 1
 
-[node name="ContractTitle" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
+[node name="ContractTitle" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 27
 text = "Earth Orbit · Route 01"
 autowrap_mode = 2
 
-[node name="ContractDescription" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
+[node name="ContractDescription" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.66, 0.76, 0.81, 1)
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.68, 0.78, 0.83, 1)
+theme_override_font_sizes/font_size = 13
 text = "Clear a light debris pocket around a service corridor."
 autowrap_mode = 2
 
-[node name="Spacer" type="Control" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
-custom_minimum_size = Vector2(0, 2)
+[node name="ContractSpacer" type="Control" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CleanupLabel" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
+[node name="CleanupLabel" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.76, 0.86, 0.91, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.77, 0.87, 0.91, 1)
+theme_override_font_sizes/font_size = 12
 text = "Cleanup target · 70%"
 
-[node name="CleanupProgress" type="ProgressBar" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
-custom_minimum_size = Vector2(0, 9)
+[node name="CleanupProgress" type="ProgressBar" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
+custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 value = 70.0
 show_percentage = false
 
-[node name="AccentBar" type="TextureRect" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
-modulate = Color(0.34, 0.86, 0.98, 0.34)
-custom_minimum_size = Vector2(160, 7)
+[node name="ProgressAccent" type="TextureRect" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
+modulate = Color(0.34, 0.86, 0.98, 0.55)
+custom_minimum_size = Vector2(96, 24)
 layout_mode = 2
 size_flags_horizontal = 0
 mouse_filter = 2
-texture = ExtResource("7")
+texture = ExtResource("5")
 expand_mode = 1
-stretch_mode = 0
+stretch_mode = 5
 
-[node name="InfoRow" type="HBoxContainer" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
+[node name="InfoRow" type="HBoxContainer" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
-[node name="HazardLabel" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content/InfoRow"]
+[node name="HazardLabel" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent/InfoRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.66, 0.76, 0.81, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.67, 0.77, 0.82, 1)
+theme_override_font_sizes/font_size = 12
 text = "Hazard · Low"
 
-[node name="PayoutLabel" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content/InfoRow"]
+[node name="PayoutLabel" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent/InfoRow"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.82, 0.4, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 text = "Base pay · 240 cr"
 
-[node name="PrimaryAction" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content" instance=ExtResource("13")]
+[node name="PrimaryAction" type="Button" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "SELECT CONTRACT"
 
-[node name="ShipCard" type="Control" parent="SafeArea/Layout/Body"]
-custom_minimum_size = Vector2(0, 270)
+[node name="ShipCard" type="PanelContainer" parent="SafeArea/Layout/Body"]
+custom_minimum_size = Vector2(0, 250)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Frame" parent="SafeArea/Layout/Body/ShipCard" instance=ExtResource("4")]
-modulate = Color(0.30, 0.62, 0.80, 0.62)
-layout_mode = 1
-variant = 1
+[node name="ShipMargin" type="MarginContainer" parent="SafeArea/Layout/Body/ShipCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 18
 
-[node name="TabBlade" type="TextureRect" parent="SafeArea/Layout/Body/ShipCard"]
-modulate = Color(0.34, 0.86, 0.98, 0.72)
-layout_mode = 1
-anchor_left = 0.04
-anchor_top = 0.03
-anchor_right = 0.48
-anchor_bottom = 0.17
-mouse_filter = 2
-texture = ExtResource("6")
-expand_mode = 1
-stretch_mode = 5
+[node name="ShipContent" type="VBoxContainer" parent="SafeArea/Layout/Body/ShipCard/ShipMargin"]
+layout_mode = 2
+theme_override_constants/separation = 7
 
-[node name="ContentMargin" type="MarginContainer" parent="SafeArea/Layout/Body/ShipCard"]
+[node name="ShipHeader" type="Control" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent"]
+custom_minimum_size = Vector2(180, 60)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Plate" type="TextureRect" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/ShipHeader"]
+modulate = Color(0.42, 0.77, 0.93, 0.76)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = 24.0
-offset_right = -28.0
-offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Content" type="VBoxContainer" parent="SafeArea/Layout/Body/ShipCard/ContentMargin"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="ShipHeading" type="Label" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content"]
+[node name="ShipHeading" type="Label" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/ShipHeader"]
 unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.4, 1)
-theme_override_font_sizes/font_size = 12
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_right = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.45, 1)
+theme_override_font_sizes/font_size = 11
 text = "COMPANY SHIP"
+vertical_alignment = 1
 
-[node name="ShipName" type="Label" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content"]
+[node name="ShipName" type="Label" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 25
 text = "Pioneer-01"
 
-[node name="ShipAccent" type="TextureRect" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content"]
-modulate = Color(1, 0.82, 0.4, 0.56)
-custom_minimum_size = Vector2(150, 7)
-layout_mode = 2
-size_flags_horizontal = 0
-mouse_filter = 2
-texture = ExtResource("7")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="ShipVisual" type="CenterContainer" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content"]
-custom_minimum_size = Vector2(0, 130)
+[node name="ShipVisual" type="CenterContainer" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent"]
+custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VisualStage" type="Control" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content/ShipVisual"]
-custom_minimum_size = Vector2(330, 175)
-layout_mode = 2
-
-[node name="EngineGlow" type="TextureRect" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content/ShipVisual/VisualStage"]
-modulate = Color(0.34, 0.86, 0.98, 0.36)
-layout_mode = 1
-anchor_left = 0.44
-anchor_top = 0.62
-anchor_right = 0.56
-anchor_bottom = 0.98
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("9")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="ShipArt" type="TextureRect" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content/ShipVisual/VisualStage"]
+[node name="ShipArt" type="TextureRect" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/ShipVisual"]
 unique_name_in_owner = true
-layout_mode = 1
-anchor_left = 0.18
-anchor_top = 0.02
-anchor_right = 0.82
-anchor_bottom = 0.91
-grow_horizontal = 2
-grow_vertical = 2
+custom_minimum_size = Vector2(160, 121)
+layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("8")
+texture_filter = 2
+texture = ExtResource("6")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ShipRule" type="HSeparator" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content"]
+[node name="ShipRule" type="HSeparator" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent"]
 layout_mode = 2
 
-[node name="Stats" type="HBoxContainer" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content"]
+[node name="Stats" type="HBoxContainer" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 10
 
-[node name="BeamLabel" type="Label" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content/Stats"]
+[node name="BeamLabel" type="Label" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.66, 0.76, 0.81, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.68, 0.78, 0.83, 1)
+theme_override_font_sizes/font_size = 11
 text = "Beam · Standard"
 
-[node name="CargoLabel" type="Label" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content/Stats"]
+[node name="CargoLabel" type="Label" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.66, 0.76, 0.81, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.68, 0.78, 0.83, 1)
+theme_override_font_sizes/font_size = 11
 text = "Cargo · 12"
 
-[node name="ScannerLabel" type="Label" parent="SafeArea/Layout/Body/ShipCard/ContentMargin/Content/Stats"]
+[node name="ScannerLabel" type="Label" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.66, 0.76, 0.81, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.68, 0.78, 0.83, 1)
+theme_override_font_sizes/font_size = 11
 text = "Scanner · Mk I"
