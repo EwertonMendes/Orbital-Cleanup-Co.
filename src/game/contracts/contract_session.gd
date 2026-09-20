@@ -25,6 +25,8 @@ func configure(context: Dictionary) -> void:
 	assert(not _sector_id.is_empty(), "ContractSession requires sector_id.")
 	assert(not _contract.is_empty(), "ContractSession requires contract definition.")
 	assert(_target_percent > 0.0 and _target_percent <= 100.0, "Contract target must be in (0, 100].")
+
+func start() -> void:
 	print("[Contract] START sector=%s target=%.0f" % [_sector_id, _target_percent])
 
 func record_salvage(definition: SalvageDefinition) -> void:
