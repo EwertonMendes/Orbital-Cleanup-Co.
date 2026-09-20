@@ -1,6 +1,8 @@
 extends Control
 
 const COMPACT_WIDTH := 820.0
+const LANDSCAPE_REFERENCE := Vector2i(1280, 720)
+const PORTRAIT_REFERENCE := Vector2i(720, 1280)
 
 @onready var body: BoxContainer = %Body
 @onready var safe_area: MarginContainer = %SafeArea
@@ -54,14 +56,24 @@ func _validate_contracts() -> void:
 	assert(english_button != null and portuguese_button != null and spanish_button != null, "Locale controls are required.")
 
 func _apply_responsive_layout() -> void:
-	var compact := size.x < COMPACT_WIDTH
+	var window_size := DisplayServer.window_get_size()
+	var portrait := window_size.y > window_size.x
+	_apply_reference_size(portrait)
+
+	var compact := portrait or size.x < COMPACT_WIDTH
 	body.vertical = compact
-	var horizontal_margin := 16 if compact else 32
-	var vertical_margin := 14 if compact else 24
+	var horizontal_margin := 22 if compact else 32
+	var vertical_margin := 18 if compact else 24
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
+
+func _apply_reference_size(portrait: bool) -> void:
+	var root_window := get_tree().root
+	var desired := PORTRAIT_REFERENCE if portrait else LANDSCAPE_REFERENCE
+	if root_window.content_scale_size != desired:
+		root_window.content_scale_size = desired
 
 func _toggle_contract_selection() -> void:
 	_selected = not _selected
