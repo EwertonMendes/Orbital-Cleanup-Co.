@@ -1,0 +1,12 @@
+{
+  "id": "relay_satellite",
+  "display_name_key": "LANDMARK_RELAY_SATELLITE",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "scale": 1.7,
+  "reserved_radius": 190,
+  "placement_radius": [
+    1000,
+    2200
+  ],
+  "ambient_effect": "none"
+}

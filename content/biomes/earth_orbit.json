@@ -7,14 +7,19 @@
     "accent": "#53d7f1"
   },
   "salvage_tables": [
-    "earth_training"
+    "earth_training",
+    "earth_orbit_ops"
   ],
   "landmarks": [
-    "service_satellite"
+    "service_satellite",
+    "cargo_waystation",
+    "relay_satellite"
   ],
   "modifiers": [
     "light_debris",
-    "dense_debris"
+    "dense_debris",
+    "valuable_salvage",
+    "sparse_corridor"
   ],
   "spawn_rules": {
     "min_spacing": 135,

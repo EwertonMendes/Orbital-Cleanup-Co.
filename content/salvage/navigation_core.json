@@ -1,0 +1,19 @@
+{
+  "id": "navigation_core",
+  "display_name_key": "SALVAGE_NAVIGATION_CORE",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "category": "electronics",
+  "rarity": "rare",
+  "base_value": 120,
+  "mass": 2,
+  "collect_duration": 1.8,
+  "cleanliness_value": 2.8,
+  "cargo_units": 3,
+  "visual_scale": 0.62,
+  "collision_radius": 26,
+  "tags": [
+    "electronics",
+    "navigation",
+    "earth"
+  ]
+}

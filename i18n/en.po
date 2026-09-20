@@ -450,3 +450,169 @@ msgstr "Mint Recovery"
 
 msgid "COSMETIC_BEAM_AMBER_PRECISION"
 msgstr "Amber Precision"
+
+
+msgid "HQ_CONTRACT_AVAILABLE"
+msgstr "AVAILABLE CONTRACT"
+
+msgid "HQ_CONTRACT_INDEX_FMT"
+msgstr "AUTHORED CONTRACT · %d / %d"
+
+msgid "HQ_CONTRACT_PREVIOUS"
+msgstr "PREVIOUS"
+
+msgid "HQ_CONTRACT_NEXT"
+msgstr "NEXT"
+
+msgid "HQ_CONTRACT_DESCRIPTION"
+msgstr "Recover authorized debris, unload safely and meet the cleanup target."
+
+msgid "HQ_RISK_LOW"
+msgstr "RISK · LOW"
+
+msgid "HQ_RISK_MODERATE"
+msgstr "RISK · MODERATE"
+
+msgid "HQ_RISK_ELEVATED"
+msgstr "RISK · ELEVATED"
+
+msgid "HQ_RISK_HIGH"
+msgstr "RISK · HIGH"
+
+msgid "BIOME_LUNAR_BELT"
+msgstr "Lunar Belt"
+
+msgid "BIOME_MARS_FREIGHT"
+msgstr "Mars Freight Route"
+
+msgid "BIOME_BLUE_NEBULA"
+msgstr "Blue Nebula"
+
+msgid "LANDMARK_CARGO_WAYSTATION"
+msgstr "Cargo Waystation"
+
+msgid "LANDMARK_RELAY_SATELLITE"
+msgstr "Relay Satellite"
+
+msgid "LANDMARK_MINING_RIG"
+msgstr "Mining Rig"
+
+msgid "LANDMARK_DERELICT_EXPLORER"
+msgstr "Derelict Explorer"
+
+msgid "LANDMARK_COMMS_ARRAY"
+msgstr "Communications Array"
+
+msgid "LANDMARK_FRACTURED_MOONLET"
+msgstr "Fractured Moonlet"
+
+msgid "LANDMARK_RESEARCH_OUTPOST"
+msgstr "Research Outpost"
+
+msgid "MODIFIER_VALUABLE_SALVAGE"
+msgstr "High-Value Salvage"
+
+msgid "MODIFIER_SPARSE_CORRIDOR"
+msgstr "Sparse Corridor"
+
+msgid "MODIFIER_METEOR_FRONT"
+msgstr "Meteor Front"
+
+msgid "MODIFIER_RICH_RECOVERY"
+msgstr "Rich Recovery"
+
+msgid "MODIFIER_QUIET_ORBIT"
+msgstr "Quiet Orbit"
+
+msgid "SALVAGE_ALLOY_PLATE"
+msgstr "Alloy Plate"
+
+msgid "SALVAGE_COOLANT_CELL"
+msgstr "Coolant Cell"
+
+msgid "SALVAGE_NAVIGATION_CORE"
+msgstr "Navigation Core"
+
+msgid "SALVAGE_ANTENNA_ARRAY"
+msgstr "Antenna Array"
+
+msgid "SALVAGE_CARGO_CANISTER"
+msgstr "Cargo Canister"
+
+msgid "SALVAGE_REACTOR_SHIELDING"
+msgstr "Reactor Shielding"
+
+msgid "SALVAGE_SOLAR_CELL_BUNDLE"
+msgstr "Solar Cell Bundle"
+
+msgid "SALVAGE_TELEMETRY_UNIT"
+msgstr "Telemetry Unit"
+
+msgid "SALVAGE_THRUSTER_NOZZLE"
+msgstr "Thruster Nozzle"
+
+msgid "SALVAGE_SURVEY_BEACON"
+msgstr "Survey Beacon"
+
+msgid "SALVAGE_STATION_BRACKET"
+msgstr "Station Bracket"
+
+msgid "SALVAGE_LUNAR_REGOLITH_CANISTER"
+msgstr "Lunar Regolith Canister"
+
+msgid "SALVAGE_MINING_COUPLER"
+msgstr "Mining Coupler"
+
+msgid "SALVAGE_THERMAL_TILE"
+msgstr "Thermal Tile"
+
+msgid "SALVAGE_MARS_FREIGHT_CRATE"
+msgstr "Mars Freight Crate"
+
+msgid "SALVAGE_PRESSURE_VALVE"
+msgstr "Pressure Valve"
+
+msgid "SALVAGE_ORBITAL_BATTERY"
+msgstr "Orbital Battery"
+
+msgid "SALVAGE_NEBULA_SENSOR"
+msgstr "Nebula Sensor"
+
+msgid "SALVAGE_EXPLORER_CORE"
+msgstr "Explorer Core"
+
+msgid "SALVAGE_QUANTUM_RELAY"
+msgstr "Quantum Relay"
+
+msgid "SECTOR_EARTH_ORBIT_03"
+msgstr "Earth Orbit · Service Lane 03"
+
+msgid "SECTOR_EARTH_ORBIT_04"
+msgstr "Earth Orbit · Relay Sweep 04"
+
+msgid "SECTOR_LUNAR_BELT_01"
+msgstr "Lunar Belt · Mining Ring 01"
+
+msgid "SECTOR_LUNAR_BELT_02"
+msgstr "Lunar Belt · Moonlet Crossing 02"
+
+msgid "SECTOR_LUNAR_BELT_03"
+msgstr "Lunar Belt · Industrial Drift 03"
+
+msgid "SECTOR_MARS_FREIGHT_01"
+msgstr "Mars Freight Route · Cargo Lane 01"
+
+msgid "SECTOR_MARS_FREIGHT_02"
+msgstr "Mars Freight Route · Red Corridor 02"
+
+msgid "SECTOR_MARS_FREIGHT_03"
+msgstr "Mars Freight Route · Transfer Gate 03"
+
+msgid "SECTOR_BLUE_NEBULA_01"
+msgstr "Blue Nebula · Research Pocket 01"
+
+msgid "SECTOR_BLUE_NEBULA_02"
+msgstr "Blue Nebula · Explorer Drift 02"
+
+msgid "SECTOR_BLUE_NEBULA_03"
+msgstr "Blue Nebula · Ion Survey 03"

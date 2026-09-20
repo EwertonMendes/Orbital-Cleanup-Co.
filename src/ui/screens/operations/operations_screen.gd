@@ -38,6 +38,9 @@ const CHROME_BUTTON_SCENE := preload("res://src/ui/components/occ_chrome_button.
 @onready var career_xp_label: Label = %CareerXpLabel
 @onready var career_xp_bar: ProgressBar = %CareerXpBar
 @onready var contract_state: Label = %ContractState
+@onready var contract_position: Label = %ContractPosition
+@onready var previous_contract: Button = %PreviousContract
+@onready var next_contract: Button = %NextContract
 @onready var contract_title: Label = %ContractTitle
 @onready var contract_description: Label = %ContractDescription
 @onready var contract_target: Label = %ContractTarget
@@ -68,6 +71,9 @@ var _platform: PlatformService
 var _router: SceneRouter
 var _progression: ProgressionService
 var _registry := ContentRegistry.new()
+var _generator := SectorGenerator.new()
+var _sector_ids := PackedStringArray()
+var _selected_sector_index := 0
 var _sector_plan: Dictionary = {}
 var _active_tab := Tab.CONTRACTS
 var _tab_group := ButtonGroup.new()
@@ -83,14 +89,19 @@ func configure(context: Dictionary) -> void:
 
 	var scaler := DifficultyScaler.new()
 	scaler.configure(_registry)
-	var generator := SectorGenerator.new()
-	generator.configure(_registry, scaler)
-	_sector_plan = generator.generate(DEFAULT_SECTOR_ID)
+	_generator.configure(_registry, scaler)
+	_sector_ids = _registry.list_sector_ids()
+	assert(not _sector_ids.is_empty(), "Headquarters requires at least one authored sector.")
+	var preferred_index := _sector_ids.find(DEFAULT_SECTOR_ID)
+	_selected_sector_index = preferred_index if preferred_index >= 0 else 0
+	_load_selected_sector()
 
 func _ready() -> void:
 	_validate_contracts()
 	resized.connect(_apply_responsive_layout)
 	primary_action.pressed.connect(_deploy_training)
+	previous_contract.pressed.connect(_select_relative_contract.bind(-1))
+	next_contract.pressed.connect(_select_relative_contract.bind(1))
 
 	_setup_tabs()
 	english_button.pressed.connect(_change_locale.bind("en"))
@@ -114,6 +125,7 @@ func _validate_contracts() -> void:
 	assert(content_scroll != null, "Headquarters requires ContentScroll.")
 	assert(content_shell != null, "Headquarters requires ContentShell.")
 	assert(primary_action != null, "Headquarters requires PrimaryAction.")
+	assert(previous_contract != null and next_contract != null and contract_position != null, "Headquarters requires authored contract navigation.")
 	assert(upgrade_grid != null, "Headquarters requires UpgradeGrid.")
 	assert(career_list != null, "Headquarters requires CareerList.")
 	assert(ship_preview != null and contract_ship_art != null, "Headquarters requires cosmetic ship previews.")
@@ -180,8 +192,30 @@ func _deploy_training() -> void:
 	var scene := load(FLIGHT_SCREEN_PATH) as PackedScene
 	assert(scene != null, "Training flight screen must be loadable.")
 	var flight_context := _context.duplicate()
-	flight_context["sector_id"] = DEFAULT_SECTOR_ID
+	flight_context["sector_id"] = String(_sector_ids[_selected_sector_index])
 	_router.show_screen(scene, flight_context)
+
+func _select_relative_contract(delta: int) -> void:
+	if _sector_ids.size() <= 1:
+		return
+	_selected_sector_index = (_selected_sector_index + delta) % _sector_ids.size()
+	if _selected_sector_index < 0:
+		_selected_sector_index += _sector_ids.size()
+	_load_selected_sector()
+	_refresh_contracts()
+
+func _load_selected_sector() -> void:
+	assert(_selected_sector_index >= 0 and _selected_sector_index < _sector_ids.size(), "Selected sector index is out of bounds.")
+	_sector_plan = _generator.generate(String(_sector_ids[_selected_sector_index]))
+
+func _risk_key(difficulty: int) -> String:
+	if difficulty <= 3:
+		return "HQ_RISK_LOW"
+	if difficulty <= 6:
+		return "HQ_RISK_MODERATE"
+	if difficulty <= 9:
+		return "HQ_RISK_ELEVATED"
+	return "HQ_RISK_HIGH"
 
 func _change_locale(locale: String) -> void:
 	if _settings != null:
@@ -238,11 +272,16 @@ func _refresh_contracts() -> void:
 
 	%ContractsTitle.text = tr("HQ_CONTRACTS_TITLE")
 	%ContractsSubtitle.text = tr("HQ_CONTRACTS_SUBTITLE")
-	contract_state.text = tr("OPS_TRAINING")
+	contract_state.text = tr("HQ_CONTRACT_AVAILABLE")
+	contract_position.text = tr("HQ_CONTRACT_INDEX_FMT") % [_selected_sector_index + 1, _sector_ids.size()]
+	previous_contract.text = tr("HQ_CONTRACT_PREVIOUS")
+	next_contract.text = tr("HQ_CONTRACT_NEXT")
+	previous_contract.disabled = _sector_ids.size() <= 1
+	next_contract.disabled = _sector_ids.size() <= 1
 	contract_title.text = tr(String(sector["display_name_key"]))
-	contract_description.text = tr("OPS_CONTRACT_DESCRIPTION")
+	contract_description.text = tr("HQ_CONTRACT_DESCRIPTION")
 	contract_target.text = tr("HQ_CONTRACT_TARGET_FMT") % int(round(float(contract_ref["target_percent"])))
-	contract_risk.text = tr("OPS_HAZARD")
+	contract_risk.text = tr(_risk_key(int(sector["difficulty"])))
 	contract_payout.text = tr("HQ_CONTRACT_PAY_FMT") % [base_pay, perfect_bonus]
 	%ContractShipName.text = tr("OPS_SHIP_NAME")
 	%ContractShipStatus.text = tr("HQ_SHIP_READY")

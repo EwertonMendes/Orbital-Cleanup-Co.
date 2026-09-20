@@ -1,0 +1,19 @@
+{
+  "id": "thruster_nozzle",
+  "display_name_key": "SALVAGE_THRUSTER_NOZZLE",
+  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+  "category": "propulsion",
+  "rarity": "uncommon",
+  "base_value": 70,
+  "mass": 2.4,
+  "collect_duration": 1.65,
+  "cleanliness_value": 2.7,
+  "cargo_units": 3,
+  "visual_scale": 0.62,
+  "collision_radius": 29,
+  "tags": [
+    "propulsion",
+    "metal",
+    "mars"
+  ]
+}

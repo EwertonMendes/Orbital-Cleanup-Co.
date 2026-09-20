@@ -1,0 +1,19 @@
+{
+  "id": "reactor_shielding",
+  "display_name_key": "SALVAGE_REACTOR_SHIELDING",
+  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+  "category": "power",
+  "rarity": "uncommon",
+  "base_value": 78,
+  "mass": 3.3,
+  "collect_duration": 2.15,
+  "cleanliness_value": 3.5,
+  "cargo_units": 4,
+  "visual_scale": 0.52,
+  "collision_radius": 36,
+  "tags": [
+    "reactor",
+    "dense",
+    "mars"
+  ]
+}

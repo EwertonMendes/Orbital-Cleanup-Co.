@@ -1,0 +1,38 @@
+{
+  "id": "lunar_belt_02",
+  "display_name_key": "SECTOR_LUNAR_BELT_02",
+  "biome": "lunar_belt",
+  "seed": 30591,
+  "difficulty": 5,
+  "map": {
+    "half_extents": [
+      5400,
+      3300
+    ],
+    "debris_density": 0.96,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "fractured_moonlet",
+    "relay_satellite"
+  ],
+  "contract": {
+    "type": "standard_cleanup",
+    "target_percent": 78
+  },
+  "modifiers": [
+    "meteor_front"
+  ],
+  "depot": {
+    "position": [
+      -1000,
+      520
+    ]
+  }
+}

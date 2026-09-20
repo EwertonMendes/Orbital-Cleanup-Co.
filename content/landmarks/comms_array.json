@@ -1,0 +1,12 @@
+{
+  "id": "comms_array",
+  "display_name_key": "LANDMARK_COMMS_ARRAY",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "scale": 2,
+  "reserved_radius": 210,
+  "placement_radius": [
+    1000,
+    2150
+  ],
+  "ambient_effect": "none"
+}

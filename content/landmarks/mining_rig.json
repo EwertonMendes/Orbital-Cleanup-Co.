@@ -1,0 +1,12 @@
+{
+  "id": "mining_rig",
+  "display_name_key": "LANDMARK_MINING_RIG",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/station_a.png",
+  "scale": 2.1,
+  "reserved_radius": 280,
+  "placement_radius": [
+    1200,
+    2300
+  ],
+  "ambient_effect": "dust"
+}

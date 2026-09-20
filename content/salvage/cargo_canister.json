@@ -1,0 +1,19 @@
+{
+  "id": "cargo_canister",
+  "display_name_key": "SALVAGE_CARGO_CANISTER",
+  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+  "category": "cargo",
+  "rarity": "common",
+  "base_value": 34,
+  "mass": 1.6,
+  "collect_duration": 1.1,
+  "cleanliness_value": 1.8,
+  "cargo_units": 2,
+  "visual_scale": 0.58,
+  "collision_radius": 26,
+  "tags": [
+    "cargo",
+    "container",
+    "mars"
+  ]
+}

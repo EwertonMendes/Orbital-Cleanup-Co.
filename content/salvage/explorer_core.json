@@ -1,0 +1,20 @@
+{
+  "id": "explorer_core",
+  "display_name_key": "SALVAGE_EXPLORER_CORE",
+  "sprite": "res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png",
+  "category": "research",
+  "rarity": "epic",
+  "base_value": 260,
+  "mass": 3.8,
+  "collect_duration": 2.8,
+  "cleanliness_value": 4.8,
+  "cargo_units": 5,
+  "visual_scale": 0.46,
+  "collision_radius": 38,
+  "tags": [
+    "explorer",
+    "core",
+    "rare",
+    "nebula"
+  ]
+}

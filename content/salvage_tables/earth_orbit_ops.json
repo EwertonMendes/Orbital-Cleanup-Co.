@@ -1,0 +1,37 @@
+{
+  "id": "earth_orbit_ops",
+  "entries": [
+    {
+      "salvage": "scrap_fragment",
+      "weight": 18
+    },
+    {
+      "salvage": "alloy_plate",
+      "weight": 16
+    },
+    {
+      "salvage": "coolant_cell",
+      "weight": 14
+    },
+    {
+      "salvage": "station_bracket",
+      "weight": 14
+    },
+    {
+      "salvage": "telemetry_unit",
+      "weight": 12
+    },
+    {
+      "salvage": "solar_cell_bundle",
+      "weight": 10
+    },
+    {
+      "salvage": "antenna_array",
+      "weight": 10
+    },
+    {
+      "salvage": "navigation_core",
+      "weight": 6
+    }
+  ]
+}

@@ -345,9 +345,26 @@ should be handled as follows:
 
 Do not add code merely because content generation is being performed by AI.
 
+## Authored sector catalog
+
+The initial content pack contains four biome kits and a growing authored sector catalog. The Headquarters Contract Board enumerates valid sector JSON definitions through `ContentRegistry`, so adding a normal authored sector does not require editing a hardcoded UI list.
+
+The content pack baseline is:
+
+- Earth Orbit;
+- Lunar Belt;
+- Mars Freight Route;
+- Blue Nebula;
+- 20+ salvage definitions;
+- 6+ reusable landmarks;
+- multiple data-only modifiers;
+- 10+ authored deterministic sectors.
+
+Every sector still runs through the same `SectorRuntime` and `SectorGenerator`.
+
 ## Current limitation
 
-Deep-link sector selection (`?sector=<id>`) and the visual Sector Preview tool belong to the later Endless Contracts / Developer Tools delivery. Until then, the flight screen defaults to `earth_training_01`, while tests can instantiate any valid sector directly through `SectorGenerator`.
+Deep-link sector selection (`?sector=<id>`), endless generated contracts and the visual Sector Preview tool belong to the later Endless Contracts / Developer Tools delivery. The player-facing Headquarters can browse authored sector definitions; developer deep links are intentionally deferred.
 
 ## Career and upgrades
 
