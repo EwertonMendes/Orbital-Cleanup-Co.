@@ -1,0 +1,13 @@
+Creative Commons Zero v1.0 Universal (CC0 1.0)
+
+The original Kenney assets in this directory are released under CC0.
+
+Canonical license:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Official Kenney support states that assets on the referenced asset pages may be
+used in personal, educational, and commercial projects and attribution is not
+required.
+
+This file documents the upstream asset license. It does not apply to Orbital
+Cleanup Co. source code or original project assets.
