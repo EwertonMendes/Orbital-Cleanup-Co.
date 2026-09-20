@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="SalvageDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/game/salvage/salvage_definition.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"service_scrap"
+display_name_key = &"SALVAGE_SERVICE_SCRAP"
+sprite = ExtResource("2")
+category = &"scrap"
+rarity = &"common"
+base_value = 18
+mass = 0.9
+collect_duration = 0.75
+cleanliness_value = 1.2
+cargo_units = 1
+visual_scale = 1.1
+collision_radius = 22.0
+tags = PackedStringArray("service", "training")

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="SalvageDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://src/game/salvage/salvage_definition.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/satellite_c.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = &"sensor_pod"
+display_name_key = &"SALVAGE_SENSOR_POD"
+sprite = ExtResource("2")
+category = &"electronics"
+rarity = &"common"
+base_value = 32
+mass = 1.35
+collect_duration = 1.05
+cleanliness_value = 1.8
+cargo_units = 2
+visual_scale = 0.76
+collision_radius = 24.0
+tags = PackedStringArray("electronics", "satellite", "training")

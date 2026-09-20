@@ -93,3 +93,42 @@ msgstr "Point to steer · WASD / arrows also work"
 
 msgid "FLIGHT_HINT_TOUCH"
 msgstr "Touch and drag anywhere to steer"
+
+msgid "FLIGHT_CARGO_FMT"
+msgstr "CARGO · %d / %d"
+
+msgid "FLIGHT_BEAM_SCANNING"
+msgstr "TRACTOR · SCANNING"
+
+msgid "FLIGHT_BEAM_LOCK_FMT"
+msgstr "TRACTOR · %s"
+
+msgid "FLIGHT_CARGO_FULL"
+msgstr "CARGO FULL · RETURN TO DEPOT"
+
+msgid "FLIGHT_RECOVERED_FMT"
+msgstr "RECOVERED · %s"
+
+msgid "FLIGHT_UNLOADED_FMT"
+msgstr "CARGO UNLOADED · %d UNITS"
+
+msgid "FLIGHT_DEPOT"
+msgstr "CARGO DEPOT"
+
+msgid "SALVAGE_SCRAP_FRAGMENT"
+msgstr "Alloy Fragment"
+
+msgid "SALVAGE_SERVICE_SCRAP"
+msgstr "Service Scrap"
+
+msgid "SALVAGE_SENSOR_POD"
+msgstr "Sensor Pod"
+
+msgid "SALVAGE_SATELLITE_PANEL"
+msgstr "Satellite Panel"
+
+msgid "SALVAGE_DENSE_COMPOSITE"
+msgstr "Dense Composite"
+
+msgid "FLIGHT_CARGO_NO_SPACE"
+msgstr "NOT ENOUGH CARGO SPACE · RETURN TO DEPOT"
