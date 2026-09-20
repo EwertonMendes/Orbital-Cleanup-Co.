@@ -1,0 +1,9 @@
+keys,en,pt_BR,es_ES
+BOOTSTRAP_EYEBROW,"ORBITAL CLEANUP CO. // SYSTEM ONLINE","ORBITAL CLEANUP CO. // SISTEMA ONLINE","ORBITAL CLEANUP CO. // SISTEMA EN LÍNEA"
+BOOTSTRAP_SLOGAN,"Keeping the galaxy tidy, one orbit at a time.","Mantendo a galáxia em ordem, uma órbita de cada vez.","Manteniendo la galaxia en orden, una órbita cada vez."
+BOOTSTRAP_FOUNDATION,"FOUNDATION BUILD","BUILD DE FUNDAÇÃO","BUILD DE FUNDACIÓN"
+BOOTSTRAP_STATUS,"Web foundation ready · %s · %s","Fundação Web pronta · %s · %s","Base Web lista · %s · %s"
+BOOTSTRAP_MESSAGE,"Infrastructure first. Gameplay systems arrive in the next focused PRs.","Infraestrutura primeiro. Os sistemas de gameplay chegam nos próximos PRs focados.","Primero la infraestructura. Los sistemas de gameplay llegan en los próximos PRs enfocados."
+BOOTSTRAP_LANGUAGE,"LANGUAGE","IDIOMA","IDIOMA"
+BOOTSTRAP_PROVIDER,"Provider","Provider","Proveedor"
+BOOTSTRAP_BUILD,"Build","Build","Build"
