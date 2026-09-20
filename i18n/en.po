@@ -1,0 +1,29 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Orbital Cleanup Co.\n"
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "BOOTSTRAP_EYEBROW"
+msgstr "ORBITAL CLEANUP CO. // SYSTEM ONLINE"
+
+msgid "BOOTSTRAP_SLOGAN"
+msgstr "Keeping the galaxy tidy, one orbit at a time."
+
+msgid "BOOTSTRAP_FOUNDATION"
+msgstr "FOUNDATION BUILD"
+
+msgid "BOOTSTRAP_STATUS"
+msgstr "Web foundation ready · %s · %s"
+
+msgid "BOOTSTRAP_MESSAGE"
+msgstr "Infrastructure first. Gameplay systems arrive in the next focused PRs."
+
+msgid "BOOTSTRAP_LANGUAGE"
+msgstr "LANGUAGE"
+
+msgid "BOOTSTRAP_PROVIDER"
+msgstr "Provider"
+
+msgid "BOOTSTRAP_BUILD"
+msgstr "Build"
