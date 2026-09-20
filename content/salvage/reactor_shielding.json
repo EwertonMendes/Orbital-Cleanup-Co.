@@ -1,7 +1,7 @@
 {
   "id": "reactor_shielding",
   "display_name_key": "SALVAGE_REACTOR_SHIELDING",
-  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
   "category": "power",
   "rarity": "uncommon",
   "base_value": 78,

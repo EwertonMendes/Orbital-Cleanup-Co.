@@ -142,6 +142,11 @@ def validate_salvage(items: dict[str, dict[str, Any]], catalogs: dict[str, set[s
         ), label)
         require_localization_key(data["display_name_key"], label, catalogs)
         require_asset(data["sprite"], f"{label}.sprite")
+        sprite_name = Path(str(data["sprite"])).name.lower()
+        require(
+            "meteor" not in sprite_name,
+            f"{label}.sprite: meteor silhouettes are reserved for hazards; use a recoverable-object asset",
+        )
         require(data["rarity"] in {"common", "uncommon", "rare", "epic"}, f"{label}: invalid rarity")
         require_number(data["base_value"], f"{label}.base_value", 0)
         require_number(data["mass"], f"{label}.mass", 0.01)
