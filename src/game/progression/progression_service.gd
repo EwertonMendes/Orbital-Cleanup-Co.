@@ -4,22 +4,26 @@ class_name ProgressionService
 signal state_changed(snapshot: Dictionary)
 signal upgrade_purchased(upgrade_id: String, level: int, cost: int)
 signal rank_changed(rank_id: String)
+signal cosmetic_equipped(category: String, cosmetic_id: String)
 
 var _save_service: SaveService
 var _registry := ContentRegistry.new()
 var _state: Dictionary = {}
 var _rank_config: Dictionary = {}
 var _upgrade_config: Dictionary = {}
+var _cosmetic_config: Dictionary = {}
 
 func initialize(save_service: SaveService) -> void:
 	assert(save_service != null, "ProgressionService requires SaveService.")
 	_save_service = save_service
 	_rank_config = _registry.get_progression("career_ranks")
 	_upgrade_config = _registry.get_progression("upgrades")
+	_cosmetic_config = _registry.get_cosmetic("ship_customization")
 
 	var persisted := _save_service.read_state()
 	_state = _normalize_state(persisted)
 	_refresh_rank(false)
+	_sanitize_cosmetics()
 	_persist()
 	print("[Progression] READY rank=%s credits=%d xp=%d" % [
 		String(_state["rank"]),
@@ -133,6 +137,57 @@ func get_ship_modifiers() -> Dictionary:
 			result[target_key] = float(result.get(target_key, 0.0)) + float(effects[effect_key]) * float(level)
 	return result
 
+func get_cosmetic_options(category: String) -> Array[Dictionary]:
+	var categories := _cosmetic_config.get("categories", {}) as Dictionary
+	assert(categories.has(category), "Unknown cosmetic category: %s" % category)
+	var output: Array[Dictionary] = []
+	for value in categories[category] as Array:
+		output.append((value as Dictionary).duplicate(true))
+	return output
+
+func get_equipped_cosmetic_ids() -> Dictionary:
+	return (_state.get("cosmetics", {}) as Dictionary).duplicate(true)
+
+func get_equipped_cosmetic_id(category: String) -> String:
+	var defaults := _cosmetic_config.get("default_loadout", {}) as Dictionary
+	var equipped := _state.get("cosmetics", {}) as Dictionary
+	return String(equipped.get(category, defaults.get(category, "")))
+
+func get_cosmetic_definition(category: String, cosmetic_id: String) -> Dictionary:
+	return _find_cosmetic_option(category, cosmetic_id).duplicate(true)
+
+func get_ship_cosmetics() -> Dictionary:
+	var output: Dictionary = {}
+	for category in ["hull", "paint", "trail", "beam"]:
+		var cosmetic_id := get_equipped_cosmetic_id(category)
+		var definition := _find_cosmetic_option(category, cosmetic_id)
+		assert(not definition.is_empty(), "Equipped cosmetic must exist: %s/%s" % [category, cosmetic_id])
+		output[category] = definition.duplicate(true)
+	return output
+
+func is_cosmetic_unlocked(category: String, cosmetic_id: String) -> bool:
+	var definition := _find_cosmetic_option(category, cosmetic_id)
+	if definition.is_empty():
+		return false
+	var unlock_rank := String(definition.get("unlock_rank", ""))
+	return _rank_index(get_rank_id()) >= _rank_index(unlock_rank)
+
+func equip_cosmetic(category: String, cosmetic_id: String) -> bool:
+	if not is_cosmetic_unlocked(category, cosmetic_id):
+		return false
+
+	var cosmetics := _state.get("cosmetics", {}) as Dictionary
+	if String(cosmetics.get(category, "")) == cosmetic_id:
+		return true
+
+	cosmetics[category] = cosmetic_id
+	_state["cosmetics"] = cosmetics
+	_persist()
+	cosmetic_equipped.emit(category, cosmetic_id)
+	state_changed.emit(get_snapshot())
+	print("[Customization] EQUIP category=%s id=%s" % [category, cosmetic_id])
+	return true
+
 func apply_contract_result(result: Dictionary) -> void:
 	assert(bool(result.get("completed", false)), "Only completed contracts can grant progression.")
 	var credits_awarded := int(result.get("credits_awarded", 0))
@@ -178,6 +233,16 @@ func _normalize_state(persisted: Dictionary) -> Dictionary:
 		upgrades[id] = clampi(int(saved_upgrades.get(id, 0)), 0, int(upgrade["max_level"]))
 	defaults["upgrades"] = upgrades
 
+	var saved_cosmetics = persisted.get("cosmetics", {})
+	if saved_cosmetics is Dictionary:
+		var cosmetics := defaults["cosmetics"] as Dictionary
+		for category_variant in cosmetics.keys():
+			var category := String(category_variant)
+			var candidate := String((saved_cosmetics as Dictionary).get(category, cosmetics[category]))
+			if not _find_cosmetic_option(category, candidate).is_empty():
+				cosmetics[category] = candidate
+		defaults["cosmetics"] = cosmetics
+
 	if persisted.get("completed_contracts", {}) is Dictionary:
 		defaults["completed_contracts"] = (persisted["completed_contracts"] as Dictionary).duplicate(true)
 	if persisted.get("last_contract_result", {}) is Dictionary:
@@ -196,7 +261,7 @@ func _default_state() -> Dictionary:
 		"upgrades": upgrades,
 		"discoveries": [],
 		"completed_contracts": {},
-		"cosmetics": {},
+		"cosmetics": (_cosmetic_config.get("default_loadout", {}) as Dictionary).duplicate(true),
 		"last_contract_result": {},
 	}
 
@@ -230,6 +295,34 @@ func _find_upgrade(upgrade_id: String) -> Dictionary:
 		if String(upgrade["id"]) == upgrade_id:
 			return upgrade
 	return {}
+
+func _find_cosmetic_option(category: String, cosmetic_id: String) -> Dictionary:
+	var categories := _cosmetic_config.get("categories", {}) as Dictionary
+	if not categories.has(category):
+		return {}
+	for value in categories[category] as Array:
+		var option := value as Dictionary
+		if String(option.get("id", "")) == cosmetic_id:
+			return option
+	return {}
+
+func _rank_index(rank_id: String) -> int:
+	var ranks := _rank_config.get("ranks", []) as Array
+	for index in range(ranks.size()):
+		var rank := ranks[index] as Dictionary
+		if String(rank["id"]) == rank_id:
+			return index
+	return -1
+
+func _sanitize_cosmetics() -> void:
+	var cosmetics := _state.get("cosmetics", {}) as Dictionary
+	var defaults := _cosmetic_config.get("default_loadout", {}) as Dictionary
+	for category_variant in defaults.keys():
+		var category := String(category_variant)
+		var cosmetic_id := String(cosmetics.get(category, defaults[category]))
+		if _find_cosmetic_option(category, cosmetic_id).is_empty() or not is_cosmetic_unlocked(category, cosmetic_id):
+			cosmetics[category] = String(defaults[category])
+	_state["cosmetics"] = cosmetics
 
 func _persist() -> void:
 	assert(_save_service != null, "ProgressionService is not initialized.")

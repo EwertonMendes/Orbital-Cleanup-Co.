@@ -387,3 +387,66 @@ msgstr "SPECIAL FINDS · %d"
 
 msgid "HQ_COMPLETED_CONTRACTS_FMT"
 msgstr "CONTRACTS COMPLETED · %d"
+
+msgid "HQ_CUSTOMIZE_HULL"
+msgstr "HULL"
+
+msgid "HQ_CUSTOMIZE_PAINT"
+msgstr "PAINT"
+
+msgid "HQ_CUSTOMIZE_TRAIL"
+msgstr "ENGINE TRAIL"
+
+msgid "HQ_CUSTOMIZE_BEAM"
+msgstr "TRACTOR BEAM"
+
+msgid "HQ_SHIP_HULL_FMT"
+msgstr "Hull · %s"
+
+msgid "HQ_SHIP_PAINT_FMT"
+msgstr "Paint · %s"
+
+msgid "HQ_SHIP_TRAIL_FMT"
+msgstr "Trail · %s"
+
+msgid "HQ_SHIP_BEAM_FMT"
+msgstr "Beam · %s"
+
+msgid "HQ_COSMETIC_EQUIPPED_FMT"
+msgstr "EQUIPPED · %s"
+
+msgid "HQ_COSMETIC_LOCKED_FMT"
+msgstr "LOCKED · %s"
+
+msgid "HQ_COSMETIC_UNLOCK_RANK_FMT"
+msgstr "Unlocks at %s"
+
+msgid "COSMETIC_HULL_PIONEER_01"
+msgstr "Pioneer-01"
+
+msgid "COSMETIC_PAINT_COMPANY_BLUE"
+msgstr "Company Blue"
+
+msgid "COSMETIC_PAINT_MINT_SERVICE"
+msgstr "Service Mint"
+
+msgid "COSMETIC_PAINT_SAFETY_AMBER"
+msgstr "Safety Amber"
+
+msgid "COSMETIC_TRAIL_ION_CYAN"
+msgstr "Ion Cyan"
+
+msgid "COSMETIC_TRAIL_MINT_STREAM"
+msgstr "Mint Stream"
+
+msgid "COSMETIC_TRAIL_AMBER_COMET"
+msgstr "Amber Comet"
+
+msgid "COSMETIC_BEAM_STANDARD_CYAN"
+msgstr "Standard Cyan"
+
+msgid "COSMETIC_BEAM_MINT_RECOVERY"
+msgstr "Mint Recovery"
+
+msgid "COSMETIC_BEAM_AMBER_PRECISION"
+msgstr "Amber Precision"

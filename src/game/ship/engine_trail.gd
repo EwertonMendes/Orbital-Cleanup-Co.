@@ -25,6 +25,23 @@ func _ready() -> void:
 func set_intensity(value: float) -> void:
 	_target_intensity = clampf(value, 0.0, 1.0)
 
+func apply_style(style: Dictionary) -> void:
+	assert(not style.is_empty(), "EngineTrail style cannot be empty.")
+	width = clampf(float(style.get("width", width)), 2.0, 24.0)
+	sample_lifetime = clampf(float(style.get("lifetime", sample_lifetime)), 0.10, 2.0)
+
+	var tail := Color.from_string(String(style.get("tail_color", "#199FDF")), Color(0.10, 0.62, 0.87, 1.0))
+	var head := Color.from_string(String(style.get("head_color", "#B0F8FF")), Color(0.69, 0.97, 1.0, 1.0))
+	var next_gradient := Gradient.new()
+	next_gradient.offsets = PackedFloat32Array([0.0, 0.36, 0.76, 1.0])
+	next_gradient.colors = PackedColorArray([
+		Color(tail.r, tail.g, tail.b, 0.0),
+		Color(tail.r, tail.g, tail.b, 0.34),
+		Color(head.r, head.g, head.b, 0.78),
+		Color(head.r, head.g, head.b, 0.98),
+	])
+	gradient = next_gradient
+
 func _process(delta: float) -> void:
 	_display_intensity = move_toward(_display_intensity, _target_intensity, delta * 5.5)
 

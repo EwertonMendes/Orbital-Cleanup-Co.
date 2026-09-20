@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Orbital Cleanup Co. ship customization",
+  "type": "object",
+  "required": ["id", "default_loadout", "categories"],
+  "properties": {
+    "id": {"const": "ship_customization"},
+    "default_loadout": {
+      "type": "object",
+      "required": ["hull", "paint", "trail", "beam"],
+      "properties": {
+        "hull": {"type": "string"},
+        "paint": {"type": "string"},
+        "trail": {"type": "string"},
+        "beam": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "categories": {
+      "type": "object",
+      "required": ["hull", "paint", "trail", "beam"],
+      "properties": {
+        "hull": {"type": "array", "minItems": 1},
+        "paint": {"type": "array", "minItems": 1},
+        "trail": {"type": "array", "minItems": 1},
+        "beam": {"type": "array", "minItems": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

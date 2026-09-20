@@ -55,7 +55,12 @@ func configure(context: Dictionary) -> void:
 	_contract_session.configure(runtime.get_contract_context())
 	backdrop.configure(runtime.get_play_bounds(), runtime.get_biome_palette())
 	depot.position = runtime.get_depot_position()
-	ship.configure(_input_service, runtime.get_play_bounds(), _progression.get_ship_modifiers())
+	ship.configure(
+		_input_service,
+		runtime.get_play_bounds(),
+		_progression.get_ship_modifiers(),
+		_progression.get_ship_cosmetics()
+	)
 
 func _ready() -> void:
 	_validate_contracts()

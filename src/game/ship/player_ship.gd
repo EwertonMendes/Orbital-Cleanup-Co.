@@ -22,11 +22,18 @@ var _has_started_moving := false
 var _bump_feedback_cooldown := 0.0
 var _smoothed_intent := Vector2.ZERO
 var _facing_rotation := 0.0
+var _pending_cosmetics: Dictionary = {}
 
-func configure(input_service: InputService, world_bounds: Rect2 = Rect2(), ship_modifiers: Dictionary = {}) -> void:
+func configure(
+	input_service: InputService,
+	world_bounds: Rect2 = Rect2(),
+	ship_modifiers: Dictionary = {},
+	ship_cosmetics: Dictionary = {}
+) -> void:
 	assert(input_service != null, "PlayerShip requires InputService.")
 	_input_service = input_service
 	_world_bounds = world_bounds
+	_pending_cosmetics = ship_cosmetics.duplicate(true)
 
 	if not ship_modifiers.is_empty():
 		var cargo := get_node("CargoHold") as CargoHold
@@ -46,6 +53,16 @@ func _ready() -> void:
 	tuning.validate()
 	assert(_input_service != null, "PlayerShip must be configured with InputService before entering the tree.")
 	ship_camera.configure(tuning)
+
+	if not _pending_cosmetics.is_empty():
+		visuals.apply_cosmetics(_pending_cosmetics)
+		tractor_beam.apply_style(_pending_cosmetics["beam"] as Dictionary)
+		print("[Ship] COSMETICS hull=%s paint=%s trail=%s beam=%s" % [
+			String((_pending_cosmetics["hull"] as Dictionary).get("id", "")),
+			String((_pending_cosmetics["paint"] as Dictionary).get("id", "")),
+			String((_pending_cosmetics["trail"] as Dictionary).get("id", "")),
+			String((_pending_cosmetics["beam"] as Dictionary).get("id", "")),
+		])
 
 	cargo_hold.cargo_changed.connect(_on_cargo_changed)
 	tractor_beam.target_changed.connect(_on_tractor_target_changed)

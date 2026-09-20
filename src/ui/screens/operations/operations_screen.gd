@@ -13,6 +13,7 @@ const FLIGHT_SCREEN_PATH := "res://src/ui/screens/flight/flight_screen.tscn"
 const DEFAULT_SECTOR_ID := "earth_training_01"
 const UPGRADE_CARD_SCENE := preload("res://src/ui/components/hq_upgrade_card.tscn")
 const RANK_ROW_SCENE := preload("res://src/ui/components/hq_rank_row.tscn")
+const CHROME_BUTTON_SCENE := preload("res://src/ui/components/occ_chrome_button.tscn")
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var header: BoxContainer = %Header
@@ -44,6 +45,12 @@ const RANK_ROW_SCENE := preload("res://src/ui/components/hq_rank_row.tscn")
 @onready var contract_payout: Label = %ContractPayout
 @onready var last_result: Label = %LastResult
 @onready var ship_stats: Label = %ShipStats
+@onready var ship_preview: TextureRect = %ShipPreview
+@onready var contract_ship_art: TextureRect = %ShipArt
+@onready var hull_options: GridContainer = %HullOptions
+@onready var paint_options: GridContainer = %PaintOptions
+@onready var trail_options: GridContainer = %TrailOptions
+@onready var beam_options: GridContainer = %BeamOptions
 @onready var discovery_count: Label = %DiscoveryCount
 @onready var completed_contracts: Label = %CompletedContracts
 @onready var english_button: Button = %EnglishButton
@@ -109,6 +116,8 @@ func _validate_contracts() -> void:
 	assert(primary_action != null, "Headquarters requires PrimaryAction.")
 	assert(upgrade_grid != null, "Headquarters requires UpgradeGrid.")
 	assert(career_list != null, "Headquarters requires CareerList.")
+	assert(ship_preview != null and contract_ship_art != null, "Headquarters requires cosmetic ship previews.")
+	assert(hull_options != null and paint_options != null and trail_options != null and beam_options != null, "Headquarters requires cosmetic option grids.")
 	assert(contracts_panel != null and upgrades_panel != null and career_panel != null, "Headquarters core panels are required.")
 	assert(ship_panel != null and discovery_panel != null, "Headquarters future-facing panels are required.")
 	assert(not _sector_plan.is_empty(), "Headquarters requires sector data.")
@@ -344,12 +353,37 @@ func _refresh_career() -> void:
 func _refresh_ship() -> void:
 	%ShipTitle.text = tr("HQ_SHIP_TITLE")
 	%ShipSubtitle.text = tr("HQ_SHIP_SUBTITLE")
-	%ShipName.text = tr("OPS_SHIP_NAME")
 	%LoadoutTitle.text = tr("HQ_SHIP_LOADOUT")
-	%HullValue.text = tr("HQ_SHIP_HULL_VALUE")
-	%PaintValue.text = tr("HQ_SHIP_PAINT_VALUE")
-	%TrailValue.text = tr("HQ_SHIP_TRAIL_VALUE")
-	%BeamStyleValue.text = tr("HQ_SHIP_BEAM_VALUE")
+	%HullHeading.text = tr("HQ_CUSTOMIZE_HULL")
+	%PaintHeading.text = tr("HQ_CUSTOMIZE_PAINT")
+	%TrailHeading.text = tr("HQ_CUSTOMIZE_TRAIL")
+	%BeamHeading.text = tr("HQ_CUSTOMIZE_BEAM")
+	%WorkshopStatus.text = tr("HQ_SHIP_WORKSHOP_STATUS")
+
+	var loadout := _progression.get_ship_cosmetics()
+	var hull := loadout["hull"] as Dictionary
+	var paint := loadout["paint"] as Dictionary
+	var trail := loadout["trail"] as Dictionary
+	var beam := loadout["beam"] as Dictionary
+
+	%ShipName.text = tr(String(hull["display_name_key"]))
+	%ContractShipName.text = tr(String(hull["display_name_key"]))
+	%HullValue.text = tr("HQ_SHIP_HULL_FMT") % tr(String(hull["display_name_key"]))
+	%PaintValue.text = tr("HQ_SHIP_PAINT_FMT") % tr(String(paint["display_name_key"]))
+	%TrailValue.text = tr("HQ_SHIP_TRAIL_FMT") % tr(String(trail["display_name_key"]))
+	%BeamStyleValue.text = tr("HQ_SHIP_BEAM_FMT") % tr(String(beam["display_name_key"]))
+
+	var texture := load(String(hull["texture"])) as Texture2D
+	assert(texture != null, "HQ hull preview texture must load.")
+	ship_preview.texture = texture
+	contract_ship_art.texture = texture
+	var preview_material := ship_preview.material as ShaderMaterial
+	assert(preview_material != null, "HQ ship preview requires paint ShaderMaterial.")
+	preview_material.set_shader_parameter(
+		"paint_color",
+		Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0))
+	)
+	preview_material.set_shader_parameter("paint_strength", float(paint["strength"]))
 
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
@@ -358,7 +392,57 @@ func _refresh_ship() -> void:
 		int(round(float(ship["cargo_capacity"]))),
 		recovery_percent,
 	]
-	%WorkshopStatus.text = tr("HQ_SHIP_WORKSHOP_STATUS")
+
+	_populate_cosmetic_options(hull_options, "hull")
+	_populate_cosmetic_options(paint_options, "paint")
+	_populate_cosmetic_options(trail_options, "trail")
+	_populate_cosmetic_options(beam_options, "beam")
+
+func _populate_cosmetic_options(container: GridContainer, category: String) -> void:
+	for child in container.get_children():
+		child.queue_free()
+
+	var equipped := _progression.get_equipped_cosmetic_id(category)
+	for option in _progression.get_cosmetic_options(category):
+		var cosmetic_id := String(option["id"])
+		var unlocked := _progression.is_cosmetic_unlocked(category, cosmetic_id)
+		var selected := cosmetic_id == equipped
+		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
+		assert(button != null, "Cosmetic option must use OccChromeButton.")
+		button.custom_minimum_size = Vector2(0, 44)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.base_tint = OccPalette.MINT if selected else OccPalette.CYAN
+		button.disabled = not unlocked
+		button.modulate.a = 1.0 if unlocked else 0.48
+
+		var name := tr(String(option["display_name_key"]))
+		if selected:
+			button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % name
+		elif unlocked:
+			button.text = name
+		else:
+			button.text = tr("HQ_COSMETIC_LOCKED_FMT") % name
+			var rank_id := String(option["unlock_rank"])
+			button.tooltip_text = tr("HQ_COSMETIC_UNLOCK_RANK_FMT") % tr(_rank_display_key(rank_id))
+
+		button.pressed.connect(_equip_cosmetic.bind(category, cosmetic_id))
+		container.add_child(button)
+
+func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
+	if not _progression.equip_cosmetic(category, cosmetic_id):
+		return
+	if _platform != null:
+		_platform.track_event("cosmetic_equipped", {
+			"category": category,
+			"cosmetic_id": cosmetic_id,
+		})
+
+func _rank_display_key(rank_id: String) -> String:
+	for value in _registry.get_progression("career_ranks").get("ranks", []) as Array:
+		var rank := value as Dictionary
+		if String(rank["id"]) == rank_id:
+			return String(rank["display_name_key"])
+	return "RANK_TRAINEE"
 
 func _refresh_discovery() -> void:
 	%DiscoveryTitle.text = tr("HQ_DISCOVERY_TITLE")

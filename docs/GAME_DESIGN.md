@@ -155,3 +155,18 @@ The first functional upgrades are Tractor Beam range, collection speed and cargo
 
 Aborting before the cleanup target returns to Operations without contract payout.
 
+## Current customization slice
+
+The Headquarters Ship workspace now allows cosmetic loadout selection with persistent save support.
+
+Current categories:
+
+- Hull — Pioneer-01 is the currently curated model;
+- Paint — Company Blue, Service Mint, Safety Amber;
+- Engine Trail — Ion Cyan, Mint Stream, Amber Comet;
+- Tractor Beam — Standard Cyan, Mint Recovery, Amber Precision.
+
+Starting-rank alternatives are immediately selectable. Amber variants unlock at Junior Cleaner. Cosmetics never alter movement, cargo, collection speed, beam range or economy.
+
+Paint is applied by shader to the colored hull regions instead of shipping duplicate recolored sprites. Additional hull models can be added later through cosmetic content once their binary assets are imported through the normal provenance-controlled asset workflow.
+

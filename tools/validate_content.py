@@ -22,6 +22,7 @@ CATEGORY_DIRS = {
     "contracts": CONTENT / "contracts",
     "modifiers": CONTENT / "modifiers",
     "progression": CONTENT / "progression",
+    "cosmetics": CONTENT / "cosmetics",
 }
 
 REQUIRED_SCHEMAS = {
@@ -35,6 +36,7 @@ REQUIRED_SCHEMAS = {
     "difficulty_scaling.schema.json",
     "career_ranks.schema.json",
     "upgrades.schema.json",
+    "cosmetics.schema.json",
 }
 
 ID_RE = re.compile(r"^[a-z0-9_]+$")
@@ -403,6 +405,76 @@ def validate_upgrades(data: dict[str, Any], catalogs: dict[str, set[str]]) -> No
             require_number(amount, f"{label}.{upgrade_id}.effects.{effect_id}", 0.0001)
 
 
+def validate_cosmetics(
+    data: dict[str, Any],
+    ranks_data: dict[str, Any],
+    catalogs: dict[str, set[str]],
+) -> None:
+    label = "cosmetics/ship_customization"
+    categories = data.get("categories")
+    defaults = data.get("default_loadout")
+    require(isinstance(categories, dict), f"{label}.categories must be an object")
+    require(isinstance(defaults, dict), f"{label}.default_loadout must be an object")
+
+    expected_categories = {"hull", "paint", "trail", "beam"}
+    require(set(categories) == expected_categories, f"{label}.categories must define exactly {sorted(expected_categories)}")
+    require(set(defaults) == expected_categories, f"{label}.default_loadout must define exactly {sorted(expected_categories)}")
+
+    rank_ids = {str(rank["id"]) for rank in ranks_data.get("ranks", [])}
+    require(rank_ids, f"{label}: career ranks are required")
+
+    option_ids: dict[str, set[str]] = {}
+    option_ranks: dict[str, dict[str, str]] = {}
+
+    for category in sorted(expected_categories):
+        options = categories.get(category)
+        require(isinstance(options, list) and options, f"{label}.{category} must be a non-empty array")
+        seen: set[str] = set()
+        ranks_by_id: dict[str, str] = {}
+
+        for index, option in enumerate(options):
+            require(isinstance(option, dict), f"{label}.{category}[{index}] must be an object")
+            option_id = option.get("id")
+            require(isinstance(option_id, str) and ID_RE.fullmatch(option_id), f"{label}.{category}[{index}].id is invalid")
+            require(option_id not in seen, f"{label}.{category}: duplicate id: {option_id}")
+            seen.add(option_id)
+
+            require_localization_key(option.get("display_name_key"), f"{label}.{category}.{option_id}", catalogs)
+            unlock_rank = option.get("unlock_rank")
+            require(unlock_rank in rank_ids, f"{label}.{category}.{option_id}: Unknown rank: {unlock_rank}")
+            ranks_by_id[option_id] = str(unlock_rank)
+
+            if category == "hull":
+                require_asset(option.get("texture"), f"{label}.{category}.{option_id}.texture")
+            elif category == "paint":
+                require(HEX_COLOR_RE.fullmatch(str(option.get("color", ""))) is not None, f"{label}.{category}.{option_id}.color: expected #RRGGBB")
+                require_number(option.get("strength"), f"{label}.{category}.{option_id}.strength", 0, 1)
+            elif category == "trail":
+                for color_key in ("tail_color", "head_color", "glow_color"):
+                    require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
+                require_number(option.get("width"), f"{label}.{category}.{option_id}.width", 2, 24)
+                require_number(option.get("lifetime"), f"{label}.{category}.{option_id}.lifetime", 0.1, 2.0)
+            elif category == "beam":
+                for color_key in ("glow_color", "core_color"):
+                    require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
+                require_number(option.get("glow_width"), f"{label}.{category}.{option_id}.glow_width", 2, 20)
+                require_number(option.get("core_width"), f"{label}.{category}.{option_id}.core_width", 0.5, 8)
+                require_number(option.get("pulse_width"), f"{label}.{category}.{option_id}.pulse_width", 0, 6)
+                require_number(option.get("pulse_speed"), f"{label}.{category}.{option_id}.pulse_speed", 1, 30)
+
+        option_ids[category] = seen
+        option_ranks[category] = ranks_by_id
+
+    trainee_rank = str(ranks_data["ranks"][0]["id"])
+    for category in sorted(expected_categories):
+        default_id = defaults.get(category)
+        require(default_id in option_ids[category], f"{label}: default {category} references unknown option: {default_id}")
+        require(
+            option_ranks[category][str(default_id)] == trainee_rank,
+            f"{label}: default {category} must unlock at the starting rank",
+        )
+
+
 def main() -> None:
     try:
         validate_schemas()
@@ -436,6 +508,12 @@ def main() -> None:
         validate_difficulty(loaded["progression"]["difficulty_scaling"])
         validate_career_ranks(loaded["progression"]["career_ranks"], catalogs)
         validate_upgrades(loaded["progression"]["upgrades"], catalogs)
+        require("ship_customization" in loaded["cosmetics"], "Missing cosmetics/ship_customization.json")
+        validate_cosmetics(
+            loaded["cosmetics"]["ship_customization"],
+            loaded["progression"]["career_ranks"],
+            catalogs,
+        )
 
         print(
             "Content validation passed: "
@@ -443,7 +521,8 @@ def main() -> None:
             f"{len(loaded['sectors'])} sector(s), "
             f"{len(loaded['salvage'])} salvage definition(s), "
             f"{len(loaded['landmarks'])} landmark(s), "
-            f"{len(loaded['modifiers'])} modifier(s)."
+            f"{len(loaded['modifiers'])} modifier(s), "
+            f"{len(loaded['cosmetics'])} cosmetic set(s)."
         )
     except ValidationError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

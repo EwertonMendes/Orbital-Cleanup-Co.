@@ -30,6 +30,9 @@ func get_modifier(id: String) -> Dictionary:
 func get_progression(id: String) -> Dictionary:
 	return _load_named("progression", id)
 
+func get_cosmetic(id: String) -> Dictionary:
+	return _load_named("cosmetics", id)
+
 func get_salvage_definition(id: String) -> SalvageDefinition:
 	if _salvage_cache.has(id):
 		return _salvage_cache[id] as SalvageDefinition
