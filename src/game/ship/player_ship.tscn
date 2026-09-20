@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://src/game/ship/player_ship.gd" id="1"]
 [ext_resource type="Resource" path="res://src/game/ship/ship_movement_tuning.tres" id="2"]
@@ -10,6 +10,13 @@
 [ext_resource type="Script" path="res://src/game/ship/ship_camera.gd" id="8"]
 [ext_resource type="Script" path="res://src/game/salvage/cargo_hold.gd" id="9"]
 [ext_resource type="Script" path="res://src/game/salvage/tractor_beam.gd" id="10"]
+[ext_resource type="Shader" path="res://src/game/customization/ship_paint.gdshader" id="11"]
+
+[sub_resource type="ShaderMaterial" id="ShipPaintMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("11")
+shader_parameter/paint_color = Color(0.224, 0.714, 0.91, 1)
+shader_parameter/paint_strength = 0.0
 
 [sub_resource type="CircleShape2D" id="ShipCollision"]
 radius = 30.0
@@ -99,6 +106,7 @@ texture = ExtResource("4")
 [node name="ShipSprite" type="Sprite2D" parent="FeedbackRoot/SteeringVisual"]
 unique_name_in_owner = true
 z_index = 2
+material = SubResource("ShipPaintMaterial")
 texture_filter = 2
 texture = ExtResource("3")
 

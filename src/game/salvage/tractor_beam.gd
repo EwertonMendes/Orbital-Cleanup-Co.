@@ -25,6 +25,11 @@ var _candidates: Array[SalvageObject] = []
 var _target: SalvageObject
 var _beam_phase := 0.0
 var _reported_blocked := false
+var _style: Dictionary = {}
+var _glow_base_width := 9.0
+var _core_base_width := 2.2
+var _pulse_width := 1.5
+var _pulse_speed := 10.0
 
 func _ready() -> void:
 	_cargo_hold = get_node(cargo_hold_path) as CargoHold
@@ -47,7 +52,33 @@ func _ready() -> void:
 	_scan_area.area_entered.connect(_on_area_entered)
 	_scan_area.area_exited.connect(_on_area_exited)
 	_cargo_hold.cargo_changed.connect(_on_cargo_changed)
+	if not _style.is_empty():
+		_apply_visual_style()
 	_hide_beam()
+
+func apply_style(style: Dictionary) -> void:
+	assert(not style.is_empty(), "TractorBeam style cannot be empty.")
+	_style = style.duplicate(true)
+	_glow_base_width = clampf(float(style.get("glow_width", 9.0)), 2.0, 20.0)
+	_core_base_width = clampf(float(style.get("core_width", 2.2)), 0.5, 8.0)
+	_pulse_width = clampf(float(style.get("pulse_width", 1.5)), 0.0, 6.0)
+	_pulse_speed = clampf(float(style.get("pulse_speed", 10.0)), 1.0, 30.0)
+	if _beam_glow != null and _beam_core != null:
+		_apply_visual_style()
+
+func _apply_visual_style() -> void:
+	_beam_glow.default_color = Color.from_string(
+		String(_style.get("glow_color", "#2ED1FF")),
+		Color(0.18, 0.82, 1.0, 0.34)
+	)
+	_beam_core.default_color = Color.from_string(
+		String(_style.get("core_color", "#9EFFE6")),
+		Color(0.62, 0.98, 0.90, 0.96)
+	)
+	_beam_glow.default_color.a = 0.34
+	_beam_core.default_color.a = 0.96
+	_beam_glow.width = _glow_base_width
+	_beam_core.width = _core_base_width
 
 func _physics_process(delta: float) -> void:
 	_prune_candidates()
@@ -165,7 +196,7 @@ func _complete_target() -> void:
 	print("[Salvage] COLLECTED id=%s cargo=%d/%d" % [String(definition.id), used, capacity])
 
 func _update_beam_visual(target_global_position: Vector2, delta: float) -> void:
-	_beam_phase += delta * 10.0
+	_beam_phase += delta * _pulse_speed
 	var start := to_local(_collect_anchor.global_position)
 	var finish := to_local(target_global_position)
 
@@ -179,9 +210,9 @@ func _update_beam_visual(target_global_position: Vector2, delta: float) -> void:
 	_beam_core.add_point(finish)
 	_beam_core.visible = true
 
-	_beam_glow.width = 9.0 + sin(_beam_phase) * 1.5
+	_beam_glow.width = _glow_base_width + sin(_beam_phase) * _pulse_width
 	_beam_glow.modulate.a = 0.45 + sin(_beam_phase * 1.6) * 0.08
-	_beam_core.width = 2.2
+	_beam_core.width = _core_base_width
 
 func _hide_beam() -> void:
 	if _beam_glow != null:

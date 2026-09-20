@@ -9,6 +9,31 @@ class_name ShipVisuals
 
 var _impact_tween: Tween
 
+func apply_cosmetics(loadout: Dictionary) -> void:
+	assert(loadout.has("hull") and loadout.has("paint") and loadout.has("trail"), "ShipVisuals requires hull, paint and trail cosmetics.")
+
+	var hull := loadout["hull"] as Dictionary
+	var paint := loadout["paint"] as Dictionary
+	var trail := loadout["trail"] as Dictionary
+
+	var texture_path := String(hull.get("texture", ""))
+	assert(not texture_path.is_empty(), "Hull cosmetic requires texture.")
+	var hull_texture := load(texture_path) as Texture2D
+	assert(hull_texture != null, "Hull texture must load: %s" % texture_path)
+	ship_sprite.texture = hull_texture
+
+	var material_instance := ship_sprite.material as ShaderMaterial
+	assert(material_instance != null, "ShipSprite requires paint ShaderMaterial.")
+	material_instance.set_shader_parameter(
+		"paint_color",
+		Color.from_string(String(paint.get("color", "#39B6E8")), Color(0.224, 0.714, 0.910, 1.0))
+	)
+	material_instance.set_shader_parameter("paint_strength", clampf(float(paint.get("strength", 0.0)), 0.0, 1.0))
+
+	engine_trail.apply_style(trail)
+	var glow_color := Color.from_string(String(trail.get("glow_color", "#55DFFF")), Color(0.33, 0.87, 1.0, 1.0))
+	engine_glow.modulate = Color(glow_color.r, glow_color.g, glow_color.b, engine_glow.modulate.a)
+
 func update_motion(
 	speed_ratio: float,
 	thrust_ratio: float,

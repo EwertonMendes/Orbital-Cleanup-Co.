@@ -70,8 +70,9 @@ func _validate_operations_screen() -> void:
 		"CareerTab", "ShipTab", "DiscoveryTab", "CompanyLabel", "DeskLabel", "LanguageLabel",
 		"ContractsTitle", "ContractsSubtitle", "ContractShipName", "ContractShipStatus",
 		"UpgradesTitle", "UpgradesSubtitle", "CareerTitle", "CareerSubtitle", "ShipTitle",
-		"ShipSubtitle", "ShipName", "LoadoutTitle", "HullValue", "PaintValue", "TrailValue",
-		"BeamStyleValue", "WorkshopStatus", "DiscoveryTitle", "DiscoverySubtitle",
+		"ShipSubtitle", "ShipName", "ShipPreview", "ShipArt", "LoadoutTitle", "HullValue", "PaintValue", "TrailValue",
+		"BeamStyleValue", "WorkshopStatus", "HullHeading", "PaintHeading", "TrailHeading", "BeamHeading",
+		"HullOptions", "PaintOptions", "TrailOptions", "BeamOptions", "DiscoveryTitle", "DiscoverySubtitle",
 		"DiscoveryEmptyTitle", "DiscoveryEmptyBody",
 	]
 	for node_name in unique_refs:
@@ -194,6 +195,18 @@ func _validate_progression_service() -> void:
 	var base_ship := progression.get_ship_modifiers()
 	_expect(is_equal_approx(float(base_ship["scan_range"]), 320.0), "Base Tractor Beam range must come from progression data.")
 	_expect(int(round(float(base_ship["cargo_capacity"]))) == 12, "Base cargo capacity must come from progression data.")
+	var default_cosmetics := progression.get_equipped_cosmetic_ids()
+	_expect(String(default_cosmetics["hull"]) == "pioneer_01", "Default hull must come from cosmetic content.")
+	_expect(String(default_cosmetics["paint"]) == "company_blue", "Default paint must come from cosmetic content.")
+	_expect(progression.is_cosmetic_unlocked("paint", "mint_service"), "Starting-rank cosmetic must be unlocked.")
+	_expect(not progression.is_cosmetic_unlocked("paint", "safety_amber"), "Junior cosmetic must stay locked for Trainee.")
+	_expect(progression.equip_cosmetic("paint", "mint_service"), "Unlocked cosmetic must equip.")
+	_expect(progression.get_equipped_cosmetic_id("paint") == "mint_service", "Equipped cosmetic must update persistent state.")
+
+	var restored := ProgressionService.new()
+	restored.initialize(save)
+	_expect(restored.get_equipped_cosmetic_id("paint") == "mint_service", "Equipped cosmetic must survive save reload.")
+	restored.free()
 
 	progression.apply_contract_result({
 		"completed": true,
@@ -204,6 +217,7 @@ func _validate_progression_service() -> void:
 	})
 	_expect(progression.get_credits() == 500, "Contract payout must persist Credits.")
 	_expect(progression.get_rank_id() == "junior_cleaner", "Company XP must promote career rank.")
+	_expect(progression.is_cosmetic_unlocked("paint", "safety_amber"), "Rank promotion must unlock configured cosmetics.")
 
 	var cost := progression.get_upgrade_cost("tractor_range")
 	_expect(progression.purchase_upgrade("tractor_range"), "Affordable upgrade purchase must succeed.")
@@ -245,6 +259,7 @@ func _validate_player_ship() -> void:
 	_expect(sprite != null, "PlayerShip requires ShipSprite.")
 	if sprite != null:
 		_expect(sprite.scale == Vector2.ONE, "Gameplay ship sprite must stay at native raster scale.")
+		_expect(sprite.material is ShaderMaterial, "Gameplay ship requires paint ShaderMaterial.")
 	var trail := ship.find_child("EngineTrail", true, false) as EngineTrail
 	_expect(trail != null, "PlayerShip requires engine trail.")
 	if trail != null:

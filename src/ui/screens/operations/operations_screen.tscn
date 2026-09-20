@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_backdrop.gd" id="2"]
@@ -10,6 +10,13 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/satellite_b.png" id="8"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/button_header_blade.png" id="9"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="10"]
+[ext_resource type="Shader" path="res://src/game/customization/ship_paint.gdshader" id="11"]
+
+[sub_resource type="ShaderMaterial" id="ShipPaintPreviewMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("11")
+shader_parameter/paint_color = Color(0.224, 0.714, 0.91, 1)
+shader_parameter/paint_strength = 0.0
 
 [node name="OperationsScreen" type="Control"]
 layout_mode = 3
@@ -402,8 +409,10 @@ theme_override_font_sizes/font_size = 13
 text = "Pioneer-01"
 
 [node name="ShipArt" type="TextureRect" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractShipCard/ShipMargin/ShipCardLayout"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(220, 118)
 layout_mode = 2
+material = SubResource("ShipPaintPreviewMaterial")
 mouse_filter = 2
 texture = ExtResource("6")
 expand_mode = 1
@@ -558,8 +567,10 @@ theme_override_font_sizes/font_size = 20
 text = "Pioneer-01"
 
 [node name="ShipPreview" type="TextureRect" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/ShipPreviewCard/ShipPreviewMargin/ShipPreviewLayout"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 145)
 layout_mode = 2
+material = SubResource("ShipPaintPreviewMaterial")
 mouse_filter = 2
 texture = ExtResource("6")
 expand_mode = 1
@@ -617,9 +628,64 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Beam · Standard Cyan"
 
-[node name="LoadoutSpacer" type="Control" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+[node name="CustomizationRule" type="HSeparator" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
 layout_mode = 2
-size_flags_vertical = 3
+
+[node name="HullHeading" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
+theme_override_font_sizes/font_size = 11
+text = "HULL"
+
+[node name="HullOptions" type="GridContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="PaintHeading" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
+theme_override_font_sizes/font_size = 11
+text = "PAINT"
+
+[node name="PaintOptions" type="GridContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="TrailHeading" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
+theme_override_font_sizes/font_size = 11
+text = "TRAIL"
+
+[node name="TrailOptions" type="GridContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="BeamHeading" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
+theme_override_font_sizes/font_size = 11
+text = "TRACTOR BEAM"
+
+[node name="BeamOptions" type="GridContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 2
 
 [node name="WorkshopStatus" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
 unique_name_in_owner = true

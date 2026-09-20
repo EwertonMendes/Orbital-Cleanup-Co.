@@ -220,3 +220,18 @@ Only one panel is visible at a time. The Contract Board alone owns the deploy ac
 
 Ship customization controls and the actual discovery-unlock loop remain separate game-domain deliveries; the HQ shell exposes their current persisted state without embedding future business rules.
 
+## Ship customization
+
+Ship customization is authored in `content/cosmetics/ship_customization.json` and persisted by `ProgressionService`.
+
+The saved loadout stores only stable cosmetic IDs for four categories: hull, paint, engine trail and Tractor Beam. Runtime code resolves those IDs through `ContentRegistry`; presentation details are not stored in the save.
+
+Responsibilities remain separated:
+
+- `ProgressionService` validates unlock rank and persists equipped IDs;
+- `ShipVisuals` applies hull texture, paint shader and engine-trail style;
+- `TractorBeam` applies beam color/width/pulse style;
+- Headquarters presents the available options and never owns unlock rules.
+
+Paint uses one reusable shader rather than duplicate recolored sprites. Trail and beam variants are parameter data rather than dedicated scenes. The current curated repository contains one hull model; the hull category is fully data-driven and ready for additional licensed textures without changing gameplay code.
+

@@ -387,3 +387,66 @@ msgstr "HALLAZGOS ESPECIALES · %d"
 
 msgid "HQ_COMPLETED_CONTRACTS_FMT"
 msgstr "CONTRATOS COMPLETADOS · %d"
+
+msgid "HQ_CUSTOMIZE_HULL"
+msgstr "CASCO"
+
+msgid "HQ_CUSTOMIZE_PAINT"
+msgstr "PINTURA"
+
+msgid "HQ_CUSTOMIZE_TRAIL"
+msgstr "ESTELA DEL MOTOR"
+
+msgid "HQ_CUSTOMIZE_BEAM"
+msgstr "HAZ TRACTOR"
+
+msgid "HQ_SHIP_HULL_FMT"
+msgstr "Casco · %s"
+
+msgid "HQ_SHIP_PAINT_FMT"
+msgstr "Pintura · %s"
+
+msgid "HQ_SHIP_TRAIL_FMT"
+msgstr "Estela · %s"
+
+msgid "HQ_SHIP_BEAM_FMT"
+msgstr "Haz · %s"
+
+msgid "HQ_COSMETIC_EQUIPPED_FMT"
+msgstr "EQUIPADO · %s"
+
+msgid "HQ_COSMETIC_LOCKED_FMT"
+msgstr "BLOQUEADO · %s"
+
+msgid "HQ_COSMETIC_UNLOCK_RANK_FMT"
+msgstr "Se desbloquea en %s"
+
+msgid "COSMETIC_HULL_PIONEER_01"
+msgstr "Pioneer-01"
+
+msgid "COSMETIC_PAINT_COMPANY_BLUE"
+msgstr "Azul Corporativo"
+
+msgid "COSMETIC_PAINT_MINT_SERVICE"
+msgstr "Menta de Servicio"
+
+msgid "COSMETIC_PAINT_SAFETY_AMBER"
+msgstr "Ámbar de Seguridad"
+
+msgid "COSMETIC_TRAIL_ION_CYAN"
+msgstr "Ion Cian"
+
+msgid "COSMETIC_TRAIL_MINT_STREAM"
+msgstr "Flujo Menta"
+
+msgid "COSMETIC_TRAIL_AMBER_COMET"
+msgstr "Cometa Ámbar"
+
+msgid "COSMETIC_BEAM_STANDARD_CYAN"
+msgstr "Cian Estándar"
+
+msgid "COSMETIC_BEAM_MINT_RECOVERY"
+msgstr "Recuperación Menta"
+
+msgid "COSMETIC_BEAM_AMBER_PRECISION"
+msgstr "Precisión Ámbar"
