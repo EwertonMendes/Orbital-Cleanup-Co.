@@ -7,7 +7,6 @@ config_version=5
 config/name="Orbital Cleanup Co."
 run/main_scene="res://src/ui/screens/bootstrap/bootstrap_screen.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-boot_splash/image="res://assets/branding/orbital_cleanup_icon.svg"
 boot_splash/bg_color=Color(0.0196078, 0.0431373, 0.0823529, 1)
 
 [display]
@@ -29,4 +28,4 @@ textures/default_filters/use_nearest_mipmap_filter=false
 [internationalization]
 
 locale/fallback="en"
-locale/translations=PackedStringArray("res://i18n/ui.csv")
+locale/translations=PackedStringArray("res://i18n/en.po", "res://i18n/pt_BR.po", "res://i18n/es_ES.po")
