@@ -191,7 +191,7 @@ msgid "OPS_UPGRADES"
 msgstr "SHIP UPGRADES"
 
 msgid "OPS_UPGRADE_BUTTON_FMT"
-msgstr "%s · L%d→%d · %d cr"
+msgstr "%s · L%d > %d · %d cr"
 
 msgid "OPS_UPGRADE_MAX_FMT"
 msgstr "%s · L%d · MAX"
