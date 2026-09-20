@@ -277,6 +277,7 @@ theme_override_font_sizes/font_size = 12
 text = "Cleanup target · 70%"
 
 [node name="CleanupProgress" type="ProgressBar" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 value = 70.0
