@@ -14,7 +14,8 @@ func show_screen(scene: PackedScene, context: Dictionary = {}) -> Control:
 	assert(scene != null, "SceneRouter requires a valid PackedScene.")
 
 	for child in _host.get_children():
-		child.free()
+		_host.remove_child(child)
+		child.queue_free()
 
 	var instance := scene.instantiate()
 	assert(instance is Control, "Routed screens must inherit Control.")

@@ -20,7 +20,7 @@ The repository validator enforces this contract.
 | Interface Sounds | Kenney | https://kenney.nl/assets/interface-sounds | CC0 | hover/select/confirm/menu SFX | approved source; not imported |
 | Sci-fi Sounds | Kenney | https://kenney.nl/assets/sci-fi-sounds | CC0 | engine/beam/machinery/environmental SFX | approved source; not imported |
 | 2D Planet Pack 2 | Screaming Brain Studios | https://screamingbrainstudios.itch.io/2d-planet-pack-2 | CC0 | curated planet/moon/sun backgrounds | approved source; not imported |
-| Oxanium | Google Fonts distribution | https://github.com/google/fonts/tree/main/ofl/oxanium | SIL OFL 1.1 | planned primary readable futuristic typeface | approved source; not imported |
+| Oxanium | Google Fonts distribution | https://github.com/google/fonts/tree/main/ofl/oxanium | SIL OFL 1.1 | primary readable futuristic interface typeface | **variable font imported** |
 | Magic Space | CodeManu | https://opengameart.org/content/magic-space | CC0 | candidate calm sci-fi music loop | candidate; not imported |
 | Singularity | vitalezzz | https://opengameart.org/content/singularity-0 | CC0 | candidate calm sci-fi music loop | candidate; not imported |
 
@@ -51,3 +51,8 @@ Each imported source directory records the official Kenney page, CC0 license, im
 Third-party packs are ingredients, not the finished art direction. Cohesion comes from Orbital Cleanup Co.'s palette, composition, motion, typography, particles, layout and reusable components.
 
 See [UI Guidelines](UI_GUIDELINES.md).
+
+
+## Typography
+
+Oxanium is imported from the Google Fonts repository as the variable `Oxanium[wght].ttf` file under SIL OFL 1.1. The font is applied through the shared Godot Theme so screens do not embed font paths individually.

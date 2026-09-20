@@ -85,6 +85,18 @@ Current visual primitives include:
 
 Screens should compose these primitives instead of duplicating styling. See `docs/UI_GUIDELINES.md`.
 
+## Movement architecture
+
+The movement slice lives under `src/game/ship/` and is intentionally game-specific rather than part of reusable core.
+
+- `ShipMovementTuning` stores feel/balance values outside presentation code.
+- `ShipSteering` contains pure pointer/deadzone intent math.
+- `PlayerShip` owns physics and collision response.
+- `ShipVisuals`, `EngineTrail` and `ShipCamera` own presentation feedback.
+- `InputService` only exposes generic navigation/pointer state; it does not know ship rules.
+
+The training flight is a temporary authored playground for validating movement. It is not the future Sector Engine and must not become a per-sector architecture.
+
 ## Web boundary
 
 Godot gameplay does not call CrazyGames, GamePix, GameMonetize or future portal globals. JavaScript adapters expose a stable project-owned surface through the Web bridge. Builds select a provider through configuration.

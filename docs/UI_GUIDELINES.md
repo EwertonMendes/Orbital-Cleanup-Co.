@@ -16,22 +16,40 @@ The interface is part of the game's identity, not a debug surface around the gam
 Use the shared foundations before creating screen-local styling:
 
 - `src/ui/themes/occ_palette.gd` for semantic colors;
-- `src/ui/themes/occ_theme.tres` for standard controls;
-- `src/ui/components/occ_panel_frame.tscn` for glass/metal card chrome;
-- `src/ui/components/occ_action_button.gd` for primary/interactive button behavior.
+- `src/ui/themes/occ_theme.tres` for scalable panels, buttons, progress bars and standard controls;
+- curated Kenney textures only for accents/plates whose native proportions are respected;
+- screen layouts built from Containers rather than stretched art pretending to be layout.
 
 If a reusable component already owns a pattern, do not copy its style into a new scene.
+
+## Typography
+
+Oxanium is the default UI family and is configured once in the shared Theme. Do not assign the font path independently in each screen. Use size, weight hierarchy and color to differentiate title/value/label roles while keeping the family consistent.
 
 ## Kenney asset usage
 
 Kenney assets are raw material. They must be composed into Orbital Cleanup Co.'s own visual language.
 
 - Use a curated subset only.
+- Preserve the source aspect ratio unless an asset is explicitly designed for NinePatch use.
+- A square 128×128 panel must never be stretched into a wide header/card frame.
+- The current 384×128 header/blade assets are treated as 3:1 plates and rendered at 3:1.
+- Large resizable surfaces should use OCC StyleBox/PanelContainer styling, with Kenney art as accents instead of distorted backgrounds.
 - Do not mix arbitrary color families from the pack on one screen.
 - Prefer blue/cyan structure, mint success/ready states and amber emphasis.
 - Do not use combat-oriented assets such as enemy ships, guns or lasers for this game.
 - Keep background scenery subtle enough that controls and text remain the visual priority.
-- Do not stretch a texture in ways that visibly destroy its intended borders; use NinePatchRect or appropriate stretch modes.
+
+## Raster quality
+
+The gameplay ship is a small raster source and must not be magnified casually.
+
+- Gameplay ship sprite renders at native scale.
+- Camera zoom stays at 1× for the current asset set.
+- Continuous steering feedback must not deform the sprite with skew/scale animation.
+- Physics interpolation is required for smooth Web movement.
+- UI ship previews may scale only inside an aspect-preserving TextureRect and should remain moderate in size.
+- Use linear filtering for rotated non-pixel-art sprites.
 
 ## Spacing and density
 

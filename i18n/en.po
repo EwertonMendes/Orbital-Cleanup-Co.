@@ -75,3 +75,21 @@ msgstr "SELECT CONTRACT"
 
 msgid "OPS_UNSELECT"
 msgstr "CLEAR SELECTION"
+
+msgid "OPS_DEPLOY"
+msgstr "DEPLOY TRAINING"
+
+msgid "FLIGHT_EYEBROW"
+msgstr "TRAINING FLIGHT"
+
+msgid "FLIGHT_TITLE"
+msgstr "Earth Orbit · Route 01"
+
+msgid "FLIGHT_RETURN"
+msgstr "RETURN TO OPERATIONS"
+
+msgid "FLIGHT_HINT_POINTER"
+msgstr "Point to steer · WASD / arrows also work"
+
+msgid "FLIGHT_HINT_TOUCH"
+msgstr "Touch and drag anywhere to steer"

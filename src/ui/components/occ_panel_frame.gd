@@ -4,10 +4,12 @@ class_name OccPanelFrame
 enum Variant {
 	GLASS,
 	METAL,
+	GLASS_TAB,
 }
 
 const GLASS_TEXTURE := preload("res://assets/third_party/kenney_ui_sci_fi/ui/panel_glass_notches.png")
 const METAL_TEXTURE := preload("res://assets/third_party/kenney_ui_sci_fi/ui/panel_rectangle_screws.png")
+const GLASS_TAB_TEXTURE := preload("res://assets/third_party/kenney_ui_sci_fi/ui/panel_glass_tab_blade.png")
 
 @export var variant: Variant = Variant.GLASS:
 	set(value):
@@ -19,4 +21,10 @@ func _ready() -> void:
 	_apply_variant()
 
 func _apply_variant() -> void:
-	texture = GLASS_TEXTURE if variant == Variant.GLASS else METAL_TEXTURE
+	match variant:
+		Variant.GLASS:
+			texture = GLASS_TEXTURE
+		Variant.METAL:
+			texture = METAL_TEXTURE
+		Variant.GLASS_TAB:
+			texture = GLASS_TAB_TEXTURE
