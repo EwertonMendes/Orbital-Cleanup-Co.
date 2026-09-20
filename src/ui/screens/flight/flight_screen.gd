@@ -46,6 +46,12 @@ func configure(context: Dictionary) -> void:
 	_configured_sector_id = String(
 		generated_definition.get("id", context.get("sector_id", DEFAULT_SECTOR_ID))
 	)
+	print("[Flight] DEPLOYMENT position=(%.1f, %.1f) depot=(%.1f, %.1f)" % [
+		ship.position.x,
+		ship.position.y,
+		depot.position.x,
+		depot.position.y,
+	])
 	var runtime := get_node("World/SectorRuntime") as SectorRuntime
 	var backdrop := get_node("World/AmbientSpace") as SectorBackdrop
 	var depot := get_node("World/UnloadDepot") as UnloadZone
@@ -62,7 +68,12 @@ func configure(context: Dictionary) -> void:
 		runtime.configure_sector_definition(generated_definition)
 	_contract_session.configure(runtime.get_contract_context())
 	backdrop.configure(runtime.get_play_bounds(), runtime.get_biome_palette())
-	depot.position = runtime.get_depot_position()
+
+	var deployment_position := runtime.get_depot_position()
+	depot.position = deployment_position
+	ship.position = deployment_position
+	ship.velocity = Vector2.ZERO
+
 	ship.configure(
 		_input_service,
 		runtime.get_play_bounds(),

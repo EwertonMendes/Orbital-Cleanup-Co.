@@ -382,6 +382,13 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
 	_expect(screen.find_child("CleanupProgress", true, false) is ProgressBar, "Flight HUD requires sector cleanliness progress.")
 
+	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
+	_expect(
+		"ship.position = deployment_position" in flight_source
+		and "depot.position = deployment_position" in flight_source,
+		"Flight deployment must place ship and cargo depot at the same sector position."
+	)
+
 	var authored_salvage := 0
 	for node in screen.find_children("*", "Area2D", true, false):
 		if node is SalvageObject:
