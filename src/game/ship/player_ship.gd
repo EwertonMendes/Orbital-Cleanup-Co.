@@ -23,10 +23,21 @@ var _bump_feedback_cooldown := 0.0
 var _smoothed_intent := Vector2.ZERO
 var _facing_rotation := 0.0
 
-func configure(input_service: InputService, world_bounds: Rect2 = Rect2()) -> void:
+func configure(input_service: InputService, world_bounds: Rect2 = Rect2(), ship_modifiers: Dictionary = {}) -> void:
 	assert(input_service != null, "PlayerShip requires InputService.")
 	_input_service = input_service
 	_world_bounds = world_bounds
+
+	if not ship_modifiers.is_empty():
+		var cargo := get_node("CargoHold") as CargoHold
+		var beam := get_node("TractorBeam") as TractorBeam
+		assert(cargo != null and beam != null, "PlayerShip upgrade targets must exist.")
+		cargo.capacity = maxi(int(round(float(ship_modifiers.get("cargo_capacity", cargo.capacity)))), 1)
+		beam.scan_range = maxf(float(ship_modifiers.get("scan_range", beam.scan_range)), 80.0)
+		beam.collection_speed_multiplier = maxf(
+			float(ship_modifiers.get("collection_speed_multiplier", beam.collection_speed_multiplier)),
+			0.1
+		)
 
 func _ready() -> void:
 	assert(tuning != null, "PlayerShip requires ShipMovementTuning.")

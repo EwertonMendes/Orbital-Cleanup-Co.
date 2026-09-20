@@ -45,6 +45,8 @@ schemas/contract.schema.json
 schemas/modifier.schema.json
 schemas/salvage_table.schema.json
 schemas/difficulty_scaling.schema.json
+schemas/career_ranks.schema.json
+schemas/upgrades.schema.json
 ```
 
 The Python validator is authoritative in CI and additionally checks cross-file references, asset existence and localization coverage.
@@ -346,3 +348,29 @@ Do not add code merely because content generation is being performed by AI.
 ## Current limitation
 
 Deep-link sector selection (`?sector=<id>`) and the visual Sector Preview tool belong to the later Endless Contracts / Developer Tools delivery. Until then, the flight screen defaults to `earth_training_01`, while tests can instantiate any valid sector directly through `SectorGenerator`.
+
+## Career and upgrades
+
+Career thresholds live in `content/progression/career_ranks.json`. Rank XP thresholds must be strictly increasing and every display key must exist in all supported locales.
+
+The first ship upgrade definitions live in `content/progression/upgrades.json`. Each definition owns:
+
+- stable ID;
+- localized name/description keys;
+- maximum level;
+- base cost;
+- cost multiplier;
+- additive gameplay effects.
+
+The base ship values are authored in the same file. Do not hardcode upgrade prices or final Tractor Beam/cargo values into UI scripts.
+
+Current validated effect IDs are:
+
+```text
+scan_range_add
+collection_speed_multiplier_add
+cargo_capacity_add
+```
+
+Adding an unknown effect fails content validation until the runtime intentionally supports it.
+

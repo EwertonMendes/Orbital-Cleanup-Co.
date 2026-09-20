@@ -166,7 +166,7 @@ theme_override_constants/separation = 10
 vertical = false
 
 [node name="MissionCard" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
-custom_minimum_size = Vector2(350, 84)
+custom_minimum_size = Vector2(370, 118)
 layout_mode = 2
 theme_override_styles/panel = SubResource("MissionPanel")
 
@@ -229,6 +229,19 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "Earth Orbit · Route 01"
 autowrap_mode = 2
+
+[node name="CleanupStatus" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.67, 0.88, 0.93, 1)
+theme_override_font_sizes/font_size = 11
+text = "SECTOR CLEANLINESS · 0% / 70%"
+
+[node name="CleanupProgress" type="ProgressBar" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 7)
+layout_mode = 2
+show_percentage = false
 
 [node name="Accent" type="TextureRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
 modulate = Color(0.34, 0.86, 0.98, 0.7)

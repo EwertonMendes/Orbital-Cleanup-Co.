@@ -150,3 +150,96 @@ msgstr "Light Debris"
 
 msgid "MODIFIER_DENSE_DEBRIS"
 msgstr "Dense Debris"
+
+msgid "FLIGHT_CLEANLINESS_FMT"
+msgstr "SECTOR CLEANLINESS · %d%% / %d%%"
+
+msgid "FLIGHT_ABORT_CONTRACT"
+msgstr "ABORT CONTRACT"
+
+msgid "FLIGHT_COMPLETE_CONTRACT"
+msgstr "COMPLETE CONTRACT"
+
+msgid "FLIGHT_RETURN_PERFECT"
+msgstr "RETURN · PERFECT"
+
+msgid "FLIGHT_CONTRACT_COMPLETE"
+msgstr "CONTRACT COMPLETE · Return now or continue to 100%"
+
+msgid "FLIGHT_PERFECT_CLEANUP"
+msgstr "PERFECT CLEANUP · Full bonus secured"
+
+msgid "OPS_CLEANUP_TARGET_FMT"
+msgstr "Cleanup target · %d%%"
+
+msgid "OPS_PAYOUT_FMT"
+msgstr "Base pay · %d cr · Perfect +%d cr"
+
+msgid "OPS_CREDITS_FMT"
+msgstr "CREDITS · %d cr"
+
+msgid "OPS_RANK_FMT"
+msgstr "RANK · %s"
+
+msgid "OPS_XP_FMT"
+msgstr "COMPANY XP · %d / %d"
+
+msgid "OPS_XP_MAX_FMT"
+msgstr "COMPANY XP · %d · MAX RANK"
+
+msgid "OPS_UPGRADES"
+msgstr "SHIP UPGRADES"
+
+msgid "OPS_UPGRADE_BUTTON_FMT"
+msgstr "%s · L%d→%d · %d cr"
+
+msgid "OPS_UPGRADE_MAX_FMT"
+msgstr "%s · L%d · MAX"
+
+msgid "OPS_LAST_RESULT_FMT"
+msgstr "Last contract · +%d cr · +%d XP"
+
+msgid "OPS_LAST_RESULT_PERFECT_FMT"
+msgstr "Perfect cleanup · +%d cr · +%d XP"
+
+msgid "OPS_BEAM_FMT"
+msgstr "Beam · %d"
+
+msgid "OPS_CARGO_FMT"
+msgstr "Cargo · %d"
+
+msgid "RANK_TRAINEE"
+msgstr "Trainee"
+
+msgid "RANK_JUNIOR_CLEANER"
+msgstr "Junior Cleaner"
+
+msgid "RANK_ORBITAL_CLEANER"
+msgstr "Orbital Cleaner"
+
+msgid "RANK_SENIOR_CLEANER"
+msgstr "Senior Cleaner"
+
+msgid "RANK_SECTOR_SPECIALIST"
+msgstr "Sector Specialist"
+
+msgid "RANK_DEEP_SPACE_OPERATOR"
+msgstr "Deep Space Operator"
+
+msgid "UPGRADE_TRACTOR_RANGE"
+msgstr "Beam Range"
+
+msgid "UPGRADE_TRACTOR_RANGE_DESC"
+msgstr "Expands the automatic Tractor Beam detection range."
+
+msgid "UPGRADE_COLLECTION_SPEED"
+msgstr "Recovery Speed"
+
+msgid "UPGRADE_COLLECTION_SPEED_DESC"
+msgstr "Accelerates automatic salvage recovery."
+
+msgid "UPGRADE_CARGO_CAPACITY"
+msgstr "Cargo"
+
+msgid "UPGRADE_CARGO_CAPACITY_DESC"
+msgstr "Adds more cargo space before unloading is required."

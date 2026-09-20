@@ -10,6 +10,8 @@ func _run() -> void:
 	_validate_operations_screen()
 	_validate_ship_steering()
 	_validate_content_runtime()
+	_validate_contract_session()
+	_validate_progression_service()
 	_validate_cargo_hold()
 	_validate_player_ship()
 	_validate_flight_screen()
@@ -33,6 +35,7 @@ func _validate_app_root() -> void:
 	_expect(root.get_node_or_null("Services/AudioService") is AudioService, "AppRoot must own AudioService.")
 	_expect(root.get_node_or_null("Services/InputService") is InputService, "AppRoot must own InputService.")
 	_expect(root.get_node_or_null("Services/SceneRouter") is SceneRouter, "AppRoot must own SceneRouter.")
+	_expect(root.get_node_or_null("Services/ProgressionService") is ProgressionService, "AppRoot must own ProgressionService.")
 	_expect(root.get_node_or_null("ScreenHost") is Control, "AppRoot must expose ScreenHost.")
 	root.free()
 
@@ -45,6 +48,10 @@ func _validate_operations_screen() -> void:
 	_expect(screen is Control, "Operations screen must inherit Control.")
 	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Operations screen needs deployment action.")
 	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Operations screen requires ship preview.")
+	_expect(screen.find_child("CreditsLabel", true, false) is Label, "Operations screen requires Credits feedback.")
+	_expect(screen.find_child("TractorUpgrade", true, false) is Button, "Operations screen requires Tractor upgrade control.")
+	_expect(screen.find_child("CollectionUpgrade", true, false) is Button, "Operations screen requires Collection Speed upgrade control.")
+	_expect(screen.find_child("CargoUpgrade", true, false) is Button, "Operations screen requires Cargo upgrade control.")
 	screen.free()
 
 func _validate_ship_steering() -> void:
@@ -97,6 +104,71 @@ func _validate_content_runtime() -> void:
 
 	var bounds := plan_a["play_bounds"] as Rect2
 	_expect(bounds.size.x >= 9000.0 and bounds.size.y >= 5500.0, "Generated training sector must preserve large play bounds.")
+
+func _validate_contract_session() -> void:
+	var registry := ContentRegistry.new()
+	var contract := registry.get_contract("standard_cleanup")
+	var session := ContractSession.new()
+	session.configure({
+		"sector_id": "qa_sector",
+		"contract": contract,
+		"target_percent": 70.0,
+		"total_cleanliness": 10.0,
+		"reward_multiplier": 1.0,
+	})
+
+	var target_salvage := registry.get_salvage_definition("scrap_fragment").duplicate(true) as SalvageDefinition
+	target_salvage.cleanliness_value = 7.0
+	target_salvage.base_value = 50
+	session.record_salvage(target_salvage)
+	_expect(session.is_target_reached(), "ContractSession must complete at configured target.")
+	_expect(not session.is_perfect_cleanup(), "Target completion must not imply Perfect Cleanup.")
+	var standard_result := session.build_result()
+	_expect(int(standard_result["credits_awarded"]) == 290, "Standard payout must combine base pay and recovered salvage.")
+	_expect(int(standard_result["xp_awarded"]) == 120, "Standard completion must grant configured Company XP.")
+
+	var final_salvage := registry.get_salvage_definition("service_scrap").duplicate(true) as SalvageDefinition
+	final_salvage.cleanliness_value = 3.0
+	final_salvage.base_value = 30
+	session.record_salvage(final_salvage)
+	_expect(session.is_perfect_cleanup(), "100% cleanliness must trigger Perfect Cleanup.")
+	var perfect_result := session.build_result()
+	_expect(int(perfect_result["perfect_bonus"]) == 160, "Perfect Cleanup must grant configured credit bonus.")
+	_expect(int(perfect_result["xp_awarded"]) == 160, "Perfect Cleanup must grant configured XP bonus.")
+	_expect(int(perfect_result["credits_awarded"]) == 480, "Perfect payout must include base, salvage and perfect bonus.")
+
+func _validate_progression_service() -> void:
+	var save := SaveService.new()
+	save.delete_save()
+	var progression := ProgressionService.new()
+	progression.initialize(save)
+
+	_expect(progression.get_credits() == 0, "New progression must start with zero Credits.")
+	_expect(progression.get_rank_id() == "trainee", "New progression must start at Trainee.")
+	var base_ship := progression.get_ship_modifiers()
+	_expect(is_equal_approx(float(base_ship["scan_range"]), 320.0), "Base Tractor Beam range must come from progression data.")
+	_expect(int(round(float(base_ship["cargo_capacity"]))) == 12, "Base cargo capacity must come from progression data.")
+
+	progression.apply_contract_result({
+		"completed": true,
+		"sector_id": "qa_sector",
+		"perfect_cleanup": false,
+		"credits_awarded": 500,
+		"xp_awarded": 450,
+	})
+	_expect(progression.get_credits() == 500, "Contract payout must persist Credits.")
+	_expect(progression.get_rank_id() == "junior_cleaner", "Company XP must promote career rank.")
+
+	var cost := progression.get_upgrade_cost("tractor_range")
+	_expect(progression.purchase_upgrade("tractor_range"), "Affordable upgrade purchase must succeed.")
+	_expect(progression.get_credits() == 500 - cost, "Upgrade purchase must deduct Credits.")
+	_expect(progression.get_upgrade_level("tractor_range") == 1, "Upgrade level must increment.")
+	var upgraded_ship := progression.get_ship_modifiers()
+	_expect(float(upgraded_ship["scan_range"]) > float(base_ship["scan_range"]), "Tractor upgrade must change gameplay modifier.")
+
+	save.delete_save()
+	progression.free()
+	save.free()
 
 func _validate_cargo_hold() -> void:
 	var registry := ContentRegistry.new()
@@ -157,6 +229,8 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("UnloadDepot", true, false) is UnloadZone, "Flight screen requires cargo unload zone.")
 	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
+	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
+	_expect(screen.find_child("CleanupProgress", true, false) is ProgressBar, "Flight HUD requires sector cleanliness progress.")
 
 	var authored_salvage := 0
 	for node in screen.find_children("*", "Area2D", true, false):

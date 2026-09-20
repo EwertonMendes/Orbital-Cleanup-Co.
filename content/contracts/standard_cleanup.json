@@ -5,5 +5,9 @@
   "target_percent_range": [
     65,
     90
-  ]
+  ],
+  "base_pay": 240,
+  "perfect_bonus": 160,
+  "company_xp": 120,
+  "perfect_xp_bonus": 40
 }

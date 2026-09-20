@@ -7,7 +7,11 @@
     "id",
     "display_name_key",
     "kind",
-    "target_percent_range"
+    "target_percent_range",
+    "base_pay",
+    "perfect_bonus",
+    "company_xp",
+    "perfect_xp_bonus"
   ],
   "properties": {
     "id": {
@@ -42,6 +46,22 @@
       ],
       "minItems": 2,
       "maxItems": 2
+    },
+    "base_pay": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "perfect_bonus": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "company_xp": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "perfect_xp_bonus": {
+      "type": "integer",
+      "minimum": 0
     }
   }
 }

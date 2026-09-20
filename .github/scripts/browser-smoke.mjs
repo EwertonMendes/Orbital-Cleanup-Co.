@@ -94,10 +94,12 @@ async function openBuild(viewport, label, deployPoint, touch = false) {
   await page.screenshot({ path: `build/smoke-operations-${label}.png`, fullPage: true });
 
   const sectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 15000);
+  const contractStarted = waitForConsole(page, '[Contract] START sector=earth_training_01', 15000);
   const flightReady = waitForConsole(page, '[Flight] READY', 15000);
   const salvageCollected = waitForConsole(page, '[Salvage] COLLECTED', 15000);
   await activateAt(page, deployPoint, touch);
   await sectorReady;
+  await contractStarted;
   await flightReady;
   await salvageCollected;
   await page.waitForTimeout(220);
