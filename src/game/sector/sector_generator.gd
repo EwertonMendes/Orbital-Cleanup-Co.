@@ -12,8 +12,23 @@ func configure(registry: ContentRegistry, scaler: DifficultyScaler) -> void:
 
 func generate(sector_id: String) -> Dictionary:
 	assert(_registry != null and _scaler != null, "SectorGenerator must be configured.")
+	return generate_definition(_registry.get_sector(sector_id))
 
-	var sector := _registry.get_sector(sector_id)
+func generate_definition(source: Dictionary) -> Dictionary:
+	assert(_registry != null and _scaler != null, "SectorGenerator must be configured.")
+	assert(not source.is_empty(), "SectorGenerator requires a sector definition.")
+
+	var sector := source.duplicate(true)
+	var sector_id := String(sector.get("id", ""))
+	assert(not sector_id.is_empty(), "Sector definition requires id.")
+	assert(sector.has("biome"), "Sector definition requires biome.")
+	assert(sector.has("seed"), "Sector definition requires seed.")
+	assert(sector.has("difficulty"), "Sector definition requires difficulty.")
+	assert(sector.has("map"), "Sector definition requires map.")
+	assert(sector.has("salvage_tables"), "Sector definition requires salvage tables.")
+	assert(sector.has("contract"), "Sector definition requires contract.")
+	assert(sector.has("depot"), "Sector definition requires depot.")
+
 	var biome := _registry.get_biome(String(sector["biome"]))
 	var difficulty := int(sector["difficulty"])
 	var parameters := _scaler.evaluate(difficulty)

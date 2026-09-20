@@ -33,6 +33,11 @@ func get_progression(id: String) -> Dictionary:
 func get_cosmetic(id: String) -> Dictionary:
 	return _load_named("cosmetics", id)
 
+func has_sector(id: String) -> bool:
+	if id.is_empty():
+		return false
+	return FileAccess.file_exists("%s/sectors/%s.json" % [CONTENT_ROOT, id])
+
 func list_sector_ids() -> PackedStringArray:
 	var ids := PackedStringArray()
 	var dir := DirAccess.open("%s/sectors" % CONTENT_ROOT)

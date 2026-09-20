@@ -40,7 +40,10 @@ func configure(context: Dictionary) -> void:
 	assert(_input_service != null, "FlightScreen requires InputService.")
 	assert(_progression != null, "FlightScreen requires ProgressionService.")
 
-	_configured_sector_id = String(context.get("sector_id", DEFAULT_SECTOR_ID))
+	var generated_definition := context.get("sector_definition", {}) as Dictionary
+	_configured_sector_id = String(
+		generated_definition.get("id", context.get("sector_id", DEFAULT_SECTOR_ID))
+	)
 	var runtime := get_node("World/SectorRuntime") as SectorRuntime
 	var backdrop := get_node("World/AmbientSpace") as SectorBackdrop
 	var depot := get_node("World/UnloadDepot") as UnloadZone
@@ -51,7 +54,10 @@ func configure(context: Dictionary) -> void:
 	assert(depot != null, "FlightScreen requires UnloadZone.")
 	assert(ship != null, "FlightScreen requires PlayerShip.")
 
-	runtime.configure_sector(_configured_sector_id)
+	if generated_definition.is_empty():
+		runtime.configure_sector(_configured_sector_id)
+	else:
+		runtime.configure_sector_definition(generated_definition)
 	_contract_session.configure(runtime.get_contract_context())
 	backdrop.configure(runtime.get_play_bounds(), runtime.get_biome_palette())
 	depot.position = runtime.get_depot_position()
@@ -144,9 +150,15 @@ func _return_to_operations() -> void:
 		if _platform != null:
 			_platform.track_event("contract_aborted", {"sector_id": _configured_sector_id})
 
-	var scene := load(OPERATIONS_SCREEN_PATH) as PackedScene
-	assert(scene != null, "Operations screen must be loadable.")
-	_router.show_screen(scene, _context)
+	var return_path := String(_context.get("return_screen_path", OPERATIONS_SCREEN_PATH))
+	var scene := load(return_path) as PackedScene
+	assert(scene != null, "Return screen must be loadable: %s" % return_path)
+	var return_context := _context.duplicate(true)
+	return_context.erase("sector_id")
+	return_context.erase("sector_definition")
+	return_context.erase("endless_number")
+	return_context.erase("return_screen_path")
+	_router.show_screen(scene, return_context)
 
 func _on_input_mode_changed(_mode: InputService.InputMode) -> void:
 	_refresh_copy()
@@ -156,7 +168,13 @@ func _refresh_copy() -> void:
 	if not is_node_ready():
 		return
 	%FlightEyebrow.text = tr("FLIGHT_EYEBROW")
-	%FlightTitle.text = tr(sector_runtime.get_sector_display_name_key())
+	if _context.has("endless_number"):
+		%FlightTitle.text = tr("SECTOR_ENDLESS_CONTRACT_FMT") % [
+			int(_context["endless_number"]),
+			tr(sector_runtime.get_biome_display_name_key()),
+		]
+	else:
+		%FlightTitle.text = tr(sector_runtime.get_sector_display_name_key())
 	hint_label.text = tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
 	%DepotLabel.text = tr("FLIGHT_DEPOT")
 	_refresh_return_button()
