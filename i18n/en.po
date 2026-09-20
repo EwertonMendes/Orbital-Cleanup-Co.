@@ -635,3 +635,7 @@ msgstr "Endless Contract"
 
 msgid "SECTOR_ENDLESS_CONTRACT_FMT"
 msgstr "Endless #%d · %s"
+
+
+msgid "FLIGHT_VISUAL_LEGEND"
+msgstr "CYAN BRACKETS · recoverable salvage   •   AMBER RING · collision hazard"
