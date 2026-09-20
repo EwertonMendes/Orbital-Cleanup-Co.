@@ -27,7 +27,6 @@ func initialize() -> void:
 	_event_callback = JavaScriptBridge.create_callback(_on_platform_event)
 	if _platform.setEventCallback != null:
 		_platform.setEventCallback(_event_callback)
-	_platform.initialize()
 	provider_name = str(_platform.getProviderName())
 	print("[Platform] BOUND provider=%s" % provider_name)
 
