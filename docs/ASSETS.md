@@ -1,39 +1,53 @@
 # Asset Provenance
 
-No third-party art/audio pack is imported in the bootstrap PR. The current SVG application icon is original project material.
+Orbital Cleanup Co. imports third-party assets only as curated, traceable source material. The current application icon remains original project material.
 
-All third-party files must live under `assets/third_party/<source>/` and include:
+Every third-party source directory must include:
 
 - `SOURCE.md`
 - `LICENSE.txt`
 
-This registry must be updated in the same PR that imports an asset.
+The repository validator enforces this contract.
 
-## Approved/planned source pool
+## Asset registry
 
-| Asset | Creator | Original URL | License | Planned use | Status |
+| Asset | Creator | Official URL | License | Use | Status |
 | --- | --- | --- | --- | --- | --- |
-| Space Shooter Remastered | Kenney | https://kenney.nl/assets/space-shooter-remastered | CC0 | ships, meteors, debris, space props | approved source; not imported |
-| Space Shooter Extension | Kenney | https://kenney.nl/assets/space-shooter-extension | CC0 | satellites, station/rocket parts, extra debris | approved source; not imported |
-| Simple Space | Kenney | https://kenney.nl/assets/simple-space | CC0 | radar/minimap/icons and select space elements | approved source; not imported |
-| UI Pack - Sci-Fi | Kenney | https://kenney.nl/assets/ui-pack-sci-fi | CC0 | raw material for OCC UI theme | approved source; not imported |
+| Space Shooter Remastered | Kenney | https://kenney.nl/assets/space-shooter-remastered | CC0 | primary ship, meteors/debris, beam/engine feedback | **curated subset imported** |
+| Simple Space | Kenney | https://kenney.nl/assets/simple-space | CC0 | station, satellites and environmental silhouettes | **curated subset imported** |
+| UI Pack - Sci-Fi | Kenney | https://kenney.nl/assets/ui-pack-sci-fi | CC0 | raw material for OCC reusable UI chrome | **curated subset imported** |
+| Space Shooter Extension | Kenney | https://kenney.nl/assets/space-shooter-extension | CC0 | possible future space props | approved source; not imported |
 | Interface Sounds | Kenney | https://kenney.nl/assets/interface-sounds | CC0 | hover/select/confirm/menu SFX | approved source; not imported |
 | Sci-fi Sounds | Kenney | https://kenney.nl/assets/sci-fi-sounds | CC0 | engine/beam/machinery/environmental SFX | approved source; not imported |
 | 2D Planet Pack 2 | Screaming Brain Studios | https://screamingbrainstudios.itch.io/2d-planet-pack-2 | CC0 | curated planet/moon/sun backgrounds | approved source; not imported |
-| Oxanium | Severin Meyer / Google Fonts distribution | https://github.com/google/fonts/tree/main/ofl/oxanium | SIL OFL 1.1 | primary futuristic readable typeface | approved source; not imported |
+| Oxanium | Google Fonts distribution | https://github.com/google/fonts/tree/main/ofl/oxanium | SIL OFL 1.1 | planned primary readable futuristic typeface | approved source; not imported |
 | Magic Space | CodeManu | https://opengameart.org/content/magic-space | CC0 | candidate calm sci-fi music loop | candidate; not imported |
 | Singularity | vitalezzz | https://opengameart.org/content/singularity-0 | CC0 | candidate calm sci-fi music loop | candidate; not imported |
 
-The current 2D Planet Pack 2 source page lists 795 planet sprites after later updates; import only a curated subset appropriate to the selected biomes.
+## Current Kenney import
+
+The visual-foundation PR imports **17 PNG files** from the three requested Kenney packs rather than dumping the full packs into the repository.
+
+Curated material includes:
+
+- six Sci-Fi UI textures for panels, buttons and bars;
+- one blue player ship, one engine-speed effect, three grey meteors and one beam part from Space Shooter Remastered;
+- two satellites, one station, one detailed meteor and one star from Simple Space.
+
+Enemies, guns and lasers are intentionally excluded because Orbital Cleanup Co. has no combat.
+
+Each imported source directory records the official Kenney page, CC0 license, import date and the pinned public mirror commit used to transfer binary files into Git.
 
 ## Import policy
 
-Do not dump entire packs into the repository. Curate only assets actually used or intentionally staged for near-term content. Record acquisition date, exact files and modifications in each source's `SOURCE.md`.
-
-Do not hotlink assets at runtime.
-
-Avoid Git LFS initially. Revisit only after measuring repository/build size.
+- Curate only assets actually used or intentionally staged for near-term work.
+- Do not hotlink runtime assets.
+- Do not import combat art merely because it exists in a source pack.
+- Prefer transformations, composition, shaders and project styling over duplicating recolored source files.
+- Do not introduce Git LFS until measured repository/build size justifies it and the owner approves it.
 
 ## Visual identity
 
-Third-party packs are ingredients, not the finished art direction. Cohesion comes from Orbital Cleanup Co. composition, palette, shaders, particles, typography, animation, UI theme and branding.
+Third-party packs are ingredients, not the finished art direction. Cohesion comes from Orbital Cleanup Co.'s palette, composition, motion, typography, particles, layout and reusable components.
+
+See [UI Guidelines](UI_GUIDELINES.md).

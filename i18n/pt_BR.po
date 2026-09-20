@@ -27,3 +27,51 @@ msgstr "Provider"
 
 msgid "BOOTSTRAP_BUILD"
 msgstr "Build"
+
+msgid "OPS_DESK"
+msgstr "OPERAÇÕES DE LIMPEZA"
+
+msgid "OPS_TRAINING"
+msgstr "CONTRATO DE TREINAMENTO"
+
+msgid "OPS_SELECTED"
+msgstr "CONTRATO SELECIONADO"
+
+msgid "OPS_CONTRACT_TITLE"
+msgstr "Órbita da Terra · Rota 01"
+
+msgid "OPS_CONTRACT_DESCRIPTION"
+msgstr "Limpe uma área leve de detritos ao redor de um corredor de serviço."
+
+msgid "OPS_CLEANUP_TARGET"
+msgstr "Meta de limpeza · 70%"
+
+msgid "OPS_HAZARD"
+msgstr "Risco · Baixo"
+
+msgid "OPS_PAYOUT"
+msgstr "Pagamento base · 240 cr"
+
+msgid "OPS_SHIP_HEADING"
+msgstr "NAVE DA EMPRESA"
+
+msgid "OPS_SHIP_NAME"
+msgstr "Pioneer-01"
+
+msgid "OPS_BEAM"
+msgstr "Feixe · Padrão"
+
+msgid "OPS_CARGO"
+msgstr "Carga · 12"
+
+msgid "OPS_SCANNER"
+msgstr "Scanner · Mk I"
+
+msgid "OPS_LANGUAGE"
+msgstr "IDIOMA"
+
+msgid "OPS_SELECT"
+msgstr "SELECIONAR CONTRATO"
+
+msgid "OPS_UNSELECT"
+msgstr "LIMPAR SELEÇÃO"
