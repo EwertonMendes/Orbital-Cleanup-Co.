@@ -66,7 +66,7 @@ texture = ExtResource("6")
 shape = SubResource("LargeMeteorShape")
 
 [node name="MediumMeteor" type="StaticBody2D" parent="World"]
-position = Vector2(-610, -260)
+position = Vector2(-450, -250)
 rotation = -0.34
 collision_layer = 2
 collision_mask = 0
@@ -80,7 +80,7 @@ texture = ExtResource("7")
 shape = SubResource("MediumMeteorShape")
 
 [node name="SmallMeteor" type="StaticBody2D" parent="World"]
-position = Vector2(180, 650)
+position = Vector2(-520, 620)
 rotation = 0.74
 collision_layer = 2
 collision_mask = 0
