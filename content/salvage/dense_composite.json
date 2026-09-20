@@ -1,0 +1,19 @@
+{
+  "id": "dense_composite",
+  "display_name_key": "SALVAGE_DENSE_COMPOSITE",
+  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+  "category": "scrap",
+  "rarity": "uncommon",
+  "base_value": 55,
+  "mass": 2.4,
+  "collect_duration": 1.7,
+  "cleanliness_value": 2.8,
+  "cargo_units": 3,
+  "visual_scale": 0.7,
+  "collision_radius": 30,
+  "tags": [
+    "dense",
+    "composite",
+    "training"
+  ]
+}

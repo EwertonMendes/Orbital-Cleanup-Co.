@@ -1,6 +1,7 @@
 extends Control
 
 const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.tscn"
+const DEFAULT_SECTOR_ID := "earth_training_01"
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var top_bar: BoxContainer = %TopBar
@@ -13,6 +14,7 @@ const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_scre
 @onready var toast_panel: PanelContainer = %ToastPanel
 @onready var toast_label: Label = %ToastLabel
 @onready var unload_zone: UnloadZone = %UnloadDepot
+@onready var sector_runtime: SectorRuntime = %SectorRuntime
 @onready var player_ship: PlayerShip = %PlayerShip
 
 var _context: Dictionary = {}
@@ -23,6 +25,7 @@ var _gameplay_active := false
 var _hint_tween: Tween
 var _toast_tween: Tween
 var _active_salvage: SalvageDefinition
+var _configured_sector_id := DEFAULT_SECTOR_ID
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -30,9 +33,22 @@ func configure(context: Dictionary) -> void:
 	_input_service = context.get("input") as InputService
 	_platform = context.get("platform") as PlatformService
 	assert(_input_service != null, "FlightScreen requires InputService.")
-	player_ship = get_node("World/PlayerShip") as PlayerShip
-	assert(player_ship != null, "FlightScreen requires PlayerShip.")
-	player_ship.configure(_input_service, TrainingSpace.PLAY_BOUNDS)
+
+	_configured_sector_id = String(context.get("sector_id", DEFAULT_SECTOR_ID))
+	var runtime := get_node("World/SectorRuntime") as SectorRuntime
+	var backdrop := get_node("World/AmbientSpace") as SectorBackdrop
+	var depot := get_node("World/UnloadDepot") as UnloadZone
+	var ship := get_node("World/PlayerShip") as PlayerShip
+
+	assert(runtime != null, "FlightScreen requires SectorRuntime.")
+	assert(backdrop != null, "FlightScreen requires SectorBackdrop.")
+	assert(depot != null, "FlightScreen requires UnloadZone.")
+	assert(ship != null, "FlightScreen requires PlayerShip.")
+
+	runtime.configure_sector(_configured_sector_id)
+	backdrop.configure(runtime.get_play_bounds(), runtime.get_biome_palette())
+	depot.position = runtime.get_depot_position()
+	ship.configure(_input_service, runtime.get_play_bounds())
 
 func _ready() -> void:
 	_validate_contracts()
@@ -55,7 +71,7 @@ func _ready() -> void:
 
 	if _platform != null:
 		_platform.gameplay_started()
-		_platform.track_event("training_flight_started")
+		_platform.track_event("training_flight_started", {"sector_id": _configured_sector_id})
 	_gameplay_active = true
 	print("[Flight] READY")
 
@@ -72,8 +88,9 @@ func _validate_contracts() -> void:
 	assert(cargo_label != null and beam_status != null and beam_progress != null, "FlightScreen requires salvage HUD.")
 	assert(toast_panel != null and toast_label != null, "FlightScreen requires collection feedback.")
 	assert(unload_zone != null, "FlightScreen requires UnloadZone.")
+	assert(sector_runtime != null, "FlightScreen requires SectorRuntime.")
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
-	assert(TrainingSpace.PLAY_BOUNDS.size.x > 0.0 and TrainingSpace.PLAY_BOUNDS.size.y > 0.0, "Training play bounds must be valid.")
+	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
@@ -103,7 +120,7 @@ func _refresh_copy() -> void:
 	if not is_node_ready():
 		return
 	%FlightEyebrow.text = tr("FLIGHT_EYEBROW")
-	%FlightTitle.text = tr("FLIGHT_TITLE")
+	%FlightTitle.text = tr(sector_runtime.get_sector_display_name_key())
 	return_button.text = tr("FLIGHT_RETURN")
 	hint_label.text = tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
 	%DepotLabel.text = tr("FLIGHT_DEPOT")

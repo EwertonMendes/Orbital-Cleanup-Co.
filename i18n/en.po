@@ -132,3 +132,21 @@ msgstr "Dense Composite"
 
 msgid "FLIGHT_CARGO_NO_SPACE"
 msgstr "NOT ENOUGH CARGO SPACE · RETURN TO DEPOT"
+
+msgid "SECTOR_EARTH_TRAINING_02"
+msgstr "Earth Orbit · Route 02"
+
+msgid "BIOME_EARTH_ORBIT"
+msgstr "Earth Orbit"
+
+msgid "LANDMARK_SERVICE_SATELLITE"
+msgstr "Service Satellite"
+
+msgid "CONTRACT_STANDARD_CLEANUP"
+msgstr "Standard Cleanup"
+
+msgid "MODIFIER_LIGHT_DEBRIS"
+msgstr "Light Debris"
+
+msgid "MODIFIER_DENSE_DEBRIS"
+msgstr "Dense Debris"

@@ -1,0 +1,30 @@
+{
+  "id": "difficulty_scaling",
+  "curves": {
+    "salvage_count": {
+      "base": 16,
+      "per_level": 1.4,
+      "max": 64
+    },
+    "obstacle_count": {
+      "base": 9,
+      "per_level": 0.8,
+      "max": 48
+    },
+    "rare_weight_multiplier": {
+      "base": 1,
+      "per_level": 0.035,
+      "max": 2.5
+    },
+    "mass_multiplier": {
+      "base": 1,
+      "per_level": 0.025,
+      "max": 2.2
+    },
+    "reward_multiplier": {
+      "base": 1,
+      "per_level": 0.09,
+      "max": 8
+    }
+  }
+}

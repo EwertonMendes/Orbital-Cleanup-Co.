@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DifficultyScaling",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "curves"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "curves": {
+      "type": "object",
+      "required": [
+        "salvage_count",
+        "obstacle_count",
+        "rare_weight_multiplier",
+        "mass_multiplier",
+        "reward_multiplier"
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "base",
+          "per_level",
+          "max"
+        ],
+        "properties": {
+          "base": {
+            "type": "number"
+          },
+          "per_level": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  }
+}

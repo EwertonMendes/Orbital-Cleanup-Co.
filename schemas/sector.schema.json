@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SectorDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "display_name_key",
+    "biome",
+    "seed",
+    "difficulty",
+    "map",
+    "salvage_tables",
+    "landmarks",
+    "contract",
+    "modifiers",
+    "depot"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "display_name_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "biome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "difficulty": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "map": {
+      "type": "object",
+      "required": [
+        "half_extents",
+        "debris_density",
+        "cluster_count"
+      ],
+      "properties": {
+        "half_extents": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "debris_density": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 3
+        },
+        "cluster_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "salvage_tables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "weight"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      }
+    },
+    "landmarks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 2,
+      "uniqueItems": true
+    },
+    "contract": {
+      "type": "object",
+      "required": [
+        "type",
+        "target_percent"
+      ],
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "target_percent": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100
+        }
+      }
+    },
+    "modifiers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "depot": {
+      "type": "object",
+      "required": [
+        "position"
+      ],
+      "properties": {
+        "position": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    }
+  }
+}

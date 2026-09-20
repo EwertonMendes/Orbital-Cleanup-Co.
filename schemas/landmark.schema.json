@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LandmarkDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "display_name_key",
+    "sprite",
+    "scale",
+    "reserved_radius",
+    "placement_radius",
+    "ambient_effect"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "display_name_key": {
+      "type": "string"
+    },
+    "sprite": {
+      "type": "string",
+      "pattern": "^res://assets/"
+    },
+    "scale": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "reserved_radius": {
+      "type": "number",
+      "minimum": 0
+    },
+    "placement_radius": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "ambient_effect": {
+      "type": "string"
+    }
+  }
+}

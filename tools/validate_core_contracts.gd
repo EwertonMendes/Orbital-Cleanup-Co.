@@ -9,11 +9,10 @@ func _run() -> void:
 	_validate_app_root()
 	_validate_operations_screen()
 	_validate_ship_steering()
-	_validate_salvage_definitions()
+	_validate_content_runtime()
 	_validate_cargo_hold()
 	_validate_player_ship()
 	_validate_flight_screen()
-	_validate_training_bounds()
 	_validate_render_quality()
 	if _failed:
 		quit(1)
@@ -56,31 +55,55 @@ func _validate_ship_steering() -> void:
 	var keyboard := Vector2.UP
 	_expect(ShipSteering.combine_intent(keyboard, Vector2.RIGHT) == keyboard, "Keyboard input must override pointer steering while held.")
 
-func _validate_salvage_definitions() -> void:
-	var paths := [
-		"res://content/salvage/scrap_fragment.tres",
-		"res://content/salvage/service_scrap.tres",
-		"res://content/salvage/sensor_pod.tres",
-		"res://content/salvage/satellite_panel.tres",
-		"res://content/salvage/dense_composite.tres",
-	]
-	var ids: Dictionary = {}
-	for path in paths:
-		var definition := load(path) as SalvageDefinition
-		_expect(definition != null, "Salvage definition must load: %s" % path)
-		if definition == null:
-			continue
-		definition.validate()
-		_expect(not ids.has(String(definition.id)), "Salvage ids must be unique.")
-		ids[String(definition.id)] = true
-		_expect(definition.sprite != null, "Salvage definition requires sprite.")
-		_expect(definition.cargo_units > 0, "Salvage cargo units must be positive.")
+func _validate_content_runtime() -> void:
+	var registry := ContentRegistry.new()
+	var scrap := registry.get_salvage_definition("scrap_fragment")
+	var dense := registry.get_salvage_definition("dense_composite")
+	_expect(scrap != null and dense != null, "ContentRegistry must build salvage definitions from JSON.")
+	if scrap != null:
+		_expect(String(scrap.id) == "scrap_fragment", "Salvage JSON id must reach runtime definition.")
+		_expect(scrap.sprite != null, "Salvage JSON asset path must load.")
+
+	var scaler := DifficultyScaler.new()
+	scaler.configure(registry)
+	var level_one := scaler.evaluate(1)
+	var level_high := scaler.evaluate(10000)
+	_expect(float(level_one["salvage_count"]) > 0.0, "DifficultyScaler must produce salvage count.")
+	_expect(float(level_high["reward_multiplier"]) <= 8.0, "DifficultyScaler must respect configured caps.")
+	_expect(float(level_high["mass_multiplier"]) <= 2.2, "DifficultyScaler mass curve must remain bounded.")
+
+	var generator := SectorGenerator.new()
+	generator.configure(registry, scaler)
+	var plan_a := generator.generate("earth_training_01")
+	var plan_b := generator.generate("earth_training_01")
+	var plan_variant := generator.generate("earth_training_02")
+
+	_expect(
+		String(plan_a["generation_signature"]) == String(plan_b["generation_signature"]),
+		"Sector generation must be deterministic for the same seed."
+	)
+	_expect(
+		String(plan_a["generation_signature"]) != String(plan_variant["generation_signature"]),
+		"Different sector data must produce a different generation signature without new code."
+	)
+	_expect((plan_a["salvage_spawns"] as Array).size() >= 5, "Generated sector requires salvage.")
+	_expect((plan_a["obstacle_spawns"] as Array).size() >= 1, "Generated sector requires environmental obstacles.")
+	_expect((plan_a["landmark_spawns"] as Array).size() >= 1, "Generated sector requires configured landmark.")
+	var first_salvage := (plan_a["salvage_spawns"] as Array)[0] as Dictionary
+	_expect(
+		(first_salvage["position"] as Vector2).length() <= 280.0,
+		"Training biome starter cluster must place recoverable salvage near deployment."
+	)
+
+	var bounds := plan_a["play_bounds"] as Rect2
+	_expect(bounds.size.x >= 9000.0 and bounds.size.y >= 5500.0, "Generated training sector must preserve large play bounds.")
 
 func _validate_cargo_hold() -> void:
+	var registry := ContentRegistry.new()
 	var cargo := CargoHold.new()
 	cargo.capacity = 4
-	var small := load("res://content/salvage/scrap_fragment.tres") as SalvageDefinition
-	var heavy := load("res://content/salvage/dense_composite.tres") as SalvageDefinition
+	var small := registry.get_salvage_definition("scrap_fragment")
+	var heavy := registry.get_salvage_definition("dense_composite")
 	_expect(cargo.store(small), "CargoHold must accept fitting salvage.")
 	_expect(cargo.used_units == 1, "CargoHold must track occupied units.")
 	_expect(cargo.store(heavy), "CargoHold must accept salvage that exactly fills remaining space.")
@@ -129,23 +152,24 @@ func _validate_flight_screen() -> void:
 	var screen := packed.instantiate()
 	_expect(screen is Control, "Flight screen must inherit Control.")
 	_expect(screen.find_child("PlayerShip", true, false) is PlayerShip, "Flight screen requires PlayerShip.")
+	_expect(screen.find_child("SectorRuntime", true, false) is SectorRuntime, "Flight screen requires generic SectorRuntime.")
+	_expect(screen.find_child("AmbientSpace", true, false) is SectorBackdrop, "Flight screen requires data-configurable SectorBackdrop.")
+	_expect(screen.find_child("UnloadDepot", true, false) is UnloadZone, "Flight screen requires cargo unload zone.")
 	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
-	_expect(screen.find_child("UnloadDepot", true, false) is UnloadZone, "Training flight requires cargo unload zone.")
-	var salvage_count := 0
-	for node in screen.find_children("Salvage*", "Area2D", true, false):
-		if node is SalvageObject:
-			salvage_count += 1
-	_expect(salvage_count >= 5, "Training flight requires multiple generic SalvageObject instances.")
-	var obstacle_count := 0
-	for node in screen.find_children("*Meteor", "StaticBody2D", true, false):
-		obstacle_count += 1
-	_expect(obstacle_count >= 3, "Training flight requires multiple bump obstacles.")
-	screen.free()
 
-func _validate_training_bounds() -> void:
-	_expect(TrainingSpace.PLAY_BOUNDS.size.x >= 9000.0, "Training area should provide a substantially larger horizontal route.")
-	_expect(TrainingSpace.PLAY_BOUNDS.size.y >= 5500.0, "Training area should provide a substantially larger vertical route.")
+	var authored_salvage := 0
+	for node in screen.find_children("*", "Area2D", true, false):
+		if node is SalvageObject:
+			authored_salvage += 1
+	_expect(authored_salvage == 0, "Flight scene must not manually author normal salvage objects.")
+
+	var authored_obstacles := 0
+	for node in screen.find_children("*", "StaticBody2D", true, false):
+		if node is SectorObstacle:
+			authored_obstacles += 1
+	_expect(authored_obstacles == 0, "Flight scene must not manually author normal sector obstacles.")
+	screen.free()
 
 func _validate_render_quality() -> void:
 	_expect(bool(ProjectSettings.get_setting("physics/common/physics_interpolation", false)), "Physics interpolation must remain enabled for smooth Web movement.")

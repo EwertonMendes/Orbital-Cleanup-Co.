@@ -132,3 +132,21 @@ msgstr "Compósito Denso"
 
 msgid "FLIGHT_CARGO_NO_SPACE"
 msgstr "SEM ESPAÇO NA CARGA · VOLTE AO DEPÓSITO"
+
+msgid "SECTOR_EARTH_TRAINING_02"
+msgstr "Órbita da Terra · Rota 02"
+
+msgid "BIOME_EARTH_ORBIT"
+msgstr "Órbita da Terra"
+
+msgid "LANDMARK_SERVICE_SATELLITE"
+msgstr "Satélite de Serviço"
+
+msgid "CONTRACT_STANDARD_CLEANUP"
+msgstr "Limpeza Padrão"
+
+msgid "MODIFIER_LIGHT_DEBRIS"
+msgstr "Detritos Leves"
+
+msgid "MODIFIER_DENSE_DEBRIS"
+msgstr "Detritos Densos"

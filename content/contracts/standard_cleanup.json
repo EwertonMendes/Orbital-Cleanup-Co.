@@ -1,0 +1,9 @@
+{
+  "id": "standard_cleanup",
+  "display_name_key": "CONTRACT_STANDARD_CLEANUP",
+  "kind": "cleanup",
+  "target_percent_range": [
+    65,
+    90
+  ]
+}

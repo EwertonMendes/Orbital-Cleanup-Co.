@@ -1,0 +1,51 @@
+{
+  "id": "earth_orbit",
+  "display_name_key": "BIOME_EARTH_ORBIT",
+  "palette": {
+    "background": "#040b13",
+    "nebula": "#0b3d4d",
+    "accent": "#53d7f1"
+  },
+  "salvage_tables": [
+    "earth_training"
+  ],
+  "landmarks": [
+    "service_satellite"
+  ],
+  "modifiers": [
+    "light_debris",
+    "dense_debris"
+  ],
+  "spawn_rules": {
+    "min_spacing": 135,
+    "edge_margin": 320,
+    "starter_cluster_count": 3,
+    "starter_cluster_radius": 270
+  },
+  "obstacles": [
+    {
+      "id": "meteor_large",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 20,
+      "collision_radius": 52,
+      "scale_min": 0.88,
+      "scale_max": 1.1
+    },
+    {
+      "id": "meteor_medium",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 45,
+      "collision_radius": 37,
+      "scale_min": 0.9,
+      "scale_max": 1.12
+    },
+    {
+      "id": "meteor_small",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 35,
+      "collision_radius": 27,
+      "scale_min": 1,
+      "scale_max": 1.35
+    }
+  ]
+}

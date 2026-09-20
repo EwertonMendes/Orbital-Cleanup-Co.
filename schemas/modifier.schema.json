@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ModifierDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "display_name_key",
+    "runtime"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "display_name_key": {
+      "type": "string"
+    },
+    "runtime": {
+      "type": "object",
+      "required": [
+        "salvage_count_multiplier",
+        "obstacle_count_multiplier",
+        "rare_weight_multiplier"
+      ],
+      "properties": {
+        "salvage_count_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "obstacle_count_multiplier": {
+          "type": "number",
+          "minimum": 0
+        },
+        "rare_weight_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    }
+  }
+}

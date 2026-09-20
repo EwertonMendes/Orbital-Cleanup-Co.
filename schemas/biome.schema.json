@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BiomeDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "display_name_key",
+    "palette",
+    "salvage_tables",
+    "landmarks",
+    "modifiers",
+    "spawn_rules",
+    "obstacles"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "display_name_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "palette": {
+      "type": "object",
+      "required": [
+        "background",
+        "nebula",
+        "accent"
+      ],
+      "properties": {
+        "background": {
+          "type": "string"
+        },
+        "nebula": {
+          "type": "string"
+        },
+        "accent": {
+          "type": "string"
+        }
+      }
+    },
+    "salvage_tables": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "landmarks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "modifiers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "spawn_rules": {
+      "type": "object",
+      "required": [
+        "min_spacing",
+        "edge_margin",
+        "starter_cluster_count",
+        "starter_cluster_radius"
+      ],
+      "properties": {
+        "min_spacing": {
+          "type": "number",
+          "minimum": 0
+        },
+        "edge_margin": {
+          "type": "number",
+          "minimum": 0
+        },
+        "starter_cluster_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "starter_cluster_radius": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "obstacles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "sprite",
+          "weight",
+          "collision_radius",
+          "scale_min",
+          "scale_max"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sprite": {
+            "type": "string",
+            "pattern": "^res://assets/"
+          },
+          "weight": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "collision_radius": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "scale_min": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "scale_max": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      }
+    }
+  }
+}

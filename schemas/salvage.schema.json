@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SalvageDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "display_name_key",
+    "sprite",
+    "category",
+    "rarity",
+    "base_value",
+    "mass",
+    "collect_duration",
+    "cleanliness_value",
+    "cargo_units",
+    "visual_scale",
+    "collision_radius",
+    "tags"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "display_name_key": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sprite": {
+      "type": "string",
+      "pattern": "^res://assets/"
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rarity": {
+      "enum": [
+        "common",
+        "uncommon",
+        "rare",
+        "epic"
+      ]
+    },
+    "base_value": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "mass": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "collect_duration": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "cleanliness_value": {
+      "type": "number",
+      "minimum": 0
+    },
+    "cargo_units": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 12
+    },
+    "visual_scale": {
+      "type": "number",
+      "minimum": 0.2,
+      "maximum": 4
+    },
+    "collision_radius": {
+      "type": "number",
+      "minimum": 6,
+      "maximum": 120
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  }
+}
