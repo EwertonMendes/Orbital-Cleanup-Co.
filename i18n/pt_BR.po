@@ -93,3 +93,42 @@ msgstr "Aponte para pilotar · WASD / setas também funcionam"
 
 msgid "FLIGHT_HINT_TOUCH"
 msgstr "Toque e arraste em qualquer lugar para pilotar"
+
+msgid "FLIGHT_CARGO_FMT"
+msgstr "CARGA · %d / %d"
+
+msgid "FLIGHT_BEAM_SCANNING"
+msgstr "TRATOR · ESCANEANDO"
+
+msgid "FLIGHT_BEAM_LOCK_FMT"
+msgstr "TRATOR · %s"
+
+msgid "FLIGHT_CARGO_FULL"
+msgstr "CARGA CHEIA · VOLTE AO DEPÓSITO"
+
+msgid "FLIGHT_RECOVERED_FMT"
+msgstr "RECUPERADO · %s"
+
+msgid "FLIGHT_UNLOADED_FMT"
+msgstr "CARGA DESCARREGADA · %d UNIDADES"
+
+msgid "FLIGHT_DEPOT"
+msgstr "DEPÓSITO DE CARGA"
+
+msgid "SALVAGE_SCRAP_FRAGMENT"
+msgstr "Fragmento de Liga"
+
+msgid "SALVAGE_SERVICE_SCRAP"
+msgstr "Sucata de Serviço"
+
+msgid "SALVAGE_SENSOR_POD"
+msgstr "Módulo Sensor"
+
+msgid "SALVAGE_SATELLITE_PANEL"
+msgstr "Painel de Satélite"
+
+msgid "SALVAGE_DENSE_COMPOSITE"
+msgstr "Compósito Denso"
+
+msgid "FLIGHT_CARGO_NO_SPACE"
+msgstr "SEM ESPAÇO NA CARGA · VOLTE AO DEPÓSITO"

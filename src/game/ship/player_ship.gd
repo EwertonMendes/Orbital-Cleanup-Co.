@@ -3,11 +3,18 @@ class_name PlayerShip
 
 signal movement_started
 signal bumped(intensity: float, normal: Vector2)
+signal cargo_changed(used_units: int, capacity: int)
+signal tractor_target_changed(definition)
+signal tractor_progress_changed(progress: float)
+signal salvage_collected(definition, used_units: int, capacity: int)
+signal cargo_collection_blocked
 
 @export var tuning: ShipMovementTuning
 
 @onready var visuals: ShipVisuals = %FeedbackRoot
 @onready var ship_camera: ShipCamera = %ShipCamera
+@onready var cargo_hold: CargoHold = %CargoHold
+@onready var tractor_beam: TractorBeam = %TractorBeam
 
 var _input_service: InputService
 var _world_bounds := Rect2()
@@ -23,10 +30,29 @@ func configure(input_service: InputService, world_bounds: Rect2 = Rect2()) -> vo
 
 func _ready() -> void:
 	assert(tuning != null, "PlayerShip requires ShipMovementTuning.")
+	assert(cargo_hold != null, "PlayerShip requires CargoHold.")
+	assert(tractor_beam != null, "PlayerShip requires TractorBeam.")
 	tuning.validate()
 	assert(_input_service != null, "PlayerShip must be configured with InputService before entering the tree.")
 	ship_camera.configure(tuning)
+
+	cargo_hold.cargo_changed.connect(_on_cargo_changed)
+	tractor_beam.target_changed.connect(_on_tractor_target_changed)
+	tractor_beam.progress_changed.connect(_on_tractor_progress_changed)
+	tractor_beam.salvage_collected.connect(_on_salvage_collected)
+	tractor_beam.blocked_by_cargo_space.connect(_on_cargo_collection_blocked)
+
+	cargo_changed.emit(cargo_hold.used_units, cargo_hold.capacity)
 	print("[Ship] READY")
+
+func unload_cargo() -> int:
+	return cargo_hold.unload_all()
+
+func get_cargo_used() -> int:
+	return cargo_hold.used_units
+
+func get_cargo_capacity() -> int:
+	return cargo_hold.capacity
 
 func _physics_process(delta: float) -> void:
 	_bump_feedback_cooldown = maxf(_bump_feedback_cooldown - delta, 0.0)
@@ -190,3 +216,18 @@ func _apply_bump(collision: KinematicCollision2D) -> void:
 	visuals.play_bump(intensity, normal)
 	ship_camera.add_bump_shake(intensity)
 	bumped.emit(intensity, normal)
+
+func _on_cargo_changed(used_units: int, capacity: int) -> void:
+	cargo_changed.emit(used_units, capacity)
+
+func _on_tractor_target_changed(definition) -> void:
+	tractor_target_changed.emit(definition)
+
+func _on_tractor_progress_changed(progress: float) -> void:
+	tractor_progress_changed.emit(progress)
+
+func _on_salvage_collected(definition, used_units: int, capacity: int) -> void:
+	salvage_collected.emit(definition, used_units, capacity)
+
+func _on_cargo_collection_blocked() -> void:
+	cargo_collection_blocked.emit()

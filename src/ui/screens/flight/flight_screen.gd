@@ -7,6 +7,12 @@ const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_scre
 @onready var return_button: Button = %ReturnButton
 @onready var hint_panel: Control = %HintPanel
 @onready var hint_label: Label = %HintLabel
+@onready var cargo_label: Label = %CargoLabel
+@onready var beam_status: Label = %BeamStatus
+@onready var beam_progress: ProgressBar = %BeamProgress
+@onready var toast_panel: PanelContainer = %ToastPanel
+@onready var toast_label: Label = %ToastLabel
+@onready var unload_zone: UnloadZone = %UnloadDepot
 @onready var player_ship: PlayerShip = %PlayerShip
 
 var _context: Dictionary = {}
@@ -15,6 +21,8 @@ var _input_service: InputService
 var _platform: PlatformService
 var _gameplay_active := false
 var _hint_tween: Tween
+var _toast_tween: Tween
+var _active_salvage: SalvageDefinition
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -31,9 +39,19 @@ func _ready() -> void:
 	resized.connect(_apply_responsive_layout)
 	return_button.pressed.connect(_return_to_operations)
 	player_ship.movement_started.connect(_schedule_hint_fade)
+	player_ship.cargo_changed.connect(_on_cargo_changed)
+	player_ship.tractor_target_changed.connect(_on_tractor_target_changed)
+	player_ship.tractor_progress_changed.connect(_on_tractor_progress_changed)
+	player_ship.salvage_collected.connect(_on_salvage_collected)
+	player_ship.cargo_collection_blocked.connect(_on_cargo_collection_blocked)
+	unload_zone.cargo_unloaded.connect(_on_cargo_unloaded)
 	_input_service.input_mode_changed.connect(_on_input_mode_changed)
+
+	toast_panel.modulate.a = 0.0
+	beam_progress.value = 0.0
 	_apply_responsive_layout()
 	_refresh_copy()
+	_on_cargo_changed(player_ship.get_cargo_used(), player_ship.get_cargo_capacity())
 
 	if _platform != null:
 		_platform.gameplay_started()
@@ -51,6 +69,9 @@ func _validate_contracts() -> void:
 	assert(top_bar != null, "FlightScreen requires responsive TopBar.")
 	assert(return_button != null, "FlightScreen requires ReturnButton.")
 	assert(hint_panel != null and hint_label != null, "FlightScreen requires steering hint.")
+	assert(cargo_label != null and beam_status != null and beam_progress != null, "FlightScreen requires salvage HUD.")
+	assert(toast_panel != null and toast_label != null, "FlightScreen requires collection feedback.")
+	assert(unload_zone != null, "FlightScreen requires UnloadZone.")
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
 	assert(TrainingSpace.PLAY_BOUNDS.size.x > 0.0 and TrainingSpace.PLAY_BOUNDS.size.y > 0.0, "Training play bounds must be valid.")
 
@@ -65,6 +86,9 @@ func _apply_responsive_layout() -> void:
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
+
+	hint_panel.custom_minimum_size.x = 300.0 if compact else 500.0
+	toast_panel.custom_minimum_size.x = 280.0 if compact else 390.0
 
 func _return_to_operations() -> void:
 	var scene := load(OPERATIONS_SCREEN_PATH) as PackedScene
@@ -82,6 +106,60 @@ func _refresh_copy() -> void:
 	%FlightTitle.text = tr("FLIGHT_TITLE")
 	return_button.text = tr("FLIGHT_RETURN")
 	hint_label.text = tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
+	%DepotLabel.text = tr("FLIGHT_DEPOT")
+
+	_on_cargo_changed(player_ship.get_cargo_used(), player_ship.get_cargo_capacity())
+	if _active_salvage == null:
+		beam_status.text = tr("FLIGHT_BEAM_SCANNING")
+	else:
+		beam_status.text = tr("FLIGHT_BEAM_LOCK_FMT") % tr(String(_active_salvage.display_name_key))
+
+func _on_cargo_changed(used_units: int, capacity: int) -> void:
+	cargo_label.text = tr("FLIGHT_CARGO_FMT") % [used_units, capacity]
+	if used_units >= capacity and _active_salvage == null:
+		beam_status.text = tr("FLIGHT_CARGO_FULL")
+
+func _on_tractor_target_changed(definition) -> void:
+	_active_salvage = definition as SalvageDefinition
+	beam_progress.value = 0.0
+	beam_progress.visible = _active_salvage != null
+
+	if _active_salvage == null:
+		if player_ship.get_cargo_used() >= player_ship.get_cargo_capacity():
+			beam_status.text = tr("FLIGHT_CARGO_FULL")
+		else:
+			beam_status.text = tr("FLIGHT_BEAM_SCANNING")
+		return
+
+	beam_status.text = tr("FLIGHT_BEAM_LOCK_FMT") % tr(String(_active_salvage.display_name_key))
+
+func _on_tractor_progress_changed(progress: float) -> void:
+	beam_progress.value = clampf(progress, 0.0, 1.0) * 100.0
+
+func _on_salvage_collected(definition, _used_units: int, _capacity: int) -> void:
+	var salvage := definition as SalvageDefinition
+	if salvage == null:
+		return
+	_show_toast(tr("FLIGHT_RECOVERED_FMT") % tr(String(salvage.display_name_key)))
+
+func _on_cargo_collection_blocked() -> void:
+	beam_status.text = tr("FLIGHT_CARGO_NO_SPACE")
+	_show_toast(tr("FLIGHT_CARGO_NO_SPACE"))
+
+func _on_cargo_unloaded(units: int) -> void:
+	_show_toast(tr("FLIGHT_UNLOADED_FMT") % units)
+	beam_status.text = tr("FLIGHT_BEAM_SCANNING")
+
+func _show_toast(message: String) -> void:
+	if _toast_tween != null and _toast_tween.is_valid():
+		_toast_tween.kill()
+
+	toast_label.text = message
+	toast_panel.modulate.a = 0.0
+	_toast_tween = create_tween()
+	_toast_tween.tween_property(toast_panel, "modulate:a", 1.0, 0.16)
+	_toast_tween.tween_interval(1.65)
+	_toast_tween.tween_property(toast_panel, "modulate:a", 0.0, 0.32)
 
 func _show_hint_temporarily() -> void:
 	if _hint_tween != null and _hint_tween.is_valid():

@@ -120,3 +120,19 @@ Procedural systems use explicit seeded RNG streams. Given the same relevant vers
 ## Performance posture
 
 Start with simple bounded spawning and object pooling. Add chunk streaming only when profiling shows a need. Avoid thousands of active physics bodies and expensive full-screen shaders in the browser.
+
+## Salvage loop architecture
+
+The first recovery slice is implemented under `src/game/salvage/` and is intentionally split by responsibility:
+
+- `SalvageDefinition` owns authored salvage properties such as id, sprite, mass, collection time, cargo footprint and future economy/cleanliness values.
+- `SalvageObject.tscn` is the single generic runtime object. Different salvage types do not get dedicated scenes or scripts.
+- `TractorBeam` owns automatic nearby-target acquisition, pulling, collection progress and beam presentation.
+- `CargoHold` owns capacity and the in-flight manifest.
+- `UnloadZone` owns depot interaction and triggers cargo unload when the player returns.
+- `PlayerShip` exposes salvage/cargo state through signals so HUD code observes gameplay instead of calculating it.
+
+The authored training flight currently places several generic salvage instances directly as a controlled vertical-slice playground. This placement is temporary. The next Sector Engine phase replaces authored scene placement with sector/content definitions while keeping the same `SalvageObject`, `TractorBeam` and `CargoHold` runtime.
+
+Browser smoke waits for a real `[Salvage] COLLECTED` lifecycle marker after deployment, so Web CI verifies that the automatic recovery loop executes rather than only confirming that the scene renders.
+

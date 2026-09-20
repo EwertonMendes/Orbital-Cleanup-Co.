@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://src/game/ship/player_ship.gd" id="1"]
 [ext_resource type="Resource" path="res://src/game/ship/ship_movement_tuning.tres" id="2"]
@@ -8,9 +8,14 @@
 [ext_resource type="Script" path="res://src/game/ship/ship_visuals.gd" id="6"]
 [ext_resource type="Script" path="res://src/game/ship/engine_trail.gd" id="7"]
 [ext_resource type="Script" path="res://src/game/ship/ship_camera.gd" id="8"]
+[ext_resource type="Script" path="res://src/game/salvage/cargo_hold.gd" id="9"]
+[ext_resource type="Script" path="res://src/game/salvage/tractor_beam.gd" id="10"]
 
 [sub_resource type="CircleShape2D" id="ShipCollision"]
 radius = 30.0
+
+[sub_resource type="CircleShape2D" id="TractorScanShape"]
+radius = 320.0
 
 [sub_resource type="Gradient" id="TrailGradient"]
 offsets = PackedFloat32Array(0, 0.36, 0.76, 1)
@@ -26,6 +31,54 @@ tuning = ExtResource("2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("ShipCollision")
+
+[node name="CargoHold" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("9")
+capacity = 12
+
+[node name="TractorBeam" type="Node2D" parent="."]
+unique_name_in_owner = true
+z_index = 1
+script = ExtResource("10")
+cargo_hold_path = NodePath("../CargoHold")
+scan_area_path = NodePath("ScanArea")
+collect_anchor_path = NodePath("CollectAnchor")
+beam_glow_path = NodePath("BeamGlow")
+beam_core_path = NodePath("BeamCore")
+scan_range = 320.0
+capture_distance = 58.0
+pull_speed = 520.0
+
+[node name="CollectAnchor" type="Marker2D" parent="TractorBeam"]
+position = Vector2(0, -2)
+
+[node name="ScanArea" type="Area2D" parent="TractorBeam"]
+collision_layer = 0
+collision_mask = 4
+monitoring = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TractorBeam/ScanArea"]
+shape = SubResource("TractorScanShape")
+
+[node name="BeamGlow" type="Line2D" parent="TractorBeam"]
+visible = false
+z_index = -1
+width = 9.0
+default_color = Color(0.18, 0.82, 1, 0.34)
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="BeamCore" type="Line2D" parent="TractorBeam"]
+visible = false
+z_index = 0
+width = 2.2
+default_color = Color(0.62, 0.98, 0.90, 0.96)
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
 
 [node name="FeedbackRoot" type="Node2D" parent="."]
 unique_name_in_owner = true
