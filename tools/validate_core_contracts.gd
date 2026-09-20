@@ -52,6 +52,20 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("TractorUpgrade", true, false) is Button, "Operations screen requires Tractor upgrade control.")
 	_expect(screen.find_child("CollectionUpgrade", true, false) is Button, "Operations screen requires Collection Speed upgrade control.")
 	_expect(screen.find_child("CargoUpgrade", true, false) is Button, "Operations screen requires Cargo upgrade control.")
+
+	var unique_refs := [
+		"Body", "Header", "SafeArea", "PrimaryAction", "ContractState", "ContractTitle",
+		"ContractDescription", "CleanupLabel", "CleanupProgress", "HazardLabel", "PayoutLabel",
+		"LastResultLabel", "ShipHeading", "ShipName", "ShipVisual", "BeamLabel", "CargoLabel",
+		"ScannerLabel", "UpgradesLabel", "TractorUpgrade", "CollectionUpgrade", "CargoUpgrade",
+		"CreditsLabel", "RankLabel", "XpLabel", "DeskLabel", "LanguageLabel", "EnglishButton",
+		"PortugueseButton", "SpanishButton",
+	]
+	for node_name in unique_refs:
+		_expect(
+			screen.get_node_or_null(NodePath("%" + node_name)) != null,
+			"Operations screen script reference must be unique: %%%s" % node_name
+		)
 	screen.free()
 
 func _validate_ship_steering() -> void:
