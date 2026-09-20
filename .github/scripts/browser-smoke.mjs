@@ -32,14 +32,6 @@ function waitForConsole(page, marker, timeout = 60000) {
   });
 }
 
-async function activateAt(page, point, touch) {
-  if (touch) {
-    await page.touchscreen.tap(point.x, point.y);
-  } else {
-    await page.mouse.click(point.x, point.y);
-  }
-}
-
 async function dragTouch(page, viewport) {
   const session = await page.context().newCDPSession(page);
   const start = {
@@ -63,7 +55,7 @@ async function dragTouch(page, viewport) {
   await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
 }
 
-async function openBuild(viewport, label, deployPoint, touch = false) {
+async function openBuild(viewport, label, touch = false) {
   const page = await browser.newPage({ viewport, hasTouch: touch, isMobile: touch });
   watch(page, label);
 
@@ -96,11 +88,16 @@ async function openBuild(viewport, label, deployPoint, touch = false) {
   await page.waitForTimeout(250);
   await page.screenshot({ path: `build/smoke-operations-${label}.png`, fullPage: true });
 
-  const sectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 15000);
-  const contractStarted = waitForConsole(page, '[Contract] START sector=earth_training_01', 15000);
-  const flightReady = waitForConsole(page, '[Flight] READY', 15000);
-  const salvageCollected = waitForConsole(page, '[Salvage] COLLECTED', 15000);
-  await activateAt(page, deployPoint, touch);
+  // Runtime smoke intentionally uses the debug deep link instead of pixel
+  // coordinates. Godot UI is rendered inside one canvas, so coordinate-click
+  // tests couple CI to a specific visual layout and break on valid redesigns.
+  // The structural Godot suite owns the HQ PrimaryAction contract; browser QA
+  // owns Web boot, routed gameplay, input modes and rendered output.
+  const sectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 30000);
+  const contractStarted = waitForConsole(page, '[Contract] START sector=earth_training_01', 30000);
+  const flightReady = waitForConsole(page, '[Flight] READY', 30000);
+  const salvageCollected = waitForConsole(page, '[Salvage] COLLECTED', 30000);
+  await page.goto(`${url}?sector=earth_training_01`, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await sectorReady;
   await contractStarted;
   await flightReady;
@@ -152,19 +149,16 @@ try {
   await openBuild(
     { width: 1280, height: 720 },
     'desktop-1280x720',
-    { x: 330, y: 676 },
     false,
   );
   await openBuild(
     { width: 844, height: 390 },
     'mobile-landscape-844x390',
-    { x: 218, y: 352 },
     true,
   );
   await openBuild(
     { width: 390, height: 844 },
     'mobile-portrait-390x844',
-    { x: 194, y: 810 },
     true,
   );
   await openQaDeepLinks();
