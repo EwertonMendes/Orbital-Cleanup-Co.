@@ -88,8 +88,11 @@ async function openBuild(viewport, label, deployPoint, touch = false) {
     throw new Error('Missing debug OCC_BUILD metadata');
   }
 
-  // Capture the player-facing operations screen before deployment so visual
-  // QA covers the menu chrome as well as gameplay.
+  const hqReady = waitForConsole(page, '[HQ] READY tab=contracts', 15000);
+  await hqReady;
+
+  // Capture the player-facing headquarters before deployment so visual
+  // QA covers the HQ chrome as well as gameplay.
   await page.waitForTimeout(250);
   await page.screenshot({ path: `build/smoke-operations-${label}.png`, fullPage: true });
 
@@ -122,19 +125,19 @@ try {
   await openBuild(
     { width: 1280, height: 720 },
     'desktop-1280x720',
-    { x: 330, y: 648 },
+    { x: 330, y: 676 },
     false,
   );
   await openBuild(
     { width: 844, height: 390 },
     'mobile-landscape-844x390',
-    { x: 218, y: 350 },
+    { x: 218, y: 352 },
     true,
   );
   await openBuild(
     { width: 390, height: 844 },
     'mobile-portrait-390x844',
-    { x: 194, y: 441 },
+    { x: 194, y: 810 },
     true,
   );
 

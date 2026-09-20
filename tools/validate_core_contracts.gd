@@ -8,6 +8,7 @@ func _init() -> void:
 func _run() -> void:
 	_validate_app_root()
 	_validate_operations_screen()
+	_validate_hq_components()
 	_validate_ship_steering()
 	_validate_content_runtime()
 	_validate_contract_session()
@@ -41,32 +42,63 @@ func _validate_app_root() -> void:
 
 func _validate_operations_screen() -> void:
 	var packed := load("res://src/ui/screens/operations/operations_screen.tscn") as PackedScene
-	_expect(packed != null, "Operations screen must load.")
+	_expect(packed != null, "Headquarters screen must load.")
 	if packed == null:
 		return
 	var screen := packed.instantiate()
-	_expect(screen is Control, "Operations screen must inherit Control.")
-	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Operations screen needs deployment action.")
-	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Operations screen requires ship preview.")
-	_expect(screen.find_child("CreditsLabel", true, false) is Label, "Operations screen requires Credits feedback.")
-	_expect(screen.find_child("TractorUpgrade", true, false) is Button, "Operations screen requires Tractor upgrade control.")
-	_expect(screen.find_child("CollectionUpgrade", true, false) is Button, "Operations screen requires Collection Speed upgrade control.")
-	_expect(screen.find_child("CargoUpgrade", true, false) is Button, "Operations screen requires Cargo upgrade control.")
+	_expect(screen is Control, "Headquarters screen must inherit Control.")
+	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Headquarters requires deployment action.")
+	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Headquarters requires contract ship preview.")
+	_expect(screen.find_child("UpgradeGrid", true, false) is GridContainer, "Headquarters requires upgrade grid.")
+	_expect(screen.find_child("CareerList", true, false) is VBoxContainer, "Headquarters requires career ladder.")
+	_expect(screen.find_child("ContentScroll", true, false) is ScrollContainer, "Headquarters content must degrade gracefully on compact screens.")
+
+	for tab_name in ["ContractsTab", "UpgradesTab", "CareerTab", "ShipTab", "DiscoveryTab"]:
+		_expect(screen.find_child(tab_name, true, false) is Button, "Headquarters requires tab: %s" % tab_name)
+
+	for panel_name in ["ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel"]:
+		_expect(screen.find_child(panel_name, true, false) is VBoxContainer, "Headquarters requires panel: %s" % panel_name)
 
 	var unique_refs := [
-		"Body", "Header", "SafeArea", "PrimaryAction", "ContractState", "ContractTitle",
-		"ContractDescription", "CleanupLabel", "CleanupProgress", "HazardLabel", "PayoutLabel",
-		"LastResultLabel", "ShipHeading", "ShipName", "ShipVisual", "BeamLabel", "CargoLabel",
-		"ScannerLabel", "UpgradesLabel", "TractorUpgrade", "CollectionUpgrade", "CargoUpgrade",
-		"CreditsLabel", "RankLabel", "XpLabel", "DeskLabel", "LanguageLabel", "EnglishButton",
-		"PortugueseButton", "SpanishButton",
+		"SafeArea", "Header", "TabGrid", "ContentScroll", "ContentShell",
+		"ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel",
+		"ContractHero", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
+		"CreditsLabel", "RankLabel", "XpLabel", "CareerRankValue", "CareerXpLabel", "CareerXpBar",
+		"ContractState", "ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk",
+		"ContractPayout", "LastResult", "ShipStats", "DiscoveryCount", "CompletedContracts",
+		"EnglishButton", "PortugueseButton", "SpanishButton", "ContractsTab", "UpgradesTab",
+		"CareerTab", "ShipTab", "DiscoveryTab", "CompanyLabel", "DeskLabel", "LanguageLabel",
+		"ContractsTitle", "ContractsSubtitle", "ContractShipName", "ContractShipStatus",
+		"UpgradesTitle", "UpgradesSubtitle", "CareerTitle", "CareerSubtitle", "ShipTitle",
+		"ShipSubtitle", "ShipName", "LoadoutTitle", "HullValue", "PaintValue", "TrailValue",
+		"BeamStyleValue", "WorkshopStatus", "DiscoveryTitle", "DiscoverySubtitle",
+		"DiscoveryEmptyTitle", "DiscoveryEmptyBody",
 	]
 	for node_name in unique_refs:
 		_expect(
 			screen.get_node_or_null(NodePath("%" + node_name)) != null,
-			"Operations screen script reference must be unique: %%%s" % node_name
+			"Headquarters script reference must be unique: %%%s" % node_name
 		)
 	screen.free()
+
+func _validate_hq_components() -> void:
+	var upgrade_packed := load("res://src/ui/components/hq_upgrade_card.tscn") as PackedScene
+	_expect(upgrade_packed != null, "HQ upgrade card scene must load.")
+	if upgrade_packed != null:
+		var upgrade := upgrade_packed.instantiate()
+		_expect(upgrade is HqUpgradeCard, "HQ upgrade card must use HqUpgradeCard.")
+		_expect(upgrade.find_child("PurchaseButton", true, false) is Button, "HQ upgrade card requires purchase action.")
+		_expect(upgrade.find_child("Description", true, false) is Label, "HQ upgrade card requires readable description.")
+		upgrade.free()
+
+	var rank_packed := load("res://src/ui/components/hq_rank_row.tscn") as PackedScene
+	_expect(rank_packed != null, "HQ rank row scene must load.")
+	if rank_packed != null:
+		var rank := rank_packed.instantiate()
+		_expect(rank is HqRankRow, "HQ rank row must use HqRankRow.")
+		_expect(rank.find_child("Status", true, false) is Label, "HQ rank row requires status.")
+		_expect(rank.find_child("Xp", true, false) is Label, "HQ rank row requires XP threshold.")
+		rank.free()
 
 func _validate_ship_steering() -> void:
 	var origin := Vector2(100, 100)

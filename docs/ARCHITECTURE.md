@@ -81,11 +81,16 @@ Player-facing screens live in `src/ui/screens/`. Reusable visual behavior lives 
 Current visual primitives include:
 
 - `OccPanelFrame` with glass/metal variants;
-- `OccActionButton`;
+- `OccChromeButton` and `OccActionButton`;
 - `OccPalette`;
 - the project `Theme`.
 
-Screens should compose these primitives instead of duplicating styling. See `docs/UI_GUIDELINES.md`.
+Headquarters adds two domain-facing reusable presentation components:
+
+- `HqUpgradeCard` renders one data-driven upgrade and emits a purchase request without owning economy rules;
+- `HqRankRow` renders one career milestone without owning rank progression.
+
+The Operations scene now acts as the Headquarters shell. It owns tab navigation and responsive composition, while persistent Credits/XP/upgrades remain in `ProgressionService`. Contract generation remains in the Sector Engine. Screens should compose these primitives instead of duplicating styling. See `docs/UI_GUIDELINES.md`.
 
 ## Movement architecture
 
@@ -198,4 +203,20 @@ The first playable upgrades are data-driven and affect the next flight immediate
 - cargo capacity.
 
 UI observes these services and does not own economy calculations.
+
+## Headquarters UI
+
+Headquarters is deliberately a UI workspace, not a walkable base scene.
+
+The current shell exposes five focused work areas:
+
+- Contract Board — assignment details and the single deployment CTA;
+- Upgrades — permanent equipment purchases;
+- Career — current certification and rank ladder;
+- Ship — current Pioneer-01 status and visual loadout summary;
+- Discovery — persistent special-find/catalog summary.
+
+Only one panel is visible at a time. The Contract Board alone owns the deploy action. Compact layouts reflow tabs and panel internals through Containers while keeping the primary action outside the scrollable content region.
+
+Ship customization controls and the actual discovery-unlock loop remain separate game-domain deliveries; the HQ shell exposes their current persisted state without embedding future business rules.
 

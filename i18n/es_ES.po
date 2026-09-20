@@ -243,3 +243,147 @@ msgstr "Carga"
 
 msgid "UPGRADE_CARGO_CAPACITY_DESC"
 msgstr "Añade más espacio de carga antes de tener que descargar."
+
+msgid "HQ_COMPANY"
+msgstr "ORBITAL CLEANUP CO."
+
+msgid "HQ_DESK"
+msgstr "SEDE · OPERACIONES"
+
+msgid "HQ_CREDITS_FMT"
+msgstr "CRÉDITOS · %d cr"
+
+msgid "HQ_RANK_FMT"
+msgstr "RANGO · %s"
+
+msgid "HQ_XP_FMT"
+msgstr "XP DE EMPRESA · %d / %d"
+
+msgid "HQ_XP_MAX_FMT"
+msgstr "XP DE EMPRESA · %d · RANGO MÁX."
+
+msgid "HQ_LANGUAGE"
+msgstr "IDIOMA"
+
+msgid "HQ_TAB_CONTRACTS"
+msgstr "CONTRATOS"
+
+msgid "HQ_TAB_UPGRADES"
+msgstr "MEJORAS"
+
+msgid "HQ_TAB_CAREER"
+msgstr "CARRERA"
+
+msgid "HQ_TAB_SHIP"
+msgstr "NAVE"
+
+msgid "HQ_TAB_DISCOVERY"
+msgstr "DESCUBRIMIENTOS"
+
+msgid "HQ_CONTRACTS_TITLE"
+msgstr "TABLÓN DE CONTRATOS"
+
+msgid "HQ_CONTRACTS_SUBTITLE"
+msgstr "Revisa la misión, las recompensas y el objetivo de limpieza antes de desplegar."
+
+msgid "HQ_CONTRACT_TARGET_FMT"
+msgstr "OBJETIVO · %d%% DE LIMPIEZA"
+
+msgid "HQ_CONTRACT_PAY_FMT"
+msgstr "BASE · %d cr · PERFECTO +%d cr"
+
+msgid "HQ_SHIP_READY"
+msgstr "LISTA PARA DESPLEGAR"
+
+msgid "HQ_DEPLOY"
+msgstr "INICIAR CONTRATO"
+
+msgid "HQ_UPGRADES_TITLE"
+msgstr "MEJORAS DE EQUIPO"
+
+msgid "HQ_UPGRADES_SUBTITLE"
+msgstr "Mejoras permanentes compradas con Créditos. Los cambios se aplican al siguiente contrato."
+
+msgid "HQ_UPGRADE_MAX"
+msgstr "NIVEL MÁX."
+
+msgid "HQ_UPGRADE_COST_FMT"
+msgstr "MEJORAR · %d cr"
+
+msgid "HQ_UPGRADE_NEED_CREDITS"
+msgstr "Créditos insuficientes."
+
+msgid "HQ_UPGRADE_EFFECT_RANGE_FMT"
+msgstr "Bono de alcance instalado · +%d"
+
+msgid "HQ_UPGRADE_EFFECT_SPEED_FMT"
+msgstr "Bono de recuperación instalado · +%d%%"
+
+msgid "HQ_UPGRADE_EFFECT_CARGO_FMT"
+msgstr "Bono de carga instalado · +%d"
+
+msgid "HQ_CAREER_TITLE"
+msgstr "CARRERA"
+
+msgid "HQ_CAREER_SUBTITLE"
+msgstr "La XP de empresa aumenta tu certificación y el acceso futuro a contratos."
+
+msgid "HQ_CAREER_PROGRESS_FMT"
+msgstr "%d / %d XP PARA EL SIGUIENTE RANGO"
+
+msgid "HQ_RANK_XP_FMT"
+msgstr "%d XP"
+
+msgid "HQ_RANK_CURRENT"
+msgstr "ACTUAL"
+
+msgid "HQ_RANK_UNLOCKED"
+msgstr "SUPERADO"
+
+msgid "HQ_RANK_LOCKED"
+msgstr "BLOQUEADO"
+
+msgid "HQ_SHIP_TITLE"
+msgstr "NAVE"
+
+msgid "HQ_SHIP_SUBTITLE"
+msgstr "Estado de Pioneer-01 y configuración visual estándar de la empresa."
+
+msgid "HQ_SHIP_LOADOUT"
+msgstr "CONFIGURACIÓN VISUAL"
+
+msgid "HQ_SHIP_HULL_VALUE"
+msgstr "Casco · Pioneer-01"
+
+msgid "HQ_SHIP_PAINT_VALUE"
+msgstr "Pintura · Azul Corporativo"
+
+msgid "HQ_SHIP_TRAIL_VALUE"
+msgstr "Estela · Ion Estándar"
+
+msgid "HQ_SHIP_BEAM_VALUE"
+msgstr "Haz · Cian Estándar"
+
+msgid "HQ_SHIP_STATS_FMT"
+msgstr "Haz %d · Carga %d · Recuperación +%d%%"
+
+msgid "HQ_SHIP_WORKSHOP_STATUS"
+msgstr "Configuración estándar de empresa · sin cosméticos adquiridos"
+
+msgid "HQ_DISCOVERY_TITLE"
+msgstr "CATÁLOGO DE DESCUBRIMIENTOS"
+
+msgid "HQ_DISCOVERY_SUBTITLE"
+msgstr "Los objetos raros recuperados y residuos inusuales se registran aquí."
+
+msgid "HQ_DISCOVERY_EMPTY_TITLE"
+msgstr "AÚN NO HAY DESCUBRIMIENTOS ESPECIALES"
+
+msgid "HQ_DISCOVERY_EMPTY_BODY"
+msgstr "Sigue limpiando contratos. Los objetos inusuales se catalogarán al encontrarlos por primera vez."
+
+msgid "HQ_DISCOVERY_COUNT_FMT"
+msgstr "HALLAZGOS ESPECIALES · %d"
+
+msgid "HQ_COMPLETED_CONTRACTS_FMT"
+msgstr "CONTRATOS COMPLETADOS · %d"
