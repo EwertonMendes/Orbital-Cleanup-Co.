@@ -117,8 +117,8 @@ func _build_salvage_spawns(
 ) -> Array[Dictionary]:
 	var output: Array[Dictionary] = []
 	for index in range(count):
-		var table_ref := _weighted_pick(sector["salvage_tables"] as Array, "weight", rng)
-		var table_id := String((table_ref as Dictionary)["id"])
+		var table_ref: Dictionary = _weighted_pick(sector["salvage_tables"] as Array, "weight", rng) as Dictionary
+		var table_id := String(table_ref["id"])
 		var table := _registry.get_salvage_table(table_id)
 		var salvage_id := _pick_salvage_id(table["entries"] as Array, rng, rare_weight_multiplier)
 
@@ -152,7 +152,7 @@ func _build_obstacle_spawns(
 		return output
 
 	for _index in range(count):
-		var definition := _weighted_pick(obstacle_definitions, "weight", rng) as Dictionary
+		var definition: Dictionary = _weighted_pick(obstacle_definitions, "weight", rng) as Dictionary
 		var position := _find_position(rng, play_bounds, edge_margin, min_spacing, occupied)
 		occupied.append(position)
 		output.append({
@@ -173,7 +173,7 @@ func _pick_salvage_id(entries: Array, rng: RandomNumberGenerator, rare_weight_mu
 		entry["_effective_weight"] = float(entry["weight"]) * rarity_multiplier
 		weighted.append(entry)
 
-	var selected := _weighted_pick(weighted, "_effective_weight", rng) as Dictionary
+	var selected: Dictionary = _weighted_pick(weighted, "_effective_weight", rng) as Dictionary
 	return String(selected["salvage"])
 
 func _weighted_pick(entries: Array, weight_key: String, rng: RandomNumberGenerator):
@@ -231,7 +231,7 @@ func _build_signature(
 ) -> String:
 	var parts := PackedStringArray([sector_id, str(seed), str(salvage.size()), str(obstacles.size()), str(landmarks.size())])
 	for index in range(mini(salvage.size(), 5)):
-		var entry := salvage[index]
+		var entry: Dictionary = salvage[index] as Dictionary
 		var position := entry["position"] as Vector2
 		parts.append("%s@%.1f,%.1f" % [String(entry["salvage_id"]), position.x, position.y])
 	return "|".join(parts)
