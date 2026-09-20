@@ -1,0 +1,55 @@
+{
+  "id": "mars_freight",
+  "display_name_key": "BIOME_MARS_FREIGHT",
+  "palette": {
+    "background": "#120907",
+    "nebula": "#5b2419",
+    "accent": "#f28b54"
+  },
+  "salvage_tables": [
+    "mars_freight"
+  ],
+  "landmarks": [
+    "cargo_waystation",
+    "comms_array",
+    "fractured_moonlet"
+  ],
+  "modifiers": [
+    "dense_debris",
+    "valuable_salvage",
+    "meteor_front",
+    "quiet_orbit"
+  ],
+  "spawn_rules": {
+    "min_spacing": 145,
+    "edge_margin": 340,
+    "starter_cluster_count": 3,
+    "starter_cluster_radius": 285
+  },
+  "obstacles": [
+    {
+      "id": "mars_rock_large",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 26,
+      "collision_radius": 54,
+      "scale_min": 0.92,
+      "scale_max": 1.18
+    },
+    {
+      "id": "mars_rock_medium",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 49,
+      "collision_radius": 38,
+      "scale_min": 0.9,
+      "scale_max": 1.16
+    },
+    {
+      "id": "mars_dust_fragment",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 25,
+      "collision_radius": 26,
+      "scale_min": 0.95,
+      "scale_max": 1.3
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "research_outpost",
+  "display_name_key": "LANDMARK_RESEARCH_OUTPOST",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/station_a.png",
+  "scale": 1.9,
+  "reserved_radius": 250,
+  "placement_radius": [
+    1200,
+    2250
+  ],
+  "ambient_effect": "ion_glow"
+}

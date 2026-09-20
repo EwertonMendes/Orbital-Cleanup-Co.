@@ -1,0 +1,37 @@
+{
+  "id": "blue_nebula_01",
+  "display_name_key": "SECTOR_BLUE_NEBULA_01",
+  "biome": "blue_nebula",
+  "seed": 88413,
+  "difficulty": 7,
+  "map": {
+    "half_extents": [
+      5600,
+      3500
+    ],
+    "debris_density": 0.84,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "standard_cleanup",
+    "target_percent": 75
+  },
+  "modifiers": [
+    "light_debris"
+  ],
+  "depot": {
+    "position": [
+      -960,
+      -620
+    ]
+  }
+}

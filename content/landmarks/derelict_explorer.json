@@ -1,0 +1,12 @@
+{
+  "id": "derelict_explorer",
+  "display_name_key": "LANDMARK_DERELICT_EXPLORER",
+  "sprite": "res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png",
+  "scale": 2.25,
+  "reserved_radius": 220,
+  "placement_radius": [
+    1100,
+    2200
+  ],
+  "ambient_effect": "ion_glow"
+}

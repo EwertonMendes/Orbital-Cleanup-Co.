@@ -1,0 +1,19 @@
+{
+  "id": "solar_cell_bundle",
+  "display_name_key": "SALVAGE_SOLAR_CELL_BUNDLE",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "category": "power",
+  "rarity": "uncommon",
+  "base_value": 64,
+  "mass": 1.4,
+  "collect_duration": 1.25,
+  "cleanliness_value": 2.2,
+  "cargo_units": 2,
+  "visual_scale": 0.66,
+  "collision_radius": 25,
+  "tags": [
+    "solar",
+    "power",
+    "earth"
+  ]
+}

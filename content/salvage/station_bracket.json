@@ -1,0 +1,19 @@
+{
+  "id": "station_bracket",
+  "display_name_key": "SALVAGE_STATION_BRACKET",
+  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_small.png",
+  "category": "scrap",
+  "rarity": "common",
+  "base_value": 20,
+  "mass": 0.85,
+  "collect_duration": 0.7,
+  "cleanliness_value": 1.2,
+  "cargo_units": 1,
+  "visual_scale": 0.88,
+  "collision_radius": 20,
+  "tags": [
+    "station",
+    "metal",
+    "earth"
+  ]
+}

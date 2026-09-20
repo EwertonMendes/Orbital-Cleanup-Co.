@@ -1,0 +1,12 @@
+{
+  "id": "fractured_moonlet",
+  "display_name_key": "LANDMARK_FRACTURED_MOONLET",
+  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+  "scale": 3.2,
+  "reserved_radius": 360,
+  "placement_radius": [
+    1400,
+    2500
+  ],
+  "ambient_effect": "dust"
+}

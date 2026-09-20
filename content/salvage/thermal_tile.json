@@ -1,0 +1,19 @@
+{
+  "id": "thermal_tile",
+  "display_name_key": "SALVAGE_THERMAL_TILE",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+  "category": "scrap",
+  "rarity": "common",
+  "base_value": 22,
+  "mass": 0.7,
+  "collect_duration": 0.6,
+  "cleanliness_value": 1.1,
+  "cargo_units": 1,
+  "visual_scale": 0.92,
+  "collision_radius": 18,
+  "tags": [
+    "thermal",
+    "ceramic",
+    "lunar"
+  ]
+}

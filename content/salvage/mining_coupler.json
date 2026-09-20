@@ -1,0 +1,19 @@
+{
+  "id": "mining_coupler",
+  "display_name_key": "SALVAGE_MINING_COUPLER",
+  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_small.png",
+  "category": "mining",
+  "rarity": "common",
+  "base_value": 28,
+  "mass": 1.15,
+  "collect_duration": 0.9,
+  "cleanliness_value": 1.6,
+  "cargo_units": 1,
+  "visual_scale": 0.92,
+  "collision_radius": 21,
+  "tags": [
+    "lunar",
+    "mining",
+    "industrial"
+  ]
+}

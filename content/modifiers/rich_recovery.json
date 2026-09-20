@@ -1,0 +1,9 @@
+{
+  "id": "rich_recovery",
+  "display_name_key": "MODIFIER_RICH_RECOVERY",
+  "runtime": {
+    "salvage_count_multiplier": 1.16,
+    "obstacle_count_multiplier": 0.9,
+    "rare_weight_multiplier": 1.6
+  }
+}

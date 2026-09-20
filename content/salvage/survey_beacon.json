@@ -1,0 +1,19 @@
+{
+  "id": "survey_beacon",
+  "display_name_key": "SALVAGE_SURVEY_BEACON",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "category": "research",
+  "rarity": "rare",
+  "base_value": 135,
+  "mass": 1.7,
+  "collect_duration": 1.6,
+  "cleanliness_value": 3,
+  "cargo_units": 2,
+  "visual_scale": 0.72,
+  "collision_radius": 27,
+  "tags": [
+    "research",
+    "beacon",
+    "nebula"
+  ]
+}

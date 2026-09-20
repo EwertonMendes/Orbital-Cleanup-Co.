@@ -1,0 +1,37 @@
+{
+  "id": "mars_freight_01",
+  "display_name_key": "SECTOR_MARS_FREIGHT_01",
+  "biome": "mars_freight",
+  "seed": 55021,
+  "difficulty": 6,
+  "map": {
+    "half_extents": [
+      5500,
+      3350
+    ],
+    "debris_density": 0.9,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "mars_freight",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "cargo_waystation"
+  ],
+  "contract": {
+    "type": "standard_cleanup",
+    "target_percent": 76
+  },
+  "modifiers": [
+    "quiet_orbit"
+  ],
+  "depot": {
+    "position": [
+      -940,
+      650
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "id": "cargo_waystation",
+  "display_name_key": "LANDMARK_CARGO_WAYSTATION",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/station_a.png",
+  "scale": 1.75,
+  "reserved_radius": 230,
+  "placement_radius": [
+    1100,
+    2100
+  ],
+  "ambient_effect": "none"
+}
