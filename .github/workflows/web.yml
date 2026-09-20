@@ -134,6 +134,7 @@ jobs:
 
           mkdir -p build/web/platform
           cp web/platform/*.js build/web/platform/
+          cp assets/branding/orbital_cleanup_icon.svg build/web/favicon.svg
           VERSION="$(tr -d '\r\n' < VERSION)"
           BUILT_AT="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           sed -i             -e "s|__OCC_PROVIDER__|${OCC_PROVIDER}|g"             -e "s|__OCC_VERSION__|${VERSION}|g"             -e "s|__OCC_COMMIT__|${OCC_COMMIT}|g"             -e "s|__OCC_ENVIRONMENT__|${OCC_ENVIRONMENT}|g"             -e "s|__OCC_WORKFLOW_RUN__|${OCC_WORKFLOW_RUN}|g"             -e "s|__OCC_BUILT_AT__|${BUILT_AT}|g"             build/web/platform/platform-config.js
@@ -143,6 +144,7 @@ jobs:
           test -s build/web/index.wasm
           test -s build/web/index.pck
           test -s build/web/platform/platform-config.js
+          test -s build/web/favicon.svg
 
       - name: Upload Web build
         uses: actions/upload-artifact@v4
