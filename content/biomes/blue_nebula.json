@@ -18,7 +18,8 @@
     "light_debris",
     "valuable_salvage",
     "rich_recovery",
-    "quiet_orbit"
+    "quiet_orbit",
+    "dense_debris"
   ],
   "spawn_rules": {
     "min_spacing": 160,
