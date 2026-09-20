@@ -153,7 +153,6 @@ def validate_visual_foundation() -> None:
     component_markers = (
         "occ_panel_frame.tscn",
         "occ_chrome_button.tscn",
-        "Oxanium[wght].ttf",
         "kenney_ui_sci_fi",
         "kenney_space_shooter",
         "kenney_simple_space",
@@ -164,6 +163,10 @@ def validate_visual_foundation() -> None:
 
     if "Provider:" in screen or "Build:" in screen:
         fail("Player-facing Operations UI must not expose debug/provider build metadata")
+
+    theme = (ROOT / "src" / "ui" / "themes" / "occ_theme.tres").read_text(encoding="utf-8")
+    if "Oxanium[wght].ttf" not in theme:
+        fail("Shared OCC Theme must provide Oxanium typography")
 
 
 def main() -> None:
