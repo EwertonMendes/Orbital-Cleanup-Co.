@@ -1,5 +1,5 @@
 {
-  "id": "default",
+  "id": "difficulty_scaling",
   "curves": {
     "salvage_count": {
       "base": 16,
