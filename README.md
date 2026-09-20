@@ -14,30 +14,34 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**PR 1 — Project Bootstrap + Web CI**
+**PR 2 — Reusable Core + Visual Foundation**
 
-The bootstrap establishes:
+This milestone builds on the merged Web bootstrap with:
 
-- Godot 4.7.2 with GL Compatibility and single-threaded Web export;
-- 1280×720 reference viewport with responsive canvas-item stretching;
-- internationalization baseline: English (US), Portuguese (Brazil), Spanish (Spain);
-- custom Web shell;
-- isolated `DebugWebProvider` with no real advertising network;
-- build metadata exposed to the runtime;
-- headless import/export validation;
-- browser smoke on desktop, mobile landscape and mobile portrait;
-- GitHub Pages production + preserved `/pr-N/` previews;
-- one self-updating playable-preview comment per PR;
-- project rules and architecture documentation.
+- an explicit `AppRoot` and small reusable core-service layer;
+- build/platform/settings/save/audio/input/routing services;
+- versioned save envelope;
+- executable Godot structural-contract tests in CI;
+- curated imports from Kenney UI Pack - Sci-Fi, Space Shooter Remastered and Simple Space;
+- provenance/license records for every imported third-party source;
+- reusable OCC palette, Theme, panel frame and action-button foundations;
+- a clean responsive Operations screen that establishes the game's UI language;
+- localization preserved across English, Brazilian Portuguese and Spanish.
 
-Gameplay starts in later focused PRs after this foundation is approved.
+The next focused milestone is **Core Movement + Cozy Ship**.
+
+## Visual direction
+
+The game should feel friendly, modern, clean and lightly corporate rather than military or cluttered. Third-party packs are source material; Orbital Cleanup Co. owns the composition, hierarchy, palette and interaction language.
+
+See [UI Guidelines](docs/UI_GUIDELINES.md).
 
 ## Repository map
 
 ```text
 assets/
   branding/
-  third_party/          # added only with provenance + license
+  third_party/          # curated files + SOURCE.md + LICENSE.txt
 content/                 # data-driven game content (introduced with Sector Engine)
 docs/
 i18n/
@@ -45,6 +49,9 @@ src/
   core/
   game/
   ui/
+    components/
+    screens/
+    themes/
   debug/
 tools/
 web/
@@ -59,21 +66,23 @@ web/
 
 Every PR targeting the default branch runs:
 
-1. lightweight repository validation;
+1. repository/localization/asset-provenance validation;
 2. Godot 4.7.2 headless import;
-3. Web export;
-4. browser smoke in Chrome;
-5. QA screenshots;
-6. GitHub Pages preview using the `debug` provider.
+3. real Godot core/UI contract assertions;
+4. Web export;
+5. browser smoke in Chrome;
+6. desktop/mobile QA screenshots;
+7. GitHub Pages preview using the `debug` provider.
 
 The production Pages root is only updated from the repository default branch.
 
-See [docs/CI_CD.md](docs/CI_CD.md) for details.
+See [CI/CD](docs/CI_CD.md).
 
 ## Project documentation
 
 - [Game design](docs/GAME_DESIGN.md)
 - [Architecture](docs/ARCHITECTURE.md)
+- [UI guidelines](docs/UI_GUIDELINES.md)
 - [Content authoring](docs/CONTENT_AUTHORING.md)
 - [Platform integration](docs/PLATFORM_INTEGRATION.md)
 - [CI/CD](docs/CI_CD.md)

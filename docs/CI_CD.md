@@ -2,7 +2,7 @@
 
 ## Goal
 
-A contributor should be able to implement, build, smoke-test and preview the Web game using GitHub without a local Godot/Node setup.
+A contributor should be able to implement, build, structurally validate, smoke-test and preview the Web game using GitHub without a local Godot/Node setup.
 
 ## Web workflow
 
@@ -12,17 +12,24 @@ Pipeline:
 
 1. resolve the exact revision under test;
 2. checkout that SHA;
-3. run fast repository validation;
+3. run repository, localization, provider-boundary and asset-provenance validation;
 4. restore/download pinned Godot 4.7.2 and Web templates;
 5. run headless import;
-6. export release Web build;
-7. inject build metadata and the debug provider;
-8. upload `occ-web-build`;
-9. serve the artifact locally on the runner;
-10. run Chrome/Playwright smoke;
-11. capture desktop, landscape-mobile and portrait-mobile screenshots;
-12. compose GitHub Pages;
-13. publish/update a single PR preview comment.
+6. execute `tools/validate_core_contracts.gd` in real Godot;
+7. export the release Web build;
+8. inject build metadata and the debug provider;
+9. upload `occ-web-build`;
+10. serve that exact artifact on the runner;
+11. run Chrome/Playwright smoke;
+12. capture desktop, landscape-mobile and portrait-mobile screenshots;
+13. compose GitHub Pages;
+14. publish/update the single PR preview comment.
+
+## Contract validation
+
+`tools/validate_core_contracts.gd` instantiates committed scenes and asserts required runtime structure, including the service container and important Operations-screen contracts.
+
+These are structural assertions, not string-only lint checks. A renamed/removed required service or UI contract must fail CI.
 
 ## Build contract
 
@@ -33,7 +40,7 @@ Web export is single-threaded:
 - extension support disabled;
 - PWA disabled;
 - adaptive canvas resizing;
-- Web VRAM texture compression copies disabled initially (no ETC2/ASTC requirement); revisit only if measured asset/runtime needs justify it.
+- Web VRAM texture compression copies disabled initially.
 
 This intentionally avoids SharedArrayBuffer/cross-origin-isolation requirements that often conflict with publisher SDKs and embedded portal contexts.
 
@@ -43,17 +50,11 @@ Production is at the Pages root. Each open PR is preserved under:
 
 `/pr-<number>/`
 
-The composition script rebuilds one Pages artifact containing production plus every recoverable open-PR artifact, so deploying PR #42 does not erase PR #41.
-
-For the very first bootstrap PR, if the default branch has never produced a Web artifact, the root intentionally displays a "production not published yet" page while the PR remains available at its preview path.
+The composition script rebuilds one Pages artifact containing production plus recoverable open-PR artifacts, so deploying a new preview does not intentionally erase another open preview.
 
 ## PR comment
 
-The workflow searches for the marker:
-
-`<!-- orbital-cleanup-preview -->`
-
-and updates the same comment on subsequent pushes instead of spamming the PR conversation.
+The workflow searches for `<!-- orbital-cleanup-preview -->` and updates the same comment on subsequent pushes.
 
 ## QA contract
 
@@ -64,7 +65,7 @@ Browser smoke checks:
 - `[OCC] READY` is emitted;
 - provider is `debug`;
 - build metadata exists;
-- no page/critical console error;
+- no page/critical console or failed-resource error;
 - screenshots succeed at target viewports.
 
-Gameplay-specific smoke will grow only when a feature needs a stable, high-value check. Avoid brittle pixel-perfect regression suites.
+Visual changes are additionally judged by the generated screenshots and playable preview. Avoid brittle pixel-perfect regression suites.

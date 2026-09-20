@@ -4,7 +4,23 @@
 
 Architecture exists to support the game. Reusability is valuable only where Orbital Cleanup Co. already needs the abstraction.
 
-## Target layout
+## Current runtime root
+
+The application starts at `src/core/app/app_root.tscn`.
+
+`AppRoot` owns explicit service nodes instead of hidden global gameplay dependencies:
+
+- `BuildInfo` — build/provider metadata;
+- `PlatformService` — project-owned bridge to the Web provider;
+- `SettingsService` — locale and user settings persistence;
+- `SaveService` — versioned save envelope;
+- `AudioService` — audio settings/application;
+- `InputService` — pointer/keyboard, touch and gamepad input-mode detection;
+- `SceneRouter` — controlled player-facing screen replacement.
+
+The service context is passed to routed screens that opt into `configure(context)`.
+
+## Layout
 
 ```text
 src/
@@ -54,23 +70,40 @@ web/
 
 Core modules must not know Orbital Cleanup Co. business rules. Game modules may depend on core services; core must not depend on game modules.
 
-Potentially extractable core modules are InputService, SaveService, AudioService, SettingsService, PlatformService, BuildInfo, SceneRouter and a small signal/event layer.
+The current core surface is intentionally small. Do not add generic managers until the game proves a real need.
+
+## UI architecture
+
+Player-facing screens live in `src/ui/screens/`. Reusable visual behavior lives in `src/ui/components/`; shared palette/control styling lives in `src/ui/themes/`.
+
+Current visual primitives include:
+
+- `OccPanelFrame` with glass/metal variants;
+- `OccActionButton`;
+- `OccPalette`;
+- the project `Theme`.
+
+Screens should compose these primitives instead of duplicating styling. See `docs/UI_GUIDELINES.md`.
 
 ## Web boundary
 
 Godot gameplay does not call CrazyGames, GamePix, GameMonetize or future portal globals. JavaScript adapters expose a stable project-owned surface through the Web bridge. Builds select a provider through configuration.
 
-GitHub Pages always selects `debug`.
+GitHub Pages and PR previews use `debug`.
+
+## Save contract
+
+Save data uses a versioned envelope. Schema migrations will be added before a public progression-bearing release. Do not silently change persisted semantics after that point.
 
 ## Data-driven sector runtime
 
 The future Sector Engine owns loading and validating BiomeDefinition, SectorDefinition, SalvageDefinition, LandmarkDefinition, ContractDefinition and ModifierDefinition.
 
-A generic `SalvageObject.tscn` is configured by data rather than duplicated per item. Landmarks should similarly be data/configuration first; genuinely unique runtime behavior must justify a reusable generic capability.
+A generic `SalvageObject.tscn` is configured by data rather than duplicated per item. Normal sector variants must not require sector-specific scripts.
 
 ## Determinism
 
-Procedural systems use explicit seeded RNG streams. Given the same relevant version/configuration and seed, debug reproduction should be practical. Never rely on implicit global randomness for sector generation.
+Procedural systems use explicit seeded RNG streams. Given the same relevant version/configuration and seed, debug reproduction should be practical.
 
 ## Performance posture
 

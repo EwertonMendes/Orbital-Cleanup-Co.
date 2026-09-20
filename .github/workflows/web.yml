@@ -117,6 +117,13 @@ jobs:
             exit 1
           fi
 
+      - name: Validate core and UI contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --headless --path . --script tools/validate_core_contracts.gd 2>&1 | tee /tmp/occ-contracts.log
+          grep -q '\[QA\] CORE_CONTRACTS_OK' /tmp/occ-contracts.log
+
       - name: Export Web build
         shell: bash
         env:

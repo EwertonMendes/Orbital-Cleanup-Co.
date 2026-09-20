@@ -3,8 +3,7 @@
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_backdrop.gd" id="2"]
 [ext_resource type="Theme" path="res://src/ui/themes/occ_theme.tres" id="3"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/panel_glass_notches.png" id="4"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/panel_rectangle_screws.png" id="5"]
+[ext_resource type="PackedScene" path="res://src/ui/components/occ_panel_frame.tscn" id="4"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/button_header_blade.png" id="6"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="7"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png" id="8"]
@@ -12,6 +11,7 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/station_a.png" id="10"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/satellite_b.png" id="11"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png" id="12"]
+[ext_resource type="Script" path="res://src/ui/components/occ_action_button.gd" id="13"]
 
 [node name="OperationsScreen" type="Control"]
 layout_mode = 3
@@ -126,7 +126,6 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.51, 0.68, 0.75, 1)
 theme_override_font_sizes/font_size = 12
 text = "CLEANER OPERATIONS"
-uppercase = true
 
 [node name="LanguageGroup" type="HBoxContainer" parent="SafeArea/Layout/Header"]
 layout_mode = 2
@@ -174,20 +173,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Frame" type="NinePatchRect" parent="SafeArea/Layout/Body/ContractCard"]
+[node name="Frame" parent="SafeArea/Layout/Body/ContractCard" instance=ExtResource("4")]
 modulate = Color(0.65, 0.9, 1, 0.78)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("4")
-patch_margin_left = 20
-patch_margin_top = 20
-patch_margin_right = 20
-patch_margin_bottom = 20
 
 [node name="ContentMargin" type="MarginContainer" parent="SafeArea/Layout/Body/ContractCard"]
 layout_mode = 1
@@ -276,6 +264,7 @@ text = "Base pay · 240 cr"
 
 [node name="PrimaryAction" type="Button" parent="SafeArea/Layout/Body/ContractCard/ContentMargin/Content"]
 unique_name_in_owner = true
+script = ExtResource("13")
 custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 text = "SELECT CONTRACT"
@@ -286,20 +275,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Frame" type="NinePatchRect" parent="SafeArea/Layout/Body/ShipCard"]
+[node name="Frame" parent="SafeArea/Layout/Body/ShipCard" instance=ExtResource("4")]
 modulate = Color(0.62, 0.77, 0.84, 0.68)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = ExtResource("5")
-patch_margin_left = 18
-patch_margin_top = 18
-patch_margin_right = 18
-patch_margin_bottom = 18
+variant = 1
 
 [node name="TabBlade" type="TextureRect" parent="SafeArea/Layout/Body/ShipCard"]
 modulate = Color(0.34, 0.86, 0.98, 0.42)

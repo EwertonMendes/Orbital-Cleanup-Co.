@@ -52,4 +52,4 @@ func read_state() -> Dictionary:
 func delete_save() -> Error:
 	if not has_save():
 		return OK
-	return DirAccess.remove_absolute(SAVE_PATH)
+	return DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
