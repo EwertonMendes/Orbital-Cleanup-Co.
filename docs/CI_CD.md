@@ -32,7 +32,8 @@ Web export is single-threaded:
 - thread support disabled;
 - extension support disabled;
 - PWA disabled;
-- adaptive canvas resizing.
+- adaptive canvas resizing;
+- Web VRAM texture compression copies disabled initially (no ETC2/ASTC requirement); revisit only if measured asset/runtime needs justify it.
 
 This intentionally avoids SharedArrayBuffer/cross-origin-isolation requirements that often conflict with publisher SDKs and embedded portal contexts.
 
