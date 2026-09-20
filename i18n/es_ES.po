@@ -150,3 +150,96 @@ msgstr "Residuos Ligeros"
 
 msgid "MODIFIER_DENSE_DEBRIS"
 msgstr "Residuos Densos"
+
+msgid "FLIGHT_CLEANLINESS_FMT"
+msgstr "LIMPIEZA DEL SECTOR · %d%% / %d%%"
+
+msgid "FLIGHT_ABORT_CONTRACT"
+msgstr "ABORTAR CONTRATO"
+
+msgid "FLIGHT_COMPLETE_CONTRACT"
+msgstr "COMPLETAR CONTRATO"
+
+msgid "FLIGHT_RETURN_PERFECT"
+msgstr "REGRESAR · PERFECTO"
+
+msgid "FLIGHT_CONTRACT_COMPLETE"
+msgstr "CONTRATO COMPLETADO · Regresa ahora o continúa hasta 100%"
+
+msgid "FLIGHT_PERFECT_CLEANUP"
+msgstr "LIMPIEZA PERFECTA · Bono completo asegurado"
+
+msgid "OPS_CLEANUP_TARGET_FMT"
+msgstr "Objetivo de limpieza · %d%%"
+
+msgid "OPS_PAYOUT_FMT"
+msgstr "Pago base · %d cr · Perfecto +%d cr"
+
+msgid "OPS_CREDITS_FMT"
+msgstr "CRÉDITOS · %d cr"
+
+msgid "OPS_RANK_FMT"
+msgstr "RANGO · %s"
+
+msgid "OPS_XP_FMT"
+msgstr "XP DE EMPRESA · %d / %d"
+
+msgid "OPS_XP_MAX_FMT"
+msgstr "XP DE EMPRESA · %d · RANGO MÁX."
+
+msgid "OPS_UPGRADES"
+msgstr "MEJORAS DE LA NAVE"
+
+msgid "OPS_UPGRADE_BUTTON_FMT"
+msgstr "%s · N%d > %d · %d cr"
+
+msgid "OPS_UPGRADE_MAX_FMT"
+msgstr "%s · N%d · MÁX."
+
+msgid "OPS_LAST_RESULT_FMT"
+msgstr "Último contrato · +%d cr · +%d XP"
+
+msgid "OPS_LAST_RESULT_PERFECT_FMT"
+msgstr "Limpieza perfecta · +%d cr · +%d XP"
+
+msgid "OPS_BEAM_FMT"
+msgstr "Haz · %d"
+
+msgid "OPS_CARGO_FMT"
+msgstr "Carga · %d"
+
+msgid "RANK_TRAINEE"
+msgstr "Aprendiz"
+
+msgid "RANK_JUNIOR_CLEANER"
+msgstr "Limpiador Júnior"
+
+msgid "RANK_ORBITAL_CLEANER"
+msgstr "Limpiador Orbital"
+
+msgid "RANK_SENIOR_CLEANER"
+msgstr "Limpiador Sénior"
+
+msgid "RANK_SECTOR_SPECIALIST"
+msgstr "Especialista de Sector"
+
+msgid "RANK_DEEP_SPACE_OPERATOR"
+msgstr "Operador de Espacio Profundo"
+
+msgid "UPGRADE_TRACTOR_RANGE"
+msgstr "Alcance del Haz"
+
+msgid "UPGRADE_TRACTOR_RANGE_DESC"
+msgstr "Amplía el alcance de detección automática del Haz Tractor."
+
+msgid "UPGRADE_COLLECTION_SPEED"
+msgstr "Velocidad de Recolección"
+
+msgid "UPGRADE_COLLECTION_SPEED_DESC"
+msgstr "Acelera la recuperación automática de residuos."
+
+msgid "UPGRADE_CARGO_CAPACITY"
+msgstr "Carga"
+
+msgid "UPGRADE_CARGO_CAPACITY_DESC"
+msgstr "Añade más espacio de carga antes de tener que descargar."

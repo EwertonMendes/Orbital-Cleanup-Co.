@@ -37,9 +37,10 @@ func set_targeted(value: bool) -> void:
 		_tractor_velocity = Vector2.ZERO
 	queue_redraw()
 
-func tractor_step(anchor: Vector2, delta: float, base_pull_speed: float) -> void:
+func tractor_step(anchor: Vector2, delta: float, base_pull_speed: float, collection_speed_multiplier: float = 1.0) -> void:
 	assert(_targeted, "tractor_step requires an active target.")
-	_tractor_progress = minf(_tractor_progress + delta / definition.collect_duration, 1.0)
+	var effective_speed := maxf(collection_speed_multiplier, 0.1)
+	_tractor_progress = minf(_tractor_progress + (delta * effective_speed) / definition.collect_duration, 1.0)
 
 	var offset := anchor - global_position
 	var distance := offset.length()

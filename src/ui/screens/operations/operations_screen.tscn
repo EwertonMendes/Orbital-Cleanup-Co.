@@ -98,9 +98,11 @@ theme_override_constants/margin_bottom = 22
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Header" type="HBoxContainer" parent="SafeArea/Layout"]
+[node name="Header" type="BoxContainer" parent="SafeArea/Layout"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 16
+vertical = false
 
 [node name="Brand" type="VBoxContainer" parent="SafeArea/Layout/Header"]
 layout_mode = 2
@@ -119,6 +121,35 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.51, 0.68, 0.75, 1)
 theme_override_font_sizes/font_size = 12
 text = "CLEANER OPERATIONS"
+
+[node name="CareerGroup" type="VBoxContainer" parent="SafeArea/Layout/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="CreditsLabel" type="Label" parent="SafeArea/Layout/Header/CareerGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.82, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "CREDITS · 0 cr"
+horizontal_alignment = 2
+
+[node name="RankLabel" type="Label" parent="SafeArea/Layout/Header/CareerGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
+theme_override_font_sizes/font_size = 11
+text = "RANK · TRAINEE"
+horizontal_alignment = 2
+
+[node name="XpLabel" type="Label" parent="SafeArea/Layout/Header/CareerGroup"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.72, 0.79, 1)
+theme_override_font_sizes/font_size = 10
+text = "COMPANY XP · 0 / 400"
+horizontal_alignment = 2
 
 [node name="LanguageGroup" type="HBoxContainer" parent="SafeArea/Layout/Header"]
 layout_mode = 2
@@ -225,6 +256,15 @@ theme_override_font_sizes/font_size = 13
 text = "Clear a light debris pocket around a service corridor."
 autowrap_mode = 2
 
+[node name="LastResultLabel" type="Label" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.96, 0.81, 1)
+theme_override_font_sizes/font_size = 11
+text = "LAST CONTRACT"
+autowrap_mode = 2
+
 [node name="ContractSpacer" type="Control" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -237,6 +277,7 @@ theme_override_font_sizes/font_size = 12
 text = "Cleanup target · 70%"
 
 [node name="CleanupProgress" type="ProgressBar" parent="SafeArea/Layout/Body/ContractCard/ContractMargin/ContractContent"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 value = 70.0
@@ -334,6 +375,7 @@ theme_override_font_sizes/font_size = 25
 text = "Pioneer-01"
 
 [node name="ShipVisual" type="CenterContainer" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 size_flags_vertical = 3
@@ -378,3 +420,41 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.68, 0.78, 0.83, 1)
 theme_override_font_sizes/font_size = 11
 text = "Scanner · Mk I"
+
+[node name="UpgradesLabel" type="Label" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
+theme_override_font_sizes/font_size = 11
+text = "SHIP UPGRADES"
+
+[node name="UpgradeButtons" type="HBoxContainer" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TractorUpgrade" type="Button" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/UpgradeButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "BEAM · L0→1 · 180 cr"
+clip_text = true
+
+[node name="CollectionUpgrade" type="Button" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/UpgradeButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "SPEED · L0→1 · 220 cr"
+clip_text = true
+
+[node name="CargoUpgrade" type="Button" parent="SafeArea/Layout/Body/ShipCard/ShipMargin/ShipContent/UpgradeButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "CARGO · L0→1 · 200 cr"
+clip_text = true

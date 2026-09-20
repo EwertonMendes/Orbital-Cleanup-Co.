@@ -125,3 +125,19 @@ After the vertical slice:
 One ship, one biome/sector, Tractor Beam, five salvage types, cargo, unload point, cleanup percentage, one contract, Credits, three upgrades, Web build and mobile support.
 
 Do not scale content before this loop feels good.
+
+## Vertical-slice progression implementation
+
+The current vertical slice now implements the first complete progression loop:
+
+```text
+deploy → recover salvage → reach cleanup target → optional Perfect Cleanup
+→ return → Credits + Company XP → buy ship upgrade → deploy again
+```
+
+The initial contract target is 70%. Reaching the target allows the player to finish the contract; continuing to 100% grants the configured Perfect Cleanup bonus.
+
+The first functional upgrades are Tractor Beam range, collection speed and cargo capacity. Their prices/effects and all career rank thresholds are authored in progression content rather than UI code.
+
+Aborting before the cleanup target returns to Operations without contract payout.
+

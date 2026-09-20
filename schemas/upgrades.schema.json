@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Upgrades",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "base_ship",
+    "upgrades"
+  ],
+  "properties": {
+    "id": {
+      "const": "upgrades"
+    },
+    "base_ship": {
+      "type": "object",
+      "required": [
+        "scan_range",
+        "collection_speed_multiplier",
+        "cargo_capacity"
+      ],
+      "properties": {
+        "scan_range": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "collection_speed_multiplier": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "cargo_capacity": {
+          "type": "number",
+          "minimum": 1
+        }
+      }
+    },
+    "upgrades": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "display_name_key",
+          "description_key",
+          "max_level",
+          "base_cost",
+          "cost_multiplier",
+          "effects"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "display_name_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description_key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "max_level": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "base_cost": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cost_multiplier": {
+            "type": "number",
+            "minimum": 1
+          },
+          "effects": {
+            "type": "object",
+            "minProperties": 1
+          }
+        }
+      }
+    }
+  }
+}

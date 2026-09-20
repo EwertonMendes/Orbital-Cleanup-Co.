@@ -14,6 +14,7 @@ signal blocked_by_cargo_space
 @export_range(80.0, 1200.0, 10.0) var scan_range := 320.0
 @export_range(20.0, 160.0, 2.0) var capture_distance := 58.0
 @export_range(100.0, 1200.0, 10.0) var pull_speed := 520.0
+@export_range(0.1, 5.0, 0.05) var collection_speed_multiplier := 1.0
 
 var _cargo_hold: CargoHold
 var _scan_area: Area2D
@@ -62,7 +63,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var anchor := _collect_anchor.global_position
-	_target.tractor_step(anchor, delta, pull_speed)
+	_target.tractor_step(anchor, delta, pull_speed, collection_speed_multiplier)
 	var progress := _target.get_tractor_progress()
 	progress_changed.emit(progress)
 	_update_beam_visual(_target.global_position, delta)

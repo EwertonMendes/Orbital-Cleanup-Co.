@@ -10,6 +10,7 @@ const DEFAULT_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.
 @onready var audio_service: AudioService = %AudioService
 @onready var input_service: InputService = %InputService
 @onready var scene_router: SceneRouter = %SceneRouter
+@onready var progression_service: ProgressionService = %ProgressionService
 @onready var screen_host: Control = %ScreenHost
 
 func _ready() -> void:
@@ -20,6 +21,7 @@ func _ready() -> void:
 	settings_service.initialize()
 	audio_service.initialize(settings_service)
 	save_service.initialize()
+	progression_service.initialize(save_service)
 	input_service.initialize()
 	platform_service.initialize()
 	scene_router.configure(screen_host)
@@ -39,6 +41,7 @@ func _service_context() -> Dictionary:
 		"audio": audio_service,
 		"input": input_service,
 		"router": scene_router,
+		"progression": progression_service,
 	}
 
 func _validate_contracts() -> void:
@@ -49,4 +52,5 @@ func _validate_contracts() -> void:
 	assert(audio_service != null, "AudioService is required.")
 	assert(input_service != null, "InputService is required.")
 	assert(scene_router != null, "SceneRouter is required.")
+	assert(progression_service != null, "ProgressionService is required.")
 	assert(screen_host != null, "ScreenHost is required.")

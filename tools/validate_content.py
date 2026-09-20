@@ -33,6 +33,8 @@ REQUIRED_SCHEMAS = {
     "modifier.schema.json",
     "salvage_table.schema.json",
     "difficulty_scaling.schema.json",
+    "career_ranks.schema.json",
+    "upgrades.schema.json",
 }
 
 ID_RE = re.compile(r"^[a-z0-9_]+$")
@@ -186,7 +188,10 @@ def validate_contracts(items: dict[str, dict[str, Any]], catalogs: dict[str, set
     allowed = {"cleanup", "full_cleanup", "recovery", "valuable_recovery", "priority_object"}
     for item_id, data in items.items():
         label = f"contracts/{item_id}"
-        require_keys(data, ("display_name_key", "kind", "target_percent_range"), label)
+        require_keys(data, (
+            "display_name_key", "kind", "target_percent_range", "base_pay",
+            "perfect_bonus", "company_xp", "perfect_xp_bonus",
+        ), label)
         require_localization_key(data["display_name_key"], label, catalogs)
         require(data["kind"] in allowed, f"{label}: unsupported contract kind")
         target = data["target_percent_range"]
@@ -194,6 +199,10 @@ def validate_contracts(items: dict[str, dict[str, Any]], catalogs: dict[str, set
         low = require_number(target[0], f"{label}.target_percent_range[0]", 1, 100)
         high = require_number(target[1], f"{label}.target_percent_range[1]", 1, 100)
         require(low <= high, f"{label}.target_percent_range min cannot exceed max")
+        require_number(data["base_pay"], f"{label}.base_pay", 0)
+        require_number(data["perfect_bonus"], f"{label}.perfect_bonus", 0)
+        require_number(data["company_xp"], f"{label}.company_xp", 0)
+        require_number(data["perfect_xp_bonus"], f"{label}.perfect_xp_bonus", 0)
 
 
 def validate_modifiers(items: dict[str, dict[str, Any]], catalogs: dict[str, set[str]]) -> None:
@@ -342,6 +351,58 @@ def validate_difficulty(data: dict[str, Any]) -> None:
         require(maximum >= base, f"{label}.{curve_id}.max cannot be below base")
 
 
+
+def validate_career_ranks(data: dict[str, Any], catalogs: dict[str, set[str]]) -> None:
+    label = "progression/career_ranks"
+    ranks = data.get("ranks")
+    require(isinstance(ranks, list) and ranks, f"{label}.ranks must be a non-empty array")
+    seen: set[str] = set()
+    previous_xp = -1
+    for index, rank in enumerate(ranks):
+        require(isinstance(rank, dict), f"{label}.ranks[{index}] must be an object")
+        rank_id = rank.get("id")
+        require(isinstance(rank_id, str) and ID_RE.fullmatch(rank_id), f"{label}.ranks[{index}].id is invalid")
+        require(rank_id not in seen, f"{label}: duplicate rank id: {rank_id}")
+        seen.add(rank_id)
+        require_localization_key(rank.get("display_name_key"), f"{label}.{rank_id}", catalogs)
+        min_xp = int(require_number(rank.get("min_xp"), f"{label}.{rank_id}.min_xp", 0))
+        require(min_xp > previous_xp, f"{label}: rank XP thresholds must be strictly increasing")
+        previous_xp = min_xp
+    require(int(ranks[0]["min_xp"]) == 0, f"{label}: first rank must start at 0 XP")
+
+
+def validate_upgrades(data: dict[str, Any], catalogs: dict[str, set[str]]) -> None:
+    label = "progression/upgrades"
+    base_ship = data.get("base_ship")
+    require(isinstance(base_ship, dict), f"{label}.base_ship must be an object")
+    allowed_base = {"scan_range", "collection_speed_multiplier", "cargo_capacity"}
+    require(set(base_ship) == allowed_base, f"{label}.base_ship must define exactly {sorted(allowed_base)}")
+    for key, value in base_ship.items():
+        require_number(value, f"{label}.base_ship.{key}", 0.01)
+
+    upgrades = data.get("upgrades")
+    require(isinstance(upgrades, list) and len(upgrades) >= 3, f"{label}.upgrades must contain at least three upgrades")
+    seen: set[str] = set()
+    allowed_effects = {"scan_range_add", "collection_speed_multiplier_add", "cargo_capacity_add"}
+    for index, upgrade in enumerate(upgrades):
+        require(isinstance(upgrade, dict), f"{label}.upgrades[{index}] must be an object")
+        upgrade_id = upgrade.get("id")
+        require(isinstance(upgrade_id, str) and ID_RE.fullmatch(upgrade_id), f"{label}.upgrades[{index}].id is invalid")
+        require(upgrade_id not in seen, f"{label}: duplicate upgrade id: {upgrade_id}")
+        seen.add(upgrade_id)
+        require_localization_key(upgrade.get("display_name_key"), f"{label}.{upgrade_id}", catalogs)
+        require_localization_key(upgrade.get("description_key"), f"{label}.{upgrade_id}", catalogs)
+        require_number(upgrade.get("max_level"), f"{label}.{upgrade_id}.max_level", 1)
+        require_number(upgrade.get("base_cost"), f"{label}.{upgrade_id}.base_cost", 1)
+        require_number(upgrade.get("cost_multiplier"), f"{label}.{upgrade_id}.cost_multiplier", 1)
+        effects = upgrade.get("effects")
+        require(isinstance(effects, dict) and effects, f"{label}.{upgrade_id}.effects must be non-empty")
+        unknown = set(effects) - allowed_effects
+        require(not unknown, f"{label}.{upgrade_id}: unknown effects: {', '.join(sorted(unknown))}")
+        for effect_id, amount in effects.items():
+            require_number(amount, f"{label}.{upgrade_id}.effects.{effect_id}", 0.0001)
+
+
 def main() -> None:
     try:
         validate_schemas()
@@ -370,7 +431,11 @@ def main() -> None:
             catalogs,
         )
         require("difficulty_scaling" in loaded["progression"], "Missing progression/difficulty_scaling.json")
+        require("career_ranks" in loaded["progression"], "Missing progression/career_ranks.json")
+        require("upgrades" in loaded["progression"], "Missing progression/upgrades.json")
         validate_difficulty(loaded["progression"]["difficulty_scaling"])
+        validate_career_ranks(loaded["progression"]["career_ranks"], catalogs)
+        validate_upgrades(loaded["progression"]["upgrades"], catalogs)
 
         print(
             "Content validation passed: "

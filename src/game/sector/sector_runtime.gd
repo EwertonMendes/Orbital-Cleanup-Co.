@@ -72,6 +72,29 @@ func get_obstacle_count() -> int:
 		return 0
 	return (_plan["obstacle_spawns"] as Array).size()
 
+func get_total_cleanliness() -> float:
+	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
+	var total := 0.0
+	for value in _plan["salvage_spawns"] as Array:
+		var entry := value as Dictionary
+		var definition := _registry.get_salvage_definition(String(entry["salvage_id"]))
+		total += definition.cleanliness_value
+	return maxf(total, 0.001)
+
+func get_contract_context() -> Dictionary:
+	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
+	var sector := _plan["sector"] as Dictionary
+	var contract_ref := sector["contract"] as Dictionary
+	var contract := _registry.get_contract(String(contract_ref["type"]))
+	var parameters := _plan["parameters"] as Dictionary
+	return {
+		"sector_id": _sector_id,
+		"contract": contract,
+		"target_percent": float(contract_ref["target_percent"]),
+		"total_cleanliness": get_total_cleanliness(),
+		"reward_multiplier": float(parameters.get("reward_multiplier", 1.0)),
+	}
+
 func _spawn_generated_content() -> void:
 	assert(not _spawned, "SectorRuntime content can only spawn once.")
 	_spawned = true
