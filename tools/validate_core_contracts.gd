@@ -10,6 +10,7 @@ func _run() -> void:
 	_validate_operations_screen()
 	_validate_hq_components()
 	_validate_ship_steering()
+	_validate_world_visual_language()
 	_validate_content_runtime()
 	_validate_endless_contracts()
 	_validate_sector_preview()
@@ -113,6 +114,36 @@ func _validate_ship_steering() -> void:
 	_expect(is_equal_approx(far_intent.length(), 1.0), "Far pointer must reach full steering intent.")
 	var keyboard := Vector2.UP
 	_expect(ShipSteering.combine_intent(keyboard, Vector2.RIGHT) == keyboard, "Keyboard input must override pointer steering while held.")
+
+func _validate_world_visual_language() -> void:
+	var salvage_packed := load("res://src/game/salvage/salvage_object.tscn") as PackedScene
+	_expect(salvage_packed != null, "SalvageObject scene must load.")
+	if salvage_packed != null:
+		var salvage := salvage_packed.instantiate()
+		_expect(salvage.find_child("Marker", true, false) is SalvageMarker, "Recoverable salvage requires a semantic marker.")
+		salvage.free()
+
+	var obstacle_packed := load("res://src/game/sector/sector_obstacle.tscn") as PackedScene
+	_expect(obstacle_packed != null, "SectorObstacle scene must load.")
+	if obstacle_packed != null:
+		var obstacle := obstacle_packed.instantiate()
+		_expect(obstacle.find_child("Marker", true, false) is SectorObstacleMarker, "Collision hazards require a semantic hazard marker.")
+		obstacle.free()
+
+	var landmark_packed := load("res://src/game/sector/sector_landmark.tscn") as PackedScene
+	_expect(landmark_packed != null, "SectorLandmark scene must load.")
+	if landmark_packed != null:
+		var landmark := landmark_packed.instantiate()
+		_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
+		landmark.free()
+
+	var recovery_color := WorldVisualLanguage.salvage_recovery_color()
+	var hazard_color := WorldVisualLanguage.hazard_color()
+	_expect(recovery_color != hazard_color, "Recoverable and hazard primary semantic colors must remain distinct.")
+	_expect(
+		WorldVisualLanguage.salvage_progress_color() != hazard_color,
+		"Tractor progress cannot reuse the hazard color."
+	)
 
 func _validate_content_runtime() -> void:
 	var registry := ContentRegistry.new()

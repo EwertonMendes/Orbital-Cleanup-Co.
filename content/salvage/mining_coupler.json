@@ -1,7 +1,7 @@
 {
   "id": "mining_coupler",
   "display_name_key": "SALVAGE_MINING_COUPLER",
-  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_small.png",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
   "category": "mining",
   "rarity": "common",
   "base_value": 28,

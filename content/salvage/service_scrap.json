@@ -1,7 +1,7 @@
 {
   "id": "service_scrap",
   "display_name_key": "SALVAGE_SERVICE_SCRAP",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
   "category": "scrap",
   "rarity": "common",
   "base_value": 18,

@@ -5,6 +5,7 @@ class_name SalvageObject
 @export_range(-3.0, 3.0, 0.05) var spin_speed := 0.35
 
 @onready var sprite: Sprite2D = %Sprite
+@onready var marker: SalvageMarker = %Marker
 @onready var collision_shape: CollisionShape2D = %CollisionShape
 
 var _tractor_progress := 0.0
@@ -20,7 +21,7 @@ func _ready() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	rotation += spin_speed * delta
+	sprite.rotation = wrapf(sprite.rotation + spin_speed * delta, -PI, PI)
 
 	if _targeted:
 		var pulse := 1.0 + sin(Time.get_ticks_msec() * 0.009) * 0.035
@@ -32,6 +33,7 @@ func set_targeted(value: bool) -> void:
 	if _targeted == value:
 		return
 	_targeted = value
+	marker.set_targeted(value)
 	if not value:
 		_tractor_progress = 0.0
 		_tractor_velocity = Vector2.ZERO
@@ -41,6 +43,7 @@ func tractor_step(anchor: Vector2, delta: float, base_pull_speed: float, collect
 	assert(_targeted, "tractor_step requires an active target.")
 	var effective_speed := maxf(collection_speed_multiplier, 0.1)
 	_tractor_progress = minf(_tractor_progress + (delta * effective_speed) / definition.collect_duration, 1.0)
+	marker.set_progress(_tractor_progress)
 
 	var offset := anchor - global_position
 	var distance := offset.length()
@@ -65,28 +68,11 @@ func _apply_definition() -> void:
 	sprite.texture = definition.sprite
 	_base_scale = Vector2.ONE * definition.visual_scale
 	sprite.scale = _base_scale
+	var category_tint := WorldVisualLanguage.salvage_category_color(definition.category)
+	sprite.modulate = Color.WHITE.lerp(category_tint, 0.16)
+	marker.configure(definition)
 
 	var circle := collision_shape.shape as CircleShape2D
 	assert(circle != null, "SalvageObject requires a CircleShape2D.")
 	circle.radius = definition.collision_radius
 
-func _draw() -> void:
-	if not _targeted or definition == null:
-		return
-
-	var radius := definition.collision_radius + 12.0
-	draw_circle(Vector2.ZERO, radius, Color(0.18, 0.84, 1.0, 0.055))
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(0.35, 0.91, 1.0, 0.56), 1.5, true)
-
-	if _tractor_progress > 0.0:
-		var end_angle := -PI * 0.5 + TAU * _tractor_progress
-		draw_arc(
-			Vector2.ZERO,
-			radius + 5.0,
-			-PI * 0.5,
-			end_angle,
-			40,
-			Color(0.58, 0.97, 0.82, 0.94),
-			3.0,
-			true
-		)

@@ -1,7 +1,7 @@
 {
   "id": "thruster_nozzle",
   "display_name_key": "SALVAGE_THRUSTER_NOZZLE",
-  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+  "sprite": "res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png",
   "category": "propulsion",
   "rarity": "uncommon",
   "base_value": 70,

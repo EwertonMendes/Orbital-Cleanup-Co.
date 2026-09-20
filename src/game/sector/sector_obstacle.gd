@@ -2,6 +2,7 @@ extends StaticBody2D
 class_name SectorObstacle
 
 @onready var sprite: Sprite2D = %Sprite
+@onready var marker: SectorObstacleMarker = %Marker
 @onready var collision_shape: CollisionShape2D = %CollisionShape
 
 var _definition: Dictionary = {}
@@ -14,11 +15,14 @@ func configure(definition: Dictionary, visual_scale: float) -> void:
 
 func _ready() -> void:
 	assert(not _definition.is_empty(), "SectorObstacle must be configured before entering the tree.")
+	add_to_group("hazard")
 	var texture_path := String(_definition["sprite"])
 	sprite.texture = load(texture_path) as Texture2D
 	assert(sprite.texture != null, "SectorObstacle texture must load: %s" % texture_path)
 	sprite.scale = Vector2.ONE * _visual_scale
+	sprite.modulate = Color(0.58, 0.62, 0.66, 0.96)
 
 	var circle := collision_shape.shape as CircleShape2D
 	assert(circle != null, "SectorObstacle requires CircleShape2D.")
 	circle.radius = float(_definition["collision_radius"]) * _visual_scale
+	marker.configure(circle.radius)

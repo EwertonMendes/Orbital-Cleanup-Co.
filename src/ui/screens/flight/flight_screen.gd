@@ -175,7 +175,8 @@ func _refresh_copy() -> void:
 		]
 	else:
 		%FlightTitle.text = tr(sector_runtime.get_sector_display_name_key())
-	hint_label.text = tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
+	var steering_hint := tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
+	hint_label.text = "%s\n%s" % [steering_hint, tr("FLIGHT_VISUAL_LEGEND")]
 	%DepotLabel.text = tr("FLIGHT_DEPOT")
 	_refresh_return_button()
 	_refresh_cleanup()

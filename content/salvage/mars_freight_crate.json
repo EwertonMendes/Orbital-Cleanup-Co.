@@ -1,7 +1,7 @@
 {
   "id": "mars_freight_crate",
   "display_name_key": "SALVAGE_MARS_FREIGHT_CRATE",
-  "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
   "category": "cargo",
   "rarity": "uncommon",
   "base_value": 68,

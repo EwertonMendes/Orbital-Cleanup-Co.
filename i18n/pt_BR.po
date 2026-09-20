@@ -635,3 +635,7 @@ msgstr "Contrato Infinito"
 
 msgid "SECTOR_ENDLESS_CONTRACT_FMT"
 msgstr "Infinito #%d · %s"
+
+
+msgid "FLIGHT_VISUAL_LEGEND"
+msgstr "MARCAS CIANO · item recuperável   •   ANEL ÂMBAR · obstáculo de colisão"

@@ -48,7 +48,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Station" type="TextureRect" parent="Scenery"]
-modulate = Color(0.55, 0.82, 0.95, 0.045)
+modulate = Color(0.55, 0.82, 0.95, 0.085)
 layout_mode = 1
 anchor_left = 0.76
 anchor_top = 0.56
@@ -62,7 +62,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="Satellite" type="TextureRect" parent="Scenery"]
-modulate = Color(0.62, 0.9, 1, 0.055)
+modulate = Color(0.62, 0.9, 1, 0.09)
 layout_mode = 1
 anchor_left = 0.86
 anchor_top = 0.09
@@ -107,7 +107,7 @@ theme_override_constants/separation = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 25
 text = "ORBITAL CLEANUP CO."
 
 [node name="DeskLabel" type="Label" parent="SafeArea/Layout/Header/Brand"]
@@ -251,7 +251,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-modulate = Color(0.34, 0.82, 0.96, 0.34)
+modulate = Color(0.34, 0.82, 0.96, 0.11)
 
 [node name="ContentMargin" type="MarginContainer" parent="SafeArea/Layout/ContentShell"]
 layout_mode = 1
@@ -347,7 +347,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 
 [node name="PlateArt" type="TextureRect" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo/ContractPlate"]
-modulate = Color(0.36, 0.83, 0.98, 0.76)
+modulate = Color(0.36, 0.83, 0.98, 0.24)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -376,7 +376,7 @@ vertical_alignment = 1
 [node name="ContractTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 27
+theme_override_font_sizes/font_size = 30
 text = "Earth Orbit · Route 01"
 autowrap_mode = 2
 
@@ -422,7 +422,7 @@ theme_override_font_sizes/font_size = 11
 text = "Last contract result"
 
 [node name="ContractShipCard" type="PanelContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero"]
-custom_minimum_size = Vector2(260, 190)
+custom_minimum_size = Vector2(280, 194)
 layout_mode = 2
 
 [node name="ShipMargin" type="MarginContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractShipCard"]
@@ -805,12 +805,14 @@ autowrap_mode = 2
 [node name="Footer" type="HBoxContainer" parent="SafeArea/Layout"]
 unique_name_in_owner = true
 layout_mode = 2
+alignment = 2
 
 [node name="PrimaryAction" parent="SafeArea/Layout/Footer" instance=ExtResource("4")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(280, 54)
 layout_mode = 2
-size_flags_horizontal = 3
-base_tint = Color(0.30, 0.82, 0.98, 0.98)
+base_tint = Color(0.34, 0.86, 0.98, 0.82)
+hover_tint = Color(0.52, 0.94, 1, 0.96)
 pressed_tint = Color(0.56, 0.95, 0.81, 1)
+emphasis = true
 text = "DEPLOY"

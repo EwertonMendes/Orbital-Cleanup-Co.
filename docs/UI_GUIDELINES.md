@@ -22,6 +22,21 @@ Use the shared foundations before creating screen-local styling:
 
 If a reusable component already owns a pattern, do not copy its style into a new scene.
 
+## Gameplay world readability
+
+World objects use a semantic visual language that must remain consistent across every biome:
+
+- **recoverable salvage** uses cool recovery brackets/halo plus a rarity pip;
+- **collision hazards** use segmented warm/amber hazard rings and a darker neutral body treatment;
+- **landmarks** use broad, low-contrast environmental arcs and must read as scenery rather than pickups;
+- the cargo depot uses mint/green recovery language and is visually distinct from both salvage and hazards.
+
+Shape and motion carry the first distinction; color reinforces it. Important gameplay categories must never rely on color alone.
+
+Meteor/asteroid silhouettes are reserved for hazards. Salvage definitions must not use meteor sprites, even for items named scrap, rock, shielding or regolith. CI enforces this rule in `tools/validate_content.py`.
+
+New categories should extend `WorldVisualLanguage` rather than introducing screen-local colors or one-off object effects. New salvage automatically inherits the shared `SalvageMarker`; new hazards and landmarks inherit their corresponding marker components.
+
 ## Typography
 
 Oxanium is the default UI family and is configured once in the shared Theme. Do not assign the font path independently in each screen. Use size, weight hierarchy and color to differentiate title/value/label roles while keeping the family consistent.
@@ -35,6 +50,7 @@ Kenney assets are raw material. They must be composed into Orbital Cleanup Co.'s
 - A square 128×128 panel must never be stretched into a wide header/card frame.
 - The current 384×128 header/blade assets are treated as 3:1 plates and rendered at 3:1.
 - Large resizable surfaces should use OCC StyleBox/PanelContainer styling, with Kenney art as accents instead of distorted backgrounds.
+- Interactive chrome must use OCC StyleBox-based components. Do not use a bright texture as the full surface of tabs, selectors or primary actions; Kenney UI textures are accents, not the button system.
 - Do not mix arbitrary color families from the pack on one screen.
 - Prefer blue/cyan structure, mint success/ready states and amber emphasis.
 - Do not use combat-oriented assets such as enemy ships, guns or lasers for this game.
