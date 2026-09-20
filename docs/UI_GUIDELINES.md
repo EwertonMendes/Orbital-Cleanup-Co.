@@ -18,9 +18,14 @@ Use the shared foundations before creating screen-local styling:
 - `src/ui/themes/occ_palette.gd` for semantic colors;
 - `src/ui/themes/occ_theme.tres` for standard controls;
 - `src/ui/components/occ_panel_frame.tscn` for glass/metal card chrome;
-- `src/ui/components/occ_action_button.gd` for primary/interactive button behavior.
+- `src/ui/components/occ_chrome_button.tscn` for prominent actions using Kenney chrome;
+- `src/ui/components/occ_action_button.gd` for lightweight button behavior when a chrome button is not appropriate.
 
 If a reusable component already owns a pattern, do not copy its style into a new scene.
+
+## Typography
+
+Oxanium is the default UI family and is configured once in the shared Theme. Do not assign the font path independently in each screen. Use size, weight hierarchy and color to differentiate title/value/label roles while keeping the family consistent.
 
 ## Kenney asset usage
 

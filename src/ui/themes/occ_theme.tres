@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=9 format=3]
+[gd_resource type="Theme" load_steps=10 format=3]\n\n[ext_resource type="FontFile" path="res://assets/third_party/oxanium/Oxanium[wght].ttf" id="1"]
 
 [sub_resource type="StyleBoxFlat" id="ButtonNormal"]
 bg_color = Color(0.055, 0.165, 0.235, 0.96)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/training_space.gd" id="2"]
@@ -10,6 +10,8 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png" id="8"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/station_a.png" id="9"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/satellite_c.png" id="10"]
+[ext_resource type="PackedScene" path="res://src/ui/components/occ_chrome_button.tscn" id="11"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="12"]
 
 [sub_resource type="CircleShape2D" id="LargeMeteorShape"]
 radius = 52.0
@@ -134,8 +136,21 @@ custom_minimum_size = Vector2(330, 66)
 layout_mode = 2
 
 [node name="Frame" parent="HUD/HudRoot/SafeArea/Layout/TopBar/IdentityCard" instance=ExtResource("5")]
-modulate = Color(0.56, 0.88, 1, 0.32)
+modulate = Color(0.46, 0.86, 1, 0.62)
 layout_mode = 1
+variant = 2
+
+[node name="AccentBar" type="TextureRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/IdentityCard"]
+modulate = Color(0.56, 0.95, 0.81, 0.78)
+layout_mode = 1
+anchor_left = 0.07
+anchor_top = 0.82
+anchor_right = 0.58
+anchor_bottom = 0.92
+mouse_filter = 2
+texture = ExtResource("12")
+expand_mode = 1
+stretch_mode = 0
 
 [node name="Margin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/IdentityCard"]
 layout_mode = 1
@@ -170,9 +185,9 @@ text = "Earth Orbit · Route 01"
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ReturnButton" type="Button" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
+[node name="ReturnButton" parent="HUD/HudRoot/SafeArea/Layout/TopBar" instance=ExtResource("11")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(164, 48)
+custom_minimum_size = Vector2(190, 52)
 layout_mode = 2
 text = "RETURN"
 
@@ -190,7 +205,7 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="Frame" parent="HUD/HudRoot/SafeArea/Layout/HintCenter/HintPanel" instance=ExtResource("5")]
-modulate = Color(0.46, 0.73, 0.82, 0.30)
+modulate = Color(0.38, 0.72, 0.86, 0.48)
 layout_mode = 1
 variant = 1
 

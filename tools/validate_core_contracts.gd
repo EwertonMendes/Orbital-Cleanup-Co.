@@ -11,6 +11,7 @@ func _run() -> void:
 	_validate_ship_steering()
 	_validate_player_ship()
 	_validate_flight_screen()
+	_validate_training_bounds()
 	if _failed:
 		quit(1)
 		return
@@ -40,7 +41,7 @@ func _validate_operations_screen() -> void:
 		return
 	var screen := packed.instantiate()
 	_expect(screen is Control, "Operations screen must inherit Control.")
-	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Operations screen needs deployment action.")
+	_expect(screen.find_child("PrimaryAction", true, false) is OccChromeButton, "Operations deployment action must use OCC chrome.")
 	screen.free()
 
 func _validate_ship_steering() -> void:
@@ -61,7 +62,12 @@ func _validate_player_ship() -> void:
 	_expect(ship.get_node_or_null("CollisionShape2D") is CollisionShape2D, "PlayerShip requires collision.")
 	_expect(ship.find_child("EngineTrail", true, false) is EngineTrail, "PlayerShip requires engine trail.")
 	_expect(ship.find_child("ShipCamera", true, false) is ShipCamera, "PlayerShip requires ship camera.")
-	_expect((ship as PlayerShip).tuning != null, "PlayerShip requires tuning resource.")
+	var tuning := (ship as PlayerShip).tuning
+	_expect(tuning != null, "PlayerShip requires tuning resource.")
+	if tuning != null:
+		_expect(tuning.pointer_deadzone >= 70.0, "Pointer deadzone should prevent twitchy center steering.")
+		_expect(tuning.pointer_full_thrust_distance >= 360.0, "Pointer full-thrust distance should preserve fine control.")
+		_expect(tuning.boundary_soft_margin > tuning.boundary_hard_padding, "Soft boundary margin must precede hard containment.")
 	ship.free()
 
 func _validate_flight_screen() -> void:
@@ -72,12 +78,16 @@ func _validate_flight_screen() -> void:
 	var screen := packed.instantiate()
 	_expect(screen is Control, "Flight screen must inherit Control.")
 	_expect(screen.find_child("PlayerShip", true, false) is PlayerShip, "Flight screen requires PlayerShip.")
-	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
+	_expect(screen.find_child("ReturnButton", true, false) is OccChromeButton, "Flight return action must use OCC chrome.")
 	var obstacle_count := 0
 	for node in screen.find_children("*Meteor", "StaticBody2D", true, false):
 		obstacle_count += 1
 	_expect(obstacle_count >= 3, "Training flight requires multiple bump obstacles.")
 	screen.free()
+
+func _validate_training_bounds() -> void:
+	_expect(TrainingSpace.PLAY_BOUNDS.size.x >= 3000.0, "Training area should provide meaningful horizontal room.")
+	_expect(TrainingSpace.PLAY_BOUNDS.size.y >= 1800.0, "Training area should provide meaningful vertical room.")
 
 func _expect(condition: bool, message: String) -> void:
 	if condition:

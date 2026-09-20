@@ -46,6 +46,8 @@ REQUIRED = [
     "src/ui/components/occ_panel_frame.tscn",
     "src/ui/components/occ_panel_frame.gd",
     "src/ui/components/occ_action_button.gd",
+    "src/ui/components/occ_chrome_button.tscn",
+    "src/ui/components/occ_chrome_button.gd",
     "src/ui/themes/occ_theme.tres",
     "src/ui/themes/occ_palette.gd",
     "tools/validate_core_contracts.gd",
@@ -62,6 +64,7 @@ REQUIRED_ASSETS = [
     "assets/third_party/kenney_space_shooter/effects/engine_speed.png",
     "assets/third_party/kenney_simple_space/scenery/station_a.png",
     "assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+    "assets/third_party/oxanium/Oxanium[wght].ttf",
 ]
 
 PORTAL_IDENTIFIERS = ("crazygames", "gamepix", "gamemonetize", "gamedistribution", "poki")
@@ -149,7 +152,8 @@ def validate_visual_foundation() -> None:
     screen = (ROOT / "src" / "ui" / "screens" / "operations" / "operations_screen.tscn").read_text(encoding="utf-8")
     component_markers = (
         "occ_panel_frame.tscn",
-        "occ_action_button.gd",
+        "occ_chrome_button.tscn",
+        "Oxanium[wght].ttf",
         "kenney_ui_sci_fi",
         "kenney_space_shooter",
         "kenney_simple_space",
