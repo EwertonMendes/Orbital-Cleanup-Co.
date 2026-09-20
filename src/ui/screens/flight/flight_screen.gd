@@ -23,6 +23,7 @@ var _context: Dictionary = {}
 var _router: SceneRouter
 var _input_service: InputService
 var _platform: PlatformService
+var _ads: AdService
 var _progression: ProgressionService
 var _contract_session := ContractSession.new()
 var _gameplay_active := false
@@ -36,6 +37,7 @@ func configure(context: Dictionary) -> void:
 	_router = context.get("router") as SceneRouter
 	_input_service = context.get("input") as InputService
 	_platform = context.get("platform") as PlatformService
+	_ads = context.get("ads") as AdService
 	_progression = context.get("progression") as ProgressionService
 	assert(_input_service != null, "FlightScreen requires InputService.")
 	assert(_progression != null, "FlightScreen requires ProgressionService.")
@@ -100,9 +102,7 @@ func _ready() -> void:
 	print("[Flight] READY")
 
 func _exit_tree() -> void:
-	if _gameplay_active and _platform != null:
-		_platform.gameplay_stopped()
-	_gameplay_active = false
+	_stop_gameplay()
 
 func _validate_contracts() -> void:
 	assert(safe_area != null, "FlightScreen requires SafeArea.")
@@ -133,7 +133,8 @@ func _apply_responsive_layout() -> void:
 	toast_panel.custom_minimum_size.x = 280.0 if compact else 390.0
 
 func _return_to_operations() -> void:
-	if _contract_session.is_target_reached():
+	var completed := _contract_session.is_target_reached()
+	if completed:
 		var result := _contract_session.build_result()
 		_progression.apply_contract_result(result)
 		if _platform != null:
@@ -150,6 +151,10 @@ func _return_to_operations() -> void:
 		if _platform != null:
 			_platform.track_event("contract_aborted", {"sector_id": _configured_sector_id})
 
+	_stop_gameplay()
+	if completed and _ads != null:
+		await _ads.show_contract_break()
+
 	var return_path := String(_context.get("return_screen_path", OPERATIONS_SCREEN_PATH))
 	var scene := load(return_path) as PackedScene
 	assert(scene != null, "Return screen must be loadable: %s" % return_path)
@@ -159,6 +164,13 @@ func _return_to_operations() -> void:
 	return_context.erase("endless_number")
 	return_context.erase("return_screen_path")
 	_router.show_screen(scene, return_context)
+
+func _stop_gameplay() -> void:
+	if not _gameplay_active:
+		return
+	if _platform != null:
+		_platform.gameplay_stopped()
+	_gameplay_active = false
 
 func _on_input_mode_changed(_mode: InputService.InputMode) -> void:
 	_refresh_copy()

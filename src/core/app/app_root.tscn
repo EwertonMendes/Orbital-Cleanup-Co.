@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://src/core/app/app_root.gd" id="1"]
 [ext_resource type="Script" path="res://src/core/build/build_info.gd" id="2"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://src/core/input/input_service.gd" id="7"]
 [ext_resource type="Script" path="res://src/core/app/scene_router.gd" id="8"]
 [ext_resource type="Script" path="res://src/game/progression/progression_service.gd" id="9"]
+[ext_resource type="Script" path="res://src/core/platform/ad_service.gd" id="10"]
 
 [node name="AppRoot" type="Node"]
 script = ExtResource("1")
@@ -21,7 +22,13 @@ script = ExtResource("2")
 
 [node name="PlatformService" type="Node" parent="Services"]
 unique_name_in_owner = true
+process_mode = 3
 script = ExtResource("3")
+
+[node name="AdService" type="Node" parent="Services"]
+unique_name_in_owner = true
+process_mode = 3
+script = ExtResource("10")
 
 [node name="SettingsService" type="Node" parent="Services"]
 unique_name_in_owner = true
