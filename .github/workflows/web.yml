@@ -206,14 +206,93 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-  deploy-pages:
-    name: Deploy Pages and PR preview
+
+  deploy-pr-preview:
+    name: Deploy PR preview
     needs:
       - build-web
       - browser-smoke
-    if: >-
-      github.event_name == 'pull_request' ||
-      (github.event_name == 'push' && github.ref_name == github.event.repository.default_branch)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: occ-pages-publish
+      cancel-in-progress: false
+    steps:
+      - name: Checkout deployment tooling
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.build-web.outputs.tested_sha }}
+
+      - name: Download current Web build
+        uses: actions/download-artifact@v5
+        with:
+          name: occ-web-build
+          path: current
+
+      - name: Compose production and open PR previews
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEFAULT_BRANCH: ${{ needs.build-web.outputs.default_branch }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ needs.build-web.outputs.head_sha }}
+        run: |
+          set -euo pipefail
+          bash .github/scripts/compose-pages-site.sh site current pull_request "$PR_NUMBER" "$HEAD_SHA"
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload combined Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy PR preview
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Update playable preview comment
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ steps.pages.outputs.base_url }}/pr-${{ github.event.pull_request.number }}/
+          HEAD_SHA: ${{ needs.build-web.outputs.head_sha }}
+        run: |
+          set -euo pipefail
+          MARKER='<!-- orbital-cleanup-preview -->'
+          SHORT_SHA="${HEAD_SHA:0:8}"
+          BODY="${MARKER}
+          ## 🎮 Playable PR Preview
+
+          **[Open Orbital Cleanup Co. PR #${PR_NUMBER}](${PREVIEW_URL})**
+
+          Build: \`${SHORT_SHA}\`
+          Provider: \`debug\`
+
+          This URL points to the exact tested PR revision. Other open PR previews are preserved in the same Pages deployment."
+
+          COMMENT_ID="$(gh api \
+            "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --paginate \
+            --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
+            | head -n 1)"
+
+          if [[ -n "$COMMENT_ID" ]]; then
+            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${COMMENT_ID}" -f body="$BODY" >/dev/null
+          else
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -f body="$BODY" >/dev/null
+          fi
+
+  deploy-production:
+    name: Deploy production Pages
+    needs:
+      - build-web
+      - browser-smoke
+    if: github.event_name == 'push' && github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
     timeout-minutes: 10
     concurrency:
@@ -239,12 +318,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DEFAULT_BRANCH: ${{ needs.build-web.outputs.default_branch }}
-          SOURCE_EVENT: ${{ github.event_name }}
-          PR_NUMBER: ${{ github.event.pull_request.number || '' }}
           HEAD_SHA: ${{ needs.build-web.outputs.head_sha }}
         run: |
           set -euo pipefail
-          bash .github/scripts/compose-pages-site.sh site current "$SOURCE_EVENT" "$PR_NUMBER" "$HEAD_SHA"
+          bash .github/scripts/compose-pages-site.sh site current push "" "$HEAD_SHA"
 
       - name: Configure Pages
         id: pages
@@ -255,36 +332,6 @@ jobs:
         with:
           path: site
 
-      - name: Deploy Pages
+      - name: Deploy production
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Update playable preview comment
-        if: github.event_name == 'pull_request'
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PREVIEW_URL: ${{ steps.pages.outputs.base_url }}/pr-${{ github.event.pull_request.number }}/
-          HEAD_SHA: ${{ needs.build-web.outputs.head_sha }}
-        run: |
-          set -euo pipefail
-          MARKER='<!-- orbital-cleanup-preview -->'
-          SHORT_SHA="${HEAD_SHA:0:8}"
-          BODY="${MARKER}
-          ## 🎮 Playable PR Preview
-
-          **[Open Orbital Cleanup Co. PR #${PR_NUMBER}](${PREVIEW_URL})**
-
-          Build: \`${SHORT_SHA}\`
-          Provider: \`debug\`
-
-          This URL points to the exact tested PR revision. Other open PR previews are preserved in the same Pages deployment."
-
-          COMMENT_ID="$(gh api             "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments"             --paginate             --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id"             | head -n 1)"
-
-          if [[ -n "$COMMENT_ID" ]]; then
-            gh api --method PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${COMMENT_ID}" -f body="$BODY" >/dev/null
-          else
-            gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" -f body="$BODY" >/dev/null
-          fi
