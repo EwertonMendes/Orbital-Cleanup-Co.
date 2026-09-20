@@ -450,3 +450,169 @@ msgstr "Recuperación Menta"
 
 msgid "COSMETIC_BEAM_AMBER_PRECISION"
 msgstr "Precisión Ámbar"
+
+
+msgid "HQ_CONTRACT_AVAILABLE"
+msgstr "CONTRATO DISPONIBLE"
+
+msgid "HQ_CONTRACT_INDEX_FMT"
+msgstr "CONTRATO CREADO · %d / %d"
+
+msgid "HQ_CONTRACT_PREVIOUS"
+msgstr "ANTERIOR"
+
+msgid "HQ_CONTRACT_NEXT"
+msgstr "SIGUIENTE"
+
+msgid "HQ_CONTRACT_DESCRIPTION"
+msgstr "Recupera residuos autorizados, descarga con seguridad y alcanza el objetivo de limpieza."
+
+msgid "HQ_RISK_LOW"
+msgstr "RIESGO · BAJO"
+
+msgid "HQ_RISK_MODERATE"
+msgstr "RIESGO · MODERADO"
+
+msgid "HQ_RISK_ELEVATED"
+msgstr "RIESGO · ELEVADO"
+
+msgid "HQ_RISK_HIGH"
+msgstr "RIESGO · ALTO"
+
+msgid "BIOME_LUNAR_BELT"
+msgstr "Cinturón Lunar"
+
+msgid "BIOME_MARS_FREIGHT"
+msgstr "Ruta de Carga de Marte"
+
+msgid "BIOME_BLUE_NEBULA"
+msgstr "Nebulosa Azul"
+
+msgid "LANDMARK_CARGO_WAYSTATION"
+msgstr "Estación de Carga"
+
+msgid "LANDMARK_RELAY_SATELLITE"
+msgstr "Satélite Repetidor"
+
+msgid "LANDMARK_MINING_RIG"
+msgstr "Plataforma Minera"
+
+msgid "LANDMARK_DERELICT_EXPLORER"
+msgstr "Explorador a la Deriva"
+
+msgid "LANDMARK_COMMS_ARRAY"
+msgstr "Matriz de Comunicaciones"
+
+msgid "LANDMARK_FRACTURED_MOONLET"
+msgstr "Astro Fracturado"
+
+msgid "LANDMARK_RESEARCH_OUTPOST"
+msgstr "Puesto de Investigación"
+
+msgid "MODIFIER_VALUABLE_SALVAGE"
+msgstr "Rescate de Alto Valor"
+
+msgid "MODIFIER_SPARSE_CORRIDOR"
+msgstr "Corredor Disperso"
+
+msgid "MODIFIER_METEOR_FRONT"
+msgstr "Frente de Meteoros"
+
+msgid "MODIFIER_RICH_RECOVERY"
+msgstr "Recuperación Rica"
+
+msgid "MODIFIER_QUIET_ORBIT"
+msgstr "Órbita Tranquila"
+
+msgid "SALVAGE_ALLOY_PLATE"
+msgstr "Placa de Aleación"
+
+msgid "SALVAGE_COOLANT_CELL"
+msgstr "Celda de Refrigerante"
+
+msgid "SALVAGE_NAVIGATION_CORE"
+msgstr "Núcleo de Navegación"
+
+msgid "SALVAGE_ANTENNA_ARRAY"
+msgstr "Conjunto de Antenas"
+
+msgid "SALVAGE_CARGO_CANISTER"
+msgstr "Cilindro de Carga"
+
+msgid "SALVAGE_REACTOR_SHIELDING"
+msgstr "Blindaje de Reactor"
+
+msgid "SALVAGE_SOLAR_CELL_BUNDLE"
+msgstr "Conjunto de Celdas Solares"
+
+msgid "SALVAGE_TELEMETRY_UNIT"
+msgstr "Unidad de Telemetría"
+
+msgid "SALVAGE_THRUSTER_NOZZLE"
+msgstr "Tobera de Propulsor"
+
+msgid "SALVAGE_SURVEY_BEACON"
+msgstr "Baliza de Exploración"
+
+msgid "SALVAGE_STATION_BRACKET"
+msgstr "Soporte de Estación"
+
+msgid "SALVAGE_LUNAR_REGOLITH_CANISTER"
+msgstr "Contenedor de Regolito Lunar"
+
+msgid "SALVAGE_MINING_COUPLER"
+msgstr "Acoplador Minero"
+
+msgid "SALVAGE_THERMAL_TILE"
+msgstr "Baldosa Térmica"
+
+msgid "SALVAGE_MARS_FREIGHT_CRATE"
+msgstr "Caja de Carga Marciana"
+
+msgid "SALVAGE_PRESSURE_VALVE"
+msgstr "Válvula de Presión"
+
+msgid "SALVAGE_ORBITAL_BATTERY"
+msgstr "Batería Orbital"
+
+msgid "SALVAGE_NEBULA_SENSOR"
+msgstr "Sensor de Nebulosa"
+
+msgid "SALVAGE_EXPLORER_CORE"
+msgstr "Núcleo de Explorador"
+
+msgid "SALVAGE_QUANTUM_RELAY"
+msgstr "Repetidor Cuántico"
+
+msgid "SECTOR_EARTH_ORBIT_03"
+msgstr "Órbita Terrestre · Corredor de Servicio 03"
+
+msgid "SECTOR_EARTH_ORBIT_04"
+msgstr "Órbita Terrestre · Barrido de Repetidor 04"
+
+msgid "SECTOR_LUNAR_BELT_01"
+msgstr "Cinturón Lunar · Anillo Minero 01"
+
+msgid "SECTOR_LUNAR_BELT_02"
+msgstr "Cinturón Lunar · Cruce del Astro 02"
+
+msgid "SECTOR_LUNAR_BELT_03"
+msgstr "Cinturón Lunar · Deriva Industrial 03"
+
+msgid "SECTOR_MARS_FREIGHT_01"
+msgstr "Ruta de Carga de Marte · Corredor 01"
+
+msgid "SECTOR_MARS_FREIGHT_02"
+msgstr "Ruta de Carga de Marte · Corredor Rojo 02"
+
+msgid "SECTOR_MARS_FREIGHT_03"
+msgstr "Ruta de Carga de Marte · Puerta de Transferencia 03"
+
+msgid "SECTOR_BLUE_NEBULA_01"
+msgstr "Nebulosa Azul · Bolsillo de Investigación 01"
+
+msgid "SECTOR_BLUE_NEBULA_02"
+msgstr "Nebulosa Azul · Deriva del Explorador 02"
+
+msgid "SECTOR_BLUE_NEBULA_03"
+msgstr "Nebulosa Azul · Estudio Iónico 03"
