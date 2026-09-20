@@ -38,8 +38,10 @@ const CHROME_BUTTON_SCENE := preload("res://src/ui/components/occ_chrome_button.
 @onready var career_xp_label: Label = %CareerXpLabel
 @onready var career_xp_bar: ProgressBar = %CareerXpBar
 @onready var contract_state: Label = %ContractState
+@onready var contract_selector: GridContainer = %ContractSelector
 @onready var contract_position: Label = %ContractPosition
 @onready var previous_contract: Button = %PreviousContract
+@onready var endless_contract: Button = %EndlessContract
 @onready var next_contract: Button = %NextContract
 @onready var contract_title: Label = %ContractTitle
 @onready var contract_description: Label = %ContractDescription
@@ -72,8 +74,12 @@ var _router: SceneRouter
 var _progression: ProgressionService
 var _registry := ContentRegistry.new()
 var _generator := SectorGenerator.new()
+var _endless_generator := EndlessContractGenerator.new()
 var _sector_ids := PackedStringArray()
 var _selected_sector_index := 0
+var _viewing_endless := false
+var _endless_number := 1
+var _active_sector_definition: Dictionary = {}
 var _sector_plan: Dictionary = {}
 var _active_tab := Tab.CONTRACTS
 var _tab_group := ButtonGroup.new()
@@ -90,6 +96,7 @@ func configure(context: Dictionary) -> void:
 	var scaler := DifficultyScaler.new()
 	scaler.configure(_registry)
 	_generator.configure(_registry, scaler)
+	_endless_generator.configure(_registry)
 	_sector_ids = _registry.list_sector_ids()
 	assert(not _sector_ids.is_empty(), "Headquarters requires at least one authored sector.")
 	var preferred_index := _sector_ids.find(DEFAULT_SECTOR_ID)
@@ -101,6 +108,7 @@ func _ready() -> void:
 	resized.connect(_apply_responsive_layout)
 	primary_action.pressed.connect(_deploy_training)
 	previous_contract.pressed.connect(_select_relative_contract.bind(-1))
+	endless_contract.pressed.connect(_toggle_endless_mode)
 	next_contract.pressed.connect(_select_relative_contract.bind(1))
 
 	_setup_tabs()
@@ -125,7 +133,8 @@ func _validate_contracts() -> void:
 	assert(content_scroll != null, "Headquarters requires ContentScroll.")
 	assert(content_shell != null, "Headquarters requires ContentShell.")
 	assert(primary_action != null, "Headquarters requires PrimaryAction.")
-	assert(previous_contract != null and next_contract != null and contract_position != null, "Headquarters requires authored contract navigation.")
+	assert(contract_selector != null, "Headquarters requires responsive ContractSelector.")
+	assert(previous_contract != null and endless_contract != null and next_contract != null and contract_position != null, "Headquarters requires contract navigation.")
 	assert(upgrade_grid != null, "Headquarters requires UpgradeGrid.")
 	assert(career_list != null, "Headquarters requires CareerList.")
 	assert(ship_preview != null and contract_ship_art != null, "Headquarters requires cosmetic ship previews.")
@@ -178,6 +187,7 @@ func _apply_responsive_layout() -> void:
 	contract_hero.vertical = compact
 	ship_body.vertical = compact
 	tab_grid.columns = 3 if compact else 5
+	contract_selector.columns = 2 if compact else 4
 	upgrade_grid.columns = 1 if compact else 3
 	content_shell.custom_minimum_size.y = 150.0 if size.y < 500.0 else 260.0
 
@@ -191,11 +201,22 @@ func _apply_responsive_layout() -> void:
 func _deploy_training() -> void:
 	var scene := load(FLIGHT_SCREEN_PATH) as PackedScene
 	assert(scene != null, "Training flight screen must be loadable.")
-	var flight_context := _context.duplicate()
-	flight_context["sector_id"] = String(_sector_ids[_selected_sector_index])
+	var flight_context := _context.duplicate(true)
+	if _viewing_endless:
+		flight_context["sector_id"] = String(_active_sector_definition["id"])
+		flight_context["sector_definition"] = _active_sector_definition.duplicate(true)
+		flight_context["endless_number"] = _endless_number
+	else:
+		flight_context["sector_id"] = String(_sector_ids[_selected_sector_index])
 	_router.show_screen(scene, flight_context)
 
 func _select_relative_contract(delta: int) -> void:
+	if _viewing_endless:
+		_endless_number = maxi(1, _endless_number + delta)
+		_load_endless_contract()
+		_refresh_contracts()
+		return
+
 	if _sector_ids.size() <= 1:
 		return
 	_selected_sector_index = (_selected_sector_index + delta) % _sector_ids.size()
@@ -204,9 +225,33 @@ func _select_relative_contract(delta: int) -> void:
 	_load_selected_sector()
 	_refresh_contracts()
 
+func _toggle_endless_mode() -> void:
+	if _viewing_endless:
+		_load_selected_sector()
+	else:
+		_viewing_endless = true
+		_endless_number = maxi(1, _completed_contract_total() + 1)
+		_load_endless_contract()
+	_refresh_contracts()
+
 func _load_selected_sector() -> void:
 	assert(_selected_sector_index >= 0 and _selected_sector_index < _sector_ids.size(), "Selected sector index is out of bounds.")
+	_viewing_endless = false
+	_active_sector_definition = {}
 	_sector_plan = _generator.generate(String(_sector_ids[_selected_sector_index]))
+
+func _load_endless_contract() -> void:
+	_viewing_endless = true
+	_active_sector_definition = _endless_generator.create_sector_definition(_endless_number)
+	_sector_plan = _generator.generate_definition(_active_sector_definition)
+
+func _completed_contract_total() -> int:
+	var snapshot := _progression.get_snapshot()
+	var completed := snapshot.get("completed_contracts", {}) as Dictionary
+	var total := 0
+	for value in completed.values():
+		total += int(value)
+	return total
 
 func _risk_key(difficulty: int) -> String:
 	if difficulty <= 3:
@@ -272,13 +317,25 @@ func _refresh_contracts() -> void:
 
 	%ContractsTitle.text = tr("HQ_CONTRACTS_TITLE")
 	%ContractsSubtitle.text = tr("HQ_CONTRACTS_SUBTITLE")
-	contract_state.text = tr("HQ_CONTRACT_AVAILABLE")
-	contract_position.text = tr("HQ_CONTRACT_INDEX_FMT") % [_selected_sector_index + 1, _sector_ids.size()]
 	previous_contract.text = tr("HQ_CONTRACT_PREVIOUS")
 	next_contract.text = tr("HQ_CONTRACT_NEXT")
-	previous_contract.disabled = _sector_ids.size() <= 1
-	next_contract.disabled = _sector_ids.size() <= 1
-	contract_title.text = tr(String(sector["display_name_key"]))
+	if _viewing_endless:
+		contract_state.text = tr("HQ_ENDLESS_AVAILABLE")
+		contract_position.text = tr("HQ_ENDLESS_INDEX_FMT") % [_endless_number, int(sector["seed"])]
+		endless_contract.text = tr("HQ_AUTHORED_CONTRACTS")
+		previous_contract.disabled = _endless_number <= 1
+		next_contract.disabled = false
+		contract_title.text = tr("SECTOR_ENDLESS_CONTRACT_FMT") % [
+			_endless_number,
+			tr(String((_sector_plan["biome"] as Dictionary)["display_name_key"])),
+		]
+	else:
+		contract_state.text = tr("HQ_CONTRACT_AVAILABLE")
+		contract_position.text = tr("HQ_CONTRACT_INDEX_FMT") % [_selected_sector_index + 1, _sector_ids.size()]
+		endless_contract.text = tr("HQ_ENDLESS_CONTRACTS")
+		previous_contract.disabled = _sector_ids.size() <= 1
+		next_contract.disabled = _sector_ids.size() <= 1
+		contract_title.text = tr(String(sector["display_name_key"]))
 	contract_description.text = tr("HQ_CONTRACT_DESCRIPTION")
 	contract_target.text = tr("HQ_CONTRACT_TARGET_FMT") % int(round(float(contract_ref["target_percent"])))
 	contract_risk.text = tr(_risk_key(int(sector["difficulty"])))
