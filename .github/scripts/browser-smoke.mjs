@@ -104,13 +104,17 @@ async function openBuild(viewport, label, touch = false) {
   // owns Web boot, routed gameplay, input modes and rendered output.
   const sectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 30000);
   const contractStarted = waitForConsole(page, '[Contract] START sector=earth_training_01', 30000);
+  const deploymentReady = waitForConsole(page, '[Flight] DEPLOYMENT', 30000);
   const flightReady = waitForConsole(page, '[Flight] READY', 30000);
-  const salvageCollected = waitForConsole(page, '[Salvage] COLLECTED', 30000);
   await page.goto(`${url}?sector=earth_training_01`, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await sectorReady;
   await contractStarted;
+  const deploymentMessage = (await deploymentReady).text();
+  const deploymentMatch = deploymentMessage.match(/position=\(([^)]+)\) depot=\(([^)]+)\)/);
+  if (!deploymentMatch || deploymentMatch[1] !== deploymentMatch[2]) {
+    throw new Error(`Ship must deploy on cargo depot, received: ${deploymentMessage}`);
+  }
   await flightReady;
-  await salvageCollected;
   await page.waitForTimeout(220);
 
   if (touch) {
