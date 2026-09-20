@@ -32,6 +32,7 @@ func _draw() -> void:
 			true
 		)
 
-	for direction in [Vector2.UP, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT]:
-		var start := direction * (ring_radius + 1.0)
+	var directions: Array[Vector2] = [Vector2.UP, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT]
+	for direction in directions:
+		var start: Vector2 = direction * (ring_radius + 1.0)
 		draw_line(start, direction * (ring_radius + 7.0), Color(hazard, 0.34), 1.5, true)
