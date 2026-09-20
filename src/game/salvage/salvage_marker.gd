@@ -68,8 +68,9 @@ func _draw_brackets(radius: float, color: Color, alpha: float) -> void:
 	var c := Color(color, alpha)
 	var arm := 8.0
 	var offset := radius + 3.0
-	for direction in [Vector2.UP, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT]:
-		var tangent := Vector2(-direction.y, direction.x)
-		var center := direction * offset
+	var directions: Array[Vector2] = [Vector2.UP, Vector2.RIGHT, Vector2.DOWN, Vector2.LEFT]
+	for direction in directions:
+		var tangent: Vector2 = Vector2(-direction.y, direction.x)
+		var center: Vector2 = direction * offset
 		draw_line(center - tangent * arm, center + tangent * arm, c, 2.0, true)
 		draw_line(center, center - direction * 6.0, c, 2.0, true)
