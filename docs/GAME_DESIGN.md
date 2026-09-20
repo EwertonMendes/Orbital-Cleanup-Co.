@@ -54,6 +54,20 @@ The MVP should implement only what is required for the vertical slice and keep t
 
 Headquarters is a UI space, not a walkable map.
 
+## Headquarters
+
+Headquarters is the between-contract decision space and remains interface-only rather than a walkable map.
+
+The vertical-slice HQ is organized into five focused work areas:
+
+- Contract Board;
+- Equipment Upgrades;
+- Career;
+- Ship;
+- Discovery.
+
+Contract Board is the default view and the only place with the deploy CTA. Other sections exist to answer a specific player question instead of repeating the same information across multiple screens.
+
 ## Economy and progression
 
 Launch economy uses one currency: **Credits**. Sources include base contract pay, salvage, rare objects, Perfect Cleanup and specific bonuses.

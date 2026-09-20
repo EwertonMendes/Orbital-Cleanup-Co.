@@ -243,3 +243,147 @@ msgstr "Cargo"
 
 msgid "UPGRADE_CARGO_CAPACITY_DESC"
 msgstr "Adds more cargo space before unloading is required."
+
+msgid "HQ_COMPANY"
+msgstr "ORBITAL CLEANUP CO."
+
+msgid "HQ_DESK"
+msgstr "HEADQUARTERS · OPERATIONS"
+
+msgid "HQ_CREDITS_FMT"
+msgstr "CREDITS · %d cr"
+
+msgid "HQ_RANK_FMT"
+msgstr "RANK · %s"
+
+msgid "HQ_XP_FMT"
+msgstr "COMPANY XP · %d / %d"
+
+msgid "HQ_XP_MAX_FMT"
+msgstr "COMPANY XP · %d · MAX RANK"
+
+msgid "HQ_LANGUAGE"
+msgstr "LANGUAGE"
+
+msgid "HQ_TAB_CONTRACTS"
+msgstr "CONTRACTS"
+
+msgid "HQ_TAB_UPGRADES"
+msgstr "UPGRADES"
+
+msgid "HQ_TAB_CAREER"
+msgstr "CAREER"
+
+msgid "HQ_TAB_SHIP"
+msgstr "SHIP"
+
+msgid "HQ_TAB_DISCOVERY"
+msgstr "DISCOVERY"
+
+msgid "HQ_CONTRACTS_TITLE"
+msgstr "CONTRACT BOARD"
+
+msgid "HQ_CONTRACTS_SUBTITLE"
+msgstr "Review the assignment, rewards and cleanup target before deployment."
+
+msgid "HQ_CONTRACT_TARGET_FMT"
+msgstr "TARGET · %d%% CLEANUP"
+
+msgid "HQ_CONTRACT_PAY_FMT"
+msgstr "BASE · %d cr · PERFECT +%d cr"
+
+msgid "HQ_SHIP_READY"
+msgstr "READY FOR DEPLOYMENT"
+
+msgid "HQ_DEPLOY"
+msgstr "DEPLOY TO CONTRACT"
+
+msgid "HQ_UPGRADES_TITLE"
+msgstr "EQUIPMENT UPGRADES"
+
+msgid "HQ_UPGRADES_SUBTITLE"
+msgstr "Permanent improvements purchased with Credits. Changes apply to the next deployment."
+
+msgid "HQ_UPGRADE_MAX"
+msgstr "MAX LEVEL"
+
+msgid "HQ_UPGRADE_COST_FMT"
+msgstr "UPGRADE · %d cr"
+
+msgid "HQ_UPGRADE_NEED_CREDITS"
+msgstr "Not enough Credits."
+
+msgid "HQ_UPGRADE_EFFECT_RANGE_FMT"
+msgstr "Installed range bonus · +%d"
+
+msgid "HQ_UPGRADE_EFFECT_SPEED_FMT"
+msgstr "Installed recovery bonus · +%d%%"
+
+msgid "HQ_UPGRADE_EFFECT_CARGO_FMT"
+msgstr "Installed cargo bonus · +%d"
+
+msgid "HQ_CAREER_TITLE"
+msgstr "CAREER"
+
+msgid "HQ_CAREER_SUBTITLE"
+msgstr "Company XP advances your certification and future contract access."
+
+msgid "HQ_CAREER_PROGRESS_FMT"
+msgstr "%d / %d XP TO NEXT RANK"
+
+msgid "HQ_RANK_XP_FMT"
+msgstr "%d XP"
+
+msgid "HQ_RANK_CURRENT"
+msgstr "CURRENT"
+
+msgid "HQ_RANK_UNLOCKED"
+msgstr "CLEARED"
+
+msgid "HQ_RANK_LOCKED"
+msgstr "LOCKED"
+
+msgid "HQ_SHIP_TITLE"
+msgstr "SHIP"
+
+msgid "HQ_SHIP_SUBTITLE"
+msgstr "Pioneer-01 status and current company-issued visual loadout."
+
+msgid "HQ_SHIP_LOADOUT"
+msgstr "VISUAL LOADOUT"
+
+msgid "HQ_SHIP_HULL_VALUE"
+msgstr "Hull · Pioneer-01"
+
+msgid "HQ_SHIP_PAINT_VALUE"
+msgstr "Paint · Company Blue"
+
+msgid "HQ_SHIP_TRAIL_VALUE"
+msgstr "Trail · Standard Ion"
+
+msgid "HQ_SHIP_BEAM_VALUE"
+msgstr "Beam · Standard Cyan"
+
+msgid "HQ_SHIP_STATS_FMT"
+msgstr "Beam %d · Cargo %d · Recovery +%d%%"
+
+msgid "HQ_SHIP_WORKSHOP_STATUS"
+msgstr "Standard company loadout · no cosmetic options owned"
+
+msgid "HQ_DISCOVERY_TITLE"
+msgstr "DISCOVERY CATALOG"
+
+msgid "HQ_DISCOVERY_SUBTITLE"
+msgstr "Rare recovered objects and unusual salvage are registered here."
+
+msgid "HQ_DISCOVERY_EMPTY_TITLE"
+msgstr "NO SPECIAL DISCOVERIES YET"
+
+msgid "HQ_DISCOVERY_EMPTY_BODY"
+msgstr "Keep cleaning contracts. Unusual recovered objects will be cataloged when first found."
+
+msgid "HQ_DISCOVERY_COUNT_FMT"
+msgstr "SPECIAL FINDS · %d"
+
+msgid "HQ_COMPLETED_CONTRACTS_FMT"
+msgstr "CONTRACTS COMPLETED · %d"
