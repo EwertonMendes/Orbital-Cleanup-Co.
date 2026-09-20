@@ -191,7 +191,7 @@ msgid "OPS_UPGRADES"
 msgstr "MELHORIAS DA NAVE"
 
 msgid "OPS_UPGRADE_BUTTON_FMT"
-msgstr "%s · N%d→%d · %d cr"
+msgstr "%s · N%d > %d · %d cr"
 
 msgid "OPS_UPGRADE_MAX_FMT"
 msgstr "%s · N%d · MÁX."
