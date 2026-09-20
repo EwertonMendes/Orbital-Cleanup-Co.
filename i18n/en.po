@@ -27,3 +27,51 @@ msgstr "Provider"
 
 msgid "BOOTSTRAP_BUILD"
 msgstr "Build"
+
+msgid "OPS_DESK"
+msgstr "CLEANER OPERATIONS"
+
+msgid "OPS_TRAINING"
+msgstr "TRAINING CONTRACT"
+
+msgid "OPS_SELECTED"
+msgstr "CONTRACT SELECTED"
+
+msgid "OPS_CONTRACT_TITLE"
+msgstr "Earth Orbit · Route 01"
+
+msgid "OPS_CONTRACT_DESCRIPTION"
+msgstr "Clear a light debris pocket around a service corridor."
+
+msgid "OPS_CLEANUP_TARGET"
+msgstr "Cleanup target · 70%"
+
+msgid "OPS_HAZARD"
+msgstr "Hazard · Low"
+
+msgid "OPS_PAYOUT"
+msgstr "Base pay · 240 cr"
+
+msgid "OPS_SHIP_HEADING"
+msgstr "COMPANY SHIP"
+
+msgid "OPS_SHIP_NAME"
+msgstr "Pioneer-01"
+
+msgid "OPS_BEAM"
+msgstr "Beam · Standard"
+
+msgid "OPS_CARGO"
+msgstr "Cargo · 12"
+
+msgid "OPS_SCANNER"
+msgstr "Scanner · Mk I"
+
+msgid "OPS_LANGUAGE"
+msgstr "LANGUAGE"
+
+msgid "OPS_SELECT"
+msgstr "SELECT CONTRACT"
+
+msgid "OPS_UNSELECT"
+msgstr "CLEAR SELECTION"
