@@ -68,7 +68,8 @@ func _apply_definition() -> void:
 	sprite.texture = definition.sprite
 	_base_scale = Vector2.ONE * definition.visual_scale
 	sprite.scale = _base_scale
-	sprite.modulate = Color(0.96, 1.0, 1.0, 1.0)
+	var category_tint := WorldVisualLanguage.salvage_category_color(definition.category)
+	sprite.modulate = Color.WHITE.lerp(category_tint, 0.16)
 	marker.configure(definition)
 
 	var circle := collision_shape.shape as CircleShape2D

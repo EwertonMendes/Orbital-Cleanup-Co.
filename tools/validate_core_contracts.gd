@@ -137,9 +137,13 @@ func _validate_world_visual_language() -> void:
 		_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
 		landmark.free()
 
-	var salvage_color := WorldVisualLanguage.salvage_category_color(&"electronics")
+	var recovery_color := WorldVisualLanguage.salvage_recovery_color()
 	var hazard_color := WorldVisualLanguage.hazard_color()
-	_expect(salvage_color != hazard_color, "Recoverable and hazard semantic colors must remain distinct.")
+	_expect(recovery_color != hazard_color, "Recoverable and hazard primary semantic colors must remain distinct.")
+	_expect(
+		WorldVisualLanguage.salvage_progress_color() != hazard_color,
+		"Tractor progress cannot reuse the hazard color."
+	)
 
 func _validate_content_runtime() -> void:
 	var registry := ContentRegistry.new()

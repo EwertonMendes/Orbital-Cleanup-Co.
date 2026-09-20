@@ -28,15 +28,18 @@ func _draw() -> void:
 	if _definition == null:
 		return
 
+	var recovery := WorldVisualLanguage.salvage_recovery_color()
+	var progress_color := WorldVisualLanguage.salvage_progress_color()
 	var category := WorldVisualLanguage.salvage_category_color(_definition.category)
 	var rarity := WorldVisualLanguage.salvage_rarity_color(_definition.rarity)
 	var radius := _definition.collision_radius + 13.0
 	var breathe := (sin(_phase) + 1.0) * 0.5
-	var idle_alpha := 0.20 + breathe * 0.07
+	var idle_alpha := 0.22 + breathe * 0.06
 
-	draw_circle(Vector2.ZERO, radius + 8.0, Color(category, 0.025 + breathe * 0.012))
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 56, Color(category, idle_alpha), 1.4, true)
-	_draw_brackets(radius, category, 0.68 if _targeted else 0.42)
+	draw_circle(Vector2.ZERO, radius + 8.0, Color(recovery, 0.024 + breathe * 0.010))
+	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 56, Color(recovery, idle_alpha), 1.35, true)
+	_draw_brackets(radius, recovery, 0.78 if _targeted else 0.48)
+	_draw_category_signature(radius, category)
 
 	var pip := Vector2(0.0, -radius - 8.0)
 	var diamond := PackedVector2Array([
@@ -45,13 +48,13 @@ func _draw() -> void:
 		pip + Vector2(0.0, 4.5),
 		pip + Vector2(-4.5, 0.0),
 	])
-	draw_colored_polygon(diamond, Color(rarity, 0.92))
+	draw_colored_polygon(diamond, Color(rarity, 0.94))
 
 	if not _targeted:
 		return
 
-	draw_circle(Vector2.ZERO, radius + 4.0, Color(category, 0.06))
-	draw_arc(Vector2.ZERO, radius + 3.0, 0.0, TAU, 64, Color(category, 0.88), 2.2, true)
+	draw_circle(Vector2.ZERO, radius + 4.0, Color(recovery, 0.055))
+	_draw_target_arcs(radius + 3.0, recovery)
 	if _progress > 0.0:
 		draw_arc(
 			Vector2.ZERO,
@@ -59,8 +62,22 @@ func _draw() -> void:
 			-PI * 0.5,
 			-PI * 0.5 + TAU * _progress,
 			48,
-			Color(rarity, 0.98),
+			Color(progress_color, 0.98),
 			3.0,
+			true
+		)
+
+func _draw_target_arcs(radius: float, color: Color) -> void:
+	for index in range(4):
+		var center_angle := float(index) * PI * 0.5
+		draw_arc(
+			Vector2.ZERO,
+			radius,
+			center_angle - 0.34,
+			center_angle + 0.34,
+			10,
+			Color(color, 0.92),
+			2.2,
 			true
 		)
 
@@ -74,3 +91,35 @@ func _draw_brackets(radius: float, color: Color, alpha: float) -> void:
 		var center: Vector2 = direction * offset
 		draw_line(center - tangent * arm, center + tangent * arm, c, 2.0, true)
 		draw_line(center, center - direction * 6.0, c, 2.0, true)
+
+func _draw_category_signature(radius: float, color: Color) -> void:
+	var c := Color(color, 0.82)
+	var anchor := Vector2(radius + 12.0, radius + 4.0)
+	match String(_definition.category):
+		"electronics":
+			for offset in [-5.0, 0.0, 5.0]:
+				draw_circle(anchor + Vector2(offset, 0.0), 1.8, c)
+		"cargo":
+			draw_rect(Rect2(anchor - Vector2(4.0, 4.0), Vector2(8.0, 8.0)), c, false, 1.6)
+		"research":
+			draw_arc(anchor, 5.0, 0.0, TAU, 16, c, 1.5, true)
+			draw_circle(anchor, 1.6, c)
+		"power":
+			draw_line(anchor - Vector2(5.0, 0.0), anchor + Vector2(5.0, 0.0), c, 1.8, true)
+			draw_line(anchor - Vector2(0.0, 5.0), anchor + Vector2(0.0, 5.0), c, 1.8, true)
+		"mining":
+			var chevron := PackedVector2Array([
+				anchor + Vector2(-5.0, -3.0),
+				anchor,
+				anchor + Vector2(-5.0, 3.0),
+			])
+			draw_polyline(chevron, c, 1.8, true)
+		"industrial":
+			draw_line(anchor + Vector2(-5.0, -3.0), anchor + Vector2(5.0, -3.0), c, 1.6, true)
+			draw_line(anchor + Vector2(-5.0, 3.0), anchor + Vector2(5.0, 3.0), c, 1.6, true)
+		"propulsion":
+			draw_line(anchor + Vector2(-5.0, 0.0), anchor + Vector2(4.0, 0.0), c, 1.8, true)
+			draw_line(anchor + Vector2(1.0, -4.0), anchor + Vector2(5.0, 0.0), c, 1.8, true)
+			draw_line(anchor + Vector2(1.0, 4.0), anchor + Vector2(5.0, 0.0), c, 1.8, true)
+		_:
+			draw_circle(anchor, 2.2, c)

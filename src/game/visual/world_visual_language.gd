@@ -1,6 +1,12 @@
 extends RefCounted
 class_name WorldVisualLanguage
 
+static func salvage_recovery_color() -> Color:
+	return Color("#55e6ff")
+
+static func salvage_progress_color() -> Color:
+	return Color("#8ff1ce")
+
 static func salvage_category_color(category: StringName) -> Color:
 	match String(category):
 		"electronics":
