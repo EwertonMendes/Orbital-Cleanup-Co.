@@ -94,6 +94,7 @@ content_margin_top = 1.0
 content_margin_bottom = 1.0
 
 [resource]
+default_font = ExtResource("1")
 default_font_size = 16
 Button/colors/font_color = Color(0.94, 0.98, 1, 1)
 Button/colors/font_hover_color = Color(1, 1, 1, 1)
