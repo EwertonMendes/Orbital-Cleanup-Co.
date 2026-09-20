@@ -33,6 +33,21 @@ func get_progression(id: String) -> Dictionary:
 func get_cosmetic(id: String) -> Dictionary:
 	return _load_named("cosmetics", id)
 
+func list_sector_ids() -> PackedStringArray:
+	var ids := PackedStringArray()
+	var dir := DirAccess.open("%s/sectors" % CONTENT_ROOT)
+	assert(dir != null, "Unable to enumerate sector content.")
+
+	dir.list_dir_begin()
+	var filename := dir.get_next()
+	while not filename.is_empty():
+		if not dir.current_is_dir() and filename.ends_with(".json"):
+			ids.append(filename.left(filename.length() - 5))
+		filename = dir.get_next()
+	dir.list_dir_end()
+	ids.sort()
+	return ids
+
 func get_salvage_definition(id: String) -> SalvageDefinition:
 	if _salvage_cache.has(id):
 		return _salvage_cache[id] as SalvageDefinition

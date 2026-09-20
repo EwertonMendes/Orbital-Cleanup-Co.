@@ -52,6 +52,9 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("UpgradeGrid", true, false) is GridContainer, "Headquarters requires upgrade grid.")
 	_expect(screen.find_child("CareerList", true, false) is VBoxContainer, "Headquarters requires career ladder.")
 	_expect(screen.find_child("ContentScroll", true, false) is ScrollContainer, "Headquarters content must degrade gracefully on compact screens.")
+	_expect(screen.find_child("PreviousContract", true, false) is Button, "Headquarters requires previous authored contract action.")
+	_expect(screen.find_child("NextContract", true, false) is Button, "Headquarters requires next authored contract action.")
+	_expect(screen.find_child("ContractPosition", true, false) is Label, "Headquarters requires authored contract position feedback.")
 
 	for tab_name in ["ContractsTab", "UpgradesTab", "CareerTab", "ShipTab", "DiscoveryTab"]:
 		_expect(screen.find_child(tab_name, true, false) is Button, "Headquarters requires tab: %s" % tab_name)
@@ -64,7 +67,7 @@ func _validate_operations_screen() -> void:
 		"ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel",
 		"ContractHero", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
 		"CreditsLabel", "RankLabel", "XpLabel", "CareerRankValue", "CareerXpLabel", "CareerXpBar",
-		"ContractState", "ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk",
+		"ContractState", "ContractPosition", "PreviousContract", "NextContract", "ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk",
 		"ContractPayout", "LastResult", "ShipStats", "DiscoveryCount", "CompletedContracts",
 		"EnglishButton", "PortugueseButton", "SpanishButton", "ContractsTab", "UpgradesTab",
 		"CareerTab", "ShipTab", "DiscoveryTab", "CompanyLabel", "DeskLabel", "LanguageLabel",
@@ -126,8 +129,18 @@ func _validate_content_runtime() -> void:
 	_expect(float(level_high["reward_multiplier"]) <= 8.0, "DifficultyScaler must respect configured caps.")
 	_expect(float(level_high["mass_multiplier"]) <= 2.2, "DifficultyScaler mass curve must remain bounded.")
 
+	var sector_ids := registry.list_sector_ids()
+	_expect(sector_ids.size() >= 13, "Initial content pack must expose at least 13 authored sectors.")
+	for required_sector in ["earth_orbit_03", "lunar_belt_01", "mars_freight_01", "blue_nebula_01"]:
+		_expect(sector_ids.has(required_sector), "Initial content pack missing authored sector: %s" % required_sector)
+
 	var generator := SectorGenerator.new()
 	generator.configure(registry, scaler)
+	for sector_id in sector_ids:
+		var authored_plan := generator.generate(sector_id)
+		_expect(not authored_plan.is_empty(), "Every authored sector must generate: %s" % sector_id)
+		_expect((authored_plan["salvage_spawns"] as Array).size() >= 5, "Every authored sector needs salvage: %s" % sector_id)
+
 	var plan_a := generator.generate("earth_training_01")
 	var plan_b := generator.generate("earth_training_01")
 	var plan_variant := generator.generate("earth_training_02")
