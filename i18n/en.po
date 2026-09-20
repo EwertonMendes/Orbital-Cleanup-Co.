@@ -616,3 +616,22 @@ msgstr "Blue Nebula · Explorer Drift 02"
 
 msgid "SECTOR_BLUE_NEBULA_03"
 msgstr "Blue Nebula · Ion Survey 03"
+
+
+msgid "HQ_ENDLESS_CONTRACTS"
+msgstr "ENDLESS"
+
+msgid "HQ_AUTHORED_CONTRACTS"
+msgstr "AUTHORED"
+
+msgid "HQ_ENDLESS_AVAILABLE"
+msgstr "ENDLESS CONTRACT"
+
+msgid "HQ_ENDLESS_INDEX_FMT"
+msgstr "ENDLESS · #%d · SEED %d"
+
+msgid "SECTOR_ENDLESS_CONTRACT"
+msgstr "Endless Contract"
+
+msgid "SECTOR_ENDLESS_CONTRACT_FMT"
+msgstr "Endless #%d · %s"

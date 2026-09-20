@@ -362,9 +362,22 @@ The content pack baseline is:
 
 Every sector still runs through the same `SectorRuntime` and `SectorGenerator`.
 
-## Current limitation
+## Endless contracts and QA preview
 
-Deep-link sector selection (`?sector=<id>`), endless generated contracts and the visual Sector Preview tool belong to the later Endless Contracts / Developer Tools delivery. The player-facing Headquarters can browse authored sector definitions; developer deep links are intentionally deferred.
+Endless contracts are virtual sector definitions produced by `EndlessContractGenerator`. They are not written to `content/sectors/` and do not bypass the Sector Engine: the generated dictionary is passed to the same `SectorGenerator.generate_definition()` path used by authored content.
+
+The contract number is the difficulty index. Difficulty curves remain centrally capped, so very large indexes such as contract 10,000 stay bounded and generatable. A stable derived seed makes the same contract number reproducible; QA may override that seed explicitly.
+
+Debug-provider Web builds support:
+
+- `?sector=<authored_id>` — deploy an authored sector directly;
+- `?endless=<number>` — deploy a deterministic endless contract directly;
+- `?endless=<number>&seed=<seed>` — reproduce an endless contract with an explicit seed;
+- `?preview=1` — open Sector Preview;
+- `?preview=1&sector=<authored_id>` — preview authored content;
+- `?preview=1&endless=<number>&seed=<seed>` — preview a generated contract before deployment.
+
+These routes are QA/debug-provider features and are ignored by non-debug provider builds.
 
 ## Career and upgrades
 

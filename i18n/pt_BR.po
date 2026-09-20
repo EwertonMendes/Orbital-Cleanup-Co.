@@ -616,3 +616,22 @@ msgstr "Nebulosa Azul · Deriva do Explorador 02"
 
 msgid "SECTOR_BLUE_NEBULA_03"
 msgstr "Nebulosa Azul · Pesquisa Iônica 03"
+
+
+msgid "HQ_ENDLESS_CONTRACTS"
+msgstr "INFINITO"
+
+msgid "HQ_AUTHORED_CONTRACTS"
+msgstr "AUTORAIS"
+
+msgid "HQ_ENDLESS_AVAILABLE"
+msgstr "CONTRATO INFINITO"
+
+msgid "HQ_ENDLESS_INDEX_FMT"
+msgstr "INFINITO · #%d · SEED %d"
+
+msgid "SECTOR_ENDLESS_CONTRACT"
+msgstr "Contrato Infinito"
+
+msgid "SECTOR_ENDLESS_CONTRACT_FMT"
+msgstr "Infinito #%d · %s"

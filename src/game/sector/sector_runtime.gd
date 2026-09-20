@@ -26,6 +26,19 @@ func configure_sector(sector_id: String) -> void:
 	_generator.configure(_registry, _scaler)
 	_plan = _generator.generate(sector_id)
 
+func configure_sector_definition(sector_definition: Dictionary) -> void:
+	assert(not sector_definition.is_empty(), "SectorRuntime requires generated sector definition.")
+	assert(not _spawned, "SectorRuntime cannot change sector after spawning.")
+	_sector_id = String(sector_definition.get("id", ""))
+	assert(not _sector_id.is_empty(), "Generated sector requires id.")
+	_scaler.configure(_registry)
+	_generator.configure(_registry, _scaler)
+	_plan = _generator.generate_definition(sector_definition)
+
+func get_biome_display_name_key() -> String:
+	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
+	return String((_plan["biome"] as Dictionary)["display_name_key"])
+
 func _ready() -> void:
 	assert(not _plan.is_empty(), "SectorRuntime must be configured before entering the tree.")
 	_spawn_generated_content()

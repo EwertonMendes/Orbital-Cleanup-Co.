@@ -121,6 +121,33 @@ async function openBuild(viewport, label, deployPoint, touch = false) {
   await page.close();
 }
 
+
+async function openQaDeepLinks() {
+  const sectorPage = await browser.newPage({ viewport: { width: 1100, height: 700 } });
+  watch(sectorPage, 'qa-sector-deeplink');
+  const sectorReady = waitForConsole(sectorPage, '[Sector] READY id=blue_nebula_02', 60000);
+  await sectorPage.goto(`${url}?sector=blue_nebula_02`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await sectorReady;
+  await sectorPage.screenshot({ path: 'build/smoke-qa-sector-deeplink.png', fullPage: true });
+  await sectorPage.close();
+
+  const endlessPage = await browser.newPage({ viewport: { width: 1100, height: 700 } });
+  watch(endlessPage, 'qa-endless-10000');
+  const endlessReady = waitForConsole(endlessPage, '[Sector] READY id=endless_010000 seed=4242', 60000);
+  await endlessPage.goto(`${url}?endless=10000&seed=4242`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await endlessReady;
+  await endlessPage.screenshot({ path: 'build/smoke-qa-endless-10000.png', fullPage: true });
+  await endlessPage.close();
+
+  const previewPage = await browser.newPage({ viewport: { width: 1100, height: 700 } });
+  watch(previewPage, 'qa-sector-preview');
+  const previewReady = waitForConsole(previewPage, '[SectorPreview] READY mode=endless id=endless_010000 seed=4242', 60000);
+  await previewPage.goto(`${url}?preview=1&endless=10000&seed=4242`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await previewReady;
+  await previewPage.screenshot({ path: 'build/smoke-qa-sector-preview.png', fullPage: true });
+  await previewPage.close();
+}
+
 try {
   await openBuild(
     { width: 1280, height: 720 },
@@ -140,6 +167,7 @@ try {
     { x: 194, y: 810 },
     true,
   );
+  await openQaDeepLinks();
 
   if (runtimeErrors.length) {
     throw new Error(runtimeErrors.join('\n'));

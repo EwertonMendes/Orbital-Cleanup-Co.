@@ -11,6 +11,8 @@ func _run() -> void:
 	_validate_hq_components()
 	_validate_ship_steering()
 	_validate_content_runtime()
+	_validate_endless_contracts()
+	_validate_sector_preview()
 	_validate_contract_session()
 	_validate_progression_service()
 	_validate_cargo_hold()
@@ -67,7 +69,7 @@ func _validate_operations_screen() -> void:
 		"ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel",
 		"ContractHero", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
 		"CreditsLabel", "RankLabel", "XpLabel", "CareerRankValue", "CareerXpLabel", "CareerXpBar",
-		"ContractState", "ContractPosition", "PreviousContract", "NextContract", "ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk",
+		"ContractState", "ContractSelector", "ContractPosition", "PreviousContract", "EndlessContract", "NextContract", "ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk",
 		"ContractPayout", "LastResult", "ShipStats", "DiscoveryCount", "CompletedContracts",
 		"EnglishButton", "PortugueseButton", "SpanishButton", "ContractsTab", "UpgradesTab",
 		"CareerTab", "ShipTab", "DiscoveryTab", "CompanyLabel", "DeskLabel", "LanguageLabel",
@@ -164,6 +166,48 @@ func _validate_content_runtime() -> void:
 
 	var bounds := plan_a["play_bounds"] as Rect2
 	_expect(bounds.size.x >= 9000.0 and bounds.size.y >= 5500.0, "Generated training sector must preserve large play bounds.")
+
+func _validate_endless_contracts() -> void:
+	var registry := ContentRegistry.new()
+	var scaler := DifficultyScaler.new()
+	scaler.configure(registry)
+	var generator := SectorGenerator.new()
+	generator.configure(registry, scaler)
+	var endless := EndlessContractGenerator.new()
+	endless.configure(registry)
+
+	var definition_a := endless.create_sector_definition(10000)
+	var definition_b := endless.create_sector_definition(10000)
+	_expect(definition_a == definition_b, "Endless contract definition must be deterministic for the same contract number.")
+	_expect(int(definition_a["difficulty"]) == 10000, "Endless difficulty must preserve the requested contract number.")
+	_expect(String(definition_a["id"]) == "endless_010000", "Endless IDs must be stable and reproducible.")
+
+	var plan_a := generator.generate_definition(definition_a)
+	var plan_b := generator.generate_definition(definition_b)
+	_expect(
+		String(plan_a["generation_signature"]) == String(plan_b["generation_signature"]),
+		"Endless sector generation must be deterministic."
+	)
+	_expect((plan_a["salvage_spawns"] as Array).size() >= 5, "High endless contracts must remain generatable.")
+	_expect((plan_a["obstacle_spawns"] as Array).size() >= 1, "High endless contracts must retain environmental composition.")
+
+	var next_definition := endless.create_sector_definition(10001)
+	var next_plan := generator.generate_definition(next_definition)
+	_expect(
+		String(plan_a["generation_signature"]) != String(next_plan["generation_signature"]),
+		"Adjacent endless contracts must not collapse to the same generation signature."
+	)
+
+func _validate_sector_preview() -> void:
+	var packed := load("res://src/debug/sector_preview/sector_preview.tscn") as PackedScene
+	_expect(packed != null, "Sector Preview scene must load.")
+	if packed == null:
+		return
+	var screen := packed.instantiate()
+	_expect(screen is Control, "Sector Preview must be a Control screen.")
+	for node_name in ["PreviewCanvas", "SectorPicker", "ContractNumber", "SeedOverride", "GenerateEndless", "DeployPreview", "ReturnToHq"]:
+		_expect(screen.find_child(node_name, true, false) != null, "Sector Preview requires node: %s" % node_name)
+	screen.free()
 
 func _validate_contract_session() -> void:
 	var registry := ContentRegistry.new()

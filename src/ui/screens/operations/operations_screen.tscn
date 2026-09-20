@@ -295,9 +295,12 @@ theme_override_font_sizes/font_size = 11
 text = "Choose your next cleanup assignment."
 autowrap_mode = 2
 
-[node name="ContractSelector" type="HBoxContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel"]
+[node name="ContractSelector" type="GridContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 4
 
 [node name="PreviousContract" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractSelector" instance=ExtResource("4")]
 unique_name_in_owner = true
@@ -314,6 +317,12 @@ theme_override_font_sizes/font_size = 10
 text = "AUTHORED CONTRACT · 1 / 1"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="EndlessContract" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractSelector" instance=ExtResource("4")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(126, 40)
+layout_mode = 2
+text = "ENDLESS"
 
 [node name="NextContract" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractSelector" instance=ExtResource("4")]
 unique_name_in_owner = true

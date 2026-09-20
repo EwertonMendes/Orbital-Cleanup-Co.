@@ -1,0 +1,98 @@
+extends RefCounted
+class_name EndlessContractGenerator
+
+const BIOME_IDS := [
+	"earth_orbit",
+	"lunar_belt",
+	"mars_freight",
+	"blue_nebula",
+]
+const CONTRACT_ID := "standard_cleanup"
+const DISPLAY_NAME_KEY := "SECTOR_ENDLESS_CONTRACT"
+
+var _registry: ContentRegistry
+
+func configure(registry: ContentRegistry) -> void:
+	assert(registry != null, "EndlessContractGenerator requires ContentRegistry.")
+	_registry = registry
+
+func create_sector_definition(contract_number: int, seed_override: int = -1, biome_override: String = "") -> Dictionary:
+	assert(_registry != null, "EndlessContractGenerator must be configured.")
+	assert(contract_number >= 1, "Endless contract number must be >= 1.")
+
+	var seed := seed_override if seed_override >= 0 else _seed_for_contract(contract_number)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed
+
+	var biome_id := biome_override
+	if biome_id.is_empty():
+		biome_id = String(BIOME_IDS[(contract_number - 1) % BIOME_IDS.size()])
+	assert(BIOME_IDS.has(biome_id), "Unsupported endless biome override: %s" % biome_id)
+	var biome := _registry.get_biome(biome_id)
+
+	var table_ids := biome.get("salvage_tables", []) as Array
+	assert(not table_ids.is_empty(), "Endless biome requires salvage tables.")
+	var table_id := String(table_ids[rng.randi_range(0, table_ids.size() - 1)])
+
+	var landmark_ids := _pick_unique(
+		biome.get("landmarks", []) as Array,
+		2 if contract_number >= 6 and rng.randf() > 0.42 else 1,
+		rng
+	)
+	var modifier_ids := _pick_unique(
+		biome.get("modifiers", []) as Array,
+		2 if contract_number >= 10 and rng.randf() > 0.50 else 1,
+		rng
+	)
+
+	var contract := _registry.get_contract(CONTRACT_ID)
+	var target_range := contract["target_percent_range"] as Array
+	var difficulty_progress := clampf(float(contract_number - 1) / 28.0, 0.0, 1.0)
+	var target := int(round(lerpf(float(target_range[0]), float(target_range[1]), difficulty_progress)))
+	target = clampi(target + rng.randi_range(-2, 2), int(target_range[0]), int(target_range[1]))
+
+	var scale_step := mini(contract_number - 1, 40)
+	var half_width := 4800.0 + float(scale_step) * 45.0
+	var half_height := 3000.0 + float(scale_step) * 30.0
+	var density := clampf(0.78 + float(scale_step) * 0.012 + rng.randf_range(-0.05, 0.06), 0.72, 1.32)
+	var clusters := mini(4 + int((contract_number - 1) / 3), 10)
+	var depot := Vector2.from_angle(rng.randf_range(0.0, TAU)) * rng.randf_range(620.0, 1180.0)
+
+	return {
+		"id": "endless_%06d" % contract_number,
+		"display_name_key": DISPLAY_NAME_KEY,
+		"biome": biome_id,
+		"seed": seed,
+		"difficulty": contract_number,
+		"map": {
+			"half_extents": [half_width, half_height],
+			"debris_density": density,
+			"cluster_count": clusters,
+		},
+		"salvage_tables": [
+			{"id": table_id, "weight": 100.0},
+		],
+		"landmarks": landmark_ids,
+		"contract": {
+			"type": CONTRACT_ID,
+			"target_percent": target,
+		},
+		"modifiers": modifier_ids,
+		"depot": {
+			"position": [depot.x, depot.y],
+		},
+	}
+
+func _seed_for_contract(contract_number: int) -> int:
+	var value := (contract_number * 7919 + 104729) % 2147483647
+	return maxi(value, 1)
+
+func _pick_unique(source: Array, requested: int, rng: RandomNumberGenerator) -> Array:
+	var candidates := source.duplicate()
+	var output: Array = []
+	var count := mini(requested, candidates.size())
+	for _index in range(count):
+		var pick := rng.randi_range(0, candidates.size() - 1)
+		output.append(candidates[pick])
+		candidates.remove_at(pick)
+	return output
