@@ -38,17 +38,17 @@ script = ExtResource("2")
 
 [node name="Station" type="Sprite2D" parent="World"]
 z_index = -8
-position = Vector2(1080, -760)
-modulate = Color(0.62, 0.86, 1, 0.34)
-scale = Vector2(2.5, 2.5)
+position = Vector2(790, -500)
+modulate = Color(0.62, 0.86, 1, 0.24)
+scale = Vector2(2.15, 2.15)
 texture = ExtResource("9")
 
 [node name="Satellite" type="Sprite2D" parent="World"]
 z_index = -7
-position = Vector2(-1160, 820)
+position = Vector2(-760, 560)
 rotation = 0.42
-modulate = Color(0.62, 0.9, 1, 0.34)
-scale = Vector2(1.7, 1.7)
+modulate = Color(0.62, 0.9, 1, 0.25)
+scale = Vector2(1.55, 1.55)
 texture = ExtResource("10")
 
 [node name="LargeMeteor" type="StaticBody2D" parent="World"]
