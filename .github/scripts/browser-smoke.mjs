@@ -134,7 +134,7 @@ try {
   await openBuild(
     { width: 390, height: 844 },
     'mobile-portrait-390x844',
-    { x: 194, y: 414 },
+    { x: 194, y: 441 },
     true,
   );
 
