@@ -3,8 +3,8 @@
 
 from __future__ import annotations
 
-import csv
 from pathlib import Path
+import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,7 +16,9 @@ REQUIRED = [
     "web/platform/platform-config.js",
     "web/platform/debug-provider.js",
     "web/platform/platform-loader.js",
-    "i18n/ui.csv",
+    "i18n/en.po",
+    "i18n/pt_BR.po",
+    "i18n/es_ES.po",
     "src/ui/screens/bootstrap/bootstrap_screen.tscn",
     "src/ui/screens/bootstrap/bootstrap_screen.gd",
     "AGENTS.md",
@@ -24,6 +26,7 @@ REQUIRED = [
 ]
 
 PORTAL_IDENTIFIERS = ("crazygames", "gamepix", "gamemonetize", "gamedistribution", "poki")
+MSGID = re.compile(r'^msgid "([^"]+)"$', re.MULTILINE)
 
 
 def fail(message: str) -> None:
@@ -38,23 +41,27 @@ def validate_required_files() -> None:
 
 
 def validate_translations() -> None:
-    path = ROOT / "i18n/ui.csv"
-    with path.open(newline="", encoding="utf-8") as handle:
-        rows = list(csv.DictReader(handle))
-    expected = {"keys", "en", "pt_BR", "es_ES"}
-    if not rows:
-        fail("Translation catalog is empty")
-    if set(rows[0].keys()) != expected:
-        fail(f"Translation columns must be exactly {sorted(expected)}")
-    keys = [row["keys"].strip() for row in rows]
-    if any(not key for key in keys):
-        fail("Translation key cannot be empty")
-    if len(keys) != len(set(keys)):
-        fail("Duplicate translation keys detected")
-    for row in rows:
-        for locale in ("en", "pt_BR", "es_ES"):
-            if not row[locale].strip():
-                fail(f"Missing {locale} translation for {row['keys']}")
+    expected_languages = {
+        "en.po": "Language: en",
+        "pt_BR.po": "Language: pt_BR",
+        "es_ES.po": "Language: es_ES",
+    }
+    catalogs: dict[str, set[str]] = {}
+    for filename, header in expected_languages.items():
+        text = (ROOT / "i18n" / filename).read_text(encoding="utf-8")
+        if header not in text:
+            fail(f"{filename} is missing expected language header {header!r}")
+        ids = set(MSGID.findall(text))
+        if not ids:
+            fail(f"{filename} contains no translation messages")
+        catalogs[filename] = ids
+
+    reference = catalogs["en.po"]
+    for filename, ids in catalogs.items():
+        missing = sorted(reference - ids)
+        extra = sorted(ids - reference)
+        if missing or extra:
+            fail(f"{filename} key mismatch; missing={missing}, extra={extra}")
 
 
 def validate_provider_boundary() -> None:
