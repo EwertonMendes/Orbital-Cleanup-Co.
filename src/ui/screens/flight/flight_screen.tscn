@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
@@ -9,9 +9,23 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="7"]
 [ext_resource type="Script" path="res://src/game/salvage/unload_zone.gd" id="8"]
 [ext_resource type="PackedScene" path="res://src/game/sector/sector_runtime.tscn" id="9"]
+[ext_resource type="Script" path="res://src/game/visual/ambient_orbit_layer.gd" id="10"]
+[ext_resource type="Shader" path="res://src/game/visual/world_post_process.gdshader" id="11"]
+[ext_resource type="Script" path="res://src/game/visual/world_post_process.gd" id="12"]
+[ext_resource type="Script" path="res://src/game/visual/flight_feedback.gd" id="13"]
 
 [sub_resource type="CircleShape2D" id="UnloadShape"]
 radius = 145.0
+
+[sub_resource type="ShaderMaterial" id="WorldPostMaterial"]
+resource_local_to_scene = true
+shader = ExtResource("11")
+shader_parameter/grade_tint = Color(0.33, 0.86, 0.98, 1)
+shader_parameter/flash_color = Color(0.55, 0.95, 0.81, 1)
+shader_parameter/effect_strength = 0.58
+shader_parameter/glow_strength = 0.08
+shader_parameter/grain_strength = 0.008
+shader_parameter/flash_strength = 0.0
 
 [sub_resource type="StyleBoxFlat" id="MissionPanel"]
 bg_color = Color(0.012, 0.044, 0.068, 0.94)
@@ -107,6 +121,10 @@ script = ExtResource("1")
 z_index = -100
 script = ExtResource("2")
 
+[node name="AmbientMotion" type="Node2D" parent="World"]
+z_index = -95
+script = ExtResource("10")
+
 [node name="SectorRuntime" parent="World" instance=ExtResource("9")]
 unique_name_in_owner = true
 
@@ -145,6 +163,27 @@ horizontal_alignment = 1
 
 [node name="PlayerShip" parent="World" instance=ExtResource("3")]
 unique_name_in_owner = true
+
+[node name="WorldPost" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="WorldPostProcess" type="ColorRect" parent="WorldPost"]
+unique_name_in_owner = true
+material = SubResource("WorldPostMaterial")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 1)
+script = ExtResource("12")
+
+[node name="FlightFeedback" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("13")
+world_path = NodePath("../World")
+post_process_path = NodePath("../WorldPost/WorldPostProcess")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 10
