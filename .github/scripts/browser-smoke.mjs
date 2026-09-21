@@ -155,6 +155,26 @@ async function openQaDeepLinks() {
     await page.close();
   }
 
+  const biomeSamples = [
+    { sector: 'earth_orbit_04', label: 'earth-orbit' },
+    { sector: 'lunar_belt_02', label: 'lunar-belt' },
+    { sector: 'mars_freight_02', label: 'mars-freight' },
+    { sector: 'blue_nebula_02', label: 'blue-nebula' },
+  ];
+
+  for (const sample of biomeSamples) {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+    watch(page, `qa-biome-${sample.label}`);
+    const sectorReady = waitForConsole(page, `[Sector] READY id=${sample.sector}`, 60000);
+    const flightReady = waitForConsole(page, '[Flight] READY', 60000);
+    await page.goto(`${url}?sector=${sample.sector}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await sectorReady;
+    await flightReady;
+    await page.waitForTimeout(850);
+    await page.screenshot({ path: `build/smoke-qa-biome-${sample.label}.png`, fullPage: true });
+    await page.close();
+  }
+
   const lockedHqPage = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   watch(lockedHqPage, 'qa-hq-locked-lunar');
   const lockedHqReady = waitForConsole(lockedHqPage, '[HQ] READY tab=contracts', 60000);

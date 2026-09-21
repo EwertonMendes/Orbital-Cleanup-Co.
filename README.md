@@ -14,11 +14,16 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**Career Progression & Region Unlocks**
+**Living Biomes**
 
-Company XP now drives access to authored contracts and regions. Every authored sector declares an explicit career order and minimum rank, Headquarters lets players inspect locked work while preventing deployment, and a persistent next-unlock tracker shows the required rank and remaining XP.
+The four launch regions now have distinct data-driven environmental gameplay and visual identities instead of behaving like recolored debris fields.
 
-Career pacing is balanced against the current 13-contract content set: Earth training leads into advanced Earth operations, Lunar Belt, Mars Freight Route and Blue Nebula. Endless Contracts become a Deep Space Operator endgame unlock. Promotions surface newly unlocked contracts alongside cosmetics in Contract Debrief.
+- Earth Orbit remains the clear, stable baseline with active orbital traffic and an animated Earth backdrop.
+- Lunar Belt adds gravity wells and an authored safe corridor that the obstacle generator keeps clear.
+- Mars Freight Route adds directional solar/dust currents and heavier salvage recovery.
+- Blue Nebula adds low-visibility pockets, scanner interference, Tractor Beam distortion and magnetic fields.
+
+All biome effects run through reusable environmental fields, while project-owned vector planets, parallax, animated atmosphere, ambient motion and distant traffic keep each location visibly alive.
 
 The remaining player-facing work is tracked in `docs/PRODUCT_BACKLOG.md`.
 

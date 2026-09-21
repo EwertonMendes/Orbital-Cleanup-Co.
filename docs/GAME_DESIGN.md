@@ -184,3 +184,19 @@ The current polish milestone turns presentation into reusable gameplay systems r
 - screen transitions belong to SceneRouter, not individual screens.
 
 The visual pass must not turn the game into a combat spectacle. Effects should reward cleanup and navigation while preserving the cozy corporate-space tone.
+
+## Living biome implementation
+
+Biome identity is now both mechanical and visual. Normal sector code must not branch on a specific biome ID to decide gameplay rules. Instead, biome JSON authors reusable environmental volumes and a visual profile; the generic Sector Generator and Environment Runtime interpret those definitions.
+
+Current biome roles:
+
+- **Earth Orbit** — neutral baseline. Navigation, scanner and Tractor Beam operate normally so early contracts remain clear and onboarding-friendly.
+- **Lunar Belt** — gravity wells gently influence ship/salvage trajectories. A long safe corridor is generated through the depot and collision hazards are explicitly excluded from that lane.
+- **Mars Freight Route** — directional drift currents push the ship and loose salvage. The biome also applies a higher salvage-mass multiplier so freight recovery feels materially heavier.
+- **Blue Nebula** — low-visibility pockets alter world post-processing, scanner interference reduces effective detection range, Tractor Beam distortion reduces pull/collection efficiency, and magnetic zones influence loose salvage more strongly than the ship.
+
+Environmental pressure is deliberately bounded. Fields use smooth falloff, never destroy the ship, never fully disable scanner/Tractor Beam and cannot overpower normal steering. Their job is route planning and feel, not punishment.
+
+Visual identity uses project-owned editable SVG planets under `assets/original/planets/`, a shared animated surface/atmosphere shader, camera-relative parallax, biome-specific ambient motion and distant traffic. HUD text identifies the dominant local environmental effect while the world itself provides matching field visuals.
+

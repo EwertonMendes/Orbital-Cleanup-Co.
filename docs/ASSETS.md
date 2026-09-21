@@ -56,3 +56,15 @@ See [UI Guidelines](UI_GUIDELINES.md).
 ## Typography
 
 Oxanium is imported from the Google Fonts repository as the variable `Oxanium[wght].ttf` file under SIL OFL 1.1. The font is applied through the shared Godot Theme so screens do not embed font paths individually.
+
+## Project-owned planet artwork
+
+The launch-biome planets under `assets/original/planets/` are original Orbital Cleanup Co. vector artwork authored directly for this project:
+
+- Earth Orbit;
+- Lunar Belt;
+- Mars Freight Route;
+- Blue Nebula giant.
+
+They are not derived from the approved-but-unimported external planet packs listed above and therefore do not add a third-party runtime dependency. Editable SVG source remains in Git, while Godot imports it as texture data at build time. A shared project shader supplies subtle rotation, atmosphere glow and shimmer instead of baking animation into duplicate image files.
+
