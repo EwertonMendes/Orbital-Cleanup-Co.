@@ -1,12 +1,21 @@
 {
   "id": "service_satellite",
   "display_name_key": "LANDMARK_SERVICE_SATELLITE",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
-  "scale": 1.6,
-  "reserved_radius": 180,
+  "sprite": "res://assets/original/landmarks/service_satellite.svg",
+  "scale": 0.62,
+  "reserved_radius": 350,
   "placement_radius": [
-    1000,
-    1800
+    1150,
+    2100
   ],
+  "collision": {
+    "shape": "circle",
+    "radius": 170
+  },
+  "spin_speed_range": [
+    -0.003,
+    0.003
+  ],
+  "drift_amplitude": 1.5,
   "ambient_effect": "none"
 }

@@ -1,12 +1,24 @@
 {
   "id": "comms_array",
   "display_name_key": "LANDMARK_COMMS_ARRAY",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
-  "scale": 2,
-  "reserved_radius": 210,
+  "sprite": "res://assets/original/landmarks/comms_array.svg",
+  "scale": 0.64,
+  "reserved_radius": 500,
   "placement_radius": [
-    1000,
-    2150
+    1450,
+    2600
   ],
+  "collision": {
+    "shape": "box",
+    "size": [
+      500,
+      300
+    ]
+  },
+  "spin_speed_range": [
+    0,
+    0
+  ],
+  "drift_amplitude": 0.5,
   "ambient_effect": "none"
 }

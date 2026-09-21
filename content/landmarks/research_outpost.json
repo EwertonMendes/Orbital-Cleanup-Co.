@@ -1,12 +1,21 @@
 {
   "id": "research_outpost",
   "display_name_key": "LANDMARK_RESEARCH_OUTPOST",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/station_a.png",
-  "scale": 1.9,
-  "reserved_radius": 250,
+  "sprite": "res://assets/original/landmarks/research_outpost.svg",
+  "scale": 0.66,
+  "reserved_radius": 520,
   "placement_radius": [
-    1200,
-    2250
+    1600,
+    2750
   ],
+  "collision": {
+    "shape": "circle",
+    "radius": 235
+  },
+  "spin_speed_range": [
+    -0.0015,
+    0.0015
+  ],
+  "drift_amplitude": 1,
   "ambient_effect": "ion_glow"
 }

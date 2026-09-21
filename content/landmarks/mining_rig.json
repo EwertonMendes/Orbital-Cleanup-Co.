@@ -1,12 +1,24 @@
 {
   "id": "mining_rig",
   "display_name_key": "LANDMARK_MINING_RIG",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/station_a.png",
-  "scale": 2.1,
-  "reserved_radius": 280,
+  "sprite": "res://assets/original/landmarks/mining_rig.svg",
+  "scale": 0.66,
+  "reserved_radius": 520,
   "placement_radius": [
-    1200,
-    2300
+    1550,
+    2650
   ],
+  "collision": {
+    "shape": "box",
+    "size": [
+      500,
+      330
+    ]
+  },
+  "spin_speed_range": [
+    0,
+    0
+  ],
+  "drift_amplitude": 0,
   "ambient_effect": "dust"
 }
