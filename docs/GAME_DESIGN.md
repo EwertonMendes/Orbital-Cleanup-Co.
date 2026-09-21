@@ -200,3 +200,15 @@ Environmental pressure is deliberately bounded. Fields use smooth falloff, never
 
 Visual identity uses project-owned editable SVG planets under `assets/original/planets/`, a shared animated surface/atmosphere shader, camera-relative parallax, biome-specific ambient motion and distant traffic. HUD text identifies the dominant local environmental effect while the world itself provides matching field visuals.
 
+
+## Memorable orbital landmark implementation
+
+Large structures are now part of navigation, not just scenery.
+
+The launch landmark family uses eight project-owned silhouettes: service satellite, cargo waystation, relay tower, lunar mining rig, fractured moonlet, communications array, Blue Nebula research outpost and a large derelict explorer wreck. Their shapes are intentionally much larger and more recognizable than salvage.
+
+Landmarks remain data-driven. Content authors choose placement range, navigation clearance, circle/box collision geometry, restrained motion and visual asset through JSON. The generic Sector Engine places them deterministically.
+
+Their `reserved_radius` is an actual composition rule: normal salvage and collision hazards are generated outside the structure's protected footprint. The ship can collide with the authored structure itself using the existing non-lethal bump response, which creates corridors, detours and recognizable navigation anchors without introducing damage or combat.
+
+Major orbital structures should continue to be authored as distinct silhouettes rather than enlarged small props. A new normal sector must still require data only, not landmark-specific GDScript.
