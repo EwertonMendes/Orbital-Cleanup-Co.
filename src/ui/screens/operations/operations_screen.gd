@@ -218,8 +218,12 @@ func _apply_responsive_layout() -> void:
 	var horizontal_margin := 14 if compact else 28
 	var vertical_margin := 12 if compact else 20
 	if _overlay_mode:
-		horizontal_margin = 18 if compact else maxi(52, int(round(size.x * 0.075)))
-		vertical_margin = 14 if compact else 34
+		if compact:
+			horizontal_margin = 14
+			vertical_margin = 12
+		else:
+			horizontal_margin = maxi(72, int(round((size.x - 1000.0) * 0.5)))
+			vertical_margin = maxi(42, int(round((size.y - 600.0) * 0.5)))
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
