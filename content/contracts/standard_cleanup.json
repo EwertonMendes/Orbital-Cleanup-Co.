@@ -1,6 +1,7 @@
 {
   "id": "standard_cleanup",
   "display_name_key": "CONTRACT_STANDARD_CLEANUP",
+  "description_key": "CONTRACT_STANDARD_CLEANUP_DESC",
   "kind": "cleanup",
   "target_percent_range": [
     65,
