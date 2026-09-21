@@ -23,6 +23,7 @@ Major sector structures now use original OCC artwork and participate in navigati
 - Reserved landmark clearance now affects deterministic generation, keeping salvage and hazards out of stations, wrecks and moonlets.
 - Large structures remain compatible with authored and Endless sectors through the generic Sector Engine.
 - Landmark ambient redraw is bounded rather than running expensive custom drawing every frame.
+- Contextual cargo-depot guidance remains available in every sector and points to the real data-driven depot position.
 
 The remaining player-facing work is tracked in `docs/PRODUCT_BACKLOG.md`.
 
