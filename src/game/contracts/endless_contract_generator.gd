@@ -7,7 +7,14 @@ const BIOME_IDS := [
 	"mars_freight",
 	"blue_nebula",
 ]
-const CONTRACT_ID := "standard_cleanup"
+const CONTRACT_ROTATION := [
+	"standard_cleanup",
+	"recovery_run",
+	"standard_cleanup",
+	"valuable_recovery",
+	"full_cleanup",
+	"priority_recovery",
+]
 const DISPLAY_NAME_KEY := "SECTOR_ENDLESS_CONTRACT"
 
 var _registry: ContentRegistry
@@ -45,11 +52,8 @@ func create_sector_definition(contract_number: int, seed_override: int = -1, bio
 		rng
 	)
 
-	var contract := _registry.get_contract(CONTRACT_ID)
-	var target_range := contract["target_percent_range"] as Array
-	var difficulty_progress := clampf(float(contract_number - 1) / 28.0, 0.0, 1.0)
-	var target := int(round(lerpf(float(target_range[0]), float(target_range[1]), difficulty_progress)))
-	target = clampi(target + rng.randi_range(-2, 2), int(target_range[0]), int(target_range[1]))
+	var contract_id := String(CONTRACT_ROTATION[(contract_number - 1) % CONTRACT_ROTATION.size()])
+	var contract_ref := _build_contract_ref(contract_id, table_id, contract_number, rng)
 
 	var scale_step := mini(contract_number - 1, 40)
 	var half_width := 4800.0 + float(scale_step) * 45.0
@@ -73,15 +77,68 @@ func create_sector_definition(contract_number: int, seed_override: int = -1, bio
 			{"id": table_id, "weight": 100.0},
 		],
 		"landmarks": landmark_ids,
-		"contract": {
-			"type": CONTRACT_ID,
-			"target_percent": target,
-		},
+		"contract": contract_ref,
 		"modifiers": modifier_ids,
 		"depot": {
 			"position": [depot.x, depot.y],
 		},
 	}
+
+func _build_contract_ref(
+	contract_id: String,
+	table_id: String,
+	contract_number: int,
+	rng: RandomNumberGenerator
+) -> Dictionary:
+	var contract := _registry.get_contract(contract_id)
+	var kind := String(contract["kind"])
+	var progress := clampf(float(contract_number - 1) / 28.0, 0.0, 1.0)
+	var output := {"type": contract_id}
+
+	match kind:
+		"cleanup", "full_cleanup":
+			var range := contract["target_percent_range"] as Array
+			var target := int(round(lerpf(float(range[0]), float(range[1]), progress)))
+			target = clampi(target + rng.randi_range(-2, 2), int(range[0]), int(range[1]))
+			output["target_percent"] = target
+		"recovery":
+			var range := contract["target_count_range"] as Array
+			var target := int(round(lerpf(float(range[0]), float(range[1]), progress)))
+			output["target_count"] = clampi(target + rng.randi_range(-1, 1), int(range[0]), int(range[1]))
+		"valuable_recovery":
+			var range := contract["target_value_range"] as Array
+			var target := int(round(lerpf(float(range[0]), float(range[1]), progress)))
+			target += rng.randi_range(-40, 40)
+			output["target_value"] = clampi(target, int(range[0]), int(range[1]))
+		"priority_object":
+			var range := contract["target_count_range"] as Array
+			output["target_count"] = clampi(
+				int(round(lerpf(float(range[0]), float(range[1]), progress))),
+				int(range[0]),
+				int(range[1])
+			)
+			output["target_salvage_id"] = _pick_priority_salvage(table_id, rng)
+		_:
+			assert(false, "Unsupported endless contract kind: %s" % kind)
+
+	return output
+
+func _pick_priority_salvage(table_id: String, rng: RandomNumberGenerator) -> String:
+	var table := _registry.get_salvage_table(table_id)
+	var preferred: Array[String] = []
+	var fallback: Array[String] = []
+
+	for value in table["entries"] as Array:
+		var entry := value as Dictionary
+		var salvage_id := String(entry["salvage"])
+		fallback.append(salvage_id)
+		var salvage := _registry.get_salvage_data(salvage_id)
+		if String(salvage.get("rarity", "common")) in ["rare", "epic"]:
+			preferred.append(salvage_id)
+
+	var candidates := preferred if not preferred.is_empty() else fallback
+	assert(not candidates.is_empty(), "Priority contract requires at least one salvage candidate.")
+	return candidates[rng.randi_range(0, candidates.size() - 1)]
 
 func _seed_for_contract(contract_number: int) -> int:
 	var value := (contract_number * 7919 + 104729) % 2147483647

@@ -68,6 +68,8 @@ func generate_definition(source: Dictionary) -> Dictionary:
 		occupied,
 		float(parameters["rare_weight_multiplier"])
 	)
+	_apply_contract_spawn_requirements(sector, salvage_spawns)
+
 	var obstacle_spawns := _build_obstacle_spawns(
 		biome,
 		rng,
@@ -78,7 +80,14 @@ func generate_definition(source: Dictionary) -> Dictionary:
 		occupied
 	)
 
-	var signature := _build_signature(sector_id, int(sector["seed"]), salvage_spawns, obstacle_spawns, landmarks)
+	var signature := _build_signature(
+		sector_id,
+		int(sector["seed"]),
+		sector["contract"] as Dictionary,
+		salvage_spawns,
+		obstacle_spawns,
+		landmarks
+	)
 	return {
 		"sector": sector,
 		"biome": biome,
@@ -153,6 +162,25 @@ func _build_salvage_spawns(
 			"spin_speed": rng.randf_range(-0.42, 0.42),
 		})
 	return output
+
+func _apply_contract_spawn_requirements(sector: Dictionary, salvage_spawns: Array[Dictionary]) -> void:
+	var contract_ref := sector["contract"] as Dictionary
+	var contract := _registry.get_contract(String(contract_ref["type"]))
+	if String(contract.get("kind", "")) != "priority_object":
+		return
+
+	var target_salvage_id := String(contract_ref.get("target_salvage_id", ""))
+	var target_count := int(contract_ref.get("target_count", 1))
+	assert(not target_salvage_id.is_empty(), "Priority contract requires target_salvage_id.")
+	assert(target_count > 0, "Priority contract requires positive target_count.")
+	assert(salvage_spawns.size() >= target_count, "Priority contract target count exceeds generated salvage count.")
+
+	for offset in range(target_count):
+		var index := salvage_spawns.size() - 1 - offset
+		var entry := salvage_spawns[index] as Dictionary
+		entry["salvage_id"] = target_salvage_id
+		entry["priority_target"] = true
+		salvage_spawns[index] = entry
 
 func _build_obstacle_spawns(
 	biome: Dictionary,
@@ -244,11 +272,19 @@ func _vector2_from_array(value: Array) -> Vector2:
 func _build_signature(
 	sector_id: String,
 	seed: int,
+	contract_ref: Dictionary,
 	salvage: Array[Dictionary],
 	obstacles: Array[Dictionary],
 	landmarks: Array[Dictionary]
 ) -> String:
-	var parts := PackedStringArray([sector_id, str(seed), str(salvage.size()), str(obstacles.size()), str(landmarks.size())])
+	var parts := PackedStringArray([
+		sector_id,
+		str(seed),
+		JSON.stringify(contract_ref),
+		str(salvage.size()),
+		str(obstacles.size()),
+		str(landmarks.size()),
+	])
 	for index in range(mini(salvage.size(), 5)):
 		var entry: Dictionary = salvage[index] as Dictionary
 		var position := entry["position"] as Vector2

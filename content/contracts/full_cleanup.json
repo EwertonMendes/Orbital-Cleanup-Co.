@@ -1,0 +1,14 @@
+{
+  "id": "full_cleanup",
+  "display_name_key": "CONTRACT_FULL_CLEANUP",
+  "description_key": "CONTRACT_FULL_CLEANUP_DESC",
+  "kind": "full_cleanup",
+  "target_percent_range": [
+    100,
+    100
+  ],
+  "base_pay": 360,
+  "perfect_bonus": 0,
+  "company_xp": 180,
+  "perfect_xp_bonus": 0
+}

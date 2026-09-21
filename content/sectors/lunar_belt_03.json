@@ -23,8 +23,9 @@
     "fractured_moonlet"
   ],
   "contract": {
-    "type": "standard_cleanup",
-    "target_percent": 80
+    "type": "priority_recovery",
+    "target_count": 1,
+    "target_salvage_id": "navigation_core"
   },
   "modifiers": [
     "rich_recovery",

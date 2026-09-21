@@ -22,8 +22,8 @@
     "cargo_waystation"
   ],
   "contract": {
-    "type": "standard_cleanup",
-    "target_percent": 76
+    "type": "recovery_run",
+    "target_count": 8
   },
   "modifiers": [
     "quiet_orbit"

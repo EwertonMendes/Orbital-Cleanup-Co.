@@ -26,6 +26,7 @@ var _input_service: InputService
 var _platform: PlatformService
 var _ads: AdService
 var _progression: ProgressionService
+var _registry := ContentRegistry.new()
 var _contract_session := ContractSession.new()
 var _gameplay_active := false
 var _hint_tween: Tween
@@ -103,6 +104,7 @@ func _ready() -> void:
 	unload_zone.cargo_unloaded.connect(_on_cargo_unloaded)
 	_input_service.input_mode_changed.connect(_on_input_mode_changed)
 	_contract_session.cleanliness_changed.connect(_on_cleanliness_changed)
+	_contract_session.objective_changed.connect(_on_objective_changed)
 	_contract_session.target_reached.connect(_on_contract_target_reached)
 	_contract_session.perfect_cleanup_reached.connect(_on_perfect_cleanup_reached)
 	_contract_session.start()
@@ -223,10 +225,39 @@ func _refresh_copy() -> void:
 func _refresh_cleanup() -> void:
 	if not is_node_ready():
 		return
-	var percent := _contract_session.get_cleanup_percent()
-	var target := _contract_session.get_target_percent()
-	cleanup_progress.value = percent
-	cleanup_status.text = tr("FLIGHT_CLEANLINESS_FMT") % [int(round(percent)), int(round(target))]
+	var objective := _contract_session.get_objective_snapshot()
+	var progress := float(objective["progress_percent"])
+	var cleanup := int(round(float(objective["cleanup_percent"])))
+	cleanup_progress.value = progress
+
+	match String(objective["kind"]):
+		"cleanup":
+			cleanup_status.text = tr("FLIGHT_CLEANLINESS_FMT") % [
+				int(round(float(objective["current"]))),
+				int(round(float(objective["target"]))),
+			]
+		"full_cleanup":
+			cleanup_status.text = tr("FLIGHT_OBJECTIVE_FULL_FMT") % cleanup
+		"recovery":
+			cleanup_status.text = tr("FLIGHT_OBJECTIVE_RECOVERY_FMT") % [
+				int(objective["current"]),
+				int(objective["target"]),
+				cleanup,
+			]
+		"valuable_recovery":
+			cleanup_status.text = tr("FLIGHT_OBJECTIVE_VALUE_FMT") % [
+				int(objective["current"]),
+				int(objective["target"]),
+				cleanup,
+			]
+		"priority_object":
+			var target_definition := _registry.get_salvage_definition(String(objective["priority_salvage_id"]))
+			cleanup_status.text = tr("FLIGHT_OBJECTIVE_PRIORITY_FMT") % [
+				tr(String(target_definition.display_name_key)),
+				int(objective["current"]),
+				int(objective["target"]),
+				cleanup,
+			]
 
 func _refresh_return_button() -> void:
 	if not is_node_ready():
@@ -239,6 +270,9 @@ func _refresh_return_button() -> void:
 		return_button.text = tr("FLIGHT_ABORT_CONTRACT")
 
 func _on_cleanliness_changed(_percent: float, _cleaned: float, _total: float) -> void:
+	_refresh_return_button()
+
+func _on_objective_changed(_snapshot: Dictionary) -> void:
 	_refresh_cleanup()
 	_refresh_return_button()
 

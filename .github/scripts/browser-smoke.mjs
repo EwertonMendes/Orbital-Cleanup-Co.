@@ -133,13 +133,27 @@ async function openBuild(viewport, label, touch = false) {
 
 
 async function openQaDeepLinks() {
-  const sectorPage = await browser.newPage({ viewport: { width: 1100, height: 700 } });
-  watch(sectorPage, 'qa-sector-deeplink');
-  const sectorReady = waitForConsole(sectorPage, '[Sector] READY id=blue_nebula_02', 60000);
-  await sectorPage.goto(`${url}?sector=blue_nebula_02`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await sectorReady;
-  await sectorPage.screenshot({ path: 'build/smoke-qa-sector-deeplink.png', fullPage: true });
-  await sectorPage.close();
+  const contractSamples = [
+    { sector: 'earth_training_02', kind: 'recovery', label: 'recovery' },
+    { sector: 'earth_orbit_04', kind: 'valuable_recovery', label: 'valuable' },
+    { sector: 'lunar_belt_02', kind: 'full_cleanup', label: 'full-cleanup' },
+    { sector: 'blue_nebula_02', kind: 'priority_object', label: 'priority' },
+  ];
+
+  for (const sample of contractSamples) {
+    const page = await browser.newPage({ viewport: { width: 1100, height: 700 } });
+    watch(page, `qa-contract-${sample.label}`);
+    const sectorReady = waitForConsole(page, `[Sector] READY id=${sample.sector}`, 60000);
+    const contractReady = waitForConsole(page, `[Contract] START sector=${sample.sector} kind=${sample.kind}`, 60000);
+    const flightReady = waitForConsole(page, '[Flight] READY', 60000);
+    await page.goto(`${url}?sector=${sample.sector}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await sectorReady;
+    await contractReady;
+    await flightReady;
+    await page.waitForTimeout(250);
+    await page.screenshot({ path: `build/smoke-qa-contract-${sample.label}.png`, fullPage: true });
+    await page.close();
+  }
 
   const endlessPage = await browser.newPage({ viewport: { width: 1100, height: 700 } });
   watch(endlessPage, 'qa-endless-10000');

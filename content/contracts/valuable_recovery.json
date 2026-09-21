@@ -1,0 +1,14 @@
+{
+  "id": "valuable_recovery",
+  "display_name_key": "CONTRACT_VALUABLE_RECOVERY",
+  "description_key": "CONTRACT_VALUABLE_RECOVERY_DESC",
+  "kind": "valuable_recovery",
+  "target_value_range": [
+    320,
+    950
+  ],
+  "base_pay": 300,
+  "perfect_bonus": 155,
+  "company_xp": 145,
+  "perfect_xp_bonus": 40
+}

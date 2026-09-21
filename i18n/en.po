@@ -684,3 +684,54 @@ msgstr "INDUSTRIAL"
 
 msgid "CATEGORY_PROPULSION"
 msgstr "PROPULSION"
+
+msgid "CONTRACT_STANDARD_CLEANUP_DESC"
+msgstr "Restore the required sector cleanliness."
+
+msgid "CONTRACT_FULL_CLEANUP"
+msgstr "Full Cleanup"
+
+msgid "CONTRACT_FULL_CLEANUP_DESC"
+msgstr "Recover every marked piece of salvage in the sector."
+
+msgid "CONTRACT_RECOVERY_RUN"
+msgstr "Recovery Run"
+
+msgid "CONTRACT_RECOVERY_RUN_DESC"
+msgstr "Recover the required number of salvage objects."
+
+msgid "CONTRACT_VALUABLE_RECOVERY"
+msgstr "Valuable Recovery"
+
+msgid "CONTRACT_VALUABLE_RECOVERY_DESC"
+msgstr "Reach the required recovery value by prioritizing better salvage."
+
+msgid "CONTRACT_PRIORITY_RECOVERY"
+msgstr "Priority Recovery"
+
+msgid "CONTRACT_PRIORITY_RECOVERY_DESC"
+msgstr "Locate and recover the designated priority object."
+
+msgid "HQ_CONTRACT_TARGET_FULL"
+msgstr "TARGET · FULL CLEANUP · 100%"
+
+msgid "HQ_CONTRACT_TARGET_RECOVERY_FMT"
+msgstr "TARGET · RECOVER %d OBJECTS"
+
+msgid "HQ_CONTRACT_TARGET_VALUE_FMT"
+msgstr "TARGET · RECOVER %d CREDITS OF VALUE"
+
+msgid "HQ_CONTRACT_TARGET_PRIORITY_FMT"
+msgstr "TARGET · %d × %s"
+
+msgid "FLIGHT_OBJECTIVE_FULL_FMT"
+msgstr "FULL CLEANUP · %d%% / 100%%"
+
+msgid "FLIGHT_OBJECTIVE_RECOVERY_FMT"
+msgstr "RECOVERY · %d / %d OBJECTS · CLEAN %d%%"
+
+msgid "FLIGHT_OBJECTIVE_VALUE_FMT"
+msgstr "RECOVERY VALUE · %d / %d CREDITS · CLEAN %d%%"
+
+msgid "FLIGHT_OBJECTIVE_PRIORITY_FMT"
+msgstr "PRIORITY · %s · %d / %d · CLEAN %d%%"

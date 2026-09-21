@@ -23,8 +23,9 @@
     "comms_array"
   ],
   "contract": {
-    "type": "standard_cleanup",
-    "target_percent": 85
+    "type": "priority_recovery",
+    "target_count": 1,
+    "target_salvage_id": "orbital_battery"
   },
   "modifiers": [
     "valuable_salvage",

@@ -14,22 +14,19 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**Polish + Retention**
+**Contract Variety**
 
-The core loop, data-driven sectors, Headquarters, customization, endless contracts and platform-provider boundary are already in place.
+The core loop and visual/retention pass are in place. The current milestone expands the cleanup loop into distinct data-driven objectives without creating separate gameplay scenes.
 
-This milestone focuses on making the existing game feel alive and rewarding:
+Available contract kinds:
 
-- lightweight world-only post-processing for Web/mobile;
-- animated orbit layers, twinkling space ambience and moving landmarks/hazards;
-- rare/epic salvage energy treatment and stronger Tractor Beam flow;
-- reusable collection, unload, impact and completion particles;
-- original procedural scanner/collection/discovery/unload/impact/Perfect Cleanup SFX;
-- persistent Discovery catalog with NEW DISCOVERY feedback;
-- smooth routed-screen transitions;
-- regression contracts that keep these presentation systems intact.
+- Standard Cleanup — reach a required cleanliness percentage;
+- Full Cleanup — recover all marked salvage;
+- Recovery Run — recover a required number of objects;
+- Valuable Recovery — reach a target recovered-credit value;
+- Priority Recovery — find and recover a designated object guaranteed by generation.
 
-The next major gameplay-content milestone after this polish pass is **Contract Variety**.
+Authored sectors distribute these objectives intentionally, while Endless Contracts rotate them deterministically and derive targets from each contract definition.
 
 ## Visual direction
 

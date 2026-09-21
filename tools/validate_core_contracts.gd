@@ -171,10 +171,17 @@ func _validate_content_runtime() -> void:
 
 	var generator := SectorGenerator.new()
 	generator.configure(registry, scaler)
+	var authored_kinds: Dictionary = {}
 	for sector_id in sector_ids:
 		var authored_plan := generator.generate(sector_id)
 		_expect(not authored_plan.is_empty(), "Every authored sector must generate: %s" % sector_id)
 		_expect((authored_plan["salvage_spawns"] as Array).size() >= 5, "Every authored sector needs salvage: %s" % sector_id)
+		var sector := authored_plan["sector"] as Dictionary
+		var contract_ref := sector["contract"] as Dictionary
+		var contract := registry.get_contract(String(contract_ref["type"]))
+		authored_kinds[String(contract["kind"])] = true
+		_validate_contract_plan_feasibility(authored_plan, registry)
+	_expect(authored_kinds.size() == 5, "Authored content must exercise all five contract kinds.")
 
 	var plan_a := generator.generate("earth_training_01")
 	var plan_b := generator.generate("earth_training_01")
@@ -231,6 +238,16 @@ func _validate_endless_contracts() -> void:
 		"Adjacent endless contracts must not collapse to the same generation signature."
 	)
 
+	var endless_kinds: Dictionary = {}
+	for contract_number in range(1, 7):
+		var varied_definition := endless.create_sector_definition(contract_number)
+		var varied_plan := generator.generate_definition(varied_definition)
+		var contract_ref := varied_definition["contract"] as Dictionary
+		var contract := registry.get_contract(String(contract_ref["type"]))
+		endless_kinds[String(contract["kind"])] = true
+		_validate_contract_plan_feasibility(varied_plan, registry)
+	_expect(endless_kinds.size() == 5, "First endless rotation must expose all five contract kinds.")
+
 func _validate_sector_preview() -> void:
 	var packed := load("res://src/debug/sector_preview/sector_preview.tscn") as PackedScene
 	_expect(packed != null, "Sector Preview scene must load.")
@@ -244,35 +261,121 @@ func _validate_sector_preview() -> void:
 
 func _validate_contract_session() -> void:
 	var registry := ContentRegistry.new()
-	var contract := registry.get_contract("standard_cleanup")
-	var session := ContractSession.new()
-	session.configure({
-		"sector_id": "qa_sector",
-		"contract": contract,
-		"target_percent": 70.0,
-		"total_cleanliness": 10.0,
-		"reward_multiplier": 1.0,
-	})
-
 	var target_salvage := registry.get_salvage_definition("scrap_fragment").duplicate(true) as SalvageDefinition
 	target_salvage.cleanliness_value = 7.0
 	target_salvage.base_value = 50
-	session.record_salvage(target_salvage)
-	_expect(session.is_target_reached(), "ContractSession must complete at configured target.")
-	_expect(not session.is_perfect_cleanup(), "Target completion must not imply Perfect Cleanup.")
-	var standard_result := session.build_result()
-	_expect(int(standard_result["credits_awarded"]) == 290, "Standard payout must combine base pay and recovered salvage.")
-	_expect(int(standard_result["xp_awarded"]) == 120, "Standard completion must grant configured Company XP.")
-
 	var final_salvage := registry.get_salvage_definition("service_scrap").duplicate(true) as SalvageDefinition
 	final_salvage.cleanliness_value = 3.0
 	final_salvage.base_value = 30
-	session.record_salvage(final_salvage)
-	_expect(session.is_perfect_cleanup(), "100% cleanliness must trigger Perfect Cleanup.")
-	var perfect_result := session.build_result()
+
+	var cleanup := ContractSession.new()
+	cleanup.configure({
+		"sector_id": "qa_cleanup",
+		"contract": registry.get_contract("standard_cleanup"),
+		"contract_ref": {"type": "standard_cleanup", "target_percent": 70.0},
+		"total_cleanliness": 10.0,
+		"reward_multiplier": 1.0,
+	})
+	cleanup.record_salvage(target_salvage)
+	_expect(cleanup.is_target_reached(), "Cleanup contract must complete at configured percentage.")
+	_expect(not cleanup.is_perfect_cleanup(), "Cleanup target completion must not imply Perfect Cleanup.")
+	var standard_result := cleanup.build_result()
+	_expect(int(standard_result["credits_awarded"]) == 290, "Standard payout must combine base pay and recovered salvage.")
+	_expect(int(standard_result["xp_awarded"]) == 120, "Standard completion must grant configured Company XP.")
+	cleanup.record_salvage(final_salvage)
+	_expect(cleanup.is_perfect_cleanup(), "100% cleanliness must trigger Perfect Cleanup.")
+	var perfect_result := cleanup.build_result()
 	_expect(int(perfect_result["perfect_bonus"]) == 160, "Perfect Cleanup must grant configured credit bonus.")
 	_expect(int(perfect_result["xp_awarded"]) == 160, "Perfect Cleanup must grant configured XP bonus.")
 	_expect(int(perfect_result["credits_awarded"]) == 480, "Perfect payout must include base, salvage and perfect bonus.")
+
+	var recovery := ContractSession.new()
+	recovery.configure({
+		"sector_id": "qa_recovery",
+		"contract": registry.get_contract("recovery_run"),
+		"contract_ref": {"type": "recovery_run", "target_count": 2},
+		"total_cleanliness": 100.0,
+		"reward_multiplier": 1.0,
+	})
+	recovery.record_salvage(target_salvage)
+	_expect(not recovery.is_target_reached(), "Recovery contract must count recovered objects.")
+	recovery.record_salvage(final_salvage)
+	_expect(recovery.is_target_reached(), "Recovery contract must complete at target_count.")
+
+	var valuable := ContractSession.new()
+	valuable.configure({
+		"sector_id": "qa_value",
+		"contract": registry.get_contract("valuable_recovery"),
+		"contract_ref": {"type": "valuable_recovery", "target_value": 75},
+		"total_cleanliness": 100.0,
+		"reward_multiplier": 1.0,
+	})
+	valuable.record_salvage(target_salvage)
+	_expect(not valuable.is_target_reached(), "Valuable Recovery must track recovered credit value.")
+	valuable.record_salvage(final_salvage)
+	_expect(valuable.is_target_reached(), "Valuable Recovery must complete at target_value.")
+
+	var priority := ContractSession.new()
+	priority.configure({
+		"sector_id": "qa_priority",
+		"contract": registry.get_contract("priority_recovery"),
+		"contract_ref": {
+			"type": "priority_recovery",
+			"target_count": 1,
+			"target_salvage_id": "navigation_core",
+		},
+		"total_cleanliness": 100.0,
+		"reward_multiplier": 1.0,
+	})
+	priority.record_salvage(target_salvage)
+	_expect(not priority.is_target_reached(), "Priority contract must ignore non-priority salvage.")
+	var navigation := registry.get_salvage_definition("navigation_core")
+	priority.record_salvage(navigation)
+	_expect(priority.is_target_reached(), "Priority contract must complete when designated salvage is recovered.")
+
+	var full := ContractSession.new()
+	full.configure({
+		"sector_id": "qa_full",
+		"contract": registry.get_contract("full_cleanup"),
+		"contract_ref": {"type": "full_cleanup", "target_percent": 100.0},
+		"total_cleanliness": 10.0,
+		"reward_multiplier": 1.0,
+	})
+	full.record_salvage(target_salvage)
+	_expect(not full.is_target_reached(), "Full Cleanup cannot complete below 100%.")
+	full.record_salvage(final_salvage)
+	_expect(full.is_target_reached() and full.is_perfect_cleanup(), "Full Cleanup must complete only at 100%.")
+
+func _validate_contract_plan_feasibility(plan: Dictionary, registry: ContentRegistry) -> void:
+	var sector := plan["sector"] as Dictionary
+	var contract_ref := sector["contract"] as Dictionary
+	var contract := registry.get_contract(String(contract_ref["type"]))
+	var kind := String(contract["kind"])
+	var spawns := plan["salvage_spawns"] as Array
+
+	match kind:
+		"cleanup", "full_cleanup":
+			_expect(float(contract_ref["target_percent"]) <= 100.0, "Cleanup target must be reachable.")
+		"recovery":
+			_expect(int(contract_ref["target_count"]) <= spawns.size(), "Recovery target cannot exceed generated salvage count.")
+		"valuable_recovery":
+			var multiplier := float((plan["parameters"] as Dictionary).get("reward_multiplier", 1.0))
+			var total_value := 0
+			for value in spawns:
+				var entry := value as Dictionary
+				var definition := registry.get_salvage_definition(String(entry["salvage_id"]))
+				total_value += int(round(float(definition.base_value) * multiplier))
+			var scaled_target := int(round(float(contract_ref["target_value"]) * multiplier))
+			_expect(scaled_target <= total_value, "Valuable Recovery target cannot exceed generated recovery value.")
+		"priority_object":
+			var target_id := String(contract_ref["target_salvage_id"])
+			var required := int(contract_ref["target_count"])
+			var marked := 0
+			for value in spawns:
+				var entry := value as Dictionary
+				if bool(entry.get("priority_target", false)) and String(entry["salvage_id"]) == target_id:
+					marked += 1
+			_expect(marked >= required, "Priority contract must guarantee every required target spawn.")
 
 func _validate_progression_service() -> void:
 	var save := SaveService.new()

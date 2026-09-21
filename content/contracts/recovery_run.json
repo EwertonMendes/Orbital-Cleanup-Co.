@@ -1,0 +1,14 @@
+{
+  "id": "recovery_run",
+  "display_name_key": "CONTRACT_RECOVERY_RUN",
+  "description_key": "CONTRACT_RECOVERY_RUN_DESC",
+  "kind": "recovery",
+  "target_count_range": [
+    6,
+    12
+  ],
+  "base_pay": 270,
+  "perfect_bonus": 145,
+  "company_xp": 130,
+  "perfect_xp_bonus": 35
+}

@@ -4,6 +4,7 @@ class_name SalvageObject
 const ENERGY_SHADER := preload("res://src/game/visual/salvage_energy.gdshader")
 
 @export var definition: SalvageDefinition
+@export var priority_target := false
 @export_range(-3.0, 3.0, 0.05) var spin_speed := 0.35
 
 @onready var sprite: Sprite2D = %Sprite
@@ -92,7 +93,7 @@ func _apply_definition() -> void:
 	else:
 		sprite.material = null
 		sprite.modulate = Color.WHITE.lerp(category_tint, 0.16)
-	marker.configure(definition)
+	marker.configure(definition, priority_target)
 
 	var circle := collision_shape.shape as CircleShape2D
 	assert(circle != null, "SalvageObject requires a CircleShape2D.")

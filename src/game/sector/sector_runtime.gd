@@ -107,7 +107,7 @@ func get_contract_context() -> Dictionary:
 	return {
 		"sector_id": _sector_id,
 		"contract": contract,
-		"target_percent": float(contract_ref["target_percent"]),
+		"contract_ref": contract_ref.duplicate(true),
 		"total_cleanliness": get_total_cleanliness(),
 		"reward_multiplier": float(parameters.get("reward_multiplier", 1.0)),
 	}
@@ -164,6 +164,7 @@ func _spawn_salvage(entry: Dictionary) -> void:
 	definition.validate()
 
 	salvage.definition = definition
+	salvage.priority_target = bool(entry.get("priority_target", false))
 	salvage.position = entry["position"] as Vector2
 	salvage.spin_speed = float(entry["spin_speed"])
 	salvage_root.add_child(salvage)
