@@ -46,6 +46,7 @@ func _resolve_startup_route() -> Dictionary:
 
 	var preview := platform_service.get_query_parameter("preview").to_lower()
 	var debrief := platform_service.get_query_parameter("debrief").to_lower()
+	var hq_sector := platform_service.get_query_parameter("hq_sector")
 	var requested_sector := platform_service.get_query_parameter("sector")
 	var endless_text := platform_service.get_query_parameter("endless")
 	var seed_text := platform_service.get_query_parameter("seed")
@@ -113,6 +114,13 @@ func _resolve_startup_route() -> Dictionary:
 		return {"screen_path": SECTOR_PREVIEW_SCREEN_PATH, "context": context}
 
 	var registry := ContentRegistry.new()
+	if not hq_sector.is_empty():
+		if registry.has_sector(hq_sector):
+			context["debug_hq_sector_id"] = hq_sector
+			print("[QA] DEEP_LINK hq_sector=%s" % hq_sector)
+			return {"screen_path": DEFAULT_SCREEN_PATH, "context": context}
+		push_warning("Unknown ?hq_sector= deep link: %s" % hq_sector)
+
 	if not requested_sector.is_empty():
 		if registry.has_sector(requested_sector):
 			context["sector_id"] = requested_sector
