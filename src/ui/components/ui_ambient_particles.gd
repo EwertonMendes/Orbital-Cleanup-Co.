@@ -34,7 +34,7 @@ func _draw() -> void:
 		var drift := fposmod(uv.y - _phase * float(particle["speed"]), 1.0)
 		var x := uv.x * viewport_size.x + sin(_phase * 0.22 + float(particle["phase"])) * 10.0
 		var y := drift * viewport_size.y
-		var edge_weight := abs(uv.x - 0.5) * 2.0
-		var alpha := float(particle["alpha"]) * lerpf(0.34, 1.0, edge_weight)
+		var edge_weight: float = absf(uv.x - 0.5) * 2.0
+		var alpha: float = float(particle["alpha"]) * lerpf(0.34, 1.0, edge_weight)
 		var tint := OccPalette.MINT if int(float(particle["phase"]) * 10.0) % 5 == 0 else OccPalette.CYAN
 		draw_circle(Vector2(x, y), float(particle["radius"]), Color(tint, alpha))
