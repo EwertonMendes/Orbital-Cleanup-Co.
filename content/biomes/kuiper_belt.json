@@ -1,0 +1,117 @@
+{
+  "id": "kuiper_belt",
+  "display_name_key": "BIOME_KUIPER_BELT",
+  "palette": {
+    "background": "#030812",
+    "nebula": "#283342",
+    "accent": "#9bcfff"
+  },
+  "visual_profile": {
+    "primary_asset": "res://assets/original/destinations/kuiper_belt.svg",
+    "primary_scale": 1.35,
+    "primary_anchor": [
+      0.2,
+      0.75
+    ],
+    "primary_parallax": 0.048,
+    "primary_rotation_speed": -0.004,
+    "atmosphere_color": "#9bcfff",
+    "atmosphere_strength": 0.44,
+    "shimmer_strength": 0.06,
+    "traffic_count": 0,
+    "dust_density": 0.68,
+    "horizon_style": "rings",
+    "horizon_intensity": 0.65
+  },
+  "environment": {
+    "salvage_mass_multiplier": 1.09,
+    "volumes": [
+      {
+        "kind": "visibility_pocket",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.28,
+          0.56
+        ],
+        "placement": "random",
+        "color": "#9bcfff",
+        "secondary_color": "#283342",
+        "radius_range": [
+          520,
+          920
+        ]
+      },
+      {
+        "kind": "scanner_interference",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.28,
+          0.54
+        ],
+        "placement": "random",
+        "color": "#9bcfff",
+        "secondary_color": "#283342",
+        "radius_range": [
+          460,
+          780
+        ]
+      }
+    ]
+  },
+  "salvage_tables": [
+    "lunar_belt_industry"
+  ],
+  "landmarks": [
+    "derelict_explorer",
+    "service_satellite"
+  ],
+  "modifiers": [
+    "light_debris",
+    "dense_debris",
+    "valuable_salvage",
+    "sparse_corridor",
+    "meteor_front",
+    "rich_recovery",
+    "quiet_orbit"
+  ],
+  "spawn_rules": {
+    "min_spacing": 148,
+    "edge_margin": 330,
+    "starter_cluster_count": 3,
+    "starter_cluster_radius": 300
+  },
+  "obstacles": [
+    {
+      "id": "kuiper_belt_large_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 20,
+      "collision_radius": 52,
+      "scale_min": 0.84,
+      "scale_max": 1.08
+    },
+    {
+      "id": "kuiper_belt_medium_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 44,
+      "collision_radius": 36,
+      "scale_min": 0.84,
+      "scale_max": 1.1
+    },
+    {
+      "id": "kuiper_belt_small_fragment",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 36,
+      "collision_radius": 27,
+      "scale_min": 0.9,
+      "scale_max": 1.25
+    }
+  ]
+}

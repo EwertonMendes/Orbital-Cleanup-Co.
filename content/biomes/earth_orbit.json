@@ -7,19 +7,21 @@
     "accent": "#53d7f1"
   },
   "visual_profile": {
-    "planet_asset": "res://assets/original/planets/earth_orbit.svg",
-    "planet_scale": 2.15,
-    "planet_anchor": [
-      0.82,
-      0.78
-    ],
-    "planet_parallax": 0.055,
-    "planet_rotation_speed": 0.006,
     "atmosphere_color": "#72e5ff",
     "atmosphere_strength": 0.48,
     "shimmer_strength": 0.09,
     "traffic_count": 9,
-    "dust_density": 0.55
+    "dust_density": 0.55,
+    "primary_asset": "res://assets/original/planets/earth_orbit.svg",
+    "primary_scale": 2.15,
+    "primary_anchor": [
+      0.82,
+      0.78
+    ],
+    "primary_parallax": 0.055,
+    "primary_rotation_speed": 0.006,
+    "horizon_style": "orbit",
+    "horizon_intensity": 0.65
   },
   "environment": {
     "salvage_mass_multiplier": 1,

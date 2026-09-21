@@ -1,0 +1,39 @@
+{
+  "id": "red_giant_01",
+  "display_name_key": "SECTOR_RED_GIANT_01",
+  "career_order": 44,
+  "unlock_rank": "deep_space_operator",
+  "biome": "red_giant",
+  "seed": 310571,
+  "difficulty": 12,
+  "map": {
+    "half_extents": [
+      5440,
+      3100
+    ],
+    "debris_density": 0.82,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 420
+  },
+  "modifiers": [
+    "sparse_corridor"
+  ],
+  "depot": {
+    "position": [
+      -1050,
+      200
+    ]
+  }
+}

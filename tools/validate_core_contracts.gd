@@ -187,11 +187,11 @@ func _validate_content_runtime() -> void:
 	_expect(float(level_high["mass_multiplier"]) <= 2.2, "DifficultyScaler mass curve must remain bounded.")
 
 	var sector_ids := registry.list_sector_ids()
-	_expect(sector_ids.size() >= 13, "Initial content pack must expose at least 13 authored sectors.")
+	_expect(sector_ids.size() >= 59, "Destination expansion must expose at least 59 authored sectors.")
 	_expect(String(sector_ids[0]) == "earth_training_01", "Career order must begin with Earth Training 01.")
 	_expect(String(sector_ids[1]) == "earth_training_02", "Career order must keep Earth Training 02 second.")
-	_expect(String(sector_ids[sector_ids.size() - 1]) == "blue_nebula_03", "Career order must end with Blue Nebula 03.")
-	for required_sector in ["earth_orbit_03", "lunar_belt_01", "mars_freight_01", "blue_nebula_01"]:
+	_expect(String(sector_ids[sector_ids.size() - 1]) == "supernova_remnant_01", "Career order must end with Supernova Remnant.")
+	for required_sector in ["earth_orbit_03", "lunar_belt_01", "mars_freight_01", "blue_nebula_01", "saturn_rings_01", "abandoned_station_01", "black_hole_01", "supernova_remnant_01"]:
 		_expect(sector_ids.has(required_sector), "Initial content pack missing authored sector: %s" % required_sector)
 
 	var generator := SectorGenerator.new()
@@ -407,12 +407,18 @@ func _validate_environment_fields() -> void:
 	)
 	visibility.free()
 
-	for biome_id in ["earth_orbit", "lunar_belt", "mars_freight", "blue_nebula"]:
+	var biome_ids := registry.list_biome_ids()
+	_expect(biome_ids.size() >= 50, "Destination library must expose at least 50 distinct visual biomes.")
+	var primary_assets := {}
+	for biome_id in biome_ids:
 		var biome := registry.get_biome(biome_id)
 		var visual := biome["visual_profile"] as Dictionary
-		var asset_path := String(visual["planet_asset"])
-		_expect(asset_path.begins_with("res://assets/original/planets/"), "Biome must use project-owned planet art: %s" % biome_id)
-		_expect(load(asset_path) is Texture2D, "Biome planet asset must import as Texture2D: %s" % biome_id)
+		var asset_path := String(visual["primary_asset"])
+		_expect(asset_path.begins_with("res://assets/original/"), "Biome must use project-owned primary art: %s" % biome_id)
+		_expect(load(asset_path) is Texture2D, "Biome primary asset must import as Texture2D: %s" % biome_id)
+		_expect(not primary_assets.has(asset_path), "Every biome requires its own primary visual asset: %s" % biome_id)
+		primary_assets[asset_path] = true
+	_expect(primary_assets.size() == biome_ids.size(), "Destination primary assets must remain one-to-one with biomes.")
 
 func _environment_kind_set(plan: Dictionary) -> Dictionary:
 	var output := {}
@@ -730,6 +736,7 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("AmbientSpace", true, false) is SectorBackdrop, "Flight screen requires data-configurable SectorBackdrop.")
 	var flight_backdrop_source := FileAccess.get_file_as_string("res://src/game/sector/sector_backdrop.gd")
 	_expect("MultiMeshInstance2D" in flight_backdrop_source, "SectorBackdrop must batch the starfield through MultiMeshInstance2D.")
+	_expect("multimesh.mesh = quad" in flight_backdrop_source, "SectorBackdrop MultiMesh must own an explicit QuadMesh for GLES3/Web rendering.")
 	_expect("queue_redraw()" not in flight_backdrop_source.split("func _process", false, 1)[1].split("func _draw", false, 1)[0], "SectorBackdrop must not redraw its static starfield during frame updates.")
 	var quality_source := FileAccess.get_file_as_string("res://src/core/performance/runtime_quality.gd")
 	_expect("OS.has_feature(\"web\")" in quality_source, "Runtime quality profile must explicitly protect Web builds.")

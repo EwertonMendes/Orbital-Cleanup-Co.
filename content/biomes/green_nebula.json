@@ -1,0 +1,136 @@
+{
+  "id": "green_nebula",
+  "display_name_key": "BIOME_GREEN_NEBULA",
+  "palette": {
+    "background": "#030812",
+    "nebula": "#183f48",
+    "accent": "#98ffd2"
+  },
+  "visual_profile": {
+    "primary_asset": "res://assets/original/destinations/green_nebula.svg",
+    "primary_scale": 1.75,
+    "primary_anchor": [
+      0.8,
+      0.25
+    ],
+    "primary_parallax": 0.04,
+    "primary_rotation_speed": 0.004,
+    "atmosphere_color": "#98ffd2",
+    "atmosphere_strength": 0.36,
+    "shimmer_strength": 0.14,
+    "traffic_count": 2,
+    "dust_density": 1.37,
+    "horizon_style": "nebula",
+    "horizon_intensity": 0.55
+  },
+  "environment": {
+    "salvage_mass_multiplier": 1.02,
+    "volumes": [
+      {
+        "kind": "visibility_pocket",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.28,
+          0.56
+        ],
+        "placement": "random",
+        "color": "#98ffd2",
+        "secondary_color": "#183f48",
+        "radius_range": [
+          520,
+          920
+        ]
+      },
+      {
+        "kind": "magnetic_zone",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.2,
+          0.44
+        ],
+        "placement": "random",
+        "color": "#98ffd2",
+        "secondary_color": "#183f48",
+        "radius_range": [
+          500,
+          820
+        ]
+      },
+      {
+        "kind": "tractor_distortion",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.24,
+          0.48
+        ],
+        "placement": "random",
+        "color": "#98ffd2",
+        "secondary_color": "#183f48",
+        "radius_range": [
+          450,
+          760
+        ]
+      }
+    ]
+  },
+  "salvage_tables": [
+    "blue_nebula_research"
+  ],
+  "landmarks": [
+    "comms_array",
+    "derelict_explorer"
+  ],
+  "modifiers": [
+    "light_debris",
+    "dense_debris",
+    "valuable_salvage",
+    "sparse_corridor",
+    "meteor_front",
+    "rich_recovery",
+    "quiet_orbit"
+  ],
+  "spawn_rules": {
+    "min_spacing": 140,
+    "edge_margin": 380,
+    "starter_cluster_count": 2,
+    "starter_cluster_radius": 280
+  },
+  "obstacles": [
+    {
+      "id": "green_nebula_large_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 20,
+      "collision_radius": 52,
+      "scale_min": 0.84,
+      "scale_max": 1.08
+    },
+    {
+      "id": "green_nebula_medium_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 44,
+      "collision_radius": 36,
+      "scale_min": 0.84,
+      "scale_max": 1.1
+    },
+    {
+      "id": "green_nebula_small_fragment",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 36,
+      "collision_radius": 27,
+      "scale_min": 0.9,
+      "scale_max": 1.25
+    }
+  ]
+}

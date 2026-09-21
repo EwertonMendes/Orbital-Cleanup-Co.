@@ -290,6 +290,29 @@ async function openQaDeepLinks() {
   });
   await depotPortraitPage.close();
 
+  const destinationSamples = [
+    { sector: 'solar_corona_01', label: 'solar-corona' },
+    { sector: 'saturn_rings_01', label: 'saturn-rings' },
+    { sector: 'titan_orbit_01', label: 'titan' },
+    { sector: 'abandoned_station_01', label: 'abandoned-station' },
+    { sector: 'black_hole_01', label: 'black-hole' },
+    { sector: 'proxima_centauri_01', label: 'proxima-centauri' },
+    { sector: 'ocean_world_01', label: 'ocean-world' },
+    { sector: 'supernova_remnant_01', label: 'supernova-remnant' },
+  ];
+  for (const sample of destinationSamples) {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+    watch(page, `qa-destination-${sample.label}`);
+    const sectorReady = waitForConsole(page, `[Sector] READY id=${sample.sector}`, 60000);
+    const flightReady = waitForConsole(page, '[Flight] READY', 60000);
+    await page.goto(`${url}?sector=${sample.sector}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await sectorReady;
+    await flightReady;
+    await page.waitForTimeout(450);
+    await page.screenshot({ path: `build/smoke-qa-destination-${sample.label}.png`, fullPage: true });
+    await page.close();
+  }
+
   const lockedHqPage = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   watch(lockedHqPage, 'qa-hq-locked-lunar');
   const lockedHqReady = waitForConsole(lockedHqPage, '[HQ] READY tab=contracts', 60000);

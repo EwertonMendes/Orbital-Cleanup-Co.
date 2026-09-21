@@ -1,0 +1,39 @@
+{
+  "id": "eris_orbit_01",
+  "display_name_key": "SECTOR_ERIS_ORBIT_01",
+  "career_order": 35,
+  "unlock_rank": "sector_specialist",
+  "biome": "eris_orbit",
+  "seed": 247219,
+  "difficulty": 11,
+  "map": {
+    "half_extents": [
+      5440,
+      3280
+    ],
+    "debris_density": 1,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "service_satellite"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 600
+  },
+  "modifiers": [
+    "valuable_salvage"
+  ],
+  "depot": {
+    "position": [
+      -430,
+      200
+    ]
+  }
+}

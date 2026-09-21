@@ -1,0 +1,39 @@
+{
+  "id": "solar_corona_01",
+  "display_name_key": "SECTOR_SOLAR_CORONA_01",
+  "career_order": 38,
+  "unlock_rank": "sector_specialist",
+  "biome": "solar_corona",
+  "seed": 270976,
+  "difficulty": 11,
+  "map": {
+    "half_extents": [
+      5220,
+      3280
+    ],
+    "debris_density": 0.82,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "earth_orbit_ops",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "relay_satellite"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 9
+  },
+  "modifiers": [
+    "quiet_orbit"
+  ],
+  "depot": {
+    "position": [
+      -1050,
+      -210
+    ]
+  }
+}

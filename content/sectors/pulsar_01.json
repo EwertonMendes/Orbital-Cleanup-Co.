@@ -1,0 +1,39 @@
+{
+  "id": "pulsar_01",
+  "display_name_key": "SECTOR_PULSAR_01",
+  "career_order": 46,
+  "unlock_rank": "deep_space_operator",
+  "biome": "pulsar",
+  "seed": 326409,
+  "difficulty": 14,
+  "map": {
+    "half_extents": [
+      5000,
+      3460
+    ],
+    "debris_density": 1,
+    "cluster_count": 5
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "comms_array"
+  ],
+  "contract": {
+    "type": "standard_cleanup",
+    "target_percent": 86
+  },
+  "modifiers": [
+    "quiet_orbit"
+  ],
+  "depot": {
+    "position": [
+      -430,
+      -620
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "rogue_planet_01",
+  "display_name_key": "SECTOR_ROGUE_PLANET_01",
+  "career_order": 42,
+  "unlock_rank": "sector_specialist",
+  "biome": "rogue_planet",
+  "seed": 302652,
+  "difficulty": 12,
+  "map": {
+    "half_extents": [
+      5220,
+      3460
+    ],
+    "debris_density": 1.18,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 10
+  },
+  "modifiers": [
+    "valuable_salvage"
+  ],
+  "depot": {
+    "position": [
+      190,
+      -210
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "enceladus_orbit_01",
+  "display_name_key": "SECTOR_ENCELADUS_ORBIT_01",
+  "career_order": 22,
+  "unlock_rank": "senior_cleaner",
+  "biome": "enceladus_orbit",
+  "seed": 160110,
+  "difficulty": 10,
+  "map": {
+    "half_extents": [
+      5660,
+      3460
+    ],
+    "debris_density": 0.91,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "quiet_orbit"
+  ],
+  "depot": {
+    "position": [
+      -740,
+      610
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "callisto_orbit_01",
+  "display_name_key": "SECTOR_CALLISTO_ORBIT_01",
+  "career_order": 16,
+  "unlock_rank": "orbital_cleaner",
+  "biome": "callisto_orbit",
+  "seed": 136353,
+  "difficulty": 8,
+  "map": {
+    "half_extents": [
+      5000,
+      3460
+    ],
+    "debris_density": 1.09,
+    "cluster_count": 5
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "derelict_explorer"
+  ],
+  "contract": {
+    "type": "standard_cleanup",
+    "target_percent": 86
+  },
+  "modifiers": [
+    "valuable_salvage"
+  ],
+  "depot": {
+    "position": [
+      -120,
+      -620
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "triton_orbit_01",
+  "display_name_key": "SECTOR_TRITON_ORBIT_01",
+  "career_order": 31,
+  "unlock_rank": "sector_specialist",
+  "biome": "triton_orbit",
+  "seed": 215543,
+  "difficulty": 10,
+  "map": {
+    "half_extents": [
+      5440,
+      3100
+    ],
+    "debris_density": 1.09,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 690
+  },
+  "modifiers": [
+    "quiet_orbit"
+  ],
+  "depot": {
+    "position": [
+      -120,
+      200
+    ]
+  }
+}

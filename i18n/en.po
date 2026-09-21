@@ -879,3 +879,279 @@ msgstr "%d m"
 
 msgid "FLIGHT_DISTANCE_KM_FMT"
 msgstr "%.1f km"
+
+msgid "BIOME_MERCURY_TERMINATOR"
+msgstr "Mercury Terminator"
+
+msgid "SECTOR_MERCURY_TERMINATOR_01"
+msgstr "Mercury Terminator · Contract 01"
+
+msgid "BIOME_VENUS_CLOUDS"
+msgstr "Venus Cloud Deck"
+
+msgid "SECTOR_VENUS_CLOUDS_01"
+msgstr "Venus Cloud Deck · Contract 01"
+
+msgid "BIOME_ASTEROID_BELT"
+msgstr "Main Asteroid Belt"
+
+msgid "SECTOR_ASTEROID_BELT_01"
+msgstr "Main Asteroid Belt · Contract 01"
+
+msgid "BIOME_CERES_ORBIT"
+msgstr "Ceres Orbit"
+
+msgid "SECTOR_CERES_ORBIT_01"
+msgstr "Ceres Orbit · Contract 01"
+
+msgid "BIOME_JUPITER_CLOUDS"
+msgstr "Jupiter Cloud Tops"
+
+msgid "SECTOR_JUPITER_CLOUDS_01"
+msgstr "Jupiter Cloud Tops · Contract 01"
+
+msgid "BIOME_IO_ORBIT"
+msgstr "Io Volcanic Orbit"
+
+msgid "SECTOR_IO_ORBIT_01"
+msgstr "Io Volcanic Orbit · Contract 01"
+
+msgid "BIOME_EUROPA_ORBIT"
+msgstr "Europa Ice Orbit"
+
+msgid "SECTOR_EUROPA_ORBIT_01"
+msgstr "Europa Ice Orbit · Contract 01"
+
+msgid "BIOME_GANYMEDE_ORBIT"
+msgstr "Ganymede Magnetosphere"
+
+msgid "SECTOR_GANYMEDE_ORBIT_01"
+msgstr "Ganymede Magnetosphere · Contract 01"
+
+msgid "BIOME_CALLISTO_ORBIT"
+msgstr "Callisto Outer Orbit"
+
+msgid "SECTOR_CALLISTO_ORBIT_01"
+msgstr "Callisto Outer Orbit · Contract 01"
+
+msgid "BIOME_SATURN_RINGS"
+msgstr "Saturn Ring Plane"
+
+msgid "SECTOR_SATURN_RINGS_01"
+msgstr "Saturn Ring Plane · Contract 01"
+
+msgid "BIOME_TITAN_ORBIT"
+msgstr "Titan Haze Orbit"
+
+msgid "SECTOR_TITAN_ORBIT_01"
+msgstr "Titan Haze Orbit · Contract 01"
+
+msgid "BIOME_ENCELADUS_ORBIT"
+msgstr "Enceladus Plume Orbit"
+
+msgid "SECTOR_ENCELADUS_ORBIT_01"
+msgstr "Enceladus Plume Orbit · Contract 01"
+
+msgid "BIOME_RHEA_ORBIT"
+msgstr "Rhea Crater Orbit"
+
+msgid "SECTOR_RHEA_ORBIT_01"
+msgstr "Rhea Crater Orbit · Contract 01"
+
+msgid "BIOME_IAPETUS_ORBIT"
+msgstr "Iapetus Ridge Orbit"
+
+msgid "SECTOR_IAPETUS_ORBIT_01"
+msgstr "Iapetus Ridge Orbit · Contract 01"
+
+msgid "BIOME_URANUS_ORBIT"
+msgstr "Uranus Polar Orbit"
+
+msgid "SECTOR_URANUS_ORBIT_01"
+msgstr "Uranus Polar Orbit · Contract 01"
+
+msgid "BIOME_TITANIA_ORBIT"
+msgstr "Titania Canyon Orbit"
+
+msgid "SECTOR_TITANIA_ORBIT_01"
+msgstr "Titania Canyon Orbit · Contract 01"
+
+msgid "BIOME_OBERON_ORBIT"
+msgstr "Oberon Shadow Orbit"
+
+msgid "SECTOR_OBERON_ORBIT_01"
+msgstr "Oberon Shadow Orbit · Contract 01"
+
+msgid "BIOME_NEPTUNE_ORBIT"
+msgstr "Neptune Storm Orbit"
+
+msgid "SECTOR_NEPTUNE_ORBIT_01"
+msgstr "Neptune Storm Orbit · Contract 01"
+
+msgid "BIOME_TRITON_ORBIT"
+msgstr "Triton Frost Orbit"
+
+msgid "SECTOR_TRITON_ORBIT_01"
+msgstr "Triton Frost Orbit · Contract 01"
+
+msgid "BIOME_PLUTO_ORBIT"
+msgstr "Pluto Heart Orbit"
+
+msgid "SECTOR_PLUTO_ORBIT_01"
+msgstr "Pluto Heart Orbit · Contract 01"
+
+msgid "BIOME_CHARON_ORBIT"
+msgstr "Charon Binary Orbit"
+
+msgid "SECTOR_CHARON_ORBIT_01"
+msgstr "Charon Binary Orbit · Contract 01"
+
+msgid "BIOME_KUIPER_BELT"
+msgstr "Kuiper Belt Drift"
+
+msgid "SECTOR_KUIPER_BELT_01"
+msgstr "Kuiper Belt Drift · Contract 01"
+
+msgid "BIOME_ERIS_ORBIT"
+msgstr "Eris Deep Orbit"
+
+msgid "SECTOR_ERIS_ORBIT_01"
+msgstr "Eris Deep Orbit · Contract 01"
+
+msgid "BIOME_HAUMEA_ORBIT"
+msgstr "Haumea Fast Orbit"
+
+msgid "SECTOR_HAUMEA_ORBIT_01"
+msgstr "Haumea Fast Orbit · Contract 01"
+
+msgid "BIOME_MAKEMAKE_ORBIT"
+msgstr "Makemake Red Orbit"
+
+msgid "SECTOR_MAKEMAKE_ORBIT_01"
+msgstr "Makemake Red Orbit · Contract 01"
+
+msgid "BIOME_SOLAR_CORONA"
+msgstr "Solar Corona"
+
+msgid "SECTOR_SOLAR_CORONA_01"
+msgstr "Solar Corona · Contract 01"
+
+msgid "BIOME_ABANDONED_STATION"
+msgstr "Abandoned Orbital Station"
+
+msgid "SECTOR_ABANDONED_STATION_01"
+msgstr "Abandoned Orbital Station · Contract 01"
+
+msgid "BIOME_SHIP_GRAVEYARD"
+msgstr "Deep-Space Ship Graveyard"
+
+msgid "SECTOR_SHIP_GRAVEYARD_01"
+msgstr "Deep-Space Ship Graveyard · Contract 01"
+
+msgid "BIOME_ORBITAL_FACTORY_RUINS"
+msgstr "Orbital Factory Ruins"
+
+msgid "SECTOR_ORBITAL_FACTORY_RUINS_01"
+msgstr "Orbital Factory Ruins · Contract 01"
+
+msgid "BIOME_ROGUE_PLANET"
+msgstr "Rogue Planet Night"
+
+msgid "SECTOR_ROGUE_PLANET_01"
+msgstr "Rogue Planet Night · Contract 01"
+
+msgid "BIOME_RED_GIANT"
+msgstr "Red Giant Perimeter"
+
+msgid "SECTOR_RED_GIANT_01"
+msgstr "Red Giant Perimeter · Contract 01"
+
+msgid "BIOME_WHITE_DWARF"
+msgstr "White Dwarf Halo"
+
+msgid "SECTOR_WHITE_DWARF_01"
+msgstr "White Dwarf Halo · Contract 01"
+
+msgid "BIOME_PULSAR"
+msgstr "Pulsar Beam Zone"
+
+msgid "SECTOR_PULSAR_01"
+msgstr "Pulsar Beam Zone · Contract 01"
+
+msgid "BIOME_NEUTRON_STAR"
+msgstr "Neutron Star Magnetosphere"
+
+msgid "SECTOR_NEUTRON_STAR_01"
+msgstr "Neutron Star Magnetosphere · Contract 01"
+
+msgid "BIOME_BLACK_HOLE"
+msgstr "Black Hole Accretion Zone"
+
+msgid "SECTOR_BLACK_HOLE_01"
+msgstr "Black Hole Accretion Zone · Contract 01"
+
+msgid "BIOME_BINARY_STAR"
+msgstr "Binary Star Crossing"
+
+msgid "SECTOR_BINARY_STAR_01"
+msgstr "Binary Star Crossing · Contract 01"
+
+msgid "BIOME_PROXIMA_CENTAURI"
+msgstr "Proxima Centauri Operations"
+
+msgid "SECTOR_PROXIMA_CENTAURI_01"
+msgstr "Proxima Centauri Operations · Contract 01"
+
+msgid "BIOME_TRAPPIST_1"
+msgstr "TRAPPIST-1 Inner System"
+
+msgid "SECTOR_TRAPPIST_1_01"
+msgstr "TRAPPIST-1 Inner System · Contract 01"
+
+msgid "BIOME_KEPLER_186F"
+msgstr "Kepler-186f Orbit"
+
+msgid "SECTOR_KEPLER_186F_01"
+msgstr "Kepler-186f Orbit · Contract 01"
+
+msgid "BIOME_OCEAN_WORLD"
+msgstr "Pelagic Exoplanet"
+
+msgid "SECTOR_OCEAN_WORLD_01"
+msgstr "Pelagic Exoplanet · Contract 01"
+
+msgid "BIOME_LAVA_WORLD"
+msgstr "Magma Exoplanet"
+
+msgid "SECTOR_LAVA_WORLD_01"
+msgstr "Magma Exoplanet · Contract 01"
+
+msgid "BIOME_ICE_GIANT_EXOPLANET"
+msgstr "Distant Ice Giant"
+
+msgid "SECTOR_ICE_GIANT_EXOPLANET_01"
+msgstr "Distant Ice Giant · Contract 01"
+
+msgid "BIOME_RINGED_EXOPLANET"
+msgstr "Ringed Exoplanet"
+
+msgid "SECTOR_RINGED_EXOPLANET_01"
+msgstr "Ringed Exoplanet · Contract 01"
+
+msgid "BIOME_CRYSTAL_WORLD"
+msgstr "Crystal World"
+
+msgid "SECTOR_CRYSTAL_WORLD_01"
+msgstr "Crystal World · Contract 01"
+
+msgid "BIOME_GREEN_NEBULA"
+msgstr "Emerald Nebula"
+
+msgid "SECTOR_GREEN_NEBULA_01"
+msgstr "Emerald Nebula · Contract 01"
+
+msgid "BIOME_SUPERNOVA_REMNANT"
+msgstr "Supernova Remnant"
+
+msgid "SECTOR_SUPERNOVA_REMNANT_01"
+msgstr "Supernova Remnant · Contract 01"

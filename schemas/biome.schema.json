@@ -135,54 +135,20 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "planet_asset",
-        "planet_scale",
-        "planet_anchor",
-        "planet_parallax",
-        "planet_rotation_speed",
+        "primary_asset",
+        "primary_scale",
+        "primary_anchor",
+        "primary_parallax",
+        "primary_rotation_speed",
         "atmosphere_color",
         "atmosphere_strength",
         "shimmer_strength",
         "traffic_count",
-        "dust_density"
+        "dust_density",
+        "horizon_style",
+        "horizon_intensity"
       ],
       "properties": {
-        "planet_asset": {
-          "type": "string",
-          "pattern": "^res://assets/original/planets/.+\\.svg$"
-        },
-        "planet_scale": {
-          "type": "number",
-          "minimum": 0.2,
-          "maximum": 5
-        },
-        "planet_anchor": {
-          "type": "array",
-          "prefixItems": [
-            {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1
-            },
-            {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1
-            }
-          ],
-          "minItems": 2,
-          "maxItems": 2
-        },
-        "planet_parallax": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 0.5
-        },
-        "planet_rotation_speed": {
-          "type": "number",
-          "minimum": -0.08,
-          "maximum": 0.08
-        },
         "atmosphere_color": {
           "type": "string"
         },
@@ -205,6 +171,61 @@
           "type": "number",
           "minimum": 0,
           "maximum": 2
+        },
+        "primary_asset": {
+          "type": "string",
+          "pattern": "^res://assets/original/(planets|destinations)/.+\\.svg$"
+        },
+        "primary_scale": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 5
+        },
+        "primary_anchor": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "primary_parallax": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.5
+        },
+        "primary_rotation_speed": {
+          "type": "number",
+          "minimum": -0.08,
+          "maximum": 0.08
+        },
+        "horizon_style": {
+          "enum": [
+            "clear",
+            "orbit",
+            "rings",
+            "dust",
+            "nebula",
+            "solar",
+            "gas",
+            "ice",
+            "industrial",
+            "anomaly"
+          ]
+        },
+        "horizon_intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         }
       }
     },

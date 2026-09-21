@@ -1,0 +1,121 @@
+{
+  "id": "orbital_factory_ruins",
+  "display_name_key": "BIOME_ORBITAL_FACTORY_RUINS",
+  "palette": {
+    "background": "#030812",
+    "nebula": "#28231f",
+    "accent": "#ffbd68"
+  },
+  "visual_profile": {
+    "primary_asset": "res://assets/original/destinations/orbital_factory_ruins.svg",
+    "primary_scale": 1.35,
+    "primary_anchor": [
+      0.5,
+      0.25
+    ],
+    "primary_parallax": 0.04,
+    "primary_rotation_speed": 0.001,
+    "atmosphere_color": "#ffbd68",
+    "atmosphere_strength": 0.36,
+    "shimmer_strength": 0.1,
+    "traffic_count": 8,
+    "dust_density": 1.1400000000000001,
+    "horizon_style": "industrial",
+    "horizon_intensity": 0.55
+  },
+  "environment": {
+    "salvage_mass_multiplier": 1.16,
+    "volumes": [
+      {
+        "kind": "safe_corridor",
+        "count_range": [
+          1,
+          1
+        ],
+        "shape": "box",
+        "strength_range": [
+          0.72,
+          0.95
+        ],
+        "placement": "depot",
+        "color": "#ffbd68",
+        "secondary_color": "#28231f",
+        "length_range": [
+          3200,
+          5200
+        ],
+        "width_range": [
+          560,
+          920
+        ]
+      },
+      {
+        "kind": "tractor_distortion",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.24,
+          0.48
+        ],
+        "placement": "random",
+        "color": "#ffbd68",
+        "secondary_color": "#28231f",
+        "radius_range": [
+          450,
+          760
+        ]
+      }
+    ]
+  },
+  "salvage_tables": [
+    "mars_freight"
+  ],
+  "landmarks": [
+    "mining_rig",
+    "derelict_explorer"
+  ],
+  "modifiers": [
+    "light_debris",
+    "dense_debris",
+    "valuable_salvage",
+    "sparse_corridor",
+    "meteor_front",
+    "rich_recovery",
+    "quiet_orbit"
+  ],
+  "spawn_rules": {
+    "min_spacing": 140,
+    "edge_margin": 355,
+    "starter_cluster_count": 2,
+    "starter_cluster_radius": 280
+  },
+  "obstacles": [
+    {
+      "id": "orbital_factory_ruins_large_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 20,
+      "collision_radius": 52,
+      "scale_min": 0.84,
+      "scale_max": 1.08
+    },
+    {
+      "id": "orbital_factory_ruins_medium_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 44,
+      "collision_radius": 36,
+      "scale_min": 0.84,
+      "scale_max": 1.1
+    },
+    {
+      "id": "orbital_factory_ruins_small_fragment",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 36,
+      "collision_radius": 27,
+      "scale_min": 0.9,
+      "scale_max": 1.25
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "id": "haumea_orbit_01",
+  "display_name_key": "SECTOR_HAUMEA_ORBIT_01",
+  "career_order": 36,
+  "unlock_rank": "sector_specialist",
+  "biome": "haumea_orbit",
+  "seed": 255138,
+  "difficulty": 12,
+  "map": {
+    "half_extents": [
+      5660,
+      3460
+    ],
+    "debris_density": 1.09,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "relay_satellite"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "sparse_corridor"
+  ],
+  "depot": {
+    "position": [
+      -120,
+      610
+    ]
+  }
+}

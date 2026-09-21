@@ -423,13 +423,14 @@ Adding an unknown effect fails content validation until the runtime intentionall
 
 Biome JSON now owns two additional data-driven sections: `visual_profile` and `environment`.
 
-`visual_profile` defines the project-owned planet asset and presentation parameters such as anchor, scale, parallax, surface rotation, atmosphere, shimmer, traffic and dust density. Planet art currently lives under:
+`visual_profile` defines the project-owned primary destination asset and presentation parameters such as anchor, scale, parallax, surface rotation, atmosphere, shimmer, traffic and dust density. Primary destination art lives under:
 
 ```text
-assets/original/planets/
+assets/original/planets/ (original launch set)
+assets/original/destinations/ (expanded destination library)
 ```
 
-Do not create a sector-specific scene just to change the planet or ambience.
+Do not create a sector-specific scene just to change the primary destination visual or ambience.
 
 `environment` defines a biome-wide salvage-mass multiplier and reusable field templates. Supported field kinds are:
 
@@ -458,4 +459,16 @@ The generic Environment Runtime samples overlapping fields and combines bounded 
 Safe corridors are stronger than decoration: obstacle placement rejects collision hazards inside the generated corridor plus safety padding.
 
 When adding a new biome mechanic, first determine whether it can be expressed as another reusable field kind. Do not add `if biome == "..."` branches to PlayerShip, TractorBeam or a normal sector script.
+
+
+
+## Destination-scale content
+
+Destination biomes use generic visual-profile fields:
+
+`primary_asset`, `primary_scale`, `primary_anchor`, `primary_parallax`, `primary_rotation_speed`, `horizon_style`, and `horizon_intensity`.
+
+Supported horizon styles are `clear`, `orbit`, `rings`, `dust`, `nebula`, `solar`, `gas`, `ice`, `industrial`, and `anomaly`.
+
+A new destination must remain JSON + SVG only. If adding a destination requires a new destination-ID branch in GDScript, the authoring model has regressed. The validator also requires one unique primary asset per biome.
 

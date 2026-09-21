@@ -14,16 +14,18 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**Memorable Orbital Landmarks**
+**Galactic Destination Expansion**
 
-Major sector structures now use original OCC artwork and participate in navigation instead of behaving like enlarged decorative props.
+The authored game now contains **50 distinct destination biomes** and **59 authored sectors**, spanning the Solar System, major moons, abandoned orbital infrastructure, nearby stars, exoplanets and extreme deep-space phenomena.
 
-- Eight project-owned landmark silhouettes replace the generic small station/satellite stand-ins.
-- Landmark collision is authored through reusable circle/box data and uses the existing non-lethal bump response.
-- Reserved landmark clearance now affects deterministic generation, keeping salvage and hazards out of stations, wrecks and moonlets.
-- Large structures remain compatible with authored and Endless sectors through the generic Sector Engine.
-- Landmark ambient redraw is bounded rather than running expensive custom drawing every frame.
-- Contextual cargo-depot guidance remains available in every sector and points to the real data-driven depot position.
+- Every new destination has a project-owned editable SVG primary asset.
+- Visual composition is driven by generic `primary_asset` and `horizon_style` data instead of destination-specific code.
+- Environmental mechanics are recombined per destination so variety changes route planning as well as appearance.
+- Career order exposes new locations throughout progression instead of hiding the expansion entirely in endgame.
+- Core QA generates every authored sector and enforces one-to-one destination/primary-art ownership.
+- Browser QA samples Solar, ringed-planet, Saturn-moon, industrial, black-hole, nearby-star, exoplanet and supernova families.
+
+See `docs/DESTINATIONS.md` for the full catalog.
 
 The remaining player-facing work is tracked in `docs/PRODUCT_BACKLOG.md`.
 

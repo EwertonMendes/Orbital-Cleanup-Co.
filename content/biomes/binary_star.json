@@ -1,0 +1,121 @@
+{
+  "id": "binary_star",
+  "display_name_key": "BIOME_BINARY_STAR",
+  "palette": {
+    "background": "#030812",
+    "nebula": "#6db6ff",
+    "accent": "#fff0b0"
+  },
+  "visual_profile": {
+    "primary_asset": "res://assets/original/destinations/binary_star.svg",
+    "primary_scale": 1.95,
+    "primary_anchor": [
+      0.8,
+      0.75
+    ],
+    "primary_parallax": 0.064,
+    "primary_rotation_speed": -0.004,
+    "atmosphere_color": "#fff0b0",
+    "atmosphere_strength": 0.6,
+    "shimmer_strength": 0.14,
+    "traffic_count": 0,
+    "dust_density": 0.45,
+    "horizon_style": "solar",
+    "horizon_intensity": 0.8500000000000001
+  },
+  "environment": {
+    "salvage_mass_multiplier": 1.23,
+    "volumes": [
+      {
+        "kind": "gravity_well",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.18,
+          0.4
+        ],
+        "placement": "random",
+        "color": "#fff0b0",
+        "secondary_color": "#6db6ff",
+        "radius_range": [
+          460,
+          820
+        ]
+      },
+      {
+        "kind": "drift_current",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "box",
+        "strength_range": [
+          0.18,
+          0.38
+        ],
+        "placement": "random",
+        "color": "#fff0b0",
+        "secondary_color": "#6db6ff",
+        "length_range": [
+          2400,
+          4800
+        ],
+        "width_range": [
+          520,
+          980
+        ]
+      }
+    ]
+  },
+  "salvage_tables": [
+    "blue_nebula_research"
+  ],
+  "landmarks": [
+    "relay_satellite",
+    "research_outpost"
+  ],
+  "modifiers": [
+    "light_debris",
+    "dense_debris",
+    "valuable_salvage",
+    "sparse_corridor",
+    "meteor_front",
+    "rich_recovery",
+    "quiet_orbit"
+  ],
+  "spawn_rules": {
+    "min_spacing": 164,
+    "edge_margin": 380,
+    "starter_cluster_count": 3,
+    "starter_cluster_radius": 340
+  },
+  "obstacles": [
+    {
+      "id": "binary_star_large_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 20,
+      "collision_radius": 52,
+      "scale_min": 0.84,
+      "scale_max": 1.08
+    },
+    {
+      "id": "binary_star_medium_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 44,
+      "collision_radius": 36,
+      "scale_min": 0.84,
+      "scale_max": 1.1
+    },
+    {
+      "id": "binary_star_small_fragment",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 36,
+      "collision_radius": 27,
+      "scale_min": 0.9,
+      "scale_max": 1.25
+    }
+  ]
+}

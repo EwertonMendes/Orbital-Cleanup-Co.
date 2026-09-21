@@ -1,0 +1,39 @@
+{
+  "id": "supernova_remnant_01",
+  "display_name_key": "SECTOR_SUPERNOVA_REMNANT_01",
+  "career_order": 59,
+  "unlock_rank": "deep_space_operator",
+  "biome": "supernova_remnant",
+  "seed": 429356,
+  "difficulty": 12,
+  "map": {
+    "half_extents": [
+      5220,
+      3100
+    ],
+    "debris_density": 0.82,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "derelict_explorer"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 8
+  },
+  "modifiers": [
+    "rich_recovery"
+  ],
+  "depot": {
+    "position": [
+      -1050,
+      -210
+    ]
+  }
+}

@@ -280,17 +280,24 @@ def validate_biomes(
 
         visual = data["visual_profile"]
         require(isinstance(visual, dict), f"{label}.visual_profile must be an object")
-        planet_asset = visual.get("planet_asset")
-        require(isinstance(planet_asset, str) and planet_asset.endswith(".svg"), f"{label}: planet asset must be an SVG")
-        require((ROOT / planet_asset.removeprefix("res://")).exists(), f"{label}: Missing planet asset: {planet_asset}")
-        anchor = visual.get("planet_anchor")
-        require(isinstance(anchor, list) and len(anchor) == 2, f"{label}.visual_profile.planet_anchor must contain two values")
-        require_number(anchor[0], f"{label}.visual_profile.planet_anchor[0]", 0, 1)
-        require_number(anchor[1], f"{label}.visual_profile.planet_anchor[1]", 0, 1)
-        require_number(visual.get("planet_scale"), f"{label}.visual_profile.planet_scale", 0.2, 5)
-        require_number(visual.get("planet_parallax"), f"{label}.visual_profile.planet_parallax", 0, 0.5)
+        primary_asset = visual.get("primary_asset")
+        require(isinstance(primary_asset, str) and primary_asset.endswith(".svg"), f"{label}: primary asset must be an SVG")
+        require((ROOT / primary_asset.removeprefix("res://")).exists(), f"{label}: Missing primary asset: {primary_asset}")
+        anchor = visual.get("primary_anchor")
+        require(isinstance(anchor, list) and len(anchor) == 2, f"{label}.visual_profile.primary_anchor must contain two values")
+        require_number(anchor[0], f"{label}.visual_profile.primary_anchor[0]", 0, 1)
+        require_number(anchor[1], f"{label}.visual_profile.primary_anchor[1]", 0, 1)
+        require_number(visual.get("primary_scale"), f"{label}.visual_profile.primary_scale", 0.2, 5)
+        require_number(visual.get("primary_parallax"), f"{label}.visual_profile.primary_parallax", 0, 0.5)
         require_number(visual.get("traffic_count"), f"{label}.visual_profile.traffic_count", 0, 24)
         require_number(visual.get("dust_density"), f"{label}.visual_profile.dust_density", 0, 2)
+        horizon_style = visual.get("horizon_style")
+        require(
+            horizon_style in {"clear", "orbit", "rings", "dust", "nebula", "solar", "gas", "ice", "industrial", "anomaly"},
+            f"{label}.visual_profile.horizon_style is invalid",
+        )
+        require_number(visual.get("horizon_intensity"), f"{label}.visual_profile.horizon_intensity", 0, 1)
+        require(str(primary_asset).startswith("res://assets/original/"), f"{label}: primary asset must be project-owned")
 
         environment = data["environment"]
         require(isinstance(environment, dict), f"{label}.environment must be an object")
@@ -699,6 +706,16 @@ def main() -> None:
             loaded["cosmetics"]["ship_customization"],
             loaded["progression"]["career_ranks"],
             catalogs,
+        )
+        require(len(loaded["biomes"]) >= 50, "Destination expansion requires at least 50 biomes")
+        require(len(loaded["sectors"]) >= 59, "Destination expansion requires at least 59 authored sectors")
+        primary_assets = {
+            str(item["visual_profile"]["primary_asset"])
+            for item in loaded["biomes"].values()
+        }
+        require(
+            len(primary_assets) == len(loaded["biomes"]),
+            "Every destination biome must own a unique primary asset",
         )
 
         print(

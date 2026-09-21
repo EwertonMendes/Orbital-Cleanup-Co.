@@ -1,0 +1,39 @@
+{
+  "id": "pluto_orbit_01",
+  "display_name_key": "SECTOR_PLUTO_ORBIT_01",
+  "career_order": 32,
+  "unlock_rank": "sector_specialist",
+  "biome": "pluto_orbit",
+  "seed": 223462,
+  "difficulty": 11,
+  "map": {
+    "half_extents": [
+      5660,
+      3280
+    ],
+    "debris_density": 1.18,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "service_satellite"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "dense_debris"
+  ],
+  "depot": {
+    "position": [
+      190,
+      610
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "black_hole_01",
+  "display_name_key": "SECTOR_BLACK_HOLE_01",
+  "career_order": 48,
+  "unlock_rank": "deep_space_operator",
+  "biome": "black_hole",
+  "seed": 342247,
+  "difficulty": 13,
+  "map": {
+    "half_extents": [
+      5440,
+      3280
+    ],
+    "debris_density": 1.18,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "derelict_explorer"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 780
+  },
+  "modifiers": [
+    "meteor_front"
+  ],
+  "depot": {
+    "position": [
+      190,
+      200
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 {
   "id": "mars_freight_01",
   "display_name_key": "SECTOR_MARS_FREIGHT_01",
-  "career_order": 8,
+  "career_order": 17,
   "unlock_rank": "senior_cleaner",
   "biome": "mars_freight",
   "seed": 55021,

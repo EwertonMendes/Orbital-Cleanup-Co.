@@ -7,19 +7,21 @@
     "accent": "#c4d8ef"
   },
   "visual_profile": {
-    "planet_asset": "res://assets/original/planets/lunar_belt.svg",
-    "planet_scale": 2,
-    "planet_anchor": [
-      0.18,
-      0.75
-    ],
-    "planet_parallax": 0.07,
-    "planet_rotation_speed": 0.0025,
     "atmosphere_color": "#d7e5f0",
     "atmosphere_strength": 0.22,
     "shimmer_strength": 0.035,
     "traffic_count": 4,
-    "dust_density": 0.85
+    "dust_density": 0.85,
+    "primary_asset": "res://assets/original/planets/lunar_belt.svg",
+    "primary_scale": 2,
+    "primary_anchor": [
+      0.18,
+      0.75
+    ],
+    "primary_parallax": 0.07,
+    "primary_rotation_speed": 0.0025,
+    "horizon_style": "rings",
+    "horizon_intensity": 0.62
   },
   "environment": {
     "salvage_mass_multiplier": 1.08,

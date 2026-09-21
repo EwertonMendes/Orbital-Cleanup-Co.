@@ -1,0 +1,39 @@
+{
+  "id": "ganymede_orbit_01",
+  "display_name_key": "SECTOR_GANYMEDE_ORBIT_01",
+  "career_order": 15,
+  "unlock_rank": "orbital_cleaner",
+  "biome": "ganymede_orbit",
+  "seed": 128434,
+  "difficulty": 7,
+  "map": {
+    "half_extents": [
+      5660,
+      3280
+    ],
+    "debris_density": 1,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "relay_satellite"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "light_debris"
+  ],
+  "depot": {
+    "position": [
+      -430,
+      610
+    ]
+  }
+}

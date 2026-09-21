@@ -1,0 +1,39 @@
+{
+  "id": "ringed_exoplanet_01",
+  "display_name_key": "SECTOR_RINGED_EXOPLANET_01",
+  "career_order": 56,
+  "unlock_rank": "deep_space_operator",
+  "biome": "ringed_exoplanet",
+  "seed": 405599,
+  "difficulty": 12,
+  "map": {
+    "half_extents": [
+      5440,
+      3100
+    ],
+    "debris_density": 1,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "cargo_waystation"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 600
+  },
+  "modifiers": [
+    "light_debris"
+  ],
+  "depot": {
+    "position": [
+      -430,
+      200
+    ]
+  }
+}

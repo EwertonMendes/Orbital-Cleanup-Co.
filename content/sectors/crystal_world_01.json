@@ -1,0 +1,39 @@
+{
+  "id": "crystal_world_01",
+  "display_name_key": "SECTOR_CRYSTAL_WORLD_01",
+  "career_order": 57,
+  "unlock_rank": "deep_space_operator",
+  "biome": "crystal_world",
+  "seed": 413518,
+  "difficulty": 13,
+  "map": {
+    "half_extents": [
+      5660,
+      3280
+    ],
+    "debris_density": 1.09,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "valuable_salvage"
+  ],
+  "depot": {
+    "position": [
+      -120,
+      610
+    ]
+  }
+}

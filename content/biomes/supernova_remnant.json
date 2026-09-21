@@ -1,0 +1,140 @@
+{
+  "id": "supernova_remnant",
+  "display_name_key": "BIOME_SUPERNOVA_REMNANT",
+  "palette": {
+    "background": "#030812",
+    "nebula": "#70417f",
+    "accent": "#ffd3a8"
+  },
+  "visual_profile": {
+    "primary_asset": "res://assets/original/destinations/supernova_remnant.svg",
+    "primary_scale": 1.75,
+    "primary_anchor": [
+      0.2,
+      0.75
+    ],
+    "primary_parallax": 0.048,
+    "primary_rotation_speed": 0.006,
+    "atmosphere_color": "#ffd3a8",
+    "atmosphere_strength": 0.44,
+    "shimmer_strength": 0.06,
+    "traffic_count": 3,
+    "dust_density": 0.45,
+    "horizon_style": "anomaly",
+    "horizon_intensity": 0.65
+  },
+  "environment": {
+    "salvage_mass_multiplier": 1.09,
+    "volumes": [
+      {
+        "kind": "drift_current",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "box",
+        "strength_range": [
+          0.18,
+          0.38
+        ],
+        "placement": "random",
+        "color": "#ffd3a8",
+        "secondary_color": "#70417f",
+        "length_range": [
+          2400,
+          4800
+        ],
+        "width_range": [
+          520,
+          980
+        ]
+      },
+      {
+        "kind": "scanner_interference",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.28,
+          0.54
+        ],
+        "placement": "random",
+        "color": "#ffd3a8",
+        "secondary_color": "#70417f",
+        "radius_range": [
+          460,
+          780
+        ]
+      },
+      {
+        "kind": "magnetic_zone",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.2,
+          0.44
+        ],
+        "placement": "random",
+        "color": "#ffd3a8",
+        "secondary_color": "#70417f",
+        "radius_range": [
+          500,
+          820
+        ]
+      }
+    ]
+  },
+  "salvage_tables": [
+    "blue_nebula_research"
+  ],
+  "landmarks": [
+    "derelict_explorer",
+    "service_satellite"
+  ],
+  "modifiers": [
+    "light_debris",
+    "dense_debris",
+    "valuable_salvage",
+    "sparse_corridor",
+    "meteor_front",
+    "rich_recovery",
+    "quiet_orbit"
+  ],
+  "spawn_rules": {
+    "min_spacing": 148,
+    "edge_margin": 330,
+    "starter_cluster_count": 3,
+    "starter_cluster_radius": 300
+  },
+  "obstacles": [
+    {
+      "id": "supernova_remnant_large_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 20,
+      "collision_radius": 52,
+      "scale_min": 0.84,
+      "scale_max": 1.08
+    },
+    {
+      "id": "supernova_remnant_medium_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 44,
+      "collision_radius": 36,
+      "scale_min": 0.84,
+      "scale_max": 1.1
+    },
+    {
+      "id": "supernova_remnant_small_fragment",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 36,
+      "collision_radius": 27,
+      "scale_min": 0.9,
+      "scale_max": 1.25
+    }
+  ]
+}

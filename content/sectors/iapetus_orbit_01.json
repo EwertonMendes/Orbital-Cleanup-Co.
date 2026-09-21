@@ -1,0 +1,39 @@
+{
+  "id": "iapetus_orbit_01",
+  "display_name_key": "SECTOR_IAPETUS_ORBIT_01",
+  "career_order": 24,
+  "unlock_rank": "senior_cleaner",
+  "biome": "iapetus_orbit",
+  "seed": 175948,
+  "difficulty": 9,
+  "map": {
+    "half_extents": [
+      5220,
+      3280
+    ],
+    "debris_density": 1.09,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "derelict_explorer"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 9
+  },
+  "modifiers": [
+    "meteor_front"
+  ],
+  "depot": {
+    "position": [
+      -120,
+      -210
+    ]
+  }
+}
