@@ -49,31 +49,7 @@ func get_rank_display_name_key() -> String:
 	return String(rank.get("display_name_key", "RANK_TRAINEE"))
 
 func get_rank_progress() -> Dictionary:
-	var ranks := _rank_config.get("ranks", []) as Array
-	var current_xp := get_company_xp()
-	var current_index := 0
-	for index in range(ranks.size()):
-		var rank := ranks[index] as Dictionary
-		if String(rank["id"]) == get_rank_id():
-			current_index = index
-			break
-
-	var current := ranks[current_index] as Dictionary
-	if current_index >= ranks.size() - 1:
-		return {
-			"current_xp": current_xp,
-			"current_min_xp": int(current["min_xp"]),
-			"next_min_xp": current_xp,
-			"is_max_rank": true,
-		}
-
-	var next_rank := ranks[current_index + 1] as Dictionary
-	return {
-		"current_xp": current_xp,
-		"current_min_xp": int(current["min_xp"]),
-		"next_min_xp": int(next_rank["min_xp"]),
-		"is_max_rank": false,
-	}
+	return _rank_progress_for(get_company_xp(), get_rank_id())
 
 func get_upgrade_definitions() -> Array[Dictionary]:
 	var output: Array[Dictionary] = []
@@ -189,14 +165,20 @@ func equip_cosmetic(category: String, cosmetic_id: String) -> bool:
 	print("[Customization] EQUIP category=%s id=%s" % [category, cosmetic_id])
 	return true
 
-func apply_contract_result(result: Dictionary) -> void:
+func apply_contract_result(result: Dictionary) -> Dictionary:
 	assert(bool(result.get("completed", false)), "Only completed contracts can grant progression.")
 	var credits_awarded := int(result.get("credits_awarded", 0))
 	var xp_awarded := int(result.get("xp_awarded", 0))
 	assert(credits_awarded >= 0 and xp_awarded >= 0, "Contract rewards cannot be negative.")
 
-	_state["credits"] = get_credits() + credits_awarded
-	_state["company_xp"] = get_company_xp() + xp_awarded
+	var credits_before := get_credits()
+	var xp_before := get_company_xp()
+	var rank_before := get_rank_id()
+	var rank_before_key := get_rank_display_name_key()
+	var progress_before := _rank_progress_for(xp_before, rank_before)
+
+	_state["credits"] = credits_before + credits_awarded
+	_state["company_xp"] = xp_before + xp_awarded
 
 	var completed := _state.get("completed_contracts", {}) as Dictionary
 	var sector_id := String(result.get("sector_id", "unknown"))
@@ -205,14 +187,33 @@ func apply_contract_result(result: Dictionary) -> void:
 	_state["last_contract_result"] = result.duplicate(true)
 
 	_refresh_rank(true)
+
+	var rank_after := get_rank_id()
+	var transition := {
+		"credits_before": credits_before,
+		"credits_after": get_credits(),
+		"xp_before": xp_before,
+		"xp_after": get_company_xp(),
+		"rank_before_id": rank_before,
+		"rank_after_id": rank_after,
+		"rank_before_key": rank_before_key,
+		"rank_after_key": get_rank_display_name_key(),
+		"rank_progress_before": progress_before,
+		"rank_progress_after": get_rank_progress(),
+		"promoted": rank_before != rank_after,
+		"unlocks": _collect_unlocks_between_ranks(rank_before, rank_after),
+	}
+
 	_persist()
 	state_changed.emit(get_snapshot())
-	print("[Economy] PAYOUT sector=%s credits=%d xp=%d total_credits=%d" % [
+	print("[Economy] PAYOUT sector=%s credits=%d xp=%d total_credits=%d promoted=%s" % [
 		sector_id,
 		credits_awarded,
 		xp_awarded,
 		get_credits(),
+		str(bool(transition["promoted"])),
 	])
+	return transition
 
 func register_discovery(definition: SalvageDefinition) -> bool:
 	if definition == null:
@@ -322,6 +323,58 @@ func _refresh_rank(emit_change: bool) -> void:
 	_state["rank"] = next_id
 	if emit_change and previous != next_id:
 		rank_changed.emit(next_id)
+
+func _rank_progress_for(xp: int, rank_id: String) -> Dictionary:
+	var ranks := _rank_config.get("ranks", []) as Array
+	assert(not ranks.is_empty(), "Career ranks configuration is required.")
+	var current_index := _rank_index(rank_id)
+	if current_index < 0:
+		current_index = 0
+
+	var current := ranks[current_index] as Dictionary
+	if current_index >= ranks.size() - 1:
+		return {
+			"current_xp": xp,
+			"current_min_xp": int(current["min_xp"]),
+			"next_min_xp": xp,
+			"is_max_rank": true,
+		}
+
+	var next_rank := ranks[current_index + 1] as Dictionary
+	return {
+		"current_xp": xp,
+		"current_min_xp": int(current["min_xp"]),
+		"next_min_xp": int(next_rank["min_xp"]),
+		"is_max_rank": false,
+	}
+
+func _collect_unlocks_between_ranks(previous_rank: String, next_rank: String) -> Array[Dictionary]:
+	var previous_index := _rank_index(previous_rank)
+	var next_index := _rank_index(next_rank)
+	var output: Array[Dictionary] = []
+	if next_index <= previous_index:
+		return output
+
+	var categories := _cosmetic_config.get("categories", {}) as Dictionary
+	for category_variant in categories.keys():
+		var category := String(category_variant)
+		for value in categories[category] as Array:
+			var option := value as Dictionary
+			var unlock_rank := String(option.get("unlock_rank", ""))
+			var unlock_index := _rank_index(unlock_rank)
+			if unlock_index > previous_index and unlock_index <= next_index:
+				output.append({
+					"type": "cosmetic",
+					"category": category,
+					"id": String(option.get("id", "")),
+					"display_name_key": String(option.get("display_name_key", "")),
+					"unlock_rank": unlock_rank,
+				})
+
+	output.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return String(a["display_name_key"]) < String(b["display_name_key"])
+	)
+	return output
 
 func _find_rank(rank_id: String) -> Dictionary:
 	for value in _rank_config.get("ranks", []) as Array:
