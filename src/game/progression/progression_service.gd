@@ -5,6 +5,7 @@ signal state_changed(snapshot: Dictionary)
 signal upgrade_purchased(upgrade_id: String, level: int, cost: int)
 signal rank_changed(rank_id: String)
 signal cosmetic_equipped(category: String, cosmetic_id: String)
+signal discovery_registered(salvage_id: String, rarity: String)
 
 var _save_service: SaveService
 var _registry := ContentRegistry.new()
@@ -213,6 +214,36 @@ func apply_contract_result(result: Dictionary) -> void:
 		get_credits(),
 	])
 
+func register_discovery(definition: SalvageDefinition) -> bool:
+	if definition == null:
+		return false
+	var rarity := String(definition.rarity)
+	if rarity not in ["rare", "epic"] and not definition.tags.has("discovery"):
+		return false
+
+	var salvage_id := String(definition.id)
+	var discoveries := _state.get("discoveries", []) as Array
+	if discoveries.has(salvage_id):
+		return false
+
+	discoveries.append(salvage_id)
+	discoveries.sort()
+	_state["discoveries"] = discoveries
+	_persist()
+	discovery_registered.emit(salvage_id, rarity)
+	state_changed.emit(get_snapshot())
+	print("[Discovery] NEW id=%s rarity=%s total=%d" % [salvage_id, rarity, discoveries.size()])
+	return true
+
+func get_discovery_ids() -> PackedStringArray:
+	var output := PackedStringArray()
+	for value in _state.get("discoveries", []) as Array:
+		output.append(String(value))
+	return output
+
+func get_discovery_count() -> int:
+	return (_state.get("discoveries", []) as Array).size()
+
 func get_last_contract_result() -> Dictionary:
 	return (_state.get("last_contract_result", {}) as Dictionary).duplicate(true)
 
@@ -242,6 +273,16 @@ func _normalize_state(persisted: Dictionary) -> Dictionary:
 			if not _find_cosmetic_option(category, candidate).is_empty():
 				cosmetics[category] = candidate
 		defaults["cosmetics"] = cosmetics
+
+	var saved_discoveries = persisted.get("discoveries", [])
+	if saved_discoveries is Array:
+		var discoveries: Array[String] = []
+		for value in saved_discoveries as Array:
+			var salvage_id := String(value)
+			if not salvage_id.is_empty() and not discoveries.has(salvage_id):
+				discoveries.append(salvage_id)
+		discoveries.sort()
+		defaults["discoveries"] = discoveries
 
 	if persisted.get("completed_contracts", {}) is Dictionary:
 		defaults["completed_contracts"] = (persisted["completed_contracts"] as Dictionary).duplicate(true)
