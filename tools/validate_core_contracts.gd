@@ -814,6 +814,10 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("BiomeThumbnail", true, false) is TextureRect, "Flight HUD must show the current biome primary artwork.")
 	_expect(screen.find_child("MissionChrome", true, false) is NinePatchRect, "Current-flight card must use the shared Kenney panel chrome.")
 	_expect(screen.find_child("CargoChrome", true, false) is NinePatchRect, "Cargo card must use the shared Kenney panel chrome.")
+	var cargo_content := screen.find_child("CargoContent", true, false) as VBoxContainer
+	_expect(cargo_content != null and cargo_content.alignment == BoxContainer.ALIGNMENT_CENTER, "Cargo content must stay vertically centered inside the dark-mode card, including while tractor progress is visible.")
+	var cargo_label := screen.find_child("CargoLabel", true, false) as Label
+	_expect(cargo_label != null and cargo_label.horizontal_alignment == HORIZONTAL_ALIGNMENT_CENTER, "Cargo title must stay horizontally centered inside the dark-mode card.")
 	var hud_root := screen.find_child("HudRoot", true, false) as Control
 	_expect(hud_root != null and hud_root.theme != null, "Flight HudRoot must own the flight HUD theme because CanvasLayer interrupts Control theme inheritance.")
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
