@@ -14,19 +14,11 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**Contract Variety**
+**Career & Reward Loop — Contract Debrief**
 
-The core loop and visual/retention pass are in place. The current milestone expands the cleanup loop into distinct data-driven objectives without creating separate gameplay scenes.
+Completed contracts now flow through a dedicated Debrief before returning to Headquarters. The Debrief presents objective completion, cleanup, recovered objects, payout breakdown, animated account balance, Company XP, rank progress, promotion unlocks and discoveries recovered during the mission.
 
-Available contract kinds:
-
-- Standard Cleanup — reach a required cleanliness percentage;
-- Full Cleanup — recover all marked salvage;
-- Recovery Run — recover a required number of objects;
-- Valuable Recovery — reach a target recovered-credit value;
-- Priority Recovery — find and recover a designated object guaranteed by generation.
-
-Authored sectors distribute these objectives intentionally, while Endless Contracts rotate them deterministically and derive targets from each contract definition.
+The remaining player-facing work is tracked in `docs/PRODUCT_BACKLOG.md`. That file is intentionally maintained as an unfinished-work list: completed items are removed instead of accumulating as historical checkmarks.
 
 ## Visual direction
 

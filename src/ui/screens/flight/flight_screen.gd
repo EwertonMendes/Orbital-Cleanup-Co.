@@ -1,6 +1,7 @@
 extends Control
 
 const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.tscn"
+const DEBRIEF_SCREEN_PATH := "res://src/ui/screens/debrief/contract_debrief_screen.tscn"
 const DEFAULT_SECTOR_ID := "earth_training_01"
 
 @onready var safe_area: MarginContainer = %SafeArea
@@ -32,6 +33,7 @@ var _gameplay_active := false
 var _hint_tween: Tween
 var _toast_tween: Tween
 var _active_salvage: SalvageDefinition
+var _new_discovery_ids: Array[String] = []
 var _configured_sector_id := DEFAULT_SECTOR_ID
 
 func configure(context: Dictionary) -> void:
@@ -157,26 +159,46 @@ func _apply_responsive_layout() -> void:
 
 func _return_to_operations() -> void:
 	var completed := _contract_session.is_target_reached()
+	_stop_gameplay()
+
 	if completed:
 		var result := _contract_session.build_result()
-		_progression.apply_contract_result(result)
+		result["new_discoveries"] = _new_discovery_ids.duplicate()
+		var transition := _progression.apply_contract_result(result)
+
 		if _platform != null:
 			_platform.track_event("contract_completed", {
 				"sector_id": _configured_sector_id,
 				"perfect": bool(result["perfect_cleanup"]),
 				"credits": int(result["credits_awarded"]),
+				"promoted": bool(transition.get("promoted", false)),
 			})
-	else:
-		print("[Contract] ABORT sector=%s cleanliness=%.1f" % [
-			_configured_sector_id,
-			_contract_session.get_cleanup_percent(),
-		])
-		if _platform != null:
-			_platform.track_event("contract_aborted", {"sector_id": _configured_sector_id})
 
-	_stop_gameplay()
-	if completed and _ads != null:
-		await _ads.show_contract_break()
+		var debrief_scene := load(DEBRIEF_SCREEN_PATH) as PackedScene
+		assert(debrief_scene != null, "Contract Debrief scene must be loadable.")
+
+		var debrief_context := _context.duplicate(true)
+		debrief_context["debrief_result"] = result
+		debrief_context["debrief_transition"] = transition
+		debrief_context["debrief_return_screen_path"] = String(
+			_context.get("return_screen_path", OPERATIONS_SCREEN_PATH)
+		)
+		debrief_context["debrief_mission"] = {
+			"sector_display_name_key": sector_runtime.get_sector_display_name_key(),
+			"biome_display_name_key": sector_runtime.get_biome_display_name_key(),
+		}
+		if _context.has("endless_number"):
+			(debrief_context["debrief_mission"] as Dictionary)["endless_number"] = int(_context["endless_number"])
+
+		_router.show_screen(debrief_scene, debrief_context)
+		return
+
+	print("[Contract] ABORT sector=%s cleanliness=%.1f" % [
+		_configured_sector_id,
+		_contract_session.get_cleanup_percent(),
+	])
+	if _platform != null:
+		_platform.track_event("contract_aborted", {"sector_id": _configured_sector_id})
 
 	var return_path := String(_context.get("return_screen_path", OPERATIONS_SCREEN_PATH))
 	var scene := load(return_path) as PackedScene
@@ -317,6 +339,8 @@ func _on_salvage_collected(definition, _used_units: int, _capacity: int) -> void
 	_contract_session.record_salvage(salvage)
 	flight_feedback.salvage_collected(salvage, is_new_discovery, player_ship.global_position)
 	if is_new_discovery:
+		if not _new_discovery_ids.has(String(salvage.id)):
+			_new_discovery_ids.append(String(salvage.id))
 		_show_toast(tr("FLIGHT_NEW_DISCOVERY_FMT") % tr(String(salvage.display_name_key)))
 		if _platform != null:
 			_platform.track_event("discovery_registered", {

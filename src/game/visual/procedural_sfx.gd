@@ -18,6 +18,9 @@ static func unload() -> AudioStreamWAV:
 static func perfect() -> AudioStreamWAV:
 	return _make_chord(PackedFloat32Array([523.25, 659.25, 783.99, 1046.5]), 0.62, 0.46)
 
+static func promotion() -> AudioStreamWAV:
+	return _make_chord(PackedFloat32Array([440.0, 659.25, 880.0, 1318.5]), 0.78, 0.50)
+
 static func impact() -> AudioStreamWAV:
 	return _make_tone(160.0, 86.0, 0.12, 0.32, 0.48)
 
