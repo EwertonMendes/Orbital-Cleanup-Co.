@@ -48,9 +48,19 @@ Meteor/asteroid silhouettes are reserved for hazards. Salvage definitions must n
 
 New categories should extend `WorldVisualLanguage` rather than introducing screen-local colors or one-off object effects. New salvage automatically inherits the shared `SalvageMarker`; new hazards and landmarks inherit their corresponding marker components.
 
+Salvage identity is data-driven. Each definition owns an authored silhouette plus a compact visual profile for motion and ambient effect. Common items can stay restrained, while rare/epic items must communicate rarity through shape, motion and energy treatment before the player reads a label. Do not create one scene or one GDScript class per salvage item.
+
 ## Typography
 
-Oxanium is the default UI family and is configured once in the shared Theme. Do not assign the font path independently in each screen. Use size, weight hierarchy and color to differentiate title/value/label roles while keeping the family consistent.
+Typography is a semantic system, not one font stretched across every piece of UI.
+
+- **Neuropol** is the display/game-identity face for branding, major titles, section headings, tabs and important rarity labels.
+- **Inter** is the reading face for descriptions, utility labels, buttons and longer copy.
+- **JetBrains Mono** is reserved for telemetry: credits, XP, numeric values, progress metadata and compact system-like readouts.
+- Font selection belongs in shared Theme type variations such as `DisplayLabel`, `UiBody`, `TelemetryLabel`, `PrimaryButton` and `TabButton`. Screens must not assign font files directly.
+- Neuropol is intentionally used selectively. Large amounts of body copy remain in Inter so the interface feels like a game without sacrificing readability.
+
+Oxanium is not part of the Orbital Cleanup Co. typography system.
 
 ## Kenney asset usage
 

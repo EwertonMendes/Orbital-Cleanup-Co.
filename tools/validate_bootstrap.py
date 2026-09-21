@@ -125,6 +125,7 @@ REQUIRED = [
     "src/game/visual/flight_feedback.gd",
     "src/ui/components/hq_discovery_card.gd",
     "src/ui/components/hq_discovery_card.tscn",
+    "src/ui/components/ui_ambient_particles.gd",
     "src/ui/screens/operations/operations_scenery_motion.gd",
     "src/ui/screens/operations/operations_backdrop.gd",
     "src/ui/themes/occ_theme.tres",
@@ -144,7 +145,11 @@ REQUIRED_ASSETS = [
     "assets/third_party/kenney_space_shooter/effects/engine_speed.png",
     "assets/third_party/kenney_simple_space/scenery/station_a.png",
     "assets/third_party/kenney_simple_space/scenery/satellite_b.png",
-    "assets/third_party/oxanium/Oxanium[wght].ttf",
+    "assets/third_party/neuropol/NEUROPOL.ttf",
+    "assets/third_party/inter/Inter[opsz,wght].ttf",
+    "assets/third_party/jetbrains_mono/JetBrainsMono[wght].ttf",
+    "assets/original/ui/brand_rule.svg",
+    "assets/original/salvage/navigation_core.svg",
 ]
 
 PORTAL_IDENTIFIERS = ("crazygames", "gamepix", "gamemonetize", "gamedistribution", "poki")
@@ -249,7 +254,8 @@ def validate_visual_foundation() -> None:
 
     required_markers = (
         "button_header_blade.png",
-        "bar_round_gloss_large.png",
+        "brand_rule.svg",
+        "InterfaceParticles",
         "kenney_space_shooter",
         "kenney_simple_space",
     )
@@ -267,8 +273,19 @@ def validate_visual_foundation() -> None:
         fail("Player-facing Operations UI must not expose debug/provider build metadata")
 
     theme = (ROOT / "src" / "ui" / "themes" / "occ_theme.tres").read_text(encoding="utf-8")
-    if "Oxanium[wght].ttf" not in theme:
-        fail("Shared OCC Theme must provide Oxanium typography")
+    required_fonts = (
+        "assets/third_party/neuropol/NEUROPOL.ttf",
+        "assets/third_party/inter/Inter[opsz,wght].ttf",
+        "assets/third_party/jetbrains_mono/JetBrainsMono[wght].ttf",
+    )
+    missing_fonts = [font for font in required_fonts if font not in theme]
+    if missing_fonts:
+        fail("Shared OCC Theme is missing professional typography families: " + ", ".join(missing_fonts))
+    if "oxanium" in theme.lower() or (ROOT / "assets" / "third_party" / "oxanium").exists():
+        fail("Oxanium must be fully removed from the project")
+    for variation in ("DisplayLabel/base_type", "TelemetryLabel/base_type", "PrimaryButton/base_type", "TabButton/base_type", "CardPanel/base_type"):
+        if variation not in theme:
+            fail(f"Shared OCC Theme is missing semantic variation: {variation}")
 
     if "WorldPostProcess" not in flight or "AmbientMotion" not in flight or "FlightFeedback" not in flight:
         fail("Flight scene must keep reusable post-processing, ambient motion and feedback systems")

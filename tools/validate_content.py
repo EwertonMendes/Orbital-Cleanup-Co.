@@ -133,12 +133,16 @@ def validate_schemas() -> None:
 
 
 def validate_salvage(items: dict[str, dict[str, Any]], catalogs: dict[str, set[str]]) -> None:
+    allowed_motion = {"tumble", "drift", "heavy", "stable", "pulse", "spin"}
+    allowed_effects = {"none", "spark", "scan", "pulse", "orbit"}
+    sprite_paths: set[str] = set()
+
     for item_id, data in items.items():
         label = f"salvage/{item_id}"
         require_keys(data, (
             "display_name_key", "sprite", "category", "rarity", "base_value", "mass",
             "collect_duration", "cleanliness_value", "cargo_units", "visual_scale",
-            "collision_radius", "tags",
+            "collision_radius", "visual_profile", "tags",
         ), label)
         require_localization_key(data["display_name_key"], label, catalogs)
         require_asset(data["sprite"], f"{label}.sprite")
@@ -147,6 +151,7 @@ def validate_salvage(items: dict[str, dict[str, Any]], catalogs: dict[str, set[s
             "meteor" not in sprite_name,
             f"{label}.sprite: meteor silhouettes are reserved for hazards; use a recoverable-object asset",
         )
+        sprite_paths.add(str(data["sprite"]))
         require(data["rarity"] in {"common", "uncommon", "rare", "epic"}, f"{label}: invalid rarity")
         require_number(data["base_value"], f"{label}.base_value", 0)
         require_number(data["mass"], f"{label}.mass", 0.01)
@@ -155,8 +160,26 @@ def validate_salvage(items: dict[str, dict[str, Any]], catalogs: dict[str, set[s
         require_number(data["cargo_units"], f"{label}.cargo_units", 1, 12)
         require_number(data["visual_scale"], f"{label}.visual_scale", 0.2, 4)
         require_number(data["collision_radius"], f"{label}.collision_radius", 6, 120)
+
+        profile = data["visual_profile"]
+        require(isinstance(profile, dict), f"{label}.visual_profile must be an object")
+        expected_profile_keys = {"motion", "effect", "spin_multiplier", "float_amplitude"}
+        require(set(profile) == expected_profile_keys, f"{label}.visual_profile must define exactly {sorted(expected_profile_keys)}")
+        require(profile["motion"] in allowed_motion, f"{label}.visual_profile.motion is invalid")
+        require(profile["effect"] in allowed_effects, f"{label}.visual_profile.effect is invalid")
+        require_number(profile["spin_multiplier"], f"{label}.visual_profile.spin_multiplier", 0, 2.5)
+        require_number(profile["float_amplitude"], f"{label}.visual_profile.float_amplitude", 0, 8)
+        if data["rarity"] in {"rare", "epic"}:
+            require(profile["effect"] != "none", f"{label}: rare/epic salvage requires a distinct visual effect")
+
         require(isinstance(data["tags"], list), f"{label}.tags must be an array")
         require(len(data["tags"]) == len(set(data["tags"])), f"{label}.tags contains duplicates")
+
+    required_unique = min(20, len(items))
+    require(
+        len(sprite_paths) >= required_unique,
+        f"Salvage art direction requires at least {required_unique} distinct silhouettes; found {len(sprite_paths)}",
+    )
 
 
 def validate_tables(tables: dict[str, dict[str, Any]], salvage: dict[str, dict[str, Any]]) -> None:
@@ -174,6 +197,12 @@ def validate_tables(tables: dict[str, dict[str, Any]], salvage: dict[str, dict[s
             seen.add(salvage_id)
             total += require_positive_weight(entry.get("weight"), f"{label}.entries[{index}].weight")
         require(total > 0.0, f"{label}: total weight must be positive")
+        table_sprites = {str(salvage[salvage_id]["sprite"]) for salvage_id in seen}
+        required_visuals = min(4, len(entries))
+        require(
+            len(table_sprites) >= required_visuals,
+            f"{label}: needs at least {required_visuals} distinct salvage silhouettes; found {len(table_sprites)}",
+        )
 
 
 def validate_landmarks(items: dict[str, dict[str, Any]], catalogs: dict[str, set[str]]) -> None:

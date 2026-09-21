@@ -20,7 +20,9 @@ The repository validator enforces this contract.
 | Interface Sounds | Kenney | https://kenney.nl/assets/interface-sounds | CC0 | hover/select/confirm/menu SFX | approved source; not imported |
 | Sci-fi Sounds | Kenney | https://kenney.nl/assets/sci-fi-sounds | CC0 | engine/beam/machinery/environmental SFX | approved source; not imported |
 | 2D Planet Pack 2 | Screaming Brain Studios | https://screamingbrainstudios.itch.io/2d-planet-pack-2 | CC0 | curated planet/moon/sun backgrounds | approved source; not imported |
-| Oxanium | Google Fonts distribution | https://github.com/google/fonts/tree/main/ofl/oxanium | SIL OFL 1.1 | primary readable futuristic interface typeface | **variable font imported** |
+| Neuropol | Ray Larabie / Typodermic Fonts | https://typodermicfonts.com/public-domain/ | CC0 1.0 / public domain | principal display/game-identity typeface | **imported** |
+| Inter | The Inter Project Authors | https://github.com/rsms/inter | SIL OFL 1.1 | readable body copy and utility UI | **variable font imported** |
+| JetBrains Mono | JetBrains | https://github.com/JetBrains/JetBrainsMono | SIL OFL 1.1 | telemetry, credits, XP and numeric metadata | **variable font imported** |
 | Magic Space | CodeManu | https://opengameart.org/content/magic-space | CC0 | candidate calm sci-fi music loop | candidate; not imported |
 | Singularity | vitalezzz | https://opengameart.org/content/singularity-0 | CC0 | candidate calm sci-fi music loop | candidate; not imported |
 
@@ -55,7 +57,13 @@ See [UI Guidelines](UI_GUIDELINES.md).
 
 ## Typography
 
-Oxanium is imported from the Google Fonts repository as the variable `Oxanium[wght].ttf` file under SIL OFL 1.1. The font is applied through the shared Godot Theme so screens do not embed font paths individually.
+Orbital Cleanup Co. uses a three-family semantic typography system:
+
+- **Neuropol** is the principal stylized game/display face. It is sourced from Ray Larabie's Typodermic public-domain catalog under CC0; the repository records the official source and the transfer mirror used for the binary.
+- **Inter** is the readable body/utility family under SIL OFL 1.1.
+- **JetBrains Mono** is the telemetry/value family under SIL OFL 1.1.
+
+All three families are applied through shared Godot Theme type variations. Oxanium has been removed from the repository.
 
 ## Project-owned planet artwork
 
@@ -83,3 +91,11 @@ The destination expansion adds 46 original editable SVG primary visuals under `a
 
 The visual system intentionally treats these as generic primary destination artwork rather than assuming every scene is a planet. The same renderer can therefore present planets, moons, stars, stations, wreck fields, nebulae, pulsars, black holes and supernova remnants.
 
+
+## Project-owned interface artwork
+
+The professional UI pass adds editable SVG accents under `assets/original/ui/`. They are authored specifically for Orbital Cleanup Co. and are used as proportion-safe accents rather than stretched panel backgrounds. Layout remains container/theme driven.
+
+## Project-owned salvage artwork
+
+The salvage pass adds **25 editable SVG silhouettes** under `assets/original/salvage/`, one for every current recoverable item. The art uses a shared OCC material language with category accents while rarity animation remains runtime-driven. This replaces the previous state where most salvage definitions reused the same two satellite sprites and makes each salvage table visually diverse without creating per-item scenes.

@@ -73,6 +73,8 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("CloseOverlay", true, false) is Button, "Operations requires a close action when embedded over flight.")
 	_expect(screen.find_child("OverlayScrim", true, false) is ColorRect, "Operations overlay requires a restrained world scrim.")
 	_expect(screen.find_child("FloatingSurface", true, false) is PanelContainer, "Operations overlay requires a floating surface.")
+	_expect(screen.find_child("DiscoveryList", true, false) is GridContainer, "Discovery catalog must use a responsive card grid.")
+	_expect(screen.find_child("InterfaceParticles", true, false) is Control, "Operations requires restrained ambient UI particles.")
 
 	for tab_name in ["ContractsTab", "UpgradesTab", "CareerTab", "ShipTab", "DiscoveryTab"]:
 		_expect(screen.find_child(tab_name, true, false) is Button, "Headquarters requires tab: %s" % tab_name)
@@ -109,6 +111,12 @@ func _validate_operations_screen() -> void:
 	_expect("_refresh_next_unlock()" in operations_source, "Headquarters must surface the next career unlock.")
 	_expect("signal deployment_requested" in operations_source, "Operations overlay must hand deployment intent back to the flight shell.")
 	_expect("_apply_overlay_presentation()" in operations_source, "Operations must own a reusable floating presentation mode.")
+	_expect("_reveal_active_panel" in operations_source, "Operations tab changes require shared motion instead of abrupt visibility swaps.")
+	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_theme.tres")
+	_expect("NEUROPOL.ttf" in theme_source, "OCC display typography must use the licensed Neuropol game face.")
+	_expect("Inter[opsz,wght].ttf" in theme_source, "OCC body typography must use Inter.")
+	_expect("JetBrainsMono[wght].ttf" in theme_source, "OCC telemetry typography must use JetBrains Mono.")
+	_expect("Oxanium" not in theme_source, "Oxanium must not remain in the shared UI theme.")
 	screen.free()
 
 func _validate_hq_components() -> void:
@@ -144,6 +152,10 @@ func _validate_world_visual_language() -> void:
 	if salvage_packed != null:
 		var salvage := salvage_packed.instantiate()
 		_expect(salvage.find_child("Marker", true, false) is SalvageMarker, "Recoverable salvage requires a semantic marker.")
+		var definition_source := FileAccess.get_file_as_string("res://src/game/salvage/salvage_definition.gd")
+		_expect("motion_profile" in definition_source and "effect_profile" in definition_source, "Salvage definitions require data-driven motion and effect profiles.")
+		var salvage_source := FileAccess.get_file_as_string("res://src/game/salvage/salvage_object.gd")
+		_expect("_apply_motion" in salvage_source and "_effect_shader_mode" in salvage_source, "Salvage runtime must compose shared motion/effect profiles without per-item scenes.")
 		salvage.free()
 
 	var obstacle_packed := load("res://src/game/sector/sector_obstacle.tscn") as PackedScene
