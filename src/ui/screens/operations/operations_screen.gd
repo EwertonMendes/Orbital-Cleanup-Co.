@@ -406,6 +406,7 @@ func _refresh_all() -> void:
 
 func _refresh_header() -> void:
 	%CompanyLabel.text = tr("HQ_COMPANY")
+	close_overlay.text = tr("HQ_CLOSE")
 	%DeskLabel.text = tr("HQ_DESK")
 	credits_label.text = tr("HQ_CREDITS_FMT") % _progression.get_credits()
 	rank_label.text = tr("HQ_RANK_FMT") % tr(_progression.get_rank_display_name_key())
