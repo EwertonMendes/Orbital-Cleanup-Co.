@@ -34,6 +34,7 @@ func _validate_app_root() -> void:
 	var root := packed.instantiate()
 	_expect(root.get_node_or_null("Services/BuildInfo") is BuildInfo, "AppRoot must own BuildInfo.")
 	_expect(root.get_node_or_null("Services/PlatformService") is PlatformService, "AppRoot must own PlatformService.")
+	_expect(root.get_node_or_null("Services/AdService") is AdService, "AppRoot must own AdService.")
 	_expect(root.get_node_or_null("Services/SettingsService") is SettingsService, "AppRoot must own SettingsService.")
 	_expect(root.get_node_or_null("Services/SaveService") is SaveService, "AppRoot must own SaveService.")
 	_expect(root.get_node_or_null("Services/AudioService") is AudioService, "AppRoot must own AudioService.")
@@ -380,6 +381,13 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
 	_expect(screen.find_child("CleanupProgress", true, false) is ProgressBar, "Flight HUD requires sector cleanliness progress.")
+
+	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
+	_expect(
+		"ship.position = deployment_position" in flight_source
+		and "depot.position = deployment_position" in flight_source,
+		"Flight deployment must place ship and cargo depot at the same sector position."
+	)
 
 	var authored_salvage := 0
 	for node in screen.find_children("*", "Area2D", true, false):

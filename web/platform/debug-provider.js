@@ -1,23 +1,17 @@
 (() => {
-  class DebugWebProvider {
+  const { BaseProvider } = window.OCCProviderUtils;
+
+  class DebugWebProvider extends BaseProvider {
     constructor() {
-      this.initialized = false;
-      this.capabilities = new Set(['interstitial', 'rewarded', 'analytics']);
+      super('debug', ['interstitial', 'rewarded', 'analytics']);
     }
 
     async initialize() {
       if (this.initialized) return true;
       this.initialized = true;
       console.info('[Platform] READY provider=debug');
+      this._emit('ready', { available: true });
       return true;
-    }
-
-    getProviderName() {
-      return 'debug';
-    }
-
-    isFeatureAvailable(feature) {
-      return this.capabilities.has(feature);
     }
 
     gameplayStarted() {
@@ -32,32 +26,36 @@
       console.info('[Platform] event', eventName, payload);
     }
 
-    async showInterstitial(placement = 'debug') {
-      return this.#simulateAd('INTERSTITIAL', placement, false);
+    showInterstitial(placement = 'debug') {
+      return this.#simulateAd('interstitial', placement, false);
     }
 
-    async showRewarded(placement = 'debug') {
-      return this.#simulateAd('REWARDED', placement, true);
+    showRewarded(placement = 'debug') {
+      return this.#simulateAd('rewarded', placement, true);
     }
 
-    pauseExternalAudio() {
-      window.dispatchEvent(new CustomEvent('occ:external-audio-pause'));
-    }
+    #simulateAd(kind, placement, rewarded) {
+      const requestId = this._requestId(kind);
+      this._emit('ad_started', { requestId, kind, placement });
 
-    resumeExternalAudio() {
-      window.dispatchEvent(new CustomEvent('occ:external-audio-resume'));
-    }
-
-    async #simulateAd(kind, placement, rewarded) {
-      window.dispatchEvent(new CustomEvent('occ:ad:start', { detail: { kind, placement } }));
       const overlay = document.createElement('div');
       overlay.className = 'occ-debug-ad';
-      overlay.innerHTML = `<strong>DEBUG ${kind}</strong><span>${placement}</span><small>No real ad network is loaded in previews.</small>`;
+      overlay.innerHTML = `<strong>DEBUG ${kind.toUpperCase()}</strong><span>${placement}</span><small>No real ad network is loaded in previews.</small>`;
       document.body.appendChild(overlay);
-      await new Promise(resolve => window.setTimeout(resolve, 700));
-      overlay.remove();
-      window.dispatchEvent(new CustomEvent('occ:ad:complete', { detail: { kind, placement, rewarded } }));
-      return Object.freeze({ completed: true, rewarded, placement, provider: 'debug' });
+
+      window.setTimeout(() => {
+        overlay.remove();
+        this._emit('ad_result', {
+          requestId,
+          kind,
+          placement,
+          completed: true,
+          rewarded,
+          reason: 'debug_complete',
+        });
+      }, 700);
+
+      return requestId;
     }
   }
 

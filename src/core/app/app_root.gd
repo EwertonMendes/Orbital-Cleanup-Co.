@@ -7,6 +7,7 @@ const SECTOR_PREVIEW_SCREEN_PATH := "res://src/debug/sector_preview/sector_previ
 
 @onready var build_info: BuildInfo = %BuildInfo
 @onready var platform_service: PlatformService = %PlatformService
+@onready var ad_service: AdService = %AdService
 @onready var settings_service: SettingsService = %SettingsService
 @onready var save_service: SaveService = %SaveService
 @onready var audio_service: AudioService = %AudioService
@@ -26,6 +27,7 @@ func _ready() -> void:
 	progression_service.initialize(save_service)
 	input_service.initialize()
 	platform_service.initialize()
+	ad_service.initialize(platform_service, audio_service)
 	scene_router.configure(screen_host)
 
 	var startup := _resolve_startup_route()
@@ -82,6 +84,7 @@ func _service_context() -> Dictionary:
 	return {
 		"build_info": build_info,
 		"platform": platform_service,
+		"ads": ad_service,
 		"settings": settings_service,
 		"save": save_service,
 		"audio": audio_service,
@@ -93,6 +96,7 @@ func _service_context() -> Dictionary:
 func _validate_contracts() -> void:
 	assert(build_info != null, "BuildInfo service is required.")
 	assert(platform_service != null, "PlatformService is required.")
+	assert(ad_service != null, "AdService is required.")
 	assert(settings_service != null, "SettingsService is required.")
 	assert(save_service != null, "SaveService is required.")
 	assert(audio_service != null, "AudioService is required.")

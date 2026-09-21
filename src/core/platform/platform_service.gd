@@ -1,10 +1,16 @@
 extends Node
 class_name PlatformService
 
+signal provider_event(event: Dictionary)
+signal ad_started(details: Dictionary)
+signal ad_result(result: Dictionary)
+
 var provider_name := "debug-native"
 var _platform = null
+var _event_callback = null
 
 func initialize() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if not OS.has_feature("web"):
 		return
 
@@ -18,8 +24,11 @@ func initialize() -> void:
 		push_warning("OCCPlatform is missing; platform features remain unavailable.")
 		return
 
-	_platform.initialize()
+	_event_callback = JavaScriptBridge.create_callback(_on_platform_event)
+	if _platform.setEventCallback != null:
+		_platform.setEventCallback(_event_callback)
 	provider_name = str(_platform.getProviderName())
+	print("[Platform] BOUND provider=%s" % provider_name)
 
 func is_feature_available(feature: String) -> bool:
 	if _platform == null:
@@ -38,13 +47,15 @@ func track_event(event_name: String, payload: Dictionary = {}) -> void:
 	if _platform != null:
 		_platform.trackEvent(event_name, payload)
 
-func show_interstitial(placement: String) -> void:
-	if _platform != null:
-		_platform.showInterstitial(placement)
+func show_interstitial(placement: String) -> String:
+	if _platform == null:
+		return ""
+	return str(_platform.showInterstitial(placement))
 
-func show_rewarded(placement: String) -> void:
-	if _platform != null:
-		_platform.showRewarded(placement)
+func show_rewarded(placement: String) -> String:
+	if _platform == null:
+		return ""
+	return str(_platform.showRewarded(placement))
 
 func pause_external_audio() -> void:
 	if _platform != null:
@@ -53,7 +64,6 @@ func pause_external_audio() -> void:
 func resume_external_audio() -> void:
 	if _platform != null:
 		_platform.resumeExternalAudio()
-
 
 func is_debug_provider() -> bool:
 	return provider_name.begins_with("debug")
@@ -86,3 +96,19 @@ func get_query_parameters() -> Dictionary:
 		var value := String(parts[1]) if parts.size() > 1 else ""
 		output[key] = value
 	return output
+
+func _on_platform_event(args: Array) -> void:
+	if args.is_empty():
+		return
+	var decoded = JSON.parse_string(str(args[0]))
+	if typeof(decoded) != TYPE_DICTIONARY:
+		push_warning("PlatformService received malformed provider event.")
+		return
+
+	var event := decoded as Dictionary
+	provider_event.emit(event)
+	match String(event.get("type", "")):
+		"ad_started":
+			ad_started.emit(event)
+		"ad_result":
+			ad_result.emit(event)

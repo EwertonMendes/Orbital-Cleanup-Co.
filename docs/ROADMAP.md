@@ -11,8 +11,8 @@ The project is intentionally delivered as focused PRs with playable previews.
 7. ✅ **Headquarters** — merged.
 8. ✅ **Customization** — merged.
 9. ✅ **Initial Content Pack** — merged.
-10. 🚧 **Endless Contracts + Sector Preview** — current PR: deterministic endless generation, deep-link QA, debug generation UI.
-11. **Platform Providers** — CrazyGames, GamePix, GameMonetize adapters and ad lifecycle.
+10. ✅ **Endless Contracts + Sector Preview** — merged: deterministic endless generation, deep-link QA, debug generation UI.
+11. 🚧 **Platform Providers** — current PR: CrazyGames, GamePix, GameMonetize adapters and normalized ad lifecycle.
 12. **Polish + Retention** — discovery/rare feedback, satisfying VFX, scanner audio, transitions and balance.
 13. **Release Pipeline** — provider ZIPs, manifest, checksums and manual release workflow.
 
