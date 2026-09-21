@@ -177,6 +177,8 @@ func _apply_debug_landmark_focus() -> void:
 	focus_position.y = clampf(focus_position.y, bounds.position.y + 160.0, bounds.end.y - 160.0)
 	player_ship.global_position = focus_position
 	player_ship.velocity = Vector2.ZERO
+	var to_landmark := target.global_position - player_ship.global_position
+	player_ship.ship_camera.set_framing_offset(to_landmark * 0.5)
 	print("[QA] LANDMARK_FOCUS id=%s ship=(%.1f, %.1f) landmark=(%.1f, %.1f)" % [
 		target.get_landmark_id(),
 		player_ship.global_position.x,
