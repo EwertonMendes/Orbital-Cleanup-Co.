@@ -212,3 +212,19 @@ Landmarks remain data-driven. Content authors choose placement range, navigation
 Their `reserved_radius` is an actual composition rule: normal salvage and collision hazards are generated outside the structure's protected footprint. The ship can collide with the authored structure itself using the existing non-lethal bump response, which creates corridors, detours and recognizable navigation anchors without introducing damage or combat.
 
 Major orbital structures should continue to be authored as distinct silhouettes rather than enlarged small props. A new normal sector must still require data only, not landmark-specific GDScript.
+
+
+## Cargo depot navigation
+
+The cargo depot is the ship's deployment/home point and must remain easy to find in every authored and Endless sector without turning the flight HUD into a minimap.
+
+Navigation uses two complementary cues:
+
+- the world depot has a restrained animated beacon and persistent local label;
+- when the depot leaves the usable viewport, a small edge guide points toward its real world position and displays approximate distance.
+
+The guide is generic: Flight binds it directly to the current sector's `UnloadDepot` node after the sector's data-driven depot position is applied. There are no biome IDs, sector IDs or hardcoded depot coordinates in normal gameplay.
+
+The edge guide projects the real depot world position through the active viewport canvas transform, so it stays correct with camera movement and responsive layouts. It hides automatically when the depot is visible or the ship is already nearby.
+
+Cargo state changes emphasis but not layout: normal travel uses calm cyan guidance; a full cargo hold promotes the same beacon/guide to amber. The guide updates at 30 Hz and the world beacon redraws at 20 Hz to preserve Web/mobile frame pacing.
