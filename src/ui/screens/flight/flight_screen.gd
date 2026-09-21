@@ -135,6 +135,7 @@ func _ready() -> void:
 	_contract_session.perfect_cleanup_reached.connect(_on_perfect_cleanup_reached)
 	environment_runtime.environment_state_changed.connect(_on_environment_state_changed)
 	_contract_session.start()
+	_apply_debug_landmark_focus()
 
 	toast_panel.modulate.a = 0.0
 	beam_progress.value = 0.0
@@ -149,6 +150,40 @@ func _ready() -> void:
 		_platform.track_event("contract_started", {"sector_id": _configured_sector_id})
 	_gameplay_active = true
 	print("[Flight] READY")
+
+func _apply_debug_landmark_focus() -> void:
+	var requested := String(_context.get("debug_landmark_focus", ""))
+	if requested.is_empty():
+		return
+	if _platform == null or not _platform.is_debug_provider():
+		return
+
+	var landmarks := sector_runtime.get_landmark_nodes()
+	if landmarks.is_empty():
+		push_warning("Landmark QA focus requested but sector has no landmarks.")
+		return
+
+	var target := landmarks[0]
+	if requested not in ["1", "true", "yes", "first"]:
+		for candidate in landmarks:
+			if candidate.get_landmark_id() == requested:
+				target = candidate
+				break
+
+	var clearance := maxf(360.0, target.get_reserved_radius() * 0.72)
+	var focus_position := target.global_position + Vector2.LEFT * clearance
+	var bounds := sector_runtime.get_play_bounds()
+	focus_position.x = clampf(focus_position.x, bounds.position.x + 160.0, bounds.end.x - 160.0)
+	focus_position.y = clampf(focus_position.y, bounds.position.y + 160.0, bounds.end.y - 160.0)
+	player_ship.global_position = focus_position
+	player_ship.velocity = Vector2.ZERO
+	print("[QA] LANDMARK_FOCUS id=%s ship=(%.1f, %.1f) landmark=(%.1f, %.1f)" % [
+		target.get_landmark_id(),
+		player_ship.global_position.x,
+		player_ship.global_position.y,
+		target.global_position.x,
+		target.global_position.y,
+	])
 
 func _exit_tree() -> void:
 	_stop_gameplay()
