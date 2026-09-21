@@ -40,8 +40,6 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var upgrade_grid: GridContainer = %UpgradeGrid
 @onready var career_list: VBoxContainer = %CareerList
 @onready var credits_label: Label = %CreditsLabel
-@onready var rank_label: Label = %RankLabel
-@onready var xp_label: Label = %XpLabel
 @onready var career_rank_value: Label = %CareerRankValue
 @onready var career_xp_label: Label = %CareerXpLabel
 @onready var career_xp_bar: ProgressBar = %CareerXpBar
@@ -467,13 +465,6 @@ func _refresh_header() -> void:
 	%AudioLabel.text = tr("HQ_SETTINGS_AUDIO")
 	%SettingsClose.text = tr("HQ_SETTINGS_DONE")
 	credits_label.text = tr("HQ_CREDITS_FMT") % _progression.get_credits()
-	rank_label.text = tr("HQ_RANK_FMT") % tr(_progression.get_rank_display_name_key())
-
-	var progress := _progression.get_rank_progress()
-	if bool(progress["is_max_rank"]):
-		xp_label.text = tr("HQ_XP_MAX_FMT") % int(progress["current_xp"])
-	else:
-		xp_label.text = tr("HQ_XP_FMT") % [int(progress["current_xp"]), int(progress["next_min_xp"])]
 	%LanguageLabel.text = tr("HQ_LANGUAGE")
 	_update_volume_value()
 
@@ -813,14 +804,22 @@ func _category_key(category: String) -> String:
 
 func _open_settings() -> void:
 	settings_layer.visible = true
+	settings_layer.modulate.a = 0.0
 	_update_volume_value()
 	settings_close.grab_focus()
+	var tween := create_tween()
+	tween.tween_property(settings_layer, "modulate:a", 1.0, 0.14).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 func _close_settings() -> void:
 	if _audio != null:
 		_audio.play_ui_back()
-	settings_layer.visible = false
-	settings_button.grab_focus()
+	var tween := create_tween()
+	tween.tween_property(settings_layer, "modulate:a", 0.0, 0.10).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.tween_callback(func() -> void:
+		settings_layer.visible = false
+		settings_layer.modulate.a = 1.0
+		settings_button.grab_focus()
+	)
 
 func _adjust_volume(delta: float) -> void:
 	if _settings == null:
@@ -843,14 +842,15 @@ func _wire_button_feedback(root: Node) -> void:
 			buttons.append(node as Button)
 	for button in buttons:
 		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		if not button.mouse_entered.is_connected(_play_ui_hover):
-			button.mouse_entered.connect(_play_ui_hover)
-		if button != close_overlay and button != settings_close and not button.pressed.is_connected(_play_ui_click):
+		if button.has_meta("occ_feedback_wired"):
+			continue
+		button.set_meta("occ_feedback_wired", true)
+		button.mouse_entered.connect(_play_ui_hover)
+		if button != close_overlay and button != settings_close:
 			button.pressed.connect(_play_ui_click)
-		if not button.button_down.is_connected(_set_pressed_cursor):
-			button.button_down.connect(_set_pressed_cursor)
-		if not button.button_up.is_connected(_set_pointing_cursor):
-			button.button_up.connect(_set_pointing_cursor)
+		button.button_down.connect(_on_ui_button_down.bind(button))
+		button.button_up.connect(_on_ui_button_up.bind(button))
+		button.mouse_exited.connect(_on_ui_button_up.bind(button))
 
 func _play_ui_hover() -> void:
 	if _audio != null:
@@ -860,8 +860,10 @@ func _play_ui_click() -> void:
 	if _audio != null:
 		_audio.play_ui_click()
 
-func _set_pressed_cursor() -> void:
+func _on_ui_button_down(button: Button) -> void:
 	OccCursorSkin.set_pressed()
+	button.self_modulate.a = 0.90
 
-func _set_pointing_cursor() -> void:
+func _on_ui_button_up(button: Button) -> void:
 	OccCursorSkin.set_pointing()
+	button.self_modulate.a = 1.0
