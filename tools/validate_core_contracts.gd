@@ -740,6 +740,8 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
 	_expect(screen.find_child("CleanupProgress", true, false) is ProgressBar, "Flight HUD requires sector cleanliness progress.")
 	_expect(screen.find_child("EnvironmentStatus", true, false) is Label, "Flight HUD must identify active environmental effects.")
+	_expect(screen.find_child("DepotNavigationGuide", true, false) is DepotNavigationGuide, "Flight HUD requires contextual cargo-depot guidance.")
+	_expect(screen.find_child("DepotNavLabel", true, false) is Label, "Depot navigation requires localized distance feedback.")
 
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	_expect(
@@ -747,6 +749,18 @@ func _validate_flight_screen() -> void:
 		and "depot.position = deployment_position" in flight_source,
 		"Flight deployment must place ship and cargo depot at the same sector position."
 	)
+
+	_expect("navigation.configure(ship, depot)" in flight_source, "Flight must bind depot navigation to the real per-sector depot world node.")
+	_expect("depot_navigation.set_cargo_state" in flight_source, "Depot guide must react to cargo state without owning cargo rules.")
+
+	var guide_source := FileAccess.get_file_as_string("res://src/ui/components/depot_navigation_guide.gd")
+	_expect("get_canvas_transform()" in guide_source, "Depot guide must project the real world target through the active camera transform.")
+	_expect("NEAR_DISTANCE" in guide_source, "Depot guide must hide near the depot instead of remaining invasive.")
+	_expect("UPDATE_INTERVAL := 1.0 / 30.0" in guide_source, "Depot guide must use a bounded lightweight update cadence.")
+
+	var depot_source := FileAccess.get_file_as_string("res://src/game/salvage/unload_zone.gd")
+	_expect("set_cargo_state" in depot_source, "Depot world beacon must react to full cargo.")
+	_expect("1.0 / 20.0" in depot_source, "Animated depot beacon must throttle redraws for Web performance.")
 
 	var authored_salvage := 0
 	for node in screen.find_children("*", "Area2D", true, false):
