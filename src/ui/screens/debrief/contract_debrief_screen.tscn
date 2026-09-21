@@ -110,6 +110,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="DebriefCard" type="PanelContainer" parent="SafeArea/Scroll/Center"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -118,13 +119,13 @@ theme_override_styles/panel = SubResource("MainPanel")
 [node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 22
+theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 22
+theme_override_constants/margin_bottom = 16
 
 [node name="Content" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 13
+theme_override_constants/separation = 8
 
 [node name="Header" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
 layout_mode = 2
@@ -179,6 +180,8 @@ layout_mode = 2
 [node name="ContentGrid" type="GridContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 6
 columns = 3
 
 [node name="ObjectiveCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid"]
@@ -275,6 +278,8 @@ text = "PAYOUT"
 [node name="RewardGrid" type="GridContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 6
 columns = 4
 
 [node name="BasePay" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid"]
