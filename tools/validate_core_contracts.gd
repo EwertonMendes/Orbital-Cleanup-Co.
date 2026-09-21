@@ -845,6 +845,8 @@ func _validate_flight_screen() -> void:
 	_expect("_refresh_biome_thumbnail" in flight_source and 'visual_profile.get("primary_asset", "")' in flight_source, "Flight biome thumbnail must come from the same data-driven primary artwork used in the world.")
 	var flight_theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_flight_hud_theme.tres")
 	_expect("HudThumbnailEmpty" in flight_theme_source, "Biome preview must not draw a second internal cyan frame.")
+	_expect("Blue/Double/bar_round_gloss_large.png" in flight_theme_source, "Operations requires a clearly clickable blue Kenney action state.")
+	_expect('HudActionButton/styles/normal = SubResource("HudButtonAction")' in flight_theme_source, "Operations must render with the full blue action surface, not the dark outline-only state.")
 	_expect("Red/Double/bar_round_gloss_large.png" in flight_theme_source, "Abort Contract requires a clearly clickable red Kenney state.")
 	_expect("Green/Double/bar_round_gloss_large.png" in flight_theme_source, "Complete Contract requires a clearly clickable green Kenney state.")
 	_expect('theme_override_styles/panel = SubResource("MissionPanel")' not in flight_scene_source, "Flight mission HUD must not retain legacy cyan panel chrome.")

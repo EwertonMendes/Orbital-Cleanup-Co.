@@ -348,6 +348,10 @@ def validate_visual_foundation() -> None:
         fail("Flight HUD must show the current biome primary artwork instead of a stretched numeric badge")
     if "HudActionButton" not in flight_theme or "HudDangerButton" not in flight_theme or "HudSuccessButton" not in flight_theme:
         fail("Flight HUD needs distinct Operations, abort and complete button states")
+    if "Blue/Double/bar_round_gloss_large.png" not in flight_theme:
+        fail("Operations must use the blue Kenney action state")
+    if 'HudActionButton/styles/normal = SubResource("HudButtonAction")' not in flight_theme:
+        fail("Operations must use the full blue action surface instead of the dark outline-only state")
     if "Red/Double/bar_round_gloss_large.png" not in flight_theme:
         fail("Abort Contract must use the red Kenney action state")
     if "Green/Double/bar_round_gloss_large.png" not in flight_theme:
