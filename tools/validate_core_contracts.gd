@@ -118,7 +118,8 @@ func _validate_operations_screen() -> void:
 	_expect("discovery_tab.visible = _progression.get_discovery_count() > 0" in operations_source, "Discovery navigation must stay hidden before first discovery.")
 	_expect("if not unlocked:" in operations_source and "continue" in operations_source, "Locked cosmetics must stay absent instead of cluttering the workshop.")
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
-	_expect("size.y < 520.0" in operations_source and "settings_modal.custom_minimum_size" in operations_source, "Operations must protect short landscape and compact Settings layouts from overflow.")
+	_expect("DisplayServer.window_get_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use real window orientation and a tall portrait console to prevent clipping.")
+	_expect("settings_modal.custom_minimum_size" in operations_source and "footer_spacer.visible = not portrait" in operations_source, "Operations must protect compact Settings and portrait deployment layouts from overflow.")
 	_expect("_reveal_active_panel" in operations_source, "Operations tab changes require restrained shared motion.")
 
 	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_operations_theme.tres")
