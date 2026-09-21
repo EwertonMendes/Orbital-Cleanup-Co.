@@ -735,3 +735,87 @@ msgstr "VALOR RECUPERADO · %d / %d CRÉDITOS · LIMPEZA %d%%"
 
 msgid "FLIGHT_OBJECTIVE_PRIORITY_FMT"
 msgstr "PRIORIDADE · %s · %d / %d · LIMPEZA %d%%"
+
+msgid "DEBRIEF_EYEBROW"
+msgstr "RELATÓRIO DE TURNO // CONTRATO ENCERRADO"
+
+msgid "DEBRIEF_TITLE"
+msgstr "Contrato Concluído"
+
+msgid "DEBRIEF_TITLE_PERFECT"
+msgstr "Limpeza Perfeita"
+
+msgid "DEBRIEF_SUBTITLE"
+msgstr "Recuperação registrada. Registros da empresa atualizados."
+
+msgid "DEBRIEF_BADGE_COMPLETE"
+msgstr "CONCLUÍDO"
+
+msgid "DEBRIEF_BADGE_PERFECT"
+msgstr "PERFEITO"
+
+msgid "DEBRIEF_OBJECTIVE"
+msgstr "OBJETIVO"
+
+msgid "DEBRIEF_OBJECTIVE_COMPLETE"
+msgstr "CONCLUÍDO"
+
+msgid "DEBRIEF_CLEANUP"
+msgstr "LIMPEZA"
+
+msgid "DEBRIEF_PERCENT_FMT"
+msgstr "%d%%"
+
+msgid "DEBRIEF_RECOVERED"
+msgstr "RECUPERADOS"
+
+msgid "DEBRIEF_RECOVERED_FMT"
+msgstr "%d OBJETOS"
+
+msgid "DEBRIEF_REWARDS"
+msgstr "PAGAMENTO"
+
+msgid "DEBRIEF_BASE_PAY"
+msgstr "PAGAMENTO BASE"
+
+msgid "DEBRIEF_SALVAGE_VALUE"
+msgstr "VALOR DO SALVAGE"
+
+msgid "DEBRIEF_PERFECT_BONUS"
+msgstr "BÔNUS PERFEITO"
+
+msgid "DEBRIEF_TOTAL"
+msgstr "TOTAL"
+
+msgid "DEBRIEF_CREDITS_FMT"
+msgstr "%d CRÉDITOS"
+
+msgid "DEBRIEF_BALANCE"
+msgstr "CONTA DA EMPRESA"
+
+msgid "DEBRIEF_CAREER"
+msgstr "PROGRESSO DE CARREIRA"
+
+msgid "DEBRIEF_XP_GAIN_FMT"
+msgstr "+%d XP DA EMPRESA"
+
+msgid "DEBRIEF_XP_PROGRESS_FMT"
+msgstr "%d / %d XP"
+
+msgid "DEBRIEF_XP_MAX_FMT"
+msgstr "%d XP // RANK MÁXIMO"
+
+msgid "DEBRIEF_PROMOTED"
+msgstr "PROMOVIDO"
+
+msgid "DEBRIEF_UNLOCKS"
+msgstr "NOVOS DESBLOQUEIOS"
+
+msgid "DEBRIEF_NO_UNLOCKS"
+msgstr "Novas responsabilidades liberadas. Nenhum equipamento novo neste rank."
+
+msgid "DEBRIEF_DISCOVERIES"
+msgstr "NOVAS DESCOBERTAS"
+
+msgid "DEBRIEF_CONTINUE"
+msgstr "CONTINUAR PARA O QG"
