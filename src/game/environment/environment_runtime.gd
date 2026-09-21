@@ -118,10 +118,11 @@ func _apply_ship_state(state: Dictionary) -> void:
 		state["ship_force"] as Vector2,
 		float(state["speed_multiplier"])
 	)
-	_ship.tractor_beam.set_environment_modifiers(
-		float(state["scanner_multiplier"]),
-		float(state["tractor_multiplier"])
-	)
+	if _ship.tractor_beam != null:
+		_ship.tractor_beam.set_environment_modifiers(
+			float(state["scanner_multiplier"]),
+			float(state["tractor_multiplier"])
+		)
 	if _post_process != null:
 		_post_process.set_environment_state(
 			float(state["visibility"]),

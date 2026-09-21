@@ -141,6 +141,47 @@ def validate_salvage(items: dict[str, dict[str, Any]], catalogs: dict[str, set[s
             "collision_radius", "tags",
         ), label)
         require_localization_key(data["display_name_key"], label, catalogs)
+        visual = data.get("visual_profile")
+        require(isinstance(visual, dict), f"{label}.visual_profile must be an object")
+        planet_asset = visual.get("planet_asset")
+        require(isinstance(planet_asset, str) and planet_asset.endswith(".svg"), f"{label}: planet asset must be an SVG")
+        require((ROOT / planet_asset.removeprefix("res://")).exists(), f"{label}: Missing planet asset: {planet_asset}")
+        anchor = visual.get("planet_anchor")
+        require(isinstance(anchor, list) and len(anchor) == 2, f"{label}.visual_profile.planet_anchor must contain two values")
+        require_number(visual.get("planet_scale"), f"{label}.visual_profile.planet_scale", 0.2, 5)
+        require_number(visual.get("planet_parallax"), f"{label}.visual_profile.planet_parallax", 0, 0.5)
+        require_number(visual.get("traffic_count"), f"{label}.visual_profile.traffic_count", 0, 24)
+        require_number(visual.get("dust_density"), f"{label}.visual_profile.dust_density", 0, 2)
+
+        environment = data.get("environment")
+        require(isinstance(environment, dict), f"{label}.environment must be an object")
+        require_number(environment.get("salvage_mass_multiplier"), f"{label}.environment.salvage_mass_multiplier", 0.5, 2)
+        volumes = environment.get("volumes")
+        require(isinstance(volumes, list), f"{label}.environment.volumes must be an array")
+        allowed_kinds = {
+            "gravity_well", "safe_corridor", "drift_current", "visibility_pocket",
+            "scanner_interference", "tractor_distortion", "magnetic_zone",
+        }
+        for volume_index, volume in enumerate(volumes):
+            field_label = f"{label}.environment.volumes[{volume_index}]"
+            require(isinstance(volume, dict), f"{field_label} must be an object")
+            require(volume.get("kind") in allowed_kinds, f"{field_label}: unsupported kind")
+            count_range = volume.get("count_range")
+            strength_range = volume.get("strength_range")
+            require(isinstance(count_range, list) and len(count_range) == 2, f"{field_label}.count_range must contain two values")
+            require(isinstance(strength_range, list) and len(strength_range) == 2, f"{field_label}.strength_range must contain two values")
+            require(int(count_range[0]) <= int(count_range[1]), f"{field_label}.count_range min cannot exceed max")
+            require(float(strength_range[0]) <= float(strength_range[1]), f"{field_label}.strength_range min cannot exceed max")
+            shape = volume.get("shape")
+            require(shape in {"circle", "box"}, f"{field_label}.shape is invalid")
+            if shape == "circle":
+                radius_range = volume.get("radius_range")
+                require(isinstance(radius_range, list) and len(radius_range) == 2, f"{field_label}.radius_range must contain two values")
+            else:
+                length_range = volume.get("length_range")
+                width_range = volume.get("width_range")
+                require(isinstance(length_range, list) and len(length_range) == 2, f"{field_label}.length_range must contain two values")
+                require(isinstance(width_range, list) and len(width_range) == 2, f"{field_label}.width_range must contain two values")
         require_asset(data["sprite"], f"{label}.sprite")
         sprite_name = Path(str(data["sprite"])).name.lower()
         require(

@@ -840,3 +840,30 @@ msgstr "%d / %d XP · FALTAM %d"
 
 msgid "UNLOCK_ENDLESS_CONTRACTS"
 msgstr "Contratos Infinitos"
+
+msgid "FLIGHT_ENVIRONMENT_FMT"
+msgstr "AMBIENTE · %s"
+
+msgid "ENV_STABLE_ORBIT"
+msgstr "ÓRBITA ESTÁVEL"
+
+msgid "ENV_GRAVITY_WELL"
+msgstr "POÇO GRAVITACIONAL"
+
+msgid "ENV_SAFE_CORRIDOR"
+msgstr "CORREDOR SEGURO"
+
+msgid "ENV_SOLAR_CURRENT"
+msgstr "CORRENTE SOLAR"
+
+msgid "ENV_LOW_VISIBILITY"
+msgstr "BAIXA VISIBILIDADE"
+
+msgid "ENV_SCANNER_INTERFERENCE"
+msgstr "INTERFERÊNCIA NO SCANNER"
+
+msgid "ENV_TRACTOR_DISTORTION"
+msgstr "DISTORÇÃO DO TRATOR"
+
+msgid "ENV_MAGNETIC_ZONE"
+msgstr "CAMPO MAGNÉTICO"
