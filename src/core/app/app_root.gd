@@ -18,6 +18,7 @@ const SECTOR_PREVIEW_SCREEN_PATH := "res://src/debug/sector_preview/sector_previ
 @onready var scene_router: SceneRouter = %SceneRouter
 @onready var progression_service: ProgressionService = %ProgressionService
 @onready var screen_host: Control = %ScreenHost
+@onready var travel_cover: ColorRect = %TravelCover
 
 func _ready() -> void:
 	print("[OCC] BOOT")
@@ -31,7 +32,7 @@ func _ready() -> void:
 	input_service.initialize()
 	platform_service.initialize()
 	ad_service.initialize(platform_service, audio_service)
-	scene_router.configure(screen_host)
+	scene_router.configure(screen_host, travel_cover)
 
 	var startup := _resolve_startup_route()
 	var screen_path := String(startup["screen_path"])
@@ -192,3 +193,4 @@ func _validate_contracts() -> void:
 	assert(scene_router != null, "SceneRouter is required.")
 	assert(progression_service != null, "ProgressionService is required.")
 	assert(screen_host != null, "ScreenHost is required.")
+	assert(travel_cover != null, "Persistent TravelCover is required.")
