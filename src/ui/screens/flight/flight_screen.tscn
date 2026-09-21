@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://src/game/environment/environment_runtime.gd" id="14"]
 [ext_resource type="Script" path="res://src/ui/components/depot_navigation_guide.gd" id="15"]
 [ext_resource type="Script" path="res://src/ui/components/warp_travel_transition.gd" id="16"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/panel_glass_notches.png" id="17"]
 
 [sub_resource type="CircleShape2D" id="UnloadShape"]
 radius = 145.0
@@ -187,16 +188,32 @@ vertical = false
 
 [node name="MissionCard" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(390, 104)
+custom_minimum_size = Vector2(390, 112)
 layout_mode = 2
 theme_type_variation = &"HudPanel"
 
+[node name="MissionChrome" type="NinePatchRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+self_modulate = Color(0.26, 0.28, 0.31, 1)
+texture = ExtResource("17")
+patch_margin_left = 24
+patch_margin_top = 24
+patch_margin_right = 24
+patch_margin_bottom = 24
+draw_center = true
+
 [node name="Margin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 16
 
 [node name="Row" type="HBoxContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin"]
 layout_mode = 2
@@ -266,16 +283,32 @@ size_flags_horizontal = 3
 
 [node name="CargoCard" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(210, 80)
+custom_minimum_size = Vector2(210, 96)
 layout_mode = 2
 theme_type_variation = &"HudPanel"
 
+[node name="CargoChrome" type="NinePatchRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+self_modulate = Color(0.26, 0.28, 0.31, 1)
+texture = ExtResource("17")
+patch_margin_left = 24
+patch_margin_top = 24
+patch_margin_right = 24
+patch_margin_bottom = 24
+draw_center = true
+
 [node name="CargoMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 9
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 16
 
 [node name="CargoContent" type="VBoxContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard/CargoMargin"]
 layout_mode = 2
