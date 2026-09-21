@@ -313,6 +313,7 @@ theme_override_constants/margin_bottom = 16
 [node name="CargoContent" type="VBoxContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard/CargoMargin"]
 layout_mode = 2
 theme_override_constants/separation = 5
+alignment = 1
 
 [node name="CargoLabel" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard/CargoMargin/CargoContent"]
 theme_type_variation = &"HudTitleSmall"
