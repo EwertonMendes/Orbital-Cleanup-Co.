@@ -74,7 +74,9 @@ func _validate_operations_screen() -> void:
 		"ContractHero", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
 		"CreditsLabel", "RankLabel", "XpLabel", "CareerRankValue", "CareerXpLabel", "CareerXpBar",
 		"ContractState", "ContractSelector", "ContractPosition", "PreviousContract", "EndlessContract", "NextContract", "ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk",
-		"ContractPayout", "LastResult", "ShipStats", "DiscoveryCount", "CompletedContracts",
+		"ContractPayout", "ContractRequirement", "NextUnlockPanel", "NextUnlockTitle",
+		"NextUnlockLabel", "NextUnlockProgress", "NextUnlockProgressLabel",
+		"LastResult", "ShipStats", "DiscoveryCount", "CompletedContracts",
 		"EnglishButton", "PortugueseButton", "SpanishButton", "ContractsTab", "UpgradesTab",
 		"CareerTab", "ShipTab", "DiscoveryTab", "CompanyLabel", "DeskLabel", "LanguageLabel",
 		"ContractsTitle", "ContractsSubtitle", "ContractShipName", "ContractShipStatus",
@@ -89,6 +91,10 @@ func _validate_operations_screen() -> void:
 			screen.get_node_or_null(NodePath("%" + node_name)) != null,
 			"Headquarters script reference must be unique: %%%s" % node_name
 		)
+	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
+	_expect("_active_contract_access()" in operations_source, "Headquarters deploy must consult centralized progression access.")
+	_expect("primary_action.disabled = not unlocked" in operations_source, "Locked contracts must disable deploy action.")
+	_expect("_refresh_next_unlock()" in operations_source, "Headquarters must surface the next career unlock.")
 	screen.free()
 
 func _validate_hq_components() -> void:
@@ -167,6 +173,9 @@ func _validate_content_runtime() -> void:
 
 	var sector_ids := registry.list_sector_ids()
 	_expect(sector_ids.size() >= 13, "Initial content pack must expose at least 13 authored sectors.")
+	_expect(String(sector_ids[0]) == "earth_training_01", "Career order must begin with Earth Training 01.")
+	_expect(String(sector_ids[1]) == "earth_training_02", "Career order must keep Earth Training 02 second.")
+	_expect(String(sector_ids[sector_ids.size() - 1]) == "blue_nebula_03", "Career order must end with Blue Nebula 03.")
 	for required_sector in ["earth_orbit_03", "lunar_belt_01", "mars_freight_01", "blue_nebula_01"]:
 		_expect(sector_ids.has(required_sector), "Initial content pack missing authored sector: %s" % required_sector)
 
@@ -386,6 +395,13 @@ func _validate_progression_service() -> void:
 
 	_expect(progression.get_credits() == 0, "New progression must start with zero Credits.")
 	_expect(progression.get_rank_id() == "trainee", "New progression must start at Trainee.")
+	_expect(progression.is_sector_unlocked("earth_training_01"), "Trainee must have first training contract.")
+	_expect(progression.is_sector_unlocked("earth_training_02"), "Trainee must have second training contract.")
+	_expect(not progression.is_sector_unlocked("earth_orbit_03"), "Advanced Earth contract must wait for Junior Cleaner.")
+	_expect(not progression.is_endless_unlocked(), "Endless Contracts must be a late-career unlock.")
+	var first_unlock := progression.get_next_content_unlock()
+	_expect(String(first_unlock["sector_id"]) == "earth_orbit_03", "First career unlock must be Earth Orbit 03.")
+	_expect(int(first_unlock["min_xp"]) == 300, "Junior Cleaner unlock threshold must match balanced career pacing.")
 	var base_ship := progression.get_ship_modifiers()
 	_expect(is_equal_approx(float(base_ship["scan_range"]), 320.0), "Base Tractor Beam range must come from progression data.")
 	_expect(int(round(float(base_ship["cargo_capacity"]))) == 12, "Base cargo capacity must come from progression data.")
@@ -424,14 +440,20 @@ func _validate_progression_service() -> void:
 	_expect(String(payout_transition["rank_before_id"]) == "trainee", "Debrief transition must preserve previous rank.")
 	_expect(String(payout_transition["rank_after_id"]) == "junior_cleaner", "Debrief transition must preserve promoted rank.")
 	var unlocked_safety_amber := false
+	var unlocked_earth_orbit := false
 	for value in payout_transition["unlocks"] as Array:
 		var unlock := value as Dictionary
 		if String(unlock.get("id", "")) == "safety_amber":
 			unlocked_safety_amber = true
+		if String(unlock.get("id", "")) == "earth_orbit_03":
+			unlocked_earth_orbit = true
 	_expect(unlocked_safety_amber, "Promotion transition must expose newly unlocked cosmetics.")
+	_expect(unlocked_earth_orbit, "Promotion transition must expose newly unlocked authored contracts.")
 	_expect(progression.get_credits() == 500, "Contract payout must persist Credits.")
 	_expect(progression.get_rank_id() == "junior_cleaner", "Company XP must promote career rank.")
 	_expect(progression.is_cosmetic_unlocked("paint", "safety_amber"), "Rank promotion must unlock configured cosmetics.")
+	_expect(progression.is_sector_unlocked("earth_orbit_03"), "Junior Cleaner promotion must unlock advanced Earth contracts.")
+	_expect(not progression.is_sector_unlocked("lunar_belt_01"), "Lunar Belt must remain gated until Orbital Cleaner.")
 
 	var cost := progression.get_upgrade_cost("tractor_range")
 	_expect(progression.purchase_upgrade("tractor_range"), "Affordable upgrade purchase must succeed.")
