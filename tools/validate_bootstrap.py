@@ -358,6 +358,12 @@ def validate_visual_foundation() -> None:
         fail("Complete Contract must use the green Kenney action state")
     if "HudThumbnailEmpty" not in flight_theme:
         fail("Biome thumbnail must not render a second internal cyan border")
+    if "bg_color = Color(0.006, 0.008, 0.011, 0.97)" not in flight_theme:
+        fail("Flight mission/cargo cards must use the near-black dark-mode surface")
+    if "border_color = Color(0.92, 0.95, 0.97, 0.94)" not in flight_theme:
+        fail("Flight mission/cargo cards must use a bright neutral border")
+    if flight.count("panel_glass_notches.png") < 1 or "MissionChrome" not in flight or "CargoChrome" not in flight:
+        fail("Flight mission/cargo cards must reuse the existing Kenney glass-notch chrome")
     if flight.count("size_flags_vertical = 4") < 2:
         fail("Flight action buttons must not stretch to the height of the mission/cargo cards")
     if 'theme_override_styles/panel = SubResource("MissionPanel")' in flight or 'theme_override_styles/normal = SubResource("ReturnButtonNormal")' in flight:
