@@ -22,6 +22,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var flight_feedback: FlightFeedback = %FlightFeedback
 @onready var environment_runtime: EnvironmentRuntime = %EnvironmentRuntime
 @onready var environment_status: Label = %EnvironmentStatus
+@onready var depot_navigation: DepotNavigationGuide = %DepotNavigationGuide
 
 var _context: Dictionary = {}
 var _router: SceneRouter
@@ -60,6 +61,7 @@ func configure(context: Dictionary) -> void:
 	var feedback := get_node("FlightFeedback") as FlightFeedback
 	var depot := get_node("World/UnloadDepot") as UnloadZone
 	var ship := get_node("World/PlayerShip") as PlayerShip
+	var navigation := get_node("HUD/HudRoot/DepotNavigationGuide") as DepotNavigationGuide
 
 	assert(runtime != null, "FlightScreen requires SectorRuntime.")
 	assert(backdrop != null, "FlightScreen requires SectorBackdrop.")
@@ -69,6 +71,7 @@ func configure(context: Dictionary) -> void:
 	assert(feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(depot != null, "FlightScreen requires UnloadZone.")
 	assert(ship != null, "FlightScreen requires PlayerShip.")
+	assert(navigation != null, "FlightScreen requires DepotNavigationGuide.")
 
 	if generated_definition.is_empty():
 		runtime.configure_sector(_configured_sector_id)
@@ -101,6 +104,9 @@ func configure(context: Dictionary) -> void:
 	depot.position = deployment_position
 	ship.position = deployment_position
 	ship.velocity = Vector2.ZERO
+	if _context.has("debug_ship_offset"):
+		ship.position += _context["debug_ship_offset"] as Vector2
+		print("[QA] DEPOT_NAV_PREVIEW ship_offset=%s" % str(_context["debug_ship_offset"]))
 
 	ship.configure(
 		_input_service,
@@ -109,6 +115,7 @@ func configure(context: Dictionary) -> void:
 		_progression.get_ship_cosmetics()
 	)
 	environment.bind(ship, runtime, post_process)
+	navigation.configure(ship, depot)
 	print("[Flight] DEPLOYMENT position=(%.1f, %.1f) depot=(%.1f, %.1f)" % [
 		ship.position.x,
 		ship.position.y,
@@ -203,6 +210,7 @@ func _validate_contracts() -> void:
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
 	assert(flight_feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(environment_runtime != null and environment_status != null, "FlightScreen requires biome environment feedback.")
+	assert(depot_navigation != null, "FlightScreen requires contextual depot navigation.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
 
 func _apply_responsive_layout() -> void:
@@ -374,6 +382,8 @@ func _on_perfect_cleanup_reached() -> void:
 
 func _on_cargo_changed(used_units: int, capacity: int) -> void:
 	cargo_label.text = tr("FLIGHT_CARGO_FMT") % [used_units, capacity]
+	depot_navigation.set_cargo_state(used_units, capacity)
+	unload_zone.set_cargo_state(used_units, capacity)
 	if used_units >= capacity and _active_salvage == null:
 		beam_status.text = tr("FLIGHT_CARGO_FULL")
 
