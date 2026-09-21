@@ -1,5 +1,8 @@
 extends Control
 
+signal deployment_requested(context: Dictionary)
+signal close_requested
+
 enum Tab {
 	CONTRACTS,
 	UPGRADES,
@@ -75,6 +78,9 @@ const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card
 @onready var career_tab: Button = %CareerTab
 @onready var ship_tab: Button = %ShipTab
 @onready var discovery_tab: Button = %DiscoveryTab
+@onready var close_overlay: Button = %CloseOverlay
+@onready var overlay_scrim: ColorRect = %OverlayScrim
+@onready var floating_surface: PanelContainer = %FloatingSurface
 
 var _context: Dictionary = {}
 var _settings: SettingsService
@@ -92,9 +98,11 @@ var _active_sector_definition: Dictionary = {}
 var _sector_plan: Dictionary = {}
 var _active_tab := Tab.CONTRACTS
 var _tab_group := ButtonGroup.new()
+var _overlay_mode := false
 
 func configure(context: Dictionary) -> void:
 	_context = context
+	_overlay_mode = bool(context.get("operations_overlay", false))
 	_settings = context.get("settings") as SettingsService
 	_platform = context.get("platform") as PlatformService
 	_router = context.get("router") as SceneRouter
@@ -117,6 +125,7 @@ func _ready() -> void:
 	_validate_contracts()
 	resized.connect(_apply_responsive_layout)
 	primary_action.pressed.connect(_deploy_training)
+	close_overlay.pressed.connect(_request_close)
 	previous_contract.pressed.connect(_select_relative_contract.bind(-1))
 	endless_contract.pressed.connect(_toggle_endless_mode)
 	next_contract.pressed.connect(_select_relative_contract.bind(1))
@@ -131,10 +140,11 @@ func _ready() -> void:
 	if not _progression.state_changed.is_connected(_on_progression_changed):
 		_progression.state_changed.connect(_on_progression_changed)
 
+	_apply_overlay_presentation()
 	_apply_responsive_layout()
 	_refresh_all()
 	_show_tab(Tab.CONTRACTS)
-	print("[HQ] READY tab=contracts")
+	print("[HQ] READY tab=contracts mode=%s" % ("overlay" if _overlay_mode else "screen"))
 
 func _validate_contracts() -> void:
 	assert(safe_area != null, "Headquarters requires SafeArea.")
@@ -154,6 +164,7 @@ func _validate_contracts() -> void:
 	assert(contracts_panel != null and upgrades_panel != null and career_panel != null, "Headquarters core panels are required.")
 	assert(ship_panel != null and discovery_panel != null, "Headquarters future-facing panels are required.")
 	assert(discovery_empty_card != null and discovery_list != null, "Headquarters discovery catalog containers are required.")
+	assert(close_overlay != null and overlay_scrim != null and floating_surface != null, "Headquarters overlay chrome is required.")
 	assert(not _sector_plan.is_empty(), "Headquarters requires sector data.")
 
 func _setup_tabs() -> void:
@@ -206,10 +217,18 @@ func _apply_responsive_layout() -> void:
 
 	var horizontal_margin := 14 if compact else 28
 	var vertical_margin := 12 if compact else 20
+	if _overlay_mode:
+		horizontal_margin = 18 if compact else maxi(52, int(round(size.x * 0.075)))
+		vertical_margin = 14 if compact else 34
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
+	if _overlay_mode:
+		floating_surface.offset_left = float(horizontal_margin - 10)
+		floating_surface.offset_top = float(vertical_margin - 8)
+		floating_surface.offset_right = float(-horizontal_margin + 10)
+		floating_surface.offset_bottom = float(-vertical_margin + 8)
 
 func _deploy_training() -> void:
 	var access := _active_contract_access()
@@ -224,13 +243,38 @@ func _deploy_training() -> void:
 	var scene := load(FLIGHT_SCREEN_PATH) as PackedScene
 	assert(scene != null, "Training flight screen must be loadable.")
 	var flight_context := _context.duplicate(true)
+	flight_context.erase("free_roam")
+	flight_context.erase("open_operations")
+	flight_context["arrival_warp"] = true
+	flight_context["travel_direction"] = 1
+	flight_context["return_screen_path"] = FLIGHT_SCREEN_PATH
 	if _viewing_endless:
 		flight_context["sector_id"] = String(_active_sector_definition["id"])
 		flight_context["sector_definition"] = _active_sector_definition.duplicate(true)
 		flight_context["endless_number"] = _endless_number
 	else:
 		flight_context["sector_id"] = String(_sector_ids[_selected_sector_index])
+
+	if _overlay_mode:
+		deployment_requested.emit(flight_context)
+		return
 	_router.show_screen(scene, flight_context)
+
+func _request_close() -> void:
+	if not _overlay_mode:
+		return
+	close_requested.emit()
+
+func _apply_overlay_presentation() -> void:
+	overlay_scrim.visible = _overlay_mode
+	floating_surface.visible = _overlay_mode
+	close_overlay.visible = _overlay_mode
+	var backdrop := get_node_or_null("Backdrop") as CanvasItem
+	var scenery := get_node_or_null("Scenery") as CanvasItem
+	if backdrop != null:
+		backdrop.visible = not _overlay_mode
+	if scenery != null:
+		scenery.visible = not _overlay_mode
 
 func _select_relative_contract(delta: int) -> void:
 	if _viewing_endless:
