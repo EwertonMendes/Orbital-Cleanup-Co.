@@ -267,7 +267,7 @@ func _apply_responsive_layout() -> void:
 	contract_hero.vertical = narrow
 	ship_body.vertical = narrow
 	tab_grid.columns = 2 if portrait or window_size.x < 560 else (3 if compact else 1)
-	contract_selector.columns = 2 if narrow else 4
+	contract_selector.columns = 3 if narrow else 4
 	upgrade_grid.columns = 1 if narrow else 3
 	discovery_list.columns = 1 if narrow else 2
 
@@ -275,8 +275,8 @@ func _apply_responsive_layout() -> void:
 	# that creates a scrollbar on desktop when the active screen fits naturally.
 	content_shell.custom_minimum_size.y = 0.0
 
-	var horizontal_margin := 12 if compact else 22
-	var vertical_margin := 10 if compact else 20
+	var horizontal_margin := 18 if portrait else (12 if compact else 22)
+	var vertical_margin := 14 if portrait else (10 if compact else 20)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
