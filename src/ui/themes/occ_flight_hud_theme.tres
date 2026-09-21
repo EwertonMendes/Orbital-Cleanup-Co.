@@ -8,19 +8,11 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Green/Double/bar_round_gloss_large.png" id="6"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Blue/Double/bar_round_gloss_large.png" id="7"]
 
-[sub_resource type="StyleBoxFlat" id="HudPanel"]
-bg_color = Color(0.006, 0.008, 0.011, 0.97)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.92, 0.95, 0.97, 0.94)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_color = Color(0, 0, 0, 0.52)
-shadow_size = 8
+[sub_resource type="StyleBoxEmpty" id="HudPanel"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
 
 [sub_resource type="StyleBoxFlat" id="HudSoftPanel"]
 bg_color = Color(0.018, 0.031, 0.045, 0.84)
