@@ -19,6 +19,7 @@ func _run() -> void:
 	_validate_cargo_hold()
 	_validate_player_ship()
 	_validate_flight_screen()
+	_validate_debrief_screen()
 	_validate_polish_systems()
 	_validate_render_quality()
 	if _failed:
@@ -410,13 +411,24 @@ func _validate_progression_service() -> void:
 	_expect(restored.get_discovery_ids().has("navigation_core"), "Discovery catalog must survive save reload.")
 	restored.free()
 
-	progression.apply_contract_result({
+	var payout_transition := progression.apply_contract_result({
 		"completed": true,
 		"sector_id": "qa_sector",
 		"perfect_cleanup": false,
 		"credits_awarded": 500,
 		"xp_awarded": 450,
 	})
+	_expect(int(payout_transition["credits_before"]) == 0, "Debrief transition must preserve pre-payout Credits.")
+	_expect(int(payout_transition["credits_after"]) == 500, "Debrief transition must preserve post-payout Credits.")
+	_expect(bool(payout_transition["promoted"]), "Debrief transition must report career promotion.")
+	_expect(String(payout_transition["rank_before_id"]) == "trainee", "Debrief transition must preserve previous rank.")
+	_expect(String(payout_transition["rank_after_id"]) == "junior_cleaner", "Debrief transition must preserve promoted rank.")
+	var unlocked_safety_amber := false
+	for value in payout_transition["unlocks"] as Array:
+		var unlock := value as Dictionary
+		if String(unlock.get("id", "")) == "safety_amber":
+			unlocked_safety_amber = true
+	_expect(unlocked_safety_amber, "Promotion transition must expose newly unlocked cosmetics.")
 	_expect(progression.get_credits() == 500, "Contract payout must persist Credits.")
 	_expect(progression.get_rank_id() == "junior_cleaner", "Company XP must promote career rank.")
 	_expect(progression.is_cosmetic_unlocked("paint", "safety_amber"), "Rank promotion must unlock configured cosmetics.")
@@ -514,6 +526,35 @@ func _validate_flight_screen() -> void:
 			authored_obstacles += 1
 	_expect(authored_obstacles == 0, "Flight scene must not manually author normal sector obstacles.")
 	screen.free()
+
+func _validate_debrief_screen() -> void:
+	var packed := load("res://src/ui/screens/debrief/contract_debrief_screen.tscn") as PackedScene
+	_expect(packed != null, "Contract Debrief scene must load.")
+	if packed == null:
+		return
+	var screen := packed.instantiate()
+	_expect(screen is ContractDebriefScreen, "Contract Debrief root must use ContractDebriefScreen.")
+	_expect(screen.find_child("Scroll", true, false) is ScrollContainer, "Debrief must remain scrollable on compact screens.")
+	_expect(screen.find_child("ContentGrid", true, false) is GridContainer, "Debrief requires responsive mission summary.")
+	_expect(screen.find_child("RewardGrid", true, false) is GridContainer, "Debrief requires reward breakdown.")
+	_expect(screen.find_child("XpProgress", true, false) is ProgressBar, "Debrief requires animated career XP progress.")
+	_expect(screen.find_child("PromotionPanel", true, false) is PanelContainer, "Debrief requires promotion reveal.")
+	_expect(screen.find_child("UnlocksList", true, false) is VBoxContainer, "Debrief requires unlock reveal.")
+	_expect(screen.find_child("DiscoveriesList", true, false) is VBoxContainer, "Debrief requires discovery reveal.")
+	_expect(screen.find_child("ContinueButton", true, false) is Button, "Debrief requires explicit Continue to Headquarters action.")
+	screen.free()
+
+	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
+	_expect("DEBRIEF_SCREEN_PATH" in flight_source, "Completed contracts must route through Contract Debrief.")
+	_expect("debrief_transition" in flight_source, "Flight must pass immutable progression transition into Debrief.")
+	_expect("_ads.show_contract_break()" not in flight_source, "Contract ad break must happen after Debrief acknowledgment, not before rewards are shown.")
+
+	var debrief_source := FileAccess.get_file_as_string("res://src/ui/screens/debrief/contract_debrief_screen.gd")
+	_expect("_ads.show_contract_break()" in debrief_source, "Debrief Continue must preserve the natural ad-break policy.")
+	_expect("debrief_return_screen_path" in debrief_source, "Debrief must preserve the configured return destination.")
+
+	var promotion := ProceduralSfx.promotion()
+	_expect(promotion != null and promotion.data.size() > 1024, "Promotion reveal requires a generated reward cue.")
 
 func _validate_polish_systems() -> void:
 	var flight_packed := load("res://src/ui/screens/flight/flight_screen.tscn") as PackedScene
