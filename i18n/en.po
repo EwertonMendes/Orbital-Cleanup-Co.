@@ -1155,3 +1155,15 @@ msgstr "Supernova Remnant"
 
 msgid "SECTOR_SUPERNOVA_REMNANT_01"
 msgstr "Supernova Remnant · Contract 01"
+
+msgid "FLIGHT_FREE_EYEBROW"
+msgstr "FREE FLIGHT"
+
+msgid "FLIGHT_FREE_STATUS"
+msgstr "NO ACTIVE CONTRACT · OPEN OPERATIONS TO DEPLOY"
+
+msgid "FLIGHT_OPERATIONS"
+msgstr "OPERATIONS"
+
+msgid "HQ_CLOSE"
+msgstr "CLOSE"
