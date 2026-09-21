@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=16 format=3]
+[gd_resource type="Theme" load_steps=18 format=3]
 
 [ext_resource type="FontFile" path="res://assets/third_party/neuropol/NEUROPOL.ttf" id="1"]
 [ext_resource type="FontFile" path="res://assets/third_party/inter/Inter[opsz,wght].ttf" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/bar_shadow_round_outline_large.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Red/Double/bar_round_gloss_large.png" id="5"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Green/Double/bar_round_gloss_large.png" id="6"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Blue/Double/bar_round_gloss_large.png" id="7"]
 
 [sub_resource type="StyleBoxFlat" id="HudPanel"]
 bg_color = Color(0.018, 0.031, 0.045, 0.92)
@@ -41,6 +42,17 @@ content_margin_bottom = 0.0
 
 [sub_resource type="StyleBoxTexture" id="HudButtonOutline"]
 texture = ExtResource("4")
+texture_margin_left = 22.0
+texture_margin_top = 12.0
+texture_margin_right = 22.0
+texture_margin_bottom = 12.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="HudButtonAction"]
+texture = ExtResource("7")
 texture_margin_left = 22.0
 texture_margin_top = 12.0
 texture_margin_right = 22.0
@@ -131,14 +143,14 @@ HudBody/colors/font_color = Color(0.80, 0.87, 0.91, 1)
 HudActionButton/base_type = &"Button"
 HudActionButton/fonts/font = ExtResource("1")
 HudActionButton/font_sizes/font_size = 10
-HudActionButton/colors/font_color = Color(0.91, 0.95, 0.97, 1)
-HudActionButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
-HudActionButton/colors/font_pressed_color = Color(0.91, 0.95, 0.97, 1)
-HudActionButton/colors/font_hover_pressed_color = Color(0.91, 0.95, 0.97, 1)
-HudActionButton/styles/normal = SubResource("HudButtonOutline")
-HudActionButton/styles/hover = SubResource("HudButtonOutline")
-HudActionButton/styles/pressed = SubResource("HudButtonOutline")
-HudActionButton/styles/hover_pressed = SubResource("HudButtonOutline")
+HudActionButton/colors/font_color = Color(0.02, 0.09, 0.14, 1)
+HudActionButton/colors/font_hover_color = Color(0.01, 0.05, 0.08, 1)
+HudActionButton/colors/font_pressed_color = Color(0.02, 0.09, 0.14, 1)
+HudActionButton/colors/font_hover_pressed_color = Color(0.02, 0.09, 0.14, 1)
+HudActionButton/styles/normal = SubResource("HudButtonAction")
+HudActionButton/styles/hover = SubResource("HudButtonAction")
+HudActionButton/styles/pressed = SubResource("HudButtonAction")
+HudActionButton/styles/hover_pressed = SubResource("HudButtonAction")
 HudActionButton/styles/focus = SubResource("EmptyFocus")
 
 HudDangerButton/base_type = &"Button"

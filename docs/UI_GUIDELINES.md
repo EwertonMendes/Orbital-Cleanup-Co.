@@ -33,7 +33,7 @@ All player-facing UI must use the current Orbital Cleanup Co. visual language. T
 - Do not introduce a new player screen on `occ_theme.tres` or with screen-local generic `StyleBoxFlat` chrome.
 - Light menu/report surfaces use `occ_operations_theme.tres`; gameplay overlays use `occ_flight_hud_theme.tres`.
 - Loading and transition UI is still product UI: it must use the same typography, Kenney-derived chrome, spacing and contrast standards.
-- Semantic action state is consistent everywhere: destructive/abort is red, successful completion is green, primary forward actions are yellow, neutral utilities remain dark/outlined.
+- Semantic action state is consistent everywhere: destructive/abort is red, successful completion is green, primary forward actions are yellow, the in-flight Operations/open-console action is blue, and neutral utilities remain dark/outlined.
 - A new UI surface is not complete until desktop, landscape-mobile and portrait-mobile smoke screenshots show no clipping, unreadable contrast or fallback styling.
 
 ## Floating gameplay interfaces
@@ -87,7 +87,7 @@ Operations deliberately uses the **original Kenney UI Pack - Sci-Fi visual langu
 - Ordinary Operations buttons use a clean dark rounded Kenney bar with centered Neuropol labels. Colored blade/header overlays and screw-heavy button textures are not used for routine actions.
 - The active navigation tab uses the original full yellow Kenney bar with dark text and a very slow subtle glow pulse; inactive tabs remain dark.
 - Tab changes use a clean directional slide: the old content moves out and the new content moves in inside the clipped content area. Do not add warp streaks or blue transition particles over menus.
-- The live-flight HUD deliberately uses a darker companion theme for contrast over gameplay, while keeping the same fonts, spacing discipline and Kenney-derived action language.
+- The live-flight HUD deliberately uses a darker companion theme for contrast over gameplay, while keeping the same fonts, spacing discipline and Kenney-derived action language. The Operations action uses the original full blue Kenney bar so it reads as clickable as clearly as red Abort Contract and green Complete Contract.
 - The pack's own cursor art is used for arrow, pointing and pressed states on desktop.
 - Kenney Interface Sounds provide restrained hover, click and back cues through the centralized AudioService.
 - Operations should read like a physical game console, not a corporate dashboard: one focused content area, compact vertical navigation, settings in a modal, and progression content revealed only when relevant.
