@@ -11,8 +11,6 @@ class_name OccChromeButton
 		emphasis = value
 		_apply_type_variation()
 
-var _rest_position := Vector2.ZERO
-
 func _ready() -> void:
 	custom_minimum_size.y = maxf(custom_minimum_size.y, 48.0)
 	focus_mode = Control.FOCUS_ALL
@@ -20,7 +18,6 @@ func _ready() -> void:
 	button_down.connect(_pressed_visual)
 	button_up.connect(_released_visual)
 	focus_exited.connect(_released_visual)
-	call_deferred("_capture_rest_position")
 	_apply_type_variation()
 
 func _apply_type_variation() -> void:
@@ -34,13 +31,8 @@ func _apply_type_variation() -> void:
 		_:
 			theme_type_variation = &"PrimaryButton" if emphasis else &"SecondaryButton"
 
-func _capture_rest_position() -> void:
-	_rest_position = position
-
 func _pressed_visual() -> void:
 	OccCursorSkin.set_pressed()
-	position = _rest_position + Vector2(0.0, 2.0)
 
 func _released_visual() -> void:
 	OccCursorSkin.set_pointing()
-	position = _rest_position
