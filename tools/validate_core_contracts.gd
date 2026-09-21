@@ -19,6 +19,7 @@ func _run() -> void:
 	_validate_cargo_hold()
 	_validate_player_ship()
 	_validate_flight_screen()
+	_validate_polish_systems()
 	_validate_render_quality()
 	if _failed:
 		quit(1)
@@ -292,9 +293,18 @@ func _validate_progression_service() -> void:
 	_expect(progression.equip_cosmetic("paint", "mint_service"), "Unlocked cosmetic must equip.")
 	_expect(progression.get_equipped_cosmetic_id("paint") == "mint_service", "Equipped cosmetic must update persistent state.")
 
+	var registry := ContentRegistry.new()
+	var rare_salvage := registry.get_salvage_definition("navigation_core")
+	var common_salvage := registry.get_salvage_definition("scrap_fragment")
+	_expect(not progression.register_discovery(common_salvage), "Common salvage must not enter the special Discovery catalog.")
+	_expect(progression.register_discovery(rare_salvage), "First rare recovery must register a Discovery.")
+	_expect(not progression.register_discovery(rare_salvage), "Repeated rare recovery must not duplicate a Discovery.")
+	_expect(progression.get_discovery_count() == 1, "Discovery count must remain unique.")
+
 	var restored := ProgressionService.new()
 	restored.initialize(save)
 	_expect(restored.get_equipped_cosmetic_id("paint") == "mint_service", "Equipped cosmetic must survive save reload.")
+	_expect(restored.get_discovery_ids().has("navigation_core"), "Discovery catalog must survive save reload.")
 	restored.free()
 
 	progression.apply_contract_result({
@@ -401,6 +411,29 @@ func _validate_flight_screen() -> void:
 			authored_obstacles += 1
 	_expect(authored_obstacles == 0, "Flight scene must not manually author normal sector obstacles.")
 	screen.free()
+
+func _validate_polish_systems() -> void:
+	var flight_packed := load("res://src/ui/screens/flight/flight_screen.tscn") as PackedScene
+	_expect(flight_packed != null, "Polished Flight scene must load.")
+	if flight_packed != null:
+		var flight := flight_packed.instantiate()
+		_expect(flight.find_child("WorldPostProcess", true, false) is WorldPostProcess, "Flight requires world-only post-processing.")
+		_expect(flight.find_child("AmbientMotion", true, false) is AmbientOrbitLayer, "Flight requires lightweight animated ambient orbits.")
+		_expect(flight.find_child("FlightFeedback", true, false) is FlightFeedback, "Flight requires centralized gameplay feedback.")
+		var engine_particles := flight.find_child("EngineParticles", true, false)
+		_expect(engine_particles is CPUParticles2D, "Ship polish requires engine particles.")
+		flight.free()
+
+	var burst_packed := load("res://src/game/visual/world_burst.tscn") as PackedScene
+	_expect(burst_packed != null, "Reusable WorldBurst effect must load.")
+
+	var post_source := FileAccess.get_file_as_string("res://src/game/visual/world_post_process.gdshader")
+	_expect("hint_screen_texture" in post_source, "Godot 4 post-process must read screen texture through hint_screen_texture.")
+
+	var scanner := ProceduralSfx.scanner_ping()
+	var discovery := ProceduralSfx.discovery()
+	_expect(scanner != null and scanner.data.size() > 256, "Scanner feedback SFX must be generated.")
+	_expect(discovery != null and discovery.data.size() > scanner.data.size(), "Discovery SFX must be a richer, longer cue.")
 
 func _validate_render_quality() -> void:
 	_expect(bool(ProjectSettings.get_setting("physics/common/physics_interpolation", false)), "Physics interpolation must remain enabled for smooth Web movement.")

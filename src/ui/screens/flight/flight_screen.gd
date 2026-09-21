@@ -219,7 +219,6 @@ func _refresh_copy() -> void:
 		beam_status.text = tr("FLIGHT_BEAM_SCANNING")
 	else:
 		beam_status.text = tr("FLIGHT_BEAM_LOCK_FMT") % tr(String(_active_salvage.display_name_key))
-	flight_feedback.target_acquired(_active_salvage)
 
 func _refresh_cleanup() -> void:
 	if not is_node_ready():
@@ -271,6 +270,7 @@ func _on_tractor_target_changed(definition) -> void:
 		return
 
 	beam_status.text = tr("FLIGHT_BEAM_LOCK_FMT") % tr(String(_active_salvage.display_name_key))
+	flight_feedback.target_acquired(_active_salvage)
 
 func _on_tractor_progress_changed(progress: float) -> void:
 	beam_progress.value = clampf(progress, 0.0, 1.0) * 100.0

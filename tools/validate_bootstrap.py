@@ -99,6 +99,17 @@ REQUIRED = [
     "schemas/upgrades.schema.json",
     "schemas/cosmetics.schema.json",
     "tools/validate_content.py",
+    "src/game/visual/world_post_process.gdshader",
+    "src/game/visual/world_post_process.gd",
+    "src/game/visual/ambient_orbit_layer.gd",
+    "src/game/visual/world_burst.gd",
+    "src/game/visual/world_burst.tscn",
+    "src/game/visual/salvage_energy.gdshader",
+    "src/game/visual/procedural_sfx.gd",
+    "src/game/visual/flight_feedback.gd",
+    "src/ui/components/hq_discovery_card.gd",
+    "src/ui/components/hq_discovery_card.tscn",
+    "src/ui/screens/operations/operations_scenery_motion.gd",
     "src/ui/screens/operations/operations_backdrop.gd",
     "src/ui/themes/occ_theme.tres",
     "src/ui/themes/occ_palette.gd",
@@ -241,6 +252,13 @@ def validate_visual_foundation() -> None:
     theme = (ROOT / "src" / "ui" / "themes" / "occ_theme.tres").read_text(encoding="utf-8")
     if "Oxanium[wght].ttf" not in theme:
         fail("Shared OCC Theme must provide Oxanium typography")
+
+    if "WorldPostProcess" not in flight or "AmbientMotion" not in flight or "FlightFeedback" not in flight:
+        fail("Flight scene must keep reusable post-processing, ambient motion and feedback systems")
+
+    post_shader = (ROOT / "src" / "game" / "visual" / "world_post_process.gdshader").read_text(encoding="utf-8")
+    if "hint_screen_texture" not in post_shader:
+        fail("World post-process must use the Godot 4 screen-texture API")
 
 
 def main() -> None:
