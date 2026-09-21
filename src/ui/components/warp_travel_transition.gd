@@ -12,6 +12,8 @@ var _direction := DEPARTURE_DIRECTION
 var _phase := 0.0
 var _active := false
 var _ship: PlayerShip
+var _arrival_destination := Vector2.ZERO
+var _arrival_restore_collection := true
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -52,9 +54,12 @@ func play_departure(ship: PlayerShip, direction: Vector2 = DEPARTURE_DIRECTION) 
 	departure_finished.emit()
 
 func play_arrival(ship: PlayerShip, direction: Vector2 = DEPARTURE_DIRECTION, restore_collection: bool = true) -> void:
+	prime_arrival(ship, direction, restore_collection)
+	await play_primed_arrival()
+
+func prime_arrival(ship: PlayerShip, direction: Vector2 = DEPARTURE_DIRECTION, restore_collection: bool = true) -> void:
 	assert(ship != null, "WarpTravelTransition requires a PlayerShip.")
-	if _active:
-		return
+	assert(not _active, "WarpTravelTransition cannot prime an arrival while another travel effect is active.")
 
 	_active = true
 	_ship = ship
@@ -62,16 +67,22 @@ func play_arrival(ship: PlayerShip, direction: Vector2 = DEPARTURE_DIRECTION, re
 	_phase = 0.0
 	visible = true
 	set_process(true)
+	_arrival_destination = ship.global_position
+	_arrival_restore_collection = restore_collection
 
-	var destination := ship.global_position
 	var distance := _travel_distance()
 	ship.begin_travel(_direction)
-	ship.global_position = destination - _direction * distance
+	ship.global_position = _arrival_destination - _direction * distance
 	_set_intensity(1.0)
+	queue_redraw()
+	print("[Travel] ARRIVAL_PRIMED direction=%s" % str(_direction))
 
+func play_primed_arrival() -> void:
+	assert(_active and _ship != null, "WarpTravelTransition requires a primed arrival.")
+	var ship := _ship
 	var arrival := create_tween()
 	arrival.set_parallel(true)
-	arrival.tween_property(ship, "global_position", destination, 0.72).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	arrival.tween_property(ship, "global_position", _arrival_destination, 0.72).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	arrival.tween_method(_set_intensity, 1.0, 0.18, 0.68).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	await arrival.finished
 
@@ -79,7 +90,7 @@ func play_arrival(ship: PlayerShip, direction: Vector2 = DEPARTURE_DIRECTION, re
 	settle.tween_method(_set_intensity, 0.18, 0.0, 0.24).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	await settle.finished
 
-	ship.end_travel(restore_collection)
+	ship.end_travel(_arrival_restore_collection)
 	_finish()
 	print("[Travel] ARRIVAL_COMPLETE direction=%s" % str(_direction))
 	arrival_finished.emit()
