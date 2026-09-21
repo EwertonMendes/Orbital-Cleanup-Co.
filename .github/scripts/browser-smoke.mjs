@@ -214,6 +214,19 @@ async function openQaDeepLinks() {
     await page.close();
   }
 
+  const depotNavPage = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  watch(depotNavPage, 'qa-depot-navigation');
+  const depotSectorReady = waitForConsole(depotNavPage, '[Sector] READY id=earth_training_01', 60000);
+  const depotNavReady = waitForConsole(depotNavPage, '[QA] DEPOT_NAV_PREVIEW', 60000);
+  const depotFlightReady = waitForConsole(depotNavPage, '[Flight] READY', 60000);
+  await depotNavPage.goto(`${url}?sector=earth_training_01&depot_nav=1`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await depotSectorReady;
+  await depotNavReady;
+  await depotFlightReady;
+  await depotNavPage.waitForTimeout(500);
+  await depotNavPage.screenshot({ path: 'build/smoke-qa-depot-navigation.png', fullPage: true });
+  await depotNavPage.close();
+
   const lockedHqPage = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   watch(lockedHqPage, 'qa-hq-locked-lunar');
   const lockedHqReady = waitForConsole(lockedHqPage, '[HQ] READY tab=contracts', 60000);

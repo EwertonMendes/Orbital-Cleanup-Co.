@@ -200,3 +200,18 @@ Environmental pressure is deliberately bounded. Fields use smooth falloff, never
 
 Visual identity uses project-owned editable SVG planets under `assets/original/planets/`, a shared animated surface/atmosphere shader, camera-relative parallax, biome-specific ambient motion and distant traffic. HUD text identifies the dominant local environmental effect while the world itself provides matching field visuals.
 
+## Cargo depot navigation
+
+The cargo depot is the ship's deployment/home point and must remain easy to recover after exploration without turning the flight HUD into a minimap.
+
+Navigation uses two complementary cues:
+
+- the world depot has a restrained animated beacon and existing label;
+- when the depot leaves the usable viewport, a small edge guide points toward it and displays approximate distance.
+
+The edge guide projects the real depot world position through the active viewport canvas transform, so it stays correct with camera movement and responsive layouts. It hides automatically when the depot is visible or the ship is already nearby.
+
+Cargo state changes emphasis but not layout: normal travel uses the calm cyan guidance treatment; a full cargo hold promotes the same marker to an amber return cue. No modal, popup or extra objective panel is introduced.
+
+The guide updates at a bounded cadence and the world beacon throttles custom redraws to preserve Web/mobile frame pacing.
+
