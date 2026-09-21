@@ -7,6 +7,9 @@ The interface is part of the game's identity, not a debug surface around the gam
 - Give each screen one obvious primary purpose.
 - Prefer one dominant primary action. Secondary actions must look secondary.
 - Show only information that helps the player make the current decision.
+- Do not show future locked contracts or cosmetic choices in routine browsing. Endless and Discovery navigation remain absent until unlocked.
+- Language and master-audio controls belong in Settings, not in the persistent Operations header.
+- Career owns rank/XP/next-unlock information; Contracts should not repeat progression bookkeeping.
 - Do not expose provider names, build SHAs, workflow IDs, debug state or implementation details in normal player-facing UI.
 - Avoid decorative labels that repeat information already obvious from layout or iconography.
 - Prefer short, scannable copy over paragraphs.
@@ -15,12 +18,23 @@ The interface is part of the game's identity, not a debug surface around the gam
 
 Use the shared foundations before creating screen-local styling:
 
-- `src/ui/themes/occ_palette.gd` for semantic colors;
-- `src/ui/themes/occ_theme.tres` for scalable panels, buttons, progress bars and standard controls;
-- curated Kenney textures only for accents/plates whose native proportions are respected;
-- screen layouts built from Containers rather than stretched art pretending to be layout.
+- `src/ui/themes/occ_operations_theme.tres` for the light physical Operations console and its Kenney button/panel assets;
+- `src/ui/themes/occ_flight_hud_theme.tres` for compact dark in-flight cards and actions that preserve readability over moving space scenery;
+- `src/ui/themes/occ_theme.tres` is legacy-only and must not be used by player-facing screens;
+- `src/ui/themes/occ_cursor_skin.gd` for the original Kenney desktop cursor states;
+- screen layouts built from Containers, with `StyleBoxTexture`/NinePatch only where the source asset is designed to scale.
 
 If a reusable component already owns a pattern, do not copy its style into a new scene.
+
+## Player-facing UI contract
+
+All player-facing UI must use the current Orbital Cleanup Co. visual language. This includes Operations, in-flight HUD, Contract Debrief, bootstrap/loading surfaces, settings, transient travel/loading panels and future menus.
+
+- Do not introduce a new player screen on `occ_theme.tres` or with screen-local generic `StyleBoxFlat` chrome.
+- Light menu/report surfaces use `occ_operations_theme.tres`; gameplay overlays use `occ_flight_hud_theme.tres`.
+- Loading and transition UI is still product UI: it must use the same typography, Kenney-derived chrome, spacing and contrast standards.
+- Semantic action state is consistent everywhere: destructive/abort is red, successful completion is green, primary forward actions are yellow, neutral utilities remain dark/outlined.
+- A new UI surface is not complete until desktop, landscape-mobile and portrait-mobile smoke screenshots show no clipping, unreadable contrast or fallback styling.
 
 ## Floating gameplay interfaces
 
@@ -48,24 +62,36 @@ Meteor/asteroid silhouettes are reserved for hazards. Salvage definitions must n
 
 New categories should extend `WorldVisualLanguage` rather than introducing screen-local colors or one-off object effects. New salvage automatically inherits the shared `SalvageMarker`; new hazards and landmarks inherit their corresponding marker components.
 
+Salvage identity is data-driven. Each definition owns an authored silhouette plus a compact visual profile for motion and ambient effect. Common items can stay restrained, while rare/epic items must communicate rarity through shape, motion and energy treatment before the player reads a label. Do not create one scene or one GDScript class per salvage item.
+
 ## Typography
 
-Oxanium is the default UI family and is configured once in the shared Theme. Do not assign the font path independently in each screen. Use size, weight hierarchy and color to differentiate title/value/label roles while keeping the family consistent.
+Typography is a semantic system, not one font stretched across every piece of UI.
 
-## Kenney asset usage
+- **Neuropol** is the display/game-identity face for branding, major titles, section headings, tabs and important rarity labels.
+- **Inter** is the reading face for descriptions, utility labels and longer copy. Interactive button labels use Neuropol so actions consistently carry the game identity.
+- **JetBrains Mono** is reserved for telemetry: credits, XP, numeric values, progress metadata and compact system-like readouts.
+- Font selection belongs in shared Theme type variations such as `DisplayLabel`, `UiBody`, `TelemetryLabel`, `PrimaryButton` and `TabButton`. Screens must not assign font files directly.
+- Neuropol is intentionally concentrated in branding, headings and interactive controls. Large amounts of body copy remain in Inter so the interface feels like a game without sacrificing readability.
 
-Kenney assets are raw material. They must be composed into Orbital Cleanup Co.'s own visual language.
+Oxanium is not part of the Orbital Cleanup Co. typography system.
 
-- Use a curated subset only.
-- Preserve the source aspect ratio unless an asset is explicitly designed for NinePatch use.
-- A square 128×128 panel must never be stretched into a wide header/card frame.
-- The current 384×128 header/blade assets are treated as 3:1 plates and rendered at 3:1.
-- Large resizable surfaces should use OCC StyleBox/PanelContainer styling, with Kenney art as accents instead of distorted backgrounds.
-- Interactive chrome must use OCC StyleBox-based components. Do not use a bright texture as the full surface of tabs, selectors or primary actions; Kenney UI textures are accents, not the button system.
-- Do not mix arbitrary color families from the pack on one screen.
-- Prefer blue/cyan structure, mint success/ready states and amber emphasis.
+## Kenney UI Pack - Sci-Fi usage
+
+Operations deliberately uses the **original Kenney UI Pack - Sci-Fi visual language** rather than redrawing it as generic Godot rectangles.
+
+- Keep the source pixels, colors, bevels, screws and highlights intact. Do not tint, recolor, paint over, blur or shader-modulate Kenney UI textures.
+- Use the pack's `Double` assets for resizable console chrome and preserve their corner geometry through `StyleBoxTexture` or `NinePatchRect`.
+- Use 9-slice scaling only on textures intended to form resizable buttons/panels. Decorative or cursor assets render at their native proportions.
+- Never animate scale or height on Kenney panels/buttons. Control geometry must remain completely stable; menu-content transitions may slide the content panel inside a clipped viewport without moving the navigation buttons themselves.
+- Ordinary Operations buttons use a clean dark rounded Kenney bar with centered Neuropol labels. Colored blade/header overlays and screw-heavy button textures are not used for routine actions.
+- The active navigation tab uses the original full yellow Kenney bar with dark text and a very slow subtle glow pulse; inactive tabs remain dark.
+- Tab changes use a clean directional slide: the old content moves out and the new content moves in inside the clipped content area. Do not add warp streaks or blue transition particles over menus.
+- The live-flight HUD deliberately uses a darker companion theme for contrast over gameplay, while keeping the same fonts, spacing discipline and Kenney-derived action language.
+- The pack's own cursor art is used for arrow, pointing and pressed states on desktop.
+- Kenney Interface Sounds provide restrained hover, click and back cues through the centralized AudioService.
+- Operations should read like a physical game console, not a corporate dashboard: one focused content area, compact vertical navigation, settings in a modal, and progression content revealed only when relevant.
 - Do not use combat-oriented assets such as enemy ships, guns or lasers for this game.
-- Keep background scenery subtle enough that controls and text remain the visual priority.
 
 ## Raster quality
 
@@ -82,7 +108,7 @@ The gameplay ship is a small raster source and must not be magnified casually.
 
 Preferred spacing steps are **6, 10, 14, 18, 24 and 32 px** at the 1280×720 reference viewport.
 
-- Touch/click targets should normally be at least 44–46 px tall.
+- Touch/click targets should normally be at least 44–48 px tall. Standard Operations actions use a 48 px native control height to avoid texture distortion.
 - Cards need enough internal breathing room that text does not touch their chrome.
 - Dense stat rows should be reserved for information that genuinely benefits from side-by-side comparison.
 - A smaller screen may stack sections rather than squeezing them.
@@ -99,7 +125,7 @@ The baseline viewport is 1280×720, but the UI must remain usable on Web/mobile.
 
 ## Accessibility and interaction
 
-- Maintain strong text/background contrast.
+- Maintain strong text/background contrast. Muted copy on the light Operations board must still be dark enough to read without relying on opacity.
 - Keyboard/gamepad focus must be visible.
 - Interactive elements should use appropriate pointer cursors on desktop.
 - Do not rely on color alone for important state.

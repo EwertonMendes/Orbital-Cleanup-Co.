@@ -1,7 +1,7 @@
 {
   "id": "satellite_panel",
   "display_name_key": "SALVAGE_SATELLITE_PANEL",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/satellite_panel.svg",
   "category": "electronics",
   "rarity": "uncommon",
   "base_value": 44,
@@ -11,6 +11,12 @@
   "cargo_units": 2,
   "visual_scale": 0.72,
   "collision_radius": 28,
+  "visual_profile": {
+    "motion": "drift",
+    "effect": "scan",
+    "spin_multiplier": 0.14,
+    "float_amplitude": 2.4
+  },
   "tags": [
     "satellite",
     "panel",

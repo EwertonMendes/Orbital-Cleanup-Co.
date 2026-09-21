@@ -1,7 +1,7 @@
 {
   "id": "navigation_core",
   "display_name_key": "SALVAGE_NAVIGATION_CORE",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/navigation_core.svg",
   "category": "electronics",
   "rarity": "rare",
   "base_value": 120,
@@ -11,6 +11,12 @@
   "cargo_units": 3,
   "visual_scale": 0.62,
   "collision_radius": 26,
+  "visual_profile": {
+    "motion": "stable",
+    "effect": "scan",
+    "spin_multiplier": 0.1,
+    "float_amplitude": 2.6
+  },
   "tags": [
     "electronics",
     "navigation",

@@ -1,7 +1,7 @@
 {
   "id": "thermal_tile",
   "display_name_key": "SALVAGE_THERMAL_TILE",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/thermal_tile.svg",
   "category": "scrap",
   "rarity": "common",
   "base_value": 22,
@@ -11,6 +11,12 @@
   "cargo_units": 1,
   "visual_scale": 0.92,
   "collision_radius": 18,
+  "visual_profile": {
+    "motion": "tumble",
+    "effect": "none",
+    "spin_multiplier": 0.51,
+    "float_amplitude": 2.3
+  },
   "tags": [
     "thermal",
     "ceramic",

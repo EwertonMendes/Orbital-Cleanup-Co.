@@ -25,6 +25,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var environment_status: Label = %EnvironmentStatus
 @onready var depot_navigation: DepotNavigationGuide = %DepotNavigationGuide
 @onready var mission_card: PanelContainer = %MissionCard
+@onready var biome_thumbnail: TextureRect = %BiomeThumbnail
 @onready var cargo_card: PanelContainer = %CargoCard
 @onready var operations_button: Button = %OperationsButton
 @onready var operations_overlay_host: Control = %OperationsOverlayHost
@@ -33,6 +34,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 var _context: Dictionary = {}
 var _router: SceneRouter
 var _input_service: InputService
+var _audio: AudioService
 var _platform: PlatformService
 var _ads: AdService
 var _progression: ProgressionService
@@ -53,6 +55,7 @@ func configure(context: Dictionary) -> void:
 	_contract_active = not bool(context.get("free_roam", false))
 	_router = context.get("router") as SceneRouter
 	_input_service = context.get("input") as InputService
+	_audio = context.get("audio") as AudioService
 	_platform = context.get("platform") as PlatformService
 	_ads = context.get("ads") as AdService
 	_progression = context.get("progression") as ProgressionService
@@ -145,6 +148,8 @@ func _ready() -> void:
 	resized.connect(_apply_responsive_layout)
 	return_button.pressed.connect(_return_to_operations)
 	operations_button.pressed.connect(_open_operations)
+	_wire_hud_button_feedback(return_button)
+	_wire_hud_button_feedback(operations_button)
 	player_ship.movement_started.connect(_schedule_hint_fade)
 	player_ship.cargo_changed.connect(_on_cargo_changed)
 	player_ship.tractor_target_changed.connect(_on_tractor_target_changed)
@@ -172,6 +177,7 @@ func _ready() -> void:
 	cleanup_progress.value = 0.0
 	_apply_responsive_layout()
 	_refresh_copy()
+	_refresh_biome_thumbnail()
 	_refresh_cleanup()
 	_on_cargo_changed(player_ship.get_cargo_used(), player_ship.get_cargo_capacity())
 
@@ -238,6 +244,16 @@ func _apply_debug_landmark_focus() -> void:
 		target.global_position.y,
 	])
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed("ui_cancel"):
+		return
+	if _operations_overlay != null and is_instance_valid(_operations_overlay):
+		return
+	if _contract_active or _travel_in_progress:
+		return
+	_open_operations()
+	get_viewport().set_input_as_handled()
+
 func _exit_tree() -> void:
 	_stop_gameplay()
 
@@ -255,7 +271,7 @@ func _validate_contracts() -> void:
 	assert(flight_feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(environment_runtime != null and environment_status != null, "FlightScreen requires biome environment feedback.")
 	assert(depot_navigation != null, "FlightScreen requires contextual depot navigation.")
-	assert(mission_card != null and cargo_card != null, "FlightScreen requires compact flight cards.")
+	assert(mission_card != null and cargo_card != null and biome_thumbnail != null, "FlightScreen requires compact flight cards and biome thumbnail.")
 	assert(operations_button != null and operations_overlay_host != null, "FlightScreen requires floating operations access.")
 	assert(warp_transition != null, "FlightScreen requires reusable warp travel transition.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
@@ -274,6 +290,22 @@ func _apply_responsive_layout() -> void:
 
 	hint_panel.custom_minimum_size.x = 300.0 if compact else 500.0
 	toast_panel.custom_minimum_size.x = 280.0 if compact else 390.0
+
+func _refresh_biome_thumbnail() -> void:
+	var visual_profile := sector_runtime.get_biome_visual_profile()
+	var asset_path := String(visual_profile.get("primary_asset", ""))
+	if asset_path.is_empty():
+		biome_thumbnail.visible = false
+		return
+
+	var texture := load(asset_path) as Texture2D
+	if texture == null:
+		push_warning("Flight HUD could not load biome thumbnail: %s" % asset_path)
+		biome_thumbnail.visible = false
+		return
+
+	biome_thumbnail.texture = texture
+	biome_thumbnail.visible = true
 
 func _return_to_operations() -> void:
 	if not _contract_active or _travel_in_progress:
@@ -404,6 +436,22 @@ func _on_operations_deployment_requested(target_context: Dictionary) -> void:
 	target_context["travel_handoff"] = true
 	_router.show_screen(scene, target_context)
 
+func _wire_hud_button_feedback(button: Button) -> void:
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	button.mouse_entered.connect(_play_hud_hover)
+	button.pressed.connect(_play_hud_click)
+	button.button_down.connect(OccCursorSkin.set_pressed)
+	button.button_up.connect(OccCursorSkin.set_pointing)
+	button.mouse_exited.connect(OccCursorSkin.set_pointing)
+
+func _play_hud_hover() -> void:
+	if _audio != null:
+		_audio.play_ui_hover()
+
+func _play_hud_click() -> void:
+	if _audio != null:
+		_audio.play_ui_click()
+
 func _stop_gameplay() -> void:
 	if not _gameplay_active:
 		return
@@ -419,7 +467,7 @@ func _refresh_copy() -> void:
 	if not is_node_ready():
 		return
 
-	operations_button.text = tr("FLIGHT_OPERATIONS")
+	operations_button.text = "%s >" % tr("FLIGHT_OPERATIONS")
 	operations_button.visible = not _contract_active
 	return_button.visible = _contract_active
 	cargo_card.visible = _contract_active
@@ -498,12 +546,19 @@ func _refresh_cleanup() -> void:
 func _refresh_return_button() -> void:
 	if not is_node_ready() or not _contract_active:
 		return
+
+	var completed := _contract_session.is_target_reached()
 	if _contract_session.is_perfect_cleanup():
 		return_button.text = tr("FLIGHT_RETURN_PERFECT")
-	elif _contract_session.is_target_reached():
+		completed = true
+	elif completed:
 		return_button.text = tr("FLIGHT_COMPLETE_CONTRACT")
 	else:
 		return_button.text = tr("FLIGHT_ABORT_CONTRACT")
+
+	return_button.theme_type_variation = (
+		&"HudSuccessButton" if completed else &"HudDangerButton"
+	)
 
 func _on_cleanliness_changed(_percent: float, _cleaned: float, _total: float) -> void:
 	_refresh_return_button()

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce9ed"/><stop offset=".48" stop-color="#78909b"/><stop offset="1" stop-color="#304d5a"/></linearGradient>
+    <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#24404d"/><stop offset="1" stop-color="#0d2334"/></linearGradient>
+  </defs>
+  <g stroke="#071424" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><circle cx="64" cy="63" r="34" fill="url(#metal)"/><circle cx="64" cy="63" r="22" fill="url(#dark)"/><path d="M64 41v44M42 63h44" fill="none" stroke="#72e2c4" stroke-width="7"/><circle cx="64" cy="63" r="8" fill="#dce9ed"/><path d="M31 34 20 23M97 34l11-11M31 92 20 103M97 92l11 11" fill="none" stroke="#78909b" stroke-width="7"/><g fill="#72e2c4" stroke="none"><circle cx="64" cy="22" r="3"/><circle cx="105" cy="63" r="3"/><circle cx="64" cy="104" r="3"/><circle cx="23" cy="63" r="3"/></g></g>
+  <g fill="none" stroke="#72e2c4" stroke-width="2" stroke-linecap="round" opacity=".9"><path d="M23 107h22"/><circle cx="51" cy="107" r="2" fill="#72e2c4" stroke="none"/></g>
+</svg>

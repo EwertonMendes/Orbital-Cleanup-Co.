@@ -1,0 +1,168 @@
+[gd_resource type="Theme" load_steps=16 format=3]
+
+[ext_resource type="FontFile" path="res://assets/third_party/neuropol/NEUROPOL.ttf" id="1"]
+[ext_resource type="FontFile" path="res://assets/third_party/inter/Inter[opsz,wght].ttf" id="2"]
+[ext_resource type="FontFile" path="res://assets/third_party/jetbrains_mono/JetBrainsMono[wght].ttf" id="3"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/bar_shadow_round_outline_large.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Red/Double/bar_round_gloss_large.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Green/Double/bar_round_gloss_large.png" id="6"]
+
+[sub_resource type="StyleBoxFlat" id="HudPanel"]
+bg_color = Color(0.018, 0.031, 0.045, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.20, 0.63, 0.74, 0.52)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.34)
+shadow_size = 7
+
+[sub_resource type="StyleBoxFlat" id="HudSoftPanel"]
+bg_color = Color(0.018, 0.031, 0.045, 0.84)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.22, 0.48, 0.56, 0.34)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxEmpty" id="HudThumbnailEmpty"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+
+[sub_resource type="StyleBoxTexture" id="HudButtonOutline"]
+texture = ExtResource("4")
+texture_margin_left = 22.0
+texture_margin_top = 12.0
+texture_margin_right = 22.0
+texture_margin_bottom = 12.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="HudButtonDanger"]
+texture = ExtResource("5")
+texture_margin_left = 22.0
+texture_margin_top = 12.0
+texture_margin_right = 22.0
+texture_margin_bottom = 12.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="HudButtonSuccess"]
+texture = ExtResource("6")
+texture_margin_left = 22.0
+texture_margin_top = 12.0
+texture_margin_right = 22.0
+texture_margin_bottom = 12.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="HudProgressBackground"]
+bg_color = Color(0.02, 0.055, 0.075, 0.95)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="HudProgressFill"]
+bg_color = Color(0.18, 0.72, 0.88, 0.96)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxEmpty" id="EmptyFocus"]
+
+[resource]
+default_font = ExtResource("2")
+default_font_size = 14
+Label/fonts/font = ExtResource("2")
+Label/colors/font_color = Color(0.91, 0.95, 0.97, 1)
+ProgressBar/styles/background = SubResource("HudProgressBackground")
+ProgressBar/styles/fill = SubResource("HudProgressFill")
+
+HudPanel/base_type = &"PanelContainer"
+HudPanel/styles/panel = SubResource("HudPanel")
+HudSoftPanel/base_type = &"PanelContainer"
+HudSoftPanel/styles/panel = SubResource("HudSoftPanel")
+HudThumbnailPanel/base_type = &"PanelContainer"
+HudThumbnailPanel/styles/panel = SubResource("HudThumbnailEmpty")
+
+HudEyebrow/base_type = &"Label"
+HudEyebrow/fonts/font = ExtResource("1")
+HudEyebrow/font_sizes/font_size = 10
+HudEyebrow/colors/font_color = Color(0.52, 0.93, 0.80, 1)
+
+HudTitle/base_type = &"Label"
+HudTitle/fonts/font = ExtResource("2")
+HudTitle/font_sizes/font_size = 17
+HudTitle/colors/font_color = Color(0.96, 0.98, 1, 1)
+
+HudTitleSmall/base_type = &"Label"
+HudTitleSmall/fonts/font = ExtResource("2")
+HudTitleSmall/font_sizes/font_size = 14
+HudTitleSmall/colors/font_color = Color(0.96, 0.98, 1, 1)
+
+HudTelemetry/base_type = &"Label"
+HudTelemetry/fonts/font = ExtResource("3")
+HudTelemetry/font_sizes/font_size = 10
+HudTelemetry/colors/font_color = Color(0.73, 0.82, 0.87, 1)
+
+HudBody/base_type = &"Label"
+HudBody/fonts/font = ExtResource("2")
+HudBody/font_sizes/font_size = 11
+HudBody/colors/font_color = Color(0.80, 0.87, 0.91, 1)
+
+HudActionButton/base_type = &"Button"
+HudActionButton/fonts/font = ExtResource("1")
+HudActionButton/font_sizes/font_size = 10
+HudActionButton/colors/font_color = Color(0.91, 0.95, 0.97, 1)
+HudActionButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+HudActionButton/colors/font_pressed_color = Color(0.91, 0.95, 0.97, 1)
+HudActionButton/colors/font_hover_pressed_color = Color(0.91, 0.95, 0.97, 1)
+HudActionButton/styles/normal = SubResource("HudButtonOutline")
+HudActionButton/styles/hover = SubResource("HudButtonOutline")
+HudActionButton/styles/pressed = SubResource("HudButtonOutline")
+HudActionButton/styles/hover_pressed = SubResource("HudButtonOutline")
+HudActionButton/styles/focus = SubResource("EmptyFocus")
+
+HudDangerButton/base_type = &"Button"
+HudDangerButton/fonts/font = ExtResource("1")
+HudDangerButton/font_sizes/font_size = 10
+HudDangerButton/colors/font_color = Color(0.12, 0.06, 0.07, 1)
+HudDangerButton/colors/font_hover_color = Color(0.05, 0.03, 0.03, 1)
+HudDangerButton/colors/font_pressed_color = Color(0.12, 0.06, 0.07, 1)
+HudDangerButton/colors/font_hover_pressed_color = Color(0.12, 0.06, 0.07, 1)
+HudDangerButton/styles/normal = SubResource("HudButtonDanger")
+HudDangerButton/styles/hover = SubResource("HudButtonDanger")
+HudDangerButton/styles/pressed = SubResource("HudButtonDanger")
+HudDangerButton/styles/hover_pressed = SubResource("HudButtonDanger")
+HudDangerButton/styles/focus = SubResource("EmptyFocus")
+
+HudSuccessButton/base_type = &"Button"
+HudSuccessButton/fonts/font = ExtResource("1")
+HudSuccessButton/font_sizes/font_size = 10
+HudSuccessButton/colors/font_color = Color(0.035, 0.11, 0.07, 1)
+HudSuccessButton/colors/font_hover_color = Color(0.015, 0.06, 0.035, 1)
+HudSuccessButton/colors/font_pressed_color = Color(0.035, 0.11, 0.07, 1)
+HudSuccessButton/colors/font_hover_pressed_color = Color(0.035, 0.11, 0.07, 1)
+HudSuccessButton/styles/normal = SubResource("HudButtonSuccess")
+HudSuccessButton/styles/hover = SubResource("HudButtonSuccess")
+HudSuccessButton/styles/pressed = SubResource("HudButtonSuccess")
+HudSuccessButton/styles/hover_pressed = SubResource("HudButtonSuccess")
+HudSuccessButton/styles/focus = SubResource("EmptyFocus")

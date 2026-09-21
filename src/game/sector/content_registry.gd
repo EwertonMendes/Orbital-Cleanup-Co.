@@ -106,6 +106,11 @@ func get_salvage_definition(id: String) -> SalvageDefinition:
 	definition.cargo_units = int(data["cargo_units"])
 	definition.visual_scale = float(data["visual_scale"])
 	definition.collision_radius = float(data["collision_radius"])
+	var visual_profile := data.get("visual_profile", {}) as Dictionary
+	definition.motion_profile = StringName(visual_profile.get("motion", "tumble"))
+	definition.effect_profile = StringName(visual_profile.get("effect", "none"))
+	definition.spin_multiplier = float(visual_profile.get("spin_multiplier", 1.0))
+	definition.float_amplitude = float(visual_profile.get("float_amplitude", 3.0))
 	definition.tags = PackedStringArray(data.get("tags", []))
 	definition.validate()
 

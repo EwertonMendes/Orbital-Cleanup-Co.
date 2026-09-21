@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://src/core/app/app_root.gd" id="1"]
 [ext_resource type="Script" path="res://src/core/build/build_info.gd" id="2"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://src/core/app/scene_router.gd" id="8"]
 [ext_resource type="Script" path="res://src/game/progression/progression_service.gd" id="9"]
 [ext_resource type="Script" path="res://src/core/platform/ad_service.gd" id="10"]
+[ext_resource type="Theme" path="res://src/ui/themes/occ_operations_theme.tres" id="11"]
 
 [node name="AppRoot" type="Node"]
 script = ExtResource("1")
@@ -76,4 +77,51 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.006, 0.028, 0.05, 1)
+color = Color(0.006, 0.018, 0.03, 0.97)
+theme = ExtResource("11")
+
+[node name="LoadingCenter" type="CenterContainer" parent="TravelHandoffLayer/TravelCover"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="LoadingPanel" type="PanelContainer" parent="TravelHandoffLayer/TravelCover/LoadingCenter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(430, 0)
+layout_mode = 2
+theme_type_variation = &"ConsolePanel"
+
+[node name="LoadingMargin" type="MarginContainer" parent="TravelHandoffLayer/TravelCover/LoadingCenter/LoadingPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 20
+
+[node name="LoadingLayout" type="VBoxContainer" parent="TravelHandoffLayer/TravelCover/LoadingCenter/LoadingPanel/LoadingMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LoadingTitle" type="Label" parent="TravelHandoffLayer/TravelCover/LoadingCenter/LoadingPanel/LoadingMargin/LoadingLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ScreenTitle"
+text = "ORBITAL CLEANUP CO."
+horizontal_alignment = 1
+
+[node name="LoadingStatus" type="Label" parent="TravelHandoffLayer/TravelCover/LoadingCenter/LoadingPanel/LoadingMargin/LoadingLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "PREPARING ORBIT..."
+horizontal_alignment = 1
+
+[node name="LoadingProgress" type="ProgressBar" parent="TravelHandoffLayer/TravelCover/LoadingCenter/LoadingPanel/LoadingMargin/LoadingLayout"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+value = 72.0
+show_percentage = false

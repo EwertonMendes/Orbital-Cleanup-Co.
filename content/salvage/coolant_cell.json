@@ -1,7 +1,7 @@
 {
   "id": "coolant_cell",
   "display_name_key": "SALVAGE_COOLANT_CELL",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/coolant_cell.svg",
   "category": "cargo",
   "rarity": "common",
   "base_value": 30,
@@ -11,6 +11,12 @@
   "cargo_units": 1,
   "visual_scale": 0.5,
   "collision_radius": 20,
+  "visual_profile": {
+    "motion": "drift",
+    "effect": "pulse",
+    "spin_multiplier": 0.22,
+    "float_amplitude": 2
+  },
   "tags": [
     "service",
     "cargo",

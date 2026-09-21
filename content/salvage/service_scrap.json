@@ -1,7 +1,7 @@
 {
   "id": "service_scrap",
   "display_name_key": "SALVAGE_SERVICE_SCRAP",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/service_scrap.svg",
   "category": "scrap",
   "rarity": "common",
   "base_value": 18,
@@ -11,6 +11,12 @@
   "cargo_units": 1,
   "visual_scale": 1.1,
   "collision_radius": 22,
+  "visual_profile": {
+    "motion": "tumble",
+    "effect": "none",
+    "spin_multiplier": 0.62,
+    "float_amplitude": 3
+  },
   "tags": [
     "service",
     "training"

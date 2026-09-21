@@ -16,6 +16,7 @@ var _tractor_velocity := Vector2.ZERO
 var _targeted := false
 var _base_scale := Vector2.ONE
 var _float_phase := 0.0
+var _effect_redraw_clock := 0.0
 var _environment_velocity := Vector2.ZERO
 var _environment_force := Vector2.ZERO
 var _environment_anchor := Vector2.ZERO
@@ -31,20 +32,42 @@ func _ready() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	sprite.rotation = wrapf(sprite.rotation + spin_speed * delta, -PI, PI)
 	_float_phase = fmod(_float_phase + delta, TAU * 100.0)
-	var float_strength := 1.6 if _targeted else 3.2
-	sprite.position = Vector2(
-		cos(_float_phase * 0.78),
-		sin(_float_phase * 1.07)
-	) * float_strength
-
-	if _targeted:
-		var pulse := 1.0 + sin(Time.get_ticks_msec() * 0.009) * 0.035
-		sprite.scale = _base_scale * pulse
-	else:
-		sprite.scale = sprite.scale.lerp(_base_scale, minf(delta * 8.0, 1.0))
+	_apply_motion(delta)
+	if definition.effect_profile != &"none":
+		_effect_redraw_clock += delta
+		if _effect_redraw_clock >= 1.0 / 30.0:
+			_effect_redraw_clock = 0.0
+			queue_redraw()
 	_integrate_environment(delta)
+
+func _apply_motion(delta: float) -> void:
+	var amplitude := definition.float_amplitude * (0.58 if _targeted else 1.0)
+	var spin := spin_speed * definition.spin_multiplier
+	var profile_scale := 1.0
+	match String(definition.motion_profile):
+		"drift":
+			sprite.rotation = sin(_float_phase * 0.42) * 0.12
+			sprite.position = Vector2(cos(_float_phase * 0.48), sin(_float_phase * 0.61)) * amplitude
+		"heavy":
+			sprite.rotation = wrapf(sprite.rotation + spin * 0.22 * delta, -PI, PI)
+			sprite.position = Vector2(cos(_float_phase * 0.35), sin(_float_phase * 0.46)) * amplitude * 0.62
+		"stable":
+			sprite.rotation = lerp_angle(sprite.rotation, sin(_float_phase * 0.44) * 0.045, minf(delta * 3.0, 1.0))
+			sprite.position = Vector2(cos(_float_phase * 0.40), sin(_float_phase * 0.52)) * amplitude * 0.72
+		"pulse":
+			sprite.rotation = lerp_angle(sprite.rotation, sin(_float_phase * 0.34) * 0.035, minf(delta * 2.5, 1.0))
+			sprite.position = Vector2(cos(_float_phase * 0.42), sin(_float_phase * 0.55)) * amplitude * 0.78
+			profile_scale = 1.0 + sin(_float_phase * 2.4) * 0.022
+		"spin":
+			sprite.rotation = wrapf(sprite.rotation + spin * 1.45 * delta, -PI, PI)
+			sprite.position = Vector2(cos(_float_phase * 0.68), sin(_float_phase * 0.82)) * amplitude * 0.82
+		_:
+			sprite.rotation = wrapf(sprite.rotation + spin * delta, -PI, PI)
+			sprite.position = Vector2(cos(_float_phase * 0.78), sin(_float_phase * 1.07)) * amplitude
+
+	var target_scale := 1.0 + (sin(Time.get_ticks_msec() * 0.009) * 0.035 if _targeted else 0.0)
+	sprite.scale = _base_scale * profile_scale * target_scale
 
 func set_targeted(value: bool) -> void:
 	if _targeted == value:
@@ -120,15 +143,58 @@ func _apply_definition() -> void:
 		energy_material.shader = ENERGY_SHADER
 		energy_material.set_shader_parameter("category_tint", category_tint)
 		energy_material.set_shader_parameter("rarity_tint", rarity_tint)
-		energy_material.set_shader_parameter("energy_strength", 0.72 if rarity_name == "rare" else 0.94)
+		energy_material.set_shader_parameter("energy_strength", 0.70 if rarity_name == "rare" else 0.96)
+		energy_material.set_shader_parameter("outline_strength", 0.72 if rarity_name == "rare" else 1.0)
+		energy_material.set_shader_parameter("pulse_speed", 2.5 if rarity_name == "rare" else 3.6)
+		energy_material.set_shader_parameter("sweep_speed", 0.11 if rarity_name == "rare" else 0.16)
+		energy_material.set_shader_parameter("effect_mode", _effect_shader_mode())
 		sprite.material = energy_material
 		sprite.modulate = Color.WHITE
 	else:
 		sprite.material = null
-		sprite.modulate = Color.WHITE.lerp(category_tint, 0.16)
+		sprite.modulate = Color.WHITE.lerp(category_tint, 0.10 if rarity_name == "common" else 0.18)
 	marker.configure(definition, priority_target)
 
 	var circle := collision_shape.shape as CircleShape2D
 	assert(circle != null, "SalvageObject requires a CircleShape2D.")
 	circle.radius = definition.collision_radius
 
+func _effect_shader_mode() -> float:
+	match String(definition.effect_profile):
+		"scan":
+			return 1.0
+		"pulse":
+			return 2.0
+		"orbit":
+			return 3.0
+		"spark":
+			return 4.0
+		_:
+			return 0.0
+
+func _draw() -> void:
+	if definition == null or definition.effect_profile == &"none":
+		return
+	var category := WorldVisualLanguage.salvage_category_color(definition.category)
+	var rarity := WorldVisualLanguage.salvage_rarity_color(definition.rarity)
+	var radius := definition.collision_radius + 7.0
+	var phase := _float_phase
+	match String(definition.effect_profile):
+		"scan":
+			for index in range(2):
+				var start := phase * (0.65 + index * 0.14) + index * PI
+				draw_arc(Vector2.ZERO, radius + float(index) * 4.0, start, start + 0.86, 16, Color(category, 0.26), 1.4, true)
+		"pulse":
+			var pulse := (sin(phase * 2.6) + 1.0) * 0.5
+			draw_arc(Vector2.ZERO, radius + pulse * 6.0, 0.0, TAU, 40, Color(category, 0.10 + pulse * 0.13), 1.4, true)
+		"orbit":
+			for index in range(2 if String(definition.rarity) != "epic" else 3):
+				var angle := phase * (0.72 + index * 0.08) + TAU * float(index) / 3.0
+				var position := Vector2.from_angle(angle) * (radius + 7.0)
+				draw_circle(position, 2.0 + float(index % 2) * 0.6, Color(rarity, 0.64))
+		"spark":
+			var flash := maxf(sin(phase * 5.4), 0.0)
+			if flash > 0.72:
+				var angle := phase * 1.7
+				var start := Vector2.from_angle(angle) * radius
+				draw_line(start, start + Vector2.from_angle(angle + 0.5) * 8.0, Color(category, flash * 0.62), 1.5, true)

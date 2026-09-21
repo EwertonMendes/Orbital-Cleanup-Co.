@@ -11,13 +11,13 @@ msgid "BOOTSTRAP_SLOGAN"
 msgstr "Mantendo a galáxia em ordem, uma órbita de cada vez."
 
 msgid "BOOTSTRAP_FOUNDATION"
-msgstr "BUILD DE FUNDAÇÃO"
+msgstr "VERIFICAÇÃO DO SISTEMA"
 
 msgid "BOOTSTRAP_STATUS"
-msgstr "Fundação Web pronta · %s · %s"
+msgstr "SISTEMAS ORBITAIS PRONTOS"
 
 msgid "BOOTSTRAP_MESSAGE"
-msgstr "Infraestrutura primeiro. Os sistemas de gameplay chegam nos próximos PRs focados."
+msgstr "Preparando sua próxima rota de limpeza."
 
 msgid "BOOTSTRAP_LANGUAGE"
 msgstr "IDIOMA"
@@ -308,7 +308,7 @@ msgid "HQ_UPGRADE_MAX"
 msgstr "NÍVEL MÁX."
 
 msgid "HQ_UPGRADE_COST_FMT"
-msgstr "MELHORAR · %d cr"
+msgstr "MELHORAR %d cr"
 
 msgid "HQ_UPGRADE_NEED_CREDITS"
 msgstr "Créditos insuficientes."
@@ -413,7 +413,7 @@ msgid "HQ_SHIP_BEAM_FMT"
 msgstr "Feixe · %s"
 
 msgid "HQ_COSMETIC_EQUIPPED_FMT"
-msgstr "EQUIPADO · %s"
+msgstr "EQUIPADO: %s"
 
 msgid "HQ_COSMETIC_LOCKED_FMT"
 msgstr "BLOQUEADO · %s"
@@ -1167,3 +1167,18 @@ msgstr "OPERAÇÕES"
 
 msgid "HQ_CLOSE"
 msgstr "FECHAR"
+
+msgid "HQ_SETTINGS"
+msgstr "AJUSTES"
+
+msgid "HQ_SETTINGS_AUDIO"
+msgstr "Áudio"
+
+msgid "HQ_SETTINGS_DONE"
+msgstr "Concluir"
+
+msgid "LOADING_TITLE"
+msgstr "ORBITAL CLEANUP CO."
+
+msgid "LOADING_STATUS"
+msgstr "PREPARANDO ÓRBITA..."

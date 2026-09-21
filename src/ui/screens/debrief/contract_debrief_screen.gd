@@ -37,6 +37,7 @@ var _transition: Dictionary = {}
 var _router: SceneRouter
 var _ads: AdService
 var _platform: PlatformService
+var _audio: AudioService
 var _registry := ContentRegistry.new()
 var _animation: Tween
 var _promotion_player: AudioStreamPlayer
@@ -50,6 +51,7 @@ func configure(context: Dictionary) -> void:
 	_router = context.get("router") as SceneRouter
 	_ads = context.get("ads") as AdService
 	_platform = context.get("platform") as PlatformService
+	_audio = context.get("audio") as AudioService
 
 	assert(_router != null, "ContractDebriefScreen requires SceneRouter.")
 	assert(bool(_result.get("completed", false)), "ContractDebriefScreen requires a completed contract result.")
@@ -58,6 +60,7 @@ func configure(context: Dictionary) -> void:
 func _ready() -> void:
 	_validate_contracts()
 	continue_button.pressed.connect(_continue_to_hq)
+	continue_button.mouse_entered.connect(_play_ui_hover)
 	resized.connect(_apply_responsive_layout)
 
 	_reward_player = _create_player(ProceduralSfx.unload(), -8.0)
@@ -163,7 +166,7 @@ func _refresh_unlocks() -> void:
 	if unlocks.is_empty():
 		var empty := Label.new()
 		empty.text = tr("DEBRIEF_NO_UNLOCKS")
-		empty.add_theme_color_override("font_color", Color("#91aab7"))
+		empty.theme_type_variation = &"UiBodyMuted"
 		unlocks_list.add_child(empty)
 		return
 
@@ -171,8 +174,8 @@ func _refresh_unlocks() -> void:
 		var unlock := value as Dictionary
 		var row := Label.new()
 		row.text = "> %s" % tr(String(unlock.get("display_name_key", "")))
-		row.add_theme_color_override("font_color", Color("#ffc857"))
-		row.add_theme_font_size_override("font_size", 14)
+		row.theme_type_variation = &"UiBody"
+		row.add_theme_color_override("font_color", Color("#6f5200"))
 		row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		unlocks_list.add_child(row)
 
@@ -192,10 +195,21 @@ func _refresh_discoveries() -> void:
 			tr(String(definition.display_name_key)),
 			tr(_rarity_key(String(definition.rarity))),
 		]
-		row.add_theme_color_override("font_color", WorldVisualLanguage.salvage_rarity_color(definition.rarity))
-		row.add_theme_font_size_override("font_size", 14)
+		row.theme_type_variation = &"UiBody"
+		row.add_theme_color_override("font_color", _discovery_text_color(String(definition.rarity)))
 		row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		discoveries_list.add_child(row)
+
+func _discovery_text_color(rarity: String) -> Color:
+	match rarity:
+		"epic":
+			return Color("#60328a")
+		"rare":
+			return Color("#7a5700")
+		"uncommon":
+			return Color("#1f6547")
+		_:
+			return Color("#293640")
 
 func _rarity_key(rarity: String) -> String:
 	match rarity:
@@ -303,6 +317,8 @@ func _refresh_xp_progress_label(progress: Dictionary) -> void:
 		]
 
 func _continue_to_hq() -> void:
+	if _audio != null:
+		_audio.play_ui_click()
 	continue_button.disabled = true
 	if _platform != null:
 		_platform.track_event("contract_debrief_continued", {
@@ -330,6 +346,10 @@ func _continue_to_hq() -> void:
 	]:
 		return_context.erase(key)
 	_router.show_screen(scene, return_context)
+
+func _play_ui_hover() -> void:
+	if _audio != null:
+		_audio.play_ui_hover()
 
 func _create_player(stream: AudioStream, volume_db: float) -> AudioStreamPlayer:
 	var player := AudioStreamPlayer.new()

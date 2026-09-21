@@ -1,7 +1,7 @@
 {
   "id": "scrap_fragment",
   "display_name_key": "SALVAGE_SCRAP_FRAGMENT",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/scrap_fragment.svg",
   "category": "scrap",
   "rarity": "common",
   "base_value": 12,
@@ -11,6 +11,12 @@
   "cargo_units": 1,
   "visual_scale": 0.72,
   "collision_radius": 20,
+  "visual_profile": {
+    "motion": "tumble",
+    "effect": "none",
+    "spin_multiplier": 0.82,
+    "float_amplitude": 3.6
+  },
   "tags": [
     "metal",
     "training"

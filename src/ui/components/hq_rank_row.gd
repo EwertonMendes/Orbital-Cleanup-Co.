@@ -11,16 +11,12 @@ func _ready() -> void:
 func configure(rank_name: String, min_xp: int, unlocked: bool, current: bool) -> void:
 	name_label.text = rank_name
 	xp_label.text = tr("HQ_RANK_XP_FMT") % min_xp
-
 	if current:
 		status_label.text = tr("HQ_RANK_CURRENT")
-		status_label.add_theme_color_override("font_color", OccPalette.MINT)
-		name_label.add_theme_color_override("font_color", OccPalette.TEXT)
+		status_label.add_theme_color_override("font_color", Color("#278a61"))
 	elif unlocked:
 		status_label.text = tr("HQ_RANK_UNLOCKED")
-		status_label.add_theme_color_override("font_color", OccPalette.CYAN)
-		name_label.add_theme_color_override("font_color", OccPalette.TEXT_MUTED)
+		status_label.add_theme_color_override("font_color", Color("#4e555e"))
 	else:
 		status_label.text = tr("HQ_RANK_LOCKED")
-		status_label.add_theme_color_override("font_color", OccPalette.TEXT_MUTED)
-		name_label.add_theme_color_override("font_color", Color(0.48, 0.58, 0.63, 1))
+		status_label.add_theme_color_override("font_color", Color("#b67b16"))

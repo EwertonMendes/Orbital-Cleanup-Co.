@@ -1,59 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/debrief/contract_debrief_screen.gd" id="1"]
-[ext_resource type="Theme" path="res://src/ui/themes/occ_theme.tres" id="2"]
+[ext_resource type="Theme" path="res://src/ui/themes/occ_operations_theme.tres" id="2"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_backdrop.gd" id="3"]
 [ext_resource type="Script" path="res://src/ui/screens/debrief/debrief_celebration.gd" id="4"]
-
-[sub_resource type="StyleBoxFlat" id="MainPanel"]
-bg_color = Color(0.012, 0.038, 0.058, 0.965)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.27, 0.71, 0.82, 0.34)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_color = Color(0, 0, 0, 0.42)
-shadow_size = 18
-
-[sub_resource type="StyleBoxFlat" id="SummaryPanel"]
-bg_color = Color(0.018, 0.064, 0.086, 0.92)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.28, 0.71, 0.82, 0.22)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="PromotionPanel"]
-bg_color = Color(0.15, 0.105, 0.025, 0.92)
-border_width_left = 2
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 0.76, 0.27, 0.72)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="DiscoveryPanel"]
-bg_color = Color(0.045, 0.075, 0.105, 0.92)
-border_width_left = 2
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.47, 0.56, 0.95, 0.5)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/squareGreen.png" id="5"]
 
 [node name="ContractDebriefScreen" type="Control"]
 layout_mode = 3
@@ -94,12 +45,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 30
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 20
 
 [node name="Scroll" type="ScrollContainer" parent="SafeArea"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -111,305 +63,342 @@ size_flags_horizontal = 3
 
 [node name="DebriefCard" type="PanelContainer" parent="SafeArea/Scroll/Center"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 0)
+custom_minimum_size = Vector2(930, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("MainPanel")
+theme_type_variation = &"ConsolePanel"
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 16
+theme_override_constants/margin_top = 22
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_bottom = 22
 
 [node name="Content" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="Header" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
 layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderCopy" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="EyebrowLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/Header"]
+[node name="EyebrowLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.42, 0.88, 1, 1)
-theme_override_font_sizes/font_size = 12
-text = "SHIFT REPORT // CONTRACT CLOSED"
+theme_type_variation = &"TelemetryLabel"
+text = "SHIFT REPORT"
 
-[node name="TitleLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/Header"]
+[node name="TitleLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.99, 1, 1)
-theme_override_font_sizes/font_size = 34
-text = "Contract Complete"
+theme_type_variation = &"DisplayLabel"
+text = "CONTRACT COMPLETE"
 autowrap_mode = 2
 
-[node name="SubtitleLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/Header"]
+[node name="SubtitleLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.62, 0.75, 0.82, 1)
-theme_override_font_sizes/font_size = 13
+theme_type_variation = &"UiBodyMuted"
 text = "Recovery logged. Company records updated."
 autowrap_mode = 2
 
-[node name="MissionRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="StatusBlock" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
-[node name="MissionLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/MissionRow"]
+[node name="StatusIcon" type="TextureRect" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/StatusBlock"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+texture = ExtResource("5")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ResultBadge" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/StatusBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"SuccessValue"
+text = "COMPLETE"
+vertical_alignment = 1
+
+[node name="MissionCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="MissionMargin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/MissionCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="MissionRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/MissionCard/MissionMargin"]
+layout_mode = 2
+
+[node name="MissionLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/MissionCard/MissionMargin/MissionRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.84, 0.92, 0.96, 1)
-theme_override_font_sizes/font_size = 15
+theme_type_variation = &"SectionTitle"
 text = "Low Orbit Orientation"
 autowrap_mode = 2
-
-[node name="ResultBadge" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/MissionRow"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/font_color = Color(0.47, 0.96, 0.76, 1)
-theme_override_font_sizes/font_size = 12
-text = "COMPLETE"
-
-[node name="Rule1" type="HSeparator" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
-layout_mode = 2
 
 [node name="ContentGrid" type="GridContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 6
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
 columns = 3
 
 [node name="ObjectiveCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("SummaryPanel")
+size_flags_horizontal = 3
+theme_type_variation = &"CardPanel"
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/ObjectiveCard"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 9
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 9
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
 
 [node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/ObjectiveCard/Margin"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
 [node name="ObjectiveLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/ObjectiveCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.48, 0.66, 0.74, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "OBJECTIVE"
 
 [node name="ObjectiveValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/ObjectiveCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.47, 0.96, 0.76, 1)
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"SuccessValue"
 text = "COMPLETE"
 
 [node name="CleanupCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("SummaryPanel")
+size_flags_horizontal = 3
+theme_type_variation = &"CardPanel"
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/CleanupCard"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 9
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 9
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
 
 [node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/CleanupCard/Margin"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
 [node name="CleanupLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/CleanupCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.48, 0.66, 0.74, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "CLEANUP"
 
 [node name="CleanupValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/CleanupCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.96, 1, 1)
+theme_type_variation = &"ValueLabel"
 theme_override_font_sizes/font_size = 16
 text = "100%"
 
 [node name="RecoveredCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("SummaryPanel")
+size_flags_horizontal = 3
+theme_type_variation = &"CardPanel"
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/RecoveredCard"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 9
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 9
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
 
 [node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/RecoveredCard/Margin"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
 [node name="RecoveredLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/RecoveredCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.48, 0.66, 0.74, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "RECOVERED"
 
 [node name="RecoveredValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/RecoveredCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.96, 1, 1)
+theme_type_variation = &"ValueLabel"
 theme_override_font_sizes/font_size = 16
 text = "12 OBJECTS"
 
-[node name="RewardsTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="RewardCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="RewardMargin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 13
+
+[node name="RewardLayout" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RewardsTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.62, 0.83, 0.91, 1)
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"ScreenTitle"
 text = "PAYOUT"
 
-[node name="RewardGrid" type="GridContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="RewardGrid" type="GridContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 18
-theme_override_constants/v_separation = 6
+theme_override_constants/v_separation = 8
 columns = 4
 
-[node name="BasePay" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid"]
+[node name="BasePay" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="BasePayLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid/BasePay"]
+[node name="BasePayLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/BasePay"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.48, 0.66, 0.74, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "BASE PAY"
 
-[node name="BasePayValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid/BasePay"]
+[node name="BasePayValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/BasePay"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.82, 0.44, 1)
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"RewardValue"
 text = "+240 C"
 
-[node name="Salvage" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid"]
+[node name="Salvage" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="SalvageLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid/Salvage"]
+[node name="SalvageLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/Salvage"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.48, 0.66, 0.74, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "SALVAGE"
 
-[node name="SalvageValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid/Salvage"]
+[node name="SalvageValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/Salvage"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.82, 0.44, 1)
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"RewardValue"
 text = "+310 C"
 
-[node name="PerfectBonus" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid"]
+[node name="PerfectBonus" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="PerfectBonusLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid/PerfectBonus"]
+[node name="PerfectBonusLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/PerfectBonus"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.48, 0.66, 0.74, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "PERFECT BONUS"
 
-[node name="PerfectBonusValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid/PerfectBonus"]
+[node name="PerfectBonusValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/PerfectBonus"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.47, 0.96, 0.76, 1)
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"SuccessValue"
 text = "+160 C"
 
-[node name="Total" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid"]
+[node name="Total" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="TotalLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid/Total"]
+[node name="TotalLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/Total"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.48, 0.66, 0.74, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "TOTAL"
 
-[node name="RewardTotalValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardGrid/Total"]
+[node name="RewardTotalValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/Total"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.35, 1)
+theme_type_variation = &"RewardValue"
 theme_override_font_sizes/font_size = 18
 text = "+710 C"
 
-[node name="BalanceRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="BalanceRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout"]
 layout_mode = 2
 
-[node name="BalanceLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/BalanceRow"]
+[node name="BalanceLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/BalanceRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.55, 0.69, 0.76, 1)
+theme_type_variation = &"UiBodyMuted"
 text = "COMPANY ACCOUNT"
 
-[node name="BalanceValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/BalanceRow"]
+[node name="BalanceValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/BalanceRow"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.35, 1)
-theme_override_font_sizes/font_size = 17
+theme_type_variation = &"RewardValue"
+theme_override_font_sizes/font_size = 18
 text = "710 CREDITS"
 
-[node name="Rule2" type="HSeparator" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="CareerCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
 layout_mode = 2
+theme_type_variation = &"CardPanel"
 
-[node name="CareerTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="CareerMargin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 13
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 13
+
+[node name="CareerLayout" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="CareerTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.62, 0.83, 0.91, 1)
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"ScreenTitle"
 text = "CAREER PROGRESS"
 
-[node name="CareerRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="CareerRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="RankValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerRow"]
+[node name="RankValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout/CareerRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.89, 0.96, 1, 1)
-theme_override_font_sizes/font_size = 17
+theme_type_variation = &"SectionTitle"
 text = "Trainee"
 
-[node name="XpGainLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerRow"]
+[node name="XpGainLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout/CareerRow"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.47, 0.96, 0.76, 1)
+theme_type_variation = &"SuccessValue"
 text = "+120 XP"
 
-[node name="XpProgress" type="ProgressBar" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="XpProgress" type="ProgressBar" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 show_percentage = false
 
-[node name="XpProgressLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="XpProgressLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.49, 0.65, 0.73, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "330 / 400 XP"
 horizontal_alignment = 2
 
@@ -417,13 +406,13 @@ horizontal_alignment = 2
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_styles/panel = SubResource("PromotionPanel")
+theme_type_variation = &"CardPanel"
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
+theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 14
+theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 12
 
 [node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin"]
@@ -433,41 +422,38 @@ theme_override_constants/separation = 4
 [node name="PromotionTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.77, 0.31, 1)
-theme_override_font_sizes/font_size = 11
+theme_type_variation = &"RewardValue"
 text = "PROMOTED"
 
 [node name="PromotionRank" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.91, 0.67, 1)
-theme_override_font_sizes/font_size = 22
+theme_type_variation = &"ScreenTitle"
 text = "Junior Cleaner"
 
 [node name="UnlocksTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.68, 0.75, 0.78, 1)
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"TelemetryLabel"
 text = "NEW UNLOCKS"
 
 [node name="UnlocksList" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 3
 
 [node name="DiscoveriesPanel" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_styles/panel = SubResource("DiscoveryPanel")
+theme_type_variation = &"CardPanel"
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/DiscoveriesPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
 
 [node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/DiscoveriesPanel/Margin"]
 layout_mode = 2
@@ -476,17 +462,18 @@ theme_override_constants/separation = 4
 [node name="DiscoveriesTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/DiscoveriesPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.66, 0.72, 1, 1)
-theme_override_font_sizes/font_size = 11
+theme_type_variation = &"AccentValue"
 text = "NEW DISCOVERIES"
 
 [node name="DiscoveriesList" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/DiscoveriesPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 3
 
 [node name="ContinueButton" type="Button" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
-text = "CONTINUE TO HEADQUARTERS"
+theme_type_variation = &"PrimaryButton"
+mouse_default_cursor_shape = 2
+text = "CONTINUE"

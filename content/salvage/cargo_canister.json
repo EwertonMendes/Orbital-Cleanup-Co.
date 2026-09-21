@@ -1,7 +1,7 @@
 {
   "id": "cargo_canister",
   "display_name_key": "SALVAGE_CARGO_CANISTER",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/cargo_canister.svg",
   "category": "cargo",
   "rarity": "common",
   "base_value": 34,
@@ -11,6 +11,12 @@
   "cargo_units": 2,
   "visual_scale": 0.58,
   "collision_radius": 26,
+  "visual_profile": {
+    "motion": "heavy",
+    "effect": "none",
+    "spin_multiplier": 0.18,
+    "float_amplitude": 1.4
+  },
   "tags": [
     "cargo",
     "container",

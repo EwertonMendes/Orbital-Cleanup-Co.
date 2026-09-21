@@ -1,7 +1,7 @@
 {
   "id": "reactor_shielding",
   "display_name_key": "SALVAGE_REACTOR_SHIELDING",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/reactor_shielding.svg",
   "category": "power",
   "rarity": "uncommon",
   "base_value": 78,
@@ -11,6 +11,12 @@
   "cargo_units": 4,
   "visual_scale": 0.52,
   "collision_radius": 36,
+  "visual_profile": {
+    "motion": "heavy",
+    "effect": "pulse",
+    "spin_multiplier": 0.08,
+    "float_amplitude": 1.2
+  },
   "tags": [
     "reactor",
     "dense",

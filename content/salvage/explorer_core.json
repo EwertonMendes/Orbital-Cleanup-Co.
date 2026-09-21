@@ -1,7 +1,7 @@
 {
   "id": "explorer_core",
   "display_name_key": "SALVAGE_EXPLORER_CORE",
-  "sprite": "res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png",
+  "sprite": "res://assets/original/salvage/explorer_core.svg",
   "category": "research",
   "rarity": "epic",
   "base_value": 260,
@@ -11,6 +11,12 @@
   "cargo_units": 5,
   "visual_scale": 0.46,
   "collision_radius": 38,
+  "visual_profile": {
+    "motion": "drift",
+    "effect": "orbit",
+    "spin_multiplier": 0.12,
+    "float_amplitude": 3
+  },
   "tags": [
     "explorer",
     "core",

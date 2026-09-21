@@ -1,7 +1,7 @@
 {
   "id": "thruster_nozzle",
   "display_name_key": "SALVAGE_THRUSTER_NOZZLE",
-  "sprite": "res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png",
+  "sprite": "res://assets/original/salvage/thruster_nozzle.svg",
   "category": "propulsion",
   "rarity": "uncommon",
   "base_value": 70,
@@ -11,6 +11,12 @@
   "cargo_units": 3,
   "visual_scale": 0.62,
   "collision_radius": 29,
+  "visual_profile": {
+    "motion": "spin",
+    "effect": "spark",
+    "spin_multiplier": 0.85,
+    "float_amplitude": 2
+  },
   "tags": [
     "propulsion",
     "metal",

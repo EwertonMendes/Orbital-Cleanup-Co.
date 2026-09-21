@@ -18,9 +18,13 @@ const UPGRADE_CARD_SCENE := preload("res://src/ui/components/hq_upgrade_card.tsc
 const RANK_ROW_SCENE := preload("res://src/ui/components/hq_rank_row.tscn")
 const CHROME_BUTTON_SCENE := preload("res://src/ui/components/occ_chrome_button.tscn")
 const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card.tscn")
+const STATUS_GREEN := preload("res://assets/third_party/kenney_ui_sci_fi/ui/squareGreen.png")
+const STATUS_YELLOW := preload("res://assets/third_party/kenney_ui_sci_fi/ui/squareYellow.png")
+const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/squareRed.png")
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var header: BoxContainer = %Header
+@onready var main_row: BoxContainer = %MainRow
 @onready var tab_grid: GridContainer = %TabGrid
 @onready var content_scroll: ScrollContainer = %ContentScroll
 @onready var content_shell: Control = %ContentShell
@@ -36,8 +40,6 @@ const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card
 @onready var upgrade_grid: GridContainer = %UpgradeGrid
 @onready var career_list: VBoxContainer = %CareerList
 @onready var credits_label: Label = %CreditsLabel
-@onready var rank_label: Label = %RankLabel
-@onready var xp_label: Label = %XpLabel
 @onready var career_rank_value: Label = %CareerRankValue
 @onready var career_xp_label: Label = %CareerXpLabel
 @onready var career_xp_bar: ProgressBar = %CareerXpBar
@@ -51,6 +53,7 @@ const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card
 @onready var contract_description: Label = %ContractDescription
 @onready var contract_target: Label = %ContractTarget
 @onready var contract_risk: Label = %ContractRisk
+@onready var risk_icon: TextureRect = %RiskIcon
 @onready var contract_payout: Label = %ContractPayout
 @onready var contract_requirement: Label = %ContractRequirement
 @onready var next_unlock_panel: VBoxContainer = %NextUnlockPanel
@@ -69,7 +72,7 @@ const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card
 @onready var discovery_count: Label = %DiscoveryCount
 @onready var completed_contracts: Label = %CompletedContracts
 @onready var discovery_empty_card: PanelContainer = %DiscoveryEmptyCard
-@onready var discovery_list: VBoxContainer = %DiscoveryList
+@onready var discovery_list: GridContainer = %DiscoveryList
 @onready var english_button: Button = %EnglishButton
 @onready var portuguese_button: Button = %PortugueseButton
 @onready var spanish_button: Button = %SpanishButton
@@ -81,9 +84,17 @@ const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card
 @onready var close_overlay: Button = %CloseOverlay
 @onready var overlay_scrim: ColorRect = %OverlayScrim
 @onready var floating_surface: PanelContainer = %FloatingSurface
+@onready var settings_button: Button = %SettingsButton
+@onready var settings_layer: Control = %SettingsLayer
+@onready var settings_modal: PanelContainer = %SettingsModal
+@onready var settings_close: Button = %SettingsClose
+@onready var volume_down: Button = %VolumeDown
+@onready var volume_up: Button = %VolumeUp
+@onready var volume_value: Label = %VolumeValue
 
 var _context: Dictionary = {}
 var _settings: SettingsService
+var _audio: AudioService
 var _platform: PlatformService
 var _router: SceneRouter
 var _progression: ProgressionService
@@ -96,14 +107,18 @@ var _viewing_endless := false
 var _endless_number := 1
 var _active_sector_definition: Dictionary = {}
 var _sector_plan: Dictionary = {}
-var _active_tab := Tab.CONTRACTS
+var _active_tab := -1
 var _tab_group := ButtonGroup.new()
 var _overlay_mode := false
+var _tab_reveal_tween: Tween
+var _tab_transitioning := false
+var _tab_pulse_tween: Tween
 
 func configure(context: Dictionary) -> void:
 	_context = context
 	_overlay_mode = bool(context.get("operations_overlay", false))
 	_settings = context.get("settings") as SettingsService
+	_audio = context.get("audio") as AudioService
 	_platform = context.get("platform") as PlatformService
 	_router = context.get("router") as SceneRouter
 	_progression = context.get("progression") as ProgressionService
@@ -114,8 +129,12 @@ func configure(context: Dictionary) -> void:
 	scaler.configure(_registry)
 	_generator.configure(_registry, scaler)
 	_endless_generator.configure(_registry)
-	_sector_ids = _registry.list_sector_ids()
-	assert(not _sector_ids.is_empty(), "Headquarters requires at least one authored sector.")
+	var authored_sector_ids := _registry.list_sector_ids()
+	_sector_ids = PackedStringArray()
+	for sector_id in authored_sector_ids:
+		if _progression.is_sector_unlocked(String(sector_id)):
+			_sector_ids.append(String(sector_id))
+	assert(not _sector_ids.is_empty(), "Operations requires at least one unlocked authored sector.")
 	var requested_sector := String(context.get("debug_hq_sector_id", DEFAULT_SECTOR_ID))
 	var preferred_index := _sector_ids.find(requested_sector)
 	_selected_sector_index = preferred_index if preferred_index >= 0 else 0
@@ -126,6 +145,10 @@ func _ready() -> void:
 	resized.connect(_apply_responsive_layout)
 	primary_action.pressed.connect(_deploy_training)
 	close_overlay.pressed.connect(_request_close)
+	settings_button.pressed.connect(_open_settings)
+	settings_close.pressed.connect(_close_settings)
+	volume_down.pressed.connect(_adjust_volume.bind(-0.1))
+	volume_up.pressed.connect(_adjust_volume.bind(0.1))
 	previous_contract.pressed.connect(_select_relative_contract.bind(-1))
 	endless_contract.pressed.connect(_toggle_endless_mode)
 	next_contract.pressed.connect(_select_relative_contract.bind(1))
@@ -137,13 +160,16 @@ func _ready() -> void:
 
 	if _settings != null and not _settings.locale_changed.is_connected(_on_locale_changed):
 		_settings.locale_changed.connect(_on_locale_changed)
+	if _settings != null and not _settings.audio_changed.is_connected(_on_audio_changed):
+		_settings.audio_changed.connect(_on_audio_changed)
 	if not _progression.state_changed.is_connected(_on_progression_changed):
 		_progression.state_changed.connect(_on_progression_changed)
 
 	_apply_overlay_presentation()
 	_apply_responsive_layout()
 	_refresh_all()
-	_show_tab(Tab.CONTRACTS)
+	_wire_button_feedback(self)
+	_show_tab(Tab.CONTRACTS, true)
 	print("[HQ] READY tab=contracts mode=%s" % ("overlay" if _overlay_mode else "screen"))
 
 func _validate_contracts() -> void:
@@ -164,8 +190,10 @@ func _validate_contracts() -> void:
 	assert(contracts_panel != null and upgrades_panel != null and career_panel != null, "Headquarters core panels are required.")
 	assert(ship_panel != null and discovery_panel != null, "Headquarters future-facing panels are required.")
 	assert(discovery_empty_card != null and discovery_list != null, "Headquarters discovery catalog containers are required.")
-	assert(close_overlay != null and overlay_scrim != null and floating_surface != null, "Headquarters overlay chrome is required.")
-	assert(not _sector_plan.is_empty(), "Headquarters requires sector data.")
+	assert(close_overlay != null and overlay_scrim != null and floating_surface != null, "Operations overlay chrome is required.")
+	assert(settings_button != null and settings_layer != null and settings_modal != null and settings_close != null, "Operations requires a dedicated settings panel.")
+	assert(volume_down != null and volume_up != null and volume_value != null, "Operations settings controls are required.")
+	assert(not _sector_plan.is_empty(), "Operations requires sector data.")
 
 func _setup_tabs() -> void:
 	var tabs := [
@@ -184,16 +212,94 @@ func _setup_tabs() -> void:
 		button.pressed.connect(_show_tab.bind(tab))
 	contracts_tab.button_pressed = true
 
-func _show_tab(tab: int) -> void:
-	_active_tab = tab
-	contracts_panel.visible = tab == Tab.CONTRACTS
-	upgrades_panel.visible = tab == Tab.UPGRADES
-	career_panel.visible = tab == Tab.CAREER
-	ship_panel.visible = tab == Tab.SHIP
-	discovery_panel.visible = tab == Tab.DISCOVERY
-	footer.visible = tab == Tab.CONTRACTS
-	content_scroll.scroll_vertical = 0
+func _show_tab(tab: int, instant: bool = false) -> void:
+	if _tab_transitioning:
+		_sync_tab_selection()
+		return
+	if tab == _active_tab and not instant:
+		return
 
+	var previous_tab := _active_tab
+	var previous_panel := _panel_for_tab(previous_tab) if previous_tab >= 0 else null
+	var active_panel := _panel_for_tab(tab)
+
+	if instant or previous_panel == null:
+		_active_tab = tab
+		_refresh_tab_content(tab)
+		_apply_panel_visibility(active_panel)
+		_sync_tab_selection()
+		_update_tab_visuals()
+		content_scroll.scroll_vertical = 0
+		return
+
+	_tab_transitioning = true
+	var direction := 1.0 if tab > previous_tab else -1.0
+
+	if _tab_reveal_tween != null and _tab_reveal_tween.is_valid():
+		_tab_reveal_tween.kill()
+
+	var previous_origin := previous_panel.position
+	_tab_reveal_tween = create_tween()
+	_tab_reveal_tween.set_parallel(true)
+	_tab_reveal_tween.tween_property(
+		previous_panel,
+		"position:x",
+		previous_origin.x - direction * 84.0,
+		0.18
+	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	_tab_reveal_tween.tween_property(
+		previous_panel,
+		"modulate:a",
+		0.0,
+		0.14
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await _tab_reveal_tween.finished
+	previous_panel.position = previous_origin
+
+	_active_tab = tab
+	_refresh_tab_content(tab)
+	_apply_panel_visibility(active_panel)
+	content_scroll.scroll_vertical = 0
+	_sync_tab_selection()
+	_update_tab_visuals()
+
+	await get_tree().process_frame
+	var active_origin := active_panel.position
+	active_panel.position = active_origin + Vector2(direction * 96.0, 0.0)
+	active_panel.modulate = Color(0.72, 0.90, 1.0, 0.0)
+
+	_tab_reveal_tween = create_tween()
+	_tab_reveal_tween.set_parallel(true)
+	_tab_reveal_tween.tween_property(
+		active_panel,
+		"position",
+		active_origin,
+		0.24
+	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	_tab_reveal_tween.tween_property(
+		active_panel,
+		"modulate",
+		Color.WHITE,
+		0.22
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	await _tab_reveal_tween.finished
+	active_panel.position = active_origin
+	active_panel.modulate = Color.WHITE
+	_tab_transitioning = false
+
+func _sync_tab_selection() -> void:
+	var tabs: Array[Button] = [
+		contracts_tab,
+		upgrades_tab,
+		career_tab,
+		ship_tab,
+		discovery_tab,
+	]
+	for index in range(tabs.size()):
+		tabs[index].button_pressed = index == _active_tab
+
+func _refresh_tab_content(tab: int) -> void:
+	footer.visible = tab == Tab.CONTRACTS
 	match tab:
 		Tab.UPGRADES:
 			_refresh_upgrades()
@@ -204,35 +310,114 @@ func _show_tab(tab: int) -> void:
 		Tab.DISCOVERY:
 			_refresh_discovery()
 
+func _apply_panel_visibility(active_panel: Control) -> void:
+	var panels: Array[Control] = [contracts_panel, upgrades_panel, career_panel, ship_panel, discovery_panel]
+	for panel in panels:
+		panel.visible = panel == active_panel
+		panel.modulate.a = 1.0
+
+func _panel_for_tab(tab: int) -> Control:
+	match tab:
+		Tab.UPGRADES:
+			return upgrades_panel
+		Tab.CAREER:
+			return career_panel
+		Tab.SHIP:
+			return ship_panel
+		Tab.DISCOVERY:
+			return discovery_panel
+		_:
+			return contracts_panel
+
+func _update_tab_visuals() -> void:
+	if _tab_pulse_tween != null and _tab_pulse_tween.is_valid():
+		_tab_pulse_tween.kill()
+
+	var tabs: Array[Button] = [
+		contracts_tab,
+		upgrades_tab,
+		career_tab,
+		ship_tab,
+		discovery_tab,
+	]
+	for button in tabs:
+		button.self_modulate = Color.WHITE
+		button.remove_theme_color_override("font_color")
+		button.remove_theme_color_override("font_hover_color")
+		button.remove_theme_color_override("font_pressed_color")
+		button.remove_theme_color_override("font_hover_pressed_color")
+		button.remove_theme_color_override("font_outline_color")
+		button.remove_theme_constant_override("outline_size")
+
+	var active_button := tabs[_active_tab] if _active_tab >= 0 and _active_tab < tabs.size() else null
+	if active_button == null:
+		return
+
+	# The pressed TabButton state owns the yellow Kenney surface. This slow
+	# modulation adds a restrained glow without changing geometry or layout.
+	active_button.self_modulate = Color(1.0, 0.98, 0.88, 1.0)
+	_tab_pulse_tween = create_tween().set_loops()
+	_tab_pulse_tween.tween_property(
+		active_button,
+		"self_modulate",
+		Color(1.0, 0.90, 0.64, 1.0),
+		1.70
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_tab_pulse_tween.tween_property(
+		active_button,
+		"self_modulate",
+		Color(1.0, 0.98, 0.88, 1.0),
+		1.70
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
-	var compact := portrait or size.x < COMPACT_WIDTH
-	header.vertical = compact
-	contract_hero.vertical = compact
-	ship_body.vertical = compact
-	tab_grid.columns = 3 if compact else 5
-	contract_selector.columns = 2 if compact else 4
-	upgrade_grid.columns = 1 if compact else 3
-	content_shell.custom_minimum_size.y = 150.0 if size.y < 500.0 else 260.0
+	var window_size := DisplayServer.window_get_size()
+	var narrow := portrait or window_size.x < int(COMPACT_WIDTH)
+	var compact := narrow
 
-	var horizontal_margin := 14 if compact else 28
-	var vertical_margin := 12 if compact else 20
-	if _overlay_mode:
-		if compact:
-			horizontal_margin = 14
-			vertical_margin = 12
-		else:
-			horizontal_margin = maxi(72, int(round((size.x - 1000.0) * 0.5)))
-			vertical_margin = maxi(42, int(round((size.y - 600.0) * 0.5)))
+	# Keep the physical-console header compact even in portrait. The 720 px
+	# portrait reference has enough room for brand, credits, settings and close.
+	header.vertical = window_size.x < 360
+	main_row.vertical = compact
+	contract_hero.vertical = narrow
+	ship_body.vertical = narrow
+	tab_grid.columns = 2 if portrait or window_size.x < 560 else (3 if compact else 1)
+	contract_selector.columns = 3 if narrow else 4
+	upgrade_grid.columns = 1 if narrow else 3
+	discovery_list.columns = 1 if narrow else 2
+
+	# ContentScroll already owns viewport expansion. Avoid an artificial minimum
+	# that creates a scrollbar on desktop when the active screen fits naturally.
+	content_shell.custom_minimum_size.y = 0.0
+
+	var horizontal_margin := 18 if portrait else (12 if compact else 22)
+	var vertical_margin := 14 if portrait else (10 if compact else 20)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
-	if _overlay_mode:
-		floating_surface.offset_left = float(horizontal_margin - 10)
-		floating_surface.offset_top = float(vertical_margin - 8)
-		floating_surface.offset_right = float(-horizontal_margin + 10)
-		floating_surface.offset_bottom = float(-vertical_margin + 8)
+
+	var available_width := maxf(size.x - (20.0 if compact else 80.0), 320.0)
+	var available_height := maxf(size.y - (20.0 if compact else 56.0), 300.0)
+	var console_height := 1180.0 if portrait else 650.0
+	floating_surface.custom_minimum_size = Vector2(
+		minf(1120.0, available_width),
+		minf(console_height, available_height)
+	)
+
+	var settings_width := 620.0 if portrait else 500.0
+	var settings_height := 390.0 if portrait else 330.0
+	settings_modal.custom_minimum_size = Vector2(
+		minf(settings_width, maxf(size.x - 40.0, 300.0)),
+		minf(settings_height, maxf(size.y - 40.0, 260.0))
+	)
+
+	var footer_spacer := footer.get_node_or_null("FooterSpacer") as Control
+	if footer_spacer != null:
+		footer_spacer.visible = not portrait
+	primary_action.custom_minimum_size.x = 0.0 if portrait else 260.0
+	primary_action.size_flags_horizontal = Control.SIZE_EXPAND_FILL if portrait else Control.SIZE_SHRINK_BEGIN
 
 func _deploy_training() -> void:
 	var access := _active_contract_access()
@@ -264,21 +449,31 @@ func _deploy_training() -> void:
 		return
 	_router.show_screen(scene, flight_context)
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed("ui_cancel"):
+		return
+	if settings_layer.visible:
+		_close_settings()
+	elif _overlay_mode:
+		_request_close()
+	else:
+		return
+	get_viewport().set_input_as_handled()
+
 func _request_close() -> void:
 	if not _overlay_mode:
 		return
+	if _audio != null:
+		_audio.play_ui_back()
 	close_requested.emit()
 
 func _apply_overlay_presentation() -> void:
 	overlay_scrim.visible = _overlay_mode
-	floating_surface.visible = _overlay_mode
+	floating_surface.visible = true
 	close_overlay.visible = _overlay_mode
 	var backdrop := get_node_or_null("Backdrop") as CanvasItem
-	var scenery := get_node_or_null("Scenery") as CanvasItem
 	if backdrop != null:
 		backdrop.visible = not _overlay_mode
-	if scenery != null:
-		scenery.visible = not _overlay_mode
 
 func _select_relative_contract(delta: int) -> void:
 	if _viewing_endless:
@@ -393,6 +588,9 @@ func _change_locale(locale: String) -> void:
 func _on_locale_changed(_locale: String) -> void:
 	_refresh_all()
 
+func _on_audio_changed(_master_linear: float) -> void:
+	_update_volume_value()
+
 func _on_progression_changed(_snapshot: Dictionary) -> void:
 	_refresh_all()
 
@@ -412,15 +610,13 @@ func _refresh_header() -> void:
 	%CompanyLabel.text = tr("HQ_COMPANY")
 	close_overlay.text = tr("HQ_CLOSE")
 	%DeskLabel.text = tr("HQ_DESK")
+	%SettingsButton.text = tr("HQ_SETTINGS")
+	%SettingsTitle.text = tr("HQ_SETTINGS")
+	%AudioLabel.text = tr("HQ_SETTINGS_AUDIO")
+	%SettingsClose.text = tr("HQ_SETTINGS_DONE")
 	credits_label.text = tr("HQ_CREDITS_FMT") % _progression.get_credits()
-	rank_label.text = tr("HQ_RANK_FMT") % tr(_progression.get_rank_display_name_key())
-
-	var progress := _progression.get_rank_progress()
-	if bool(progress["is_max_rank"]):
-		xp_label.text = tr("HQ_XP_MAX_FMT") % int(progress["current_xp"])
-	else:
-		xp_label.text = tr("HQ_XP_FMT") % [int(progress["current_xp"]), int(progress["next_min_xp"])]
 	%LanguageLabel.text = tr("HQ_LANGUAGE")
+	_update_volume_value()
 
 func _refresh_tabs() -> void:
 	contracts_tab.text = tr("HQ_TAB_CONTRACTS")
@@ -428,6 +624,7 @@ func _refresh_tabs() -> void:
 	career_tab.text = tr("HQ_TAB_CAREER")
 	ship_tab.text = tr("HQ_TAB_SHIP")
 	discovery_tab.text = tr("HQ_TAB_DISCOVERY")
+	discovery_tab.visible = _progression.get_discovery_count() > 0
 
 func _refresh_contracts() -> void:
 	var sector := _sector_plan["sector"] as Dictionary
@@ -442,8 +639,9 @@ func _refresh_contracts() -> void:
 
 	%ContractsTitle.text = tr("HQ_CONTRACTS_TITLE")
 	%ContractsSubtitle.text = tr("HQ_CONTRACTS_SUBTITLE")
-	previous_contract.text = tr("HQ_CONTRACT_PREVIOUS")
-	next_contract.text = tr("HQ_CONTRACT_NEXT")
+	previous_contract.text = "<  %s" % tr("HQ_CONTRACT_PREVIOUS")
+	next_contract.text = "%s  >" % tr("HQ_CONTRACT_NEXT")
+	endless_contract.visible = _progression.is_endless_unlocked()
 	if _viewing_endless:
 		contract_state.text = tr("HQ_ENDLESS_AVAILABLE") if unlocked else tr("HQ_CONTRACT_LOCKED")
 		contract_position.text = tr("HQ_ENDLESS_INDEX_FMT") % [_endless_number, int(sector["seed"])]
@@ -466,7 +664,14 @@ func _refresh_contracts() -> void:
 		tr(String(contract["description_key"])),
 	]
 	contract_target.text = _contract_target_text(contract_ref, contract, multiplier)
-	contract_risk.text = tr(_risk_key(int(sector["difficulty"])))
+	var difficulty := int(sector["difficulty"])
+	contract_risk.text = tr(_risk_key(difficulty))
+	if difficulty <= 3:
+		risk_icon.texture = STATUS_GREEN
+	elif difficulty <= 7:
+		risk_icon.texture = STATUS_YELLOW
+	else:
+		risk_icon.texture = STATUS_RED
 	contract_payout.text = tr("HQ_CONTRACT_PAY_FMT") % [base_pay, perfect_bonus]
 	%ContractShipName.text = tr("OPS_SHIP_NAME")
 	%ContractShipStatus.text = tr("HQ_SHIP_READY")
@@ -478,11 +683,6 @@ func _refresh_contracts() -> void:
 		tr(String(requirement["display_name_key"])),
 		int(access["min_xp"]),
 	]
-	contract_state.add_theme_color_override(
-		"font_color",
-		Color("#79e6c4") if unlocked else Color("#ffc857")
-	)
-
 	var result := _progression.get_last_contract_result()
 	last_result.visible = not result.is_empty()
 	if not result.is_empty():
@@ -509,6 +709,7 @@ func _refresh_upgrades() -> void:
 		var card := UPGRADE_CARD_SCENE.instantiate() as HqUpgradeCard
 		assert(card != null, "Upgrade card scene must instantiate.")
 		upgrade_grid.add_child(card)
+		_wire_button_feedback(card)
 
 		var id := String(definition["id"])
 		var level := _progression.get_upgrade_level(id)
@@ -572,8 +773,15 @@ func _refresh_career() -> void:
 
 	var ranks := _registry.get_progression("career_ranks").get("ranks", []) as Array
 	var current_rank := _progression.get_rank_id()
-	for value in ranks:
-		var rank := value as Dictionary
+	var current_index := 0
+	for index in range(ranks.size()):
+		if String((ranks[index] as Dictionary)["id"]) == current_rank:
+			current_index = index
+			break
+	for index in range(ranks.size()):
+		if index != current_index and index != current_index + 1:
+			continue
+		var rank := ranks[index] as Dictionary
 		var row := RANK_ROW_SCENE.instantiate() as HqRankRow
 		assert(row != null, "Rank row scene must instantiate.")
 		career_list.add_child(row)
@@ -641,27 +849,20 @@ func _populate_cosmetic_options(container: GridContainer, category: String) -> v
 	for option in _progression.get_cosmetic_options(category):
 		var cosmetic_id := String(option["id"])
 		var unlocked := _progression.is_cosmetic_unlocked(category, cosmetic_id)
+		if not unlocked:
+			continue
 		var selected := cosmetic_id == equipped
 		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
 		assert(button != null, "Cosmetic option must use OccChromeButton.")
-		button.custom_minimum_size = Vector2(0, 44)
+		button.custom_minimum_size = Vector2(0, 46)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.base_tint = OccPalette.MINT if selected else OccPalette.CYAN
-		button.disabled = not unlocked
-		button.modulate.a = 1.0 if unlocked else 0.48
+		button.emphasis = selected
 
 		var name := tr(String(option["display_name_key"]))
-		if selected:
-			button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % name
-		elif unlocked:
-			button.text = name
-		else:
-			button.text = tr("HQ_COSMETIC_LOCKED_FMT") % name
-			var rank_id := String(option["unlock_rank"])
-			button.tooltip_text = tr("HQ_COSMETIC_UNLOCK_RANK_FMT") % tr(_rank_display_key(rank_id))
-
+		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % name if selected else name
 		button.pressed.connect(_equip_cosmetic.bind(category, cosmetic_id))
 		container.add_child(button)
+		_wire_button_feedback(button)
 
 func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 	if not _progression.equip_cosmetic(category, cosmetic_id):
@@ -699,6 +900,7 @@ func _refresh_discovery() -> void:
 	for child in discovery_list.get_children():
 		child.queue_free()
 
+	var discovery_index := 0
 	for salvage_id in discoveries:
 		if not _registry.has_salvage(salvage_id):
 			continue
@@ -716,6 +918,8 @@ func _refresh_discovery() -> void:
 			tr(rarity_key),
 			WorldVisualLanguage.salvage_rarity_color(definition.rarity)
 		)
+		card.call_deferred("reveal", minf(float(discovery_index) * 0.035, 0.24))
+		discovery_index += 1
 
 func _rarity_key(rarity: String) -> String:
 	match rarity:
@@ -746,3 +950,68 @@ func _category_key(category: String) -> String:
 			return "CATEGORY_PROPULSION"
 		_:
 			return "CATEGORY_SCRAP"
+
+
+func _open_settings() -> void:
+	settings_layer.visible = true
+	settings_layer.modulate.a = 0.0
+	_update_volume_value()
+	settings_close.grab_focus()
+	var tween := create_tween()
+	tween.tween_property(settings_layer, "modulate:a", 1.0, 0.14).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+func _close_settings() -> void:
+	if _audio != null:
+		_audio.play_ui_back()
+	var tween := create_tween()
+	tween.tween_property(settings_layer, "modulate:a", 0.0, 0.10).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.tween_callback(func() -> void:
+		settings_layer.visible = false
+		settings_layer.modulate.a = 1.0
+		settings_button.grab_focus()
+	)
+
+func _adjust_volume(delta: float) -> void:
+	if _settings == null:
+		return
+	_settings.set_master_audio_linear(clampf(_settings.master_audio_linear + delta, 0.0, 1.0))
+	_update_volume_value()
+
+func _update_volume_value() -> void:
+	if volume_value == null:
+		return
+	var linear := _settings.master_audio_linear if _settings != null else 1.0
+	volume_value.text = "%d%%" % int(round(linear * 100.0))
+
+func _wire_button_feedback(root: Node) -> void:
+	var buttons: Array[Button] = []
+	if root is Button:
+		buttons.append(root as Button)
+	for node in root.find_children("*", "Button", true, false):
+		if node is Button:
+			buttons.append(node as Button)
+	for button in buttons:
+		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		if button.has_meta("occ_feedback_wired"):
+			continue
+		button.set_meta("occ_feedback_wired", true)
+		button.mouse_entered.connect(_play_ui_hover)
+		if button != close_overlay and button != settings_close:
+			button.pressed.connect(_play_ui_click)
+		button.button_down.connect(_on_ui_button_down.bind(button))
+		button.button_up.connect(_on_ui_button_up.bind(button))
+		button.mouse_exited.connect(_on_ui_button_up.bind(button))
+
+func _play_ui_hover() -> void:
+	if _audio != null:
+		_audio.play_ui_hover()
+
+func _play_ui_click() -> void:
+	if _audio != null:
+		_audio.play_ui_click()
+
+func _on_ui_button_down(_button: Button) -> void:
+	OccCursorSkin.set_pressed()
+
+func _on_ui_button_up(_button: Button) -> void:
+	OccCursorSkin.set_pointing()
