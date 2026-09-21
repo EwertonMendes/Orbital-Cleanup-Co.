@@ -812,6 +812,8 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("WarpTravelTransition", true, false) is WarpTravelTransition, "Flight requires reusable warp departure and arrival feedback.")
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
 	_expect(screen.find_child("BiomeThumbnail", true, false) is TextureRect, "Flight HUD must show the current biome primary artwork.")
+	_expect(screen.find_child("MissionChrome", true, false) is NinePatchRect, "Current-flight card must use the shared Kenney panel chrome.")
+	_expect(screen.find_child("CargoChrome", true, false) is NinePatchRect, "Cargo card must use the shared Kenney panel chrome.")
 	var hud_root := screen.find_child("HudRoot", true, false) as Control
 	_expect(hud_root != null and hud_root.theme != null, "Flight HudRoot must own the flight HUD theme because CanvasLayer interrupts Control theme inheritance.")
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
@@ -845,6 +847,9 @@ func _validate_flight_screen() -> void:
 	_expect("_refresh_biome_thumbnail" in flight_source and 'visual_profile.get("primary_asset", "")' in flight_source, "Flight biome thumbnail must come from the same data-driven primary artwork used in the world.")
 	var flight_theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_flight_hud_theme.tres")
 	_expect("HudThumbnailEmpty" in flight_theme_source, "Biome preview must not draw a second internal cyan frame.")
+	_expect("bg_color = Color(0.006, 0.008, 0.011, 0.97)" in flight_theme_source, "Flight status cards must use the near-black dark-mode surface.")
+	_expect("border_color = Color(0.92, 0.95, 0.97, 0.94)" in flight_theme_source, "Flight status cards must keep a bright neutral border instead of the legacy cyan frame.")
+	_expect("panel_glass_notches.png" in flight_scene_source, "Flight status cards must reuse the existing Kenney glass-notch panel chrome.")
 	_expect("Blue/Double/bar_round_gloss_large.png" in flight_theme_source, "Operations requires a clearly clickable blue Kenney action state.")
 	_expect('HudActionButton/styles/normal = SubResource("HudButtonAction")' in flight_theme_source, "Operations must render with the full blue action surface, not the dark outline-only state.")
 	_expect("Red/Double/bar_round_gloss_large.png" in flight_theme_source, "Abort Contract requires a clearly clickable red Kenney state.")
