@@ -33,6 +33,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 var _context: Dictionary = {}
 var _router: SceneRouter
 var _input_service: InputService
+var _audio: AudioService
 var _platform: PlatformService
 var _ads: AdService
 var _progression: ProgressionService
@@ -53,6 +54,7 @@ func configure(context: Dictionary) -> void:
 	_contract_active = not bool(context.get("free_roam", false))
 	_router = context.get("router") as SceneRouter
 	_input_service = context.get("input") as InputService
+	_audio = context.get("audio") as AudioService
 	_platform = context.get("platform") as PlatformService
 	_ads = context.get("ads") as AdService
 	_progression = context.get("progression") as ProgressionService
@@ -145,6 +147,8 @@ func _ready() -> void:
 	resized.connect(_apply_responsive_layout)
 	return_button.pressed.connect(_return_to_operations)
 	operations_button.pressed.connect(_open_operations)
+	_wire_hud_button_feedback(return_button)
+	_wire_hud_button_feedback(operations_button)
 	player_ship.movement_started.connect(_schedule_hint_fade)
 	player_ship.cargo_changed.connect(_on_cargo_changed)
 	player_ship.tractor_target_changed.connect(_on_tractor_target_changed)
@@ -237,6 +241,16 @@ func _apply_debug_landmark_focus() -> void:
 		target.global_position.x,
 		target.global_position.y,
 	])
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed("ui_cancel"):
+		return
+	if _operations_overlay != null and is_instance_valid(_operations_overlay):
+		return
+	if _contract_active or _travel_in_progress:
+		return
+	_open_operations()
+	get_viewport().set_input_as_handled()
 
 func _exit_tree() -> void:
 	_stop_gameplay()
@@ -403,6 +417,22 @@ func _on_operations_deployment_requested(target_context: Dictionary) -> void:
 	assert(scene != null, "Contract flight screen must be loadable.")
 	target_context["travel_handoff"] = true
 	_router.show_screen(scene, target_context)
+
+func _wire_hud_button_feedback(button: Button) -> void:
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	button.mouse_entered.connect(_play_hud_hover)
+	button.pressed.connect(_play_hud_click)
+	button.button_down.connect(OccCursorSkin.set_pressed)
+	button.button_up.connect(OccCursorSkin.set_pointing)
+	button.mouse_exited.connect(OccCursorSkin.set_pointing)
+
+func _play_hud_hover() -> void:
+	if _audio != null:
+		_audio.play_ui_hover()
+
+func _play_hud_click() -> void:
+	if _audio != null:
+		_audio.play_ui_click()
 
 func _stop_gameplay() -> void:
 	if not _gameplay_active:

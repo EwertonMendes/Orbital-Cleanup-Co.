@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
 [ext_resource type="PackedScene" path="res://src/game/ship/player_ship.tscn" id="3"]
-[ext_resource type="Theme" path="res://src/ui/themes/occ_theme.tres" id="4"]
+[ext_resource type="Theme" path="res://src/ui/themes/occ_operations_theme.tres" id="4"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/station_a.png" id="5"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/panel_glass_notches.png" id="6"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="7"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/squareBlue.png" id="6"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Blue/Double/bar_round_gloss_large.png" id="7"]
 [ext_resource type="Script" path="res://src/game/salvage/unload_zone.gd" id="8"]
 [ext_resource type="PackedScene" path="res://src/game/sector/sector_runtime.tscn" id="9"]
 [ext_resource type="Script" path="res://src/game/visual/ambient_orbit_layer.gd" id="10"]
@@ -164,7 +164,6 @@ offset_bottom = 120.0
 theme_override_colors/font_color = Color(0.68, 1, 0.84, 0.98)
 theme_override_colors/font_outline_color = Color(0.01, 0.03, 0.04, 0.92)
 theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 13
 text = "CARGO DEPOT"
 horizontal_alignment = 1
 
@@ -269,7 +268,7 @@ vertical = false
 unique_name_in_owner = true
 custom_minimum_size = Vector2(410, 112)
 layout_mode = 2
-theme_override_styles/panel = SubResource("MissionPanel")
+theme_type_variation = &"CardPanel"
 
 [node name="Margin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard"]
 layout_mode = 2
@@ -287,7 +286,6 @@ custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 
 [node name="Asset" type="TextureRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Badge"]
-modulate = Color(0.42, 0.86, 1, 0.72)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -318,25 +316,24 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 2
 
 [node name="FlightEyebrow" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
 theme_override_font_sizes/font_size = 11
 text = "TRAINING FLIGHT"
 
 [node name="FlightTitle" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
+theme_type_variation = &"SectionTitle"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_outline_color = Color(0.0, 0.02, 0.04, 0.78)
-theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 19
 text = "Earth Orbit · Route 01"
 autowrap_mode = 2
 
 [node name="CleanupStatus" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.67, 0.88, 0.93, 1)
 theme_override_font_sizes/font_size = 11
 text = "SECTOR CLEANLINESS · 0% / 70%"
 
@@ -347,15 +344,14 @@ layout_mode = 2
 show_percentage = false
 
 [node name="EnvironmentStatus" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.47, 0.90, 0.76, 1)
 theme_override_font_sizes/font_size = 10
 text = "ENVIRONMENT · STABLE ORBIT"
 clip_text = true
 
 [node name="Accent" type="TextureRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
-modulate = Color(0.34, 0.86, 0.98, 0.7)
 custom_minimum_size = Vector2(64, 16)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -372,7 +368,7 @@ size_flags_horizontal = 3
 unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 88)
 layout_mode = 2
-theme_override_styles/panel = SubResource("CargoPanel")
+theme_type_variation = &"CardPanel"
 
 [node name="CargoMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard"]
 layout_mode = 2
@@ -386,16 +382,15 @@ layout_mode = 2
 theme_override_constants/separation = 5
 
 [node name="CargoLabel" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard/CargoMargin/CargoContent"]
+theme_type_variation = &"SectionTitle"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.82, 0.4, 1)
-theme_override_font_sizes/font_size = 13
 text = "CARGO · 0 / 12"
 
 [node name="BeamStatus" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard/CargoMargin/CargoContent"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.63, 0.86, 0.94, 1)
 theme_override_font_sizes/font_size = 11
 text = "TRACTOR · SCANNING"
 clip_text = true
@@ -407,23 +402,17 @@ layout_mode = 2
 show_percentage = false
 
 [node name="ReturnButton" type="Button" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
+theme_type_variation = &"SecondaryButton"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(176, 54)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = SubResource("ReturnButtonNormal")
-theme_override_styles/hover = SubResource("ReturnButtonHover")
-theme_override_styles/pressed = SubResource("ReturnButtonHover")
 text = "RETURN"
 
 [node name="OperationsButton" type="Button" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
+theme_type_variation = &"SecondaryButton"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(156, 54)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("ReturnButtonNormal")
-theme_override_styles/hover = SubResource("ReturnButtonHover")
-theme_override_styles/pressed = SubResource("ReturnButtonHover")
 text = "OPERATIONS"
 
 [node name="MainSpacer" type="Control" parent="HUD/HudRoot/SafeArea/Layout"]
@@ -438,7 +427,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(390, 42)
 layout_mode = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("ToastPanelStyle")
+theme_type_variation = &"CardPanel"
 
 [node name="ToastMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/ToastCenter/ToastPanel"]
 layout_mode = 2
@@ -448,9 +437,9 @@ theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 7
 
 [node name="ToastLabel" type="Label" parent="HUD/HudRoot/SafeArea/Layout/ToastCenter/ToastPanel/ToastMargin"]
+theme_type_variation = &"UiBody"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.68, 0.98, 0.83, 1)
 theme_override_font_sizes/font_size = 12
 text = "RECOVERED"
 horizontal_alignment = 1
@@ -464,7 +453,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(520, 60)
 layout_mode = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("HintPanelStyle")
+theme_type_variation = &"CardPanel"
 
 [node name="HintMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/HintCenter/HintPanel"]
 layout_mode = 2
@@ -474,9 +463,9 @@ theme_override_constants/margin_right = 18
 theme_override_constants/margin_bottom = 8
 
 [node name="HintLabel" type="Label" parent="HUD/HudRoot/SafeArea/Layout/HintCenter/HintPanel/HintMargin"]
+theme_type_variation = &"UiBodyMuted"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.84, 0.90, 1)
 theme_override_font_sizes/font_size = 12
 text = "Point to steer · WASD / arrows also work"
 horizontal_alignment = 1
