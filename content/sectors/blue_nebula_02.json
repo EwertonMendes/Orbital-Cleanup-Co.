@@ -22,8 +22,9 @@
     "derelict_explorer"
   ],
   "contract": {
-    "type": "standard_cleanup",
-    "target_percent": 83
+    "type": "priority_recovery",
+    "target_count": 1,
+    "target_salvage_id": "survey_beacon"
   },
   "modifiers": [
     "rich_recovery"

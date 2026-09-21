@@ -22,8 +22,8 @@
     "service_satellite"
   ],
   "contract": {
-    "type": "standard_cleanup",
-    "target_percent": 75
+    "type": "recovery_run",
+    "target_count": 6
   },
   "modifiers": [
     "dense_debris"

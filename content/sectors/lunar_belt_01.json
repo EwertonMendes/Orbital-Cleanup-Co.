@@ -22,8 +22,8 @@
     "mining_rig"
   ],
   "contract": {
-    "type": "standard_cleanup",
-    "target_percent": 74
+    "type": "recovery_run",
+    "target_count": 7
   },
   "modifiers": [
     "dense_debris"

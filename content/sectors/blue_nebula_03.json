@@ -23,8 +23,8 @@
     "comms_array"
   ],
   "contract": {
-    "type": "standard_cleanup",
-    "target_percent": 88
+    "type": "full_cleanup",
+    "target_percent": 100
   },
   "modifiers": [
     "valuable_salvage",

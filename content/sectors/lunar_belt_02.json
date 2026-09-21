@@ -23,8 +23,8 @@
     "relay_satellite"
   ],
   "contract": {
-    "type": "standard_cleanup",
-    "target_percent": 78
+    "type": "full_cleanup",
+    "target_percent": 100
   },
   "modifiers": [
     "meteor_front"
