@@ -1,10 +1,8 @@
 extends Node2D
 class_name SectorBackdrop
 
-const PLANET_SHADER := preload("res://src/game/visual/planet_surface.gdshader")
 const BACKGROUND_EXTENT := 18000.0
 const STAR_EXTENT := 11500.0
-const STAR_COUNT := 1450
 
 var _play_bounds := Rect2(-4800.0, -3000.0, 9600.0, 6000.0)
 var _background_color := Color("#040b13")
@@ -76,14 +74,15 @@ func _build_star_multimesh() -> void:
 	var texture := load("res://assets/third_party/kenney_simple_space/scenery/star_small.png") as Texture2D
 	assert(texture != null, "SectorBackdrop requires the curated star texture.")
 
+	var star_count := RuntimeQuality.star_count()
 	var multimesh := MultiMesh.new()
 	multimesh.transform_format = MultiMesh.TRANSFORM_2D
 	multimesh.use_colors = true
-	multimesh.instance_count = STAR_COUNT
+	multimesh.instance_count = star_count
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 31051999
-	for index in range(STAR_COUNT):
+	for index in range(star_count):
 		var bright := rng.randf() > 0.82
 		var position := Vector2(
 			rng.randf_range(-STAR_EXTENT, STAR_EXTENT),
@@ -143,10 +142,11 @@ func _draw_planet_horizon(
 	draw_arc(center, radius - 34.0, deg_to_rad(210.0), deg_to_rad(328.0), 100, Color(atmosphere, 0.055), 1.0, true)
 
 func _draw_soft_cloud(center: Vector2, radius: float, color: Color, strength: float) -> void:
-	for layer in range(8, 0, -1):
-		var ratio := float(layer) / 8.0
+	var layer_count := RuntimeQuality.soft_cloud_layers()
+	for layer in range(layer_count, 0, -1):
+		var ratio := float(layer) / float(layer_count)
 		var layer_radius := radius * (0.34 + ratio * 0.66)
-		var alpha := strength * (0.018 + (1.0 - ratio) * 0.026)
+		var alpha := strength * (0.030 + (1.0 - ratio) * 0.040)
 		draw_circle(center, layer_radius, Color(color, alpha))
 
 func _draw_glint(position: Vector2, size: float, color: Color) -> void:
@@ -171,25 +171,8 @@ func _rebuild_planet() -> void:
 	_planet.texture = texture
 	_planet.centered = true
 	_planet.z_index = 1
-	_planet_material = ShaderMaterial.new()
-	_planet_material.shader = PLANET_SHADER
-	_planet_material.set_shader_parameter(
-		"atmosphere_color",
-		Color.from_string(
-			String(_visual_profile.get("atmosphere_color", "#72d7ff")),
-			Color("#72d7ff")
-		)
-	)
 	_planet_rotation_speed = float(_visual_profile.get("planet_rotation_speed", 0.006))
-	_planet_material.set_shader_parameter(
-		"atmosphere_strength",
-		float(_visual_profile.get("atmosphere_strength", 0.42))
-	)
-	_planet_material.set_shader_parameter(
-		"shimmer_strength",
-		float(_visual_profile.get("shimmer_strength", 0.08))
-	)
-	_planet.material = _planet_material
+	_planet.material = null
 	add_child(_planet)
 	_update_planet_parallax()
 

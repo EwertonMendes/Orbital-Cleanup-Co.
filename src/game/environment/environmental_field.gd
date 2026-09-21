@@ -88,7 +88,7 @@ func contains_world_position(world_position: Vector2, padding: float = 0.0) -> b
 func _process(delta: float) -> void:
 	_phase = fmod(_phase + delta, TAU * 100.0)
 	_redraw_accumulator += delta
-	if _redraw_accumulator >= 1.0 / 15.0:
+	if _redraw_accumulator >= RuntimeQuality.environmental_field_redraw_interval():
 		_redraw_accumulator = 0.0
 		queue_redraw()
 
@@ -164,10 +164,10 @@ func _draw_corridor() -> void:
 
 func _draw_current() -> void:
 	var half := _size * 0.5
-	for row in range(5):
-		var y := lerpf(-half.y * 0.75, half.y * 0.75, float(row) / 4.0)
-		for column in range(5):
-			var t := fposmod(float(column) / 5.0 + _phase * 0.06 + row * 0.07, 1.0)
+	for row in range(3):
+		var y := lerpf(-half.y * 0.72, half.y * 0.72, float(row) / 2.0)
+		for column in range(4):
+			var t := fposmod(float(column) / 4.0 + _phase * 0.06 + row * 0.07, 1.0)
 			var x := lerpf(-half.x, half.x, t)
 			var alpha := 0.07 + _strength * 0.08
 			draw_line(Vector2(x - 38.0, y), Vector2(x + 22.0, y), Color(_field_color, alpha), 2.0, true)
@@ -176,12 +176,12 @@ func _draw_current() -> void:
 	draw_rect(Rect2(-half, _size), Color(_secondary_color, 0.025), true)
 
 func _draw_visibility_pocket() -> void:
-	for index in range(8, 0, -1):
-		var ratio := float(index) / 8.0
+	for index in range(3, 0, -1):
+		var ratio := float(index) / 3.0
 		var radius := _radius * ratio
-		var alpha := 0.012 + (1.0 - ratio) * 0.015
+		var alpha := 0.020 + (1.0 - ratio) * 0.022
 		draw_circle(Vector2.ZERO, radius, Color(_secondary_color, alpha))
-	draw_arc(Vector2.ZERO, _radius, _phase * 0.06, _phase * 0.06 + 2.3, 36, Color(_field_color, 0.07), 1.2, true)
+	draw_arc(Vector2.ZERO, _radius, _phase * 0.06, _phase * 0.06 + 2.3, 24, Color(_field_color, 0.07), 1.2, true)
 
 func _draw_interference() -> void:
 	for index in range(4):

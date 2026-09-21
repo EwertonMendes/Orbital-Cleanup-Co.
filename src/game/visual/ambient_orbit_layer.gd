@@ -34,7 +34,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_phase = fmod(_phase + delta, TAU * 100.0)
 	_redraw_accumulator += delta
-	if _redraw_accumulator >= 1.0 / 30.0:
+	if _redraw_accumulator >= RuntimeQuality.ambient_redraw_interval():
 		_redraw_accumulator = 0.0
 		queue_redraw()
 
@@ -45,7 +45,11 @@ func _rebuild_dynamic_content() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 771904
 	var dust_density := clampf(float(_visual_profile.get("dust_density", 1.0)), 0.25, 1.8)
-	var mote_count := clampi(int(round(float(MOTE_COUNT) * dust_density)), 12, 38)
+	var mote_count := clampi(
+		int(round(float(MOTE_COUNT) * dust_density)),
+		12,
+		RuntimeQuality.ambient_mote_cap()
+	)
 	for index in range(mote_count):
 		var center := Vector2(
 			rng.randf_range(_play_bounds.position.x, _play_bounds.end.x),

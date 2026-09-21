@@ -108,6 +108,7 @@ REQUIRED = [
     "tools/validate_content.py",
     "src/game/visual/world_post_process.gdshader",
     "src/game/visual/world_post_process.gd",
+    "src/core/performance/runtime_quality.gd",
     "src/game/visual/planet_surface.gdshader",
     "src/game/environment/environmental_field.gd",
     "src/game/environment/environment_runtime.gd",
