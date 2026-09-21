@@ -144,8 +144,22 @@ func _validate_world_visual_language() -> void:
 	_expect(landmark_packed != null, "SectorLandmark scene must load.")
 	if landmark_packed != null:
 		var landmark := landmark_packed.instantiate()
+		_expect(landmark is StaticBody2D, "Landmarks must participate in navigation as static structures.")
 		_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
+		_expect(landmark.find_child("CollisionShape", true, false) is CollisionShape2D, "Landmarks require generic collision geometry.")
 		landmark.free()
+
+	for asset_path in [
+		"res://assets/original/landmarks/service_satellite.svg",
+		"res://assets/original/landmarks/cargo_waystation.svg",
+		"res://assets/original/landmarks/relay_satellite.svg",
+		"res://assets/original/landmarks/mining_rig.svg",
+		"res://assets/original/landmarks/fractured_moonlet.svg",
+		"res://assets/original/landmarks/comms_array.svg",
+		"res://assets/original/landmarks/research_outpost.svg",
+		"res://assets/original/landmarks/derelict_explorer.svg",
+	]:
+		_expect(load(asset_path) is Texture2D, "Original landmark SVG must import as texture: %s" % asset_path)
 
 	var recovery_color := WorldVisualLanguage.salvage_recovery_color()
 	var hazard_color := WorldVisualLanguage.hazard_color()
@@ -192,6 +206,7 @@ func _validate_content_runtime() -> void:
 		var contract := registry.get_contract(String(contract_ref["type"]))
 		authored_kinds[String(contract["kind"])] = true
 		_validate_contract_plan_feasibility(authored_plan, registry)
+		_validate_landmark_plan(authored_plan)
 	_expect(authored_kinds.size() == 5, "Authored content must exercise all five contract kinds.")
 
 	var plan_a := generator.generate("earth_training_01")
@@ -217,6 +232,36 @@ func _validate_content_runtime() -> void:
 
 	var bounds := plan_a["play_bounds"] as Rect2
 	_expect(bounds.size.x >= 9000.0 and bounds.size.y >= 5500.0, "Generated training sector must preserve large play bounds.")
+
+func _validate_landmark_plan(plan: Dictionary) -> void:
+	for landmark_value in plan["landmark_spawns"] as Array:
+		var landmark := landmark_value as Dictionary
+		var definition := landmark["definition"] as Dictionary
+		var asset_path := String(definition.get("sprite", ""))
+		_expect(
+			asset_path.begins_with("res://assets/original/landmarks/"),
+			"Authored landmarks must use project-owned OCC landmark art."
+		)
+		var collision := definition.get("collision", {}) as Dictionary
+		_expect(
+			String(collision.get("shape", "")) in ["circle", "box"],
+			"Landmark collision must be data-driven."
+		)
+		var landmark_position := landmark["position"] as Vector2
+		var reserved_radius := float(definition.get("reserved_radius", 0.0))
+		_expect(reserved_radius >= 80.0, "Landmark requires meaningful navigation clearance.")
+		for salvage_value in plan["salvage_spawns"] as Array:
+			var salvage := salvage_value as Dictionary
+			_expect(
+				landmark_position.distance_to(salvage["position"] as Vector2) >= reserved_radius,
+				"Salvage cannot spawn inside landmark reserved clearance."
+			)
+		for obstacle_value in plan["obstacle_spawns"] as Array:
+			var obstacle := obstacle_value as Dictionary
+			_expect(
+				landmark_position.distance_to(obstacle["position"] as Vector2) >= reserved_radius,
+				"Collision hazards cannot spawn inside landmark reserved clearance."
+			)
 
 func _validate_environment_fields() -> void:
 	var registry := ContentRegistry.new()
