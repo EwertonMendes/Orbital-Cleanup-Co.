@@ -62,3 +62,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+
+[node name="TravelHandoffLayer" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="TravelCover" type="ColorRect" parent="TravelHandoffLayer"]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.006, 0.028, 0.05, 1)
