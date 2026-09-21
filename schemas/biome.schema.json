@@ -7,6 +7,8 @@
     "id",
     "display_name_key",
     "palette",
+    "visual_profile",
+    "environment",
     "salvage_tables",
     "landmarks",
     "modifiers",
@@ -125,6 +127,262 @@
           "scale_max": {
             "type": "number",
             "exclusiveMinimum": 0
+          }
+        }
+      }
+    },
+    "visual_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "planet_asset",
+        "planet_scale",
+        "planet_anchor",
+        "planet_parallax",
+        "planet_rotation_speed",
+        "atmosphere_color",
+        "atmosphere_strength",
+        "shimmer_strength",
+        "traffic_count",
+        "dust_density"
+      ],
+      "properties": {
+        "planet_asset": {
+          "type": "string",
+          "pattern": "^res://assets/original/planets/.+\\.svg$"
+        },
+        "planet_scale": {
+          "type": "number",
+          "minimum": 0.2,
+          "maximum": 5
+        },
+        "planet_anchor": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "planet_parallax": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.5
+        },
+        "planet_rotation_speed": {
+          "type": "number",
+          "minimum": -0.08,
+          "maximum": 0.08
+        },
+        "atmosphere_color": {
+          "type": "string"
+        },
+        "atmosphere_strength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "shimmer_strength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.5
+        },
+        "traffic_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 24
+        },
+        "dust_density": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "salvage_mass_multiplier",
+        "volumes"
+      ],
+      "properties": {
+        "salvage_mass_multiplier": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 2
+        },
+        "volumes": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "count_range",
+              "shape",
+              "strength_range",
+              "placement",
+              "color",
+              "secondary_color"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "gravity_well",
+                  "safe_corridor",
+                  "drift_current",
+                  "visibility_pocket",
+                  "scanner_interference",
+                  "tractor_distortion",
+                  "magnetic_zone"
+                ]
+              },
+              "count_range": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8
+                  }
+                ],
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "shape": {
+                "enum": [
+                  "circle",
+                  "box"
+                ]
+              },
+              "strength_range": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number",
+                    "minimum": 0.05,
+                    "maximum": 1
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 0.05,
+                    "maximum": 1
+                  }
+                ],
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "radius_range": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number",
+                    "minimum": 80,
+                    "maximum": 2000
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 80,
+                    "maximum": 2000
+                  }
+                ],
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "length_range": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number",
+                    "minimum": 200,
+                    "maximum": 8000
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 200,
+                    "maximum": 8000
+                  }
+                ],
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "width_range": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "number",
+                    "minimum": 100,
+                    "maximum": 2000
+                  },
+                  {
+                    "type": "number",
+                    "minimum": 100,
+                    "maximum": 2000
+                  }
+                ],
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "placement": {
+                "enum": [
+                  "random",
+                  "depot"
+                ]
+              },
+              "color": {
+                "type": "string"
+              },
+              "secondary_color": {
+                "type": "string"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "shape": {
+                      "const": "circle"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "radius_range"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "shape": {
+                      "const": "box"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "length_range",
+                    "width_range"
+                  ]
+                }
+              }
+            ]
           }
         }
       }
