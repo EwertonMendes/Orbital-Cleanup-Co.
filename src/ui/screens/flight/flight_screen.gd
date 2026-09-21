@@ -182,7 +182,14 @@ func _ready() -> void:
 	if bool(_context.get("arrival_warp", false)):
 		_travel_in_progress = true
 		var direction_sign := -1.0 if int(_context.get("travel_direction", 1)) < 0 else 1.0
-		await warp_transition.play_arrival(player_ship, Vector2.RIGHT * direction_sign, _contract_active)
+		var arrival_direction := Vector2.RIGHT * direction_sign
+		if bool(_context.get("travel_handoff", false)):
+			warp_transition.prime_arrival(player_ship, arrival_direction, _contract_active)
+			await _router.finish_travel_handoff()
+			await warp_transition.play_primed_arrival()
+			_context.erase("travel_handoff")
+		else:
+			await warp_transition.play_arrival(player_ship, arrival_direction, _contract_active)
 		_travel_in_progress = false
 
 	if _contract_active:
@@ -317,6 +324,7 @@ func _return_to_operations() -> void:
 	if _platform != null:
 		_platform.track_event("contract_aborted", {"sector_id": _configured_sector_id})
 
+	await _router.begin_travel_handoff()
 	_route_to_home_orbit()
 
 func _route_to_home_orbit() -> void:
@@ -336,6 +344,7 @@ func _route_to_home_orbit() -> void:
 	return_context["free_roam"] = true
 	return_context["arrival_warp"] = true
 	return_context["travel_direction"] = -1
+	return_context["travel_handoff"] = true
 	_router.show_screen(scene, return_context)
 
 func _open_operations() -> void:
@@ -389,8 +398,10 @@ func _on_operations_deployment_requested(target_context: Dictionary) -> void:
 	_travel_in_progress = true
 	_stop_gameplay()
 	await warp_transition.play_departure(player_ship, Vector2.RIGHT)
+	await _router.begin_travel_handoff()
 	var scene := load(FLIGHT_SCREEN_PATH) as PackedScene
 	assert(scene != null, "Contract flight screen must be loadable.")
+	target_context["travel_handoff"] = true
 	_router.show_screen(scene, target_context)
 
 func _stop_gameplay() -> void:
