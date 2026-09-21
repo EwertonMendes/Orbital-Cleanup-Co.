@@ -86,6 +86,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var floating_surface: PanelContainer = %FloatingSurface
 @onready var settings_button: Button = %SettingsButton
 @onready var settings_layer: Control = %SettingsLayer
+@onready var settings_modal: PanelContainer = %SettingsModal
 @onready var settings_close: Button = %SettingsClose
 @onready var volume_down: Button = %VolumeDown
 @onready var volume_up: Button = %VolumeUp
@@ -188,7 +189,7 @@ func _validate_contracts() -> void:
 	assert(ship_panel != null and discovery_panel != null, "Headquarters future-facing panels are required.")
 	assert(discovery_empty_card != null and discovery_list != null, "Headquarters discovery catalog containers are required.")
 	assert(close_overlay != null and overlay_scrim != null and floating_surface != null, "Operations overlay chrome is required.")
-	assert(settings_button != null and settings_layer != null and settings_close != null, "Operations requires a dedicated settings panel.")
+	assert(settings_button != null and settings_layer != null and settings_modal != null and settings_close != null, "Operations requires a dedicated settings panel.")
 	assert(volume_down != null and volume_up != null and volume_value != null, "Operations settings require audio controls.")
 	assert(not _sector_plan.is_empty(), "Operations requires sector data.")
 
@@ -255,16 +256,17 @@ func _reveal_active_panel(panel: Control) -> void:
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
-	var compact := portrait or size.x < COMPACT_WIDTH
-	header.vertical = compact
+	var narrow := portrait or size.x < COMPACT_WIDTH
+	var compact := narrow or size.y < 520.0
+	header.vertical = narrow
 	main_row.vertical = compact
-	contract_hero.vertical = compact
-	ship_body.vertical = compact
-	tab_grid.columns = 3 if compact else 1
-	contract_selector.columns = 2 if compact else 4
-	upgrade_grid.columns = 1 if compact else 3
-	discovery_list.columns = 1 if compact else 2
-	content_shell.custom_minimum_size.y = 300.0 if compact else 470.0
+	contract_hero.vertical = narrow
+	ship_body.vertical = narrow
+	tab_grid.columns = 2 if size.x < 560.0 else (3 if compact else 1)
+	contract_selector.columns = 2 if narrow else 4
+	upgrade_grid.columns = 1 if narrow else 3
+	discovery_list.columns = 1 if narrow else 2
+	content_shell.custom_minimum_size.y = 260.0 if compact else 470.0
 
 	var horizontal_margin := 12 if compact else 22
 	var vertical_margin := 10 if compact else 20
@@ -278,6 +280,10 @@ func _apply_responsive_layout() -> void:
 	floating_surface.custom_minimum_size = Vector2(
 		minf(1120.0, available_width),
 		minf(650.0, available_height)
+	)
+	settings_modal.custom_minimum_size = Vector2(
+		minf(500.0, maxf(size.x - 20.0, 300.0)),
+		minf(330.0, maxf(size.y - 20.0, 260.0))
 	)
 
 func _deploy_training() -> void:
