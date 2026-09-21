@@ -3,6 +3,7 @@ class_name AppRoot
 
 const DEFAULT_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.tscn"
 const FLIGHT_SCREEN_PATH := "res://src/ui/screens/flight/flight_screen.tscn"
+const DEBRIEF_SCREEN_PATH := "res://src/ui/screens/debrief/contract_debrief_screen.tscn"
 const SECTOR_PREVIEW_SCREEN_PATH := "res://src/debug/sector_preview/sector_preview.tscn"
 
 @onready var build_info: BuildInfo = %BuildInfo
@@ -44,9 +45,64 @@ func _resolve_startup_route() -> Dictionary:
 		return {"screen_path": DEFAULT_SCREEN_PATH, "context": context}
 
 	var preview := platform_service.get_query_parameter("preview").to_lower()
+	var debrief := platform_service.get_query_parameter("debrief").to_lower()
 	var requested_sector := platform_service.get_query_parameter("sector")
 	var endless_text := platform_service.get_query_parameter("endless")
 	var seed_text := platform_service.get_query_parameter("seed")
+
+	if not debrief.is_empty():
+		var promoted := debrief in ["1", "true", "yes", "promotion", "promoted"]
+		var perfect := debrief in ["1", "true", "yes", "promotion", "promoted", "perfect"]
+		context["debrief_result"] = {
+			"completed": true,
+			"sector_id": "earth_training_02",
+			"contract_id": "recovery_run",
+			"contract_kind": "recovery",
+			"cleanup_percent": 100.0 if perfect else 82.0,
+			"perfect_cleanup": perfect,
+			"recovered_count": 9,
+			"base_pay": 270,
+			"salvage_credits": 390,
+			"perfect_bonus": 145 if perfect else 0,
+			"credits_awarded": 805 if perfect else 660,
+			"xp_awarded": 165 if perfect else 130,
+			"new_discoveries": ["navigation_core", "explorer_core"],
+		}
+		context["debrief_transition"] = {
+			"credits_before": 860,
+			"credits_after": 1665 if perfect else 1520,
+			"xp_before": 330 if promoted else 520,
+			"xp_after": 495 if promoted else 650,
+			"rank_before_id": "trainee" if promoted else "junior_cleaner",
+			"rank_after_id": "junior_cleaner",
+			"rank_before_key": "RANK_TRAINEE" if promoted else "RANK_JUNIOR_CLEANER",
+			"rank_after_key": "RANK_JUNIOR_CLEANER",
+			"rank_progress_before": {
+				"current_xp": 330 if promoted else 520,
+				"current_min_xp": 0 if promoted else 400,
+				"next_min_xp": 400 if promoted else 1100,
+				"is_max_rank": false,
+			},
+			"rank_progress_after": {
+				"current_xp": 495 if promoted else 650,
+				"current_min_xp": 400,
+				"next_min_xp": 1100,
+				"is_max_rank": false,
+			},
+			"promoted": promoted,
+			"unlocks": [
+				{"type": "cosmetic", "category": "paint", "id": "safety_amber", "display_name_key": "COSMETIC_PAINT_SAFETY_AMBER", "unlock_rank": "junior_cleaner"},
+				{"type": "cosmetic", "category": "trail", "id": "amber_comet", "display_name_key": "COSMETIC_TRAIL_AMBER_COMET", "unlock_rank": "junior_cleaner"},
+				{"type": "cosmetic", "category": "beam", "id": "amber_precision", "display_name_key": "COSMETIC_BEAM_AMBER_PRECISION", "unlock_rank": "junior_cleaner"},
+			] if promoted else [],
+		}
+		context["debrief_mission"] = {
+			"sector_display_name_key": "SECTOR_EARTH_TRAINING_02",
+			"biome_display_name_key": "BIOME_EARTH_ORBIT",
+		}
+		context["debrief_return_screen_path"] = DEFAULT_SCREEN_PATH
+		print("[QA] DEEP_LINK debrief=%s" % debrief)
+		return {"screen_path": DEBRIEF_SCREEN_PATH, "context": context}
 
 	if preview in ["1", "true", "yes"]:
 		context["debug_sector_id"] = requested_sector
