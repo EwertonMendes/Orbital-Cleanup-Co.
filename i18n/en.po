@@ -819,3 +819,24 @@ msgstr "NEW DISCOVERIES"
 
 msgid "DEBRIEF_CONTINUE"
 msgstr "CONTINUE TO HEADQUARTERS"
+
+msgid "HQ_CONTRACT_LOCKED"
+msgstr "LOCKED CONTRACT"
+
+msgid "HQ_LOCKED_RANK_FMT"
+msgstr "LOCKED · %s"
+
+msgid "HQ_CONTRACT_LOCK_REQUIREMENT_FMT"
+msgstr "Requires %s · %d Company XP"
+
+msgid "HQ_NEXT_UNLOCK"
+msgstr "NEXT CAREER UNLOCK"
+
+msgid "HQ_NEXT_UNLOCK_FMT"
+msgstr "%s · %s"
+
+msgid "HQ_NEXT_UNLOCK_XP_FMT"
+msgstr "%d / %d XP · %d TO GO"
+
+msgid "UNLOCK_ENDLESS_CONTRACTS"
+msgstr "Endless Contracts"
