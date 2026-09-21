@@ -18,6 +18,9 @@ const UPGRADE_CARD_SCENE := preload("res://src/ui/components/hq_upgrade_card.tsc
 const RANK_ROW_SCENE := preload("res://src/ui/components/hq_rank_row.tscn")
 const CHROME_BUTTON_SCENE := preload("res://src/ui/components/occ_chrome_button.tscn")
 const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card.tscn")
+const STATUS_GREEN := preload("res://assets/third_party/kenney_ui_sci_fi/ui/squareGreen.png")
+const STATUS_YELLOW := preload("res://assets/third_party/kenney_ui_sci_fi/ui/squareYellow.png")
+const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/squareRed.png")
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var header: BoxContainer = %Header
@@ -52,6 +55,7 @@ const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card
 @onready var contract_description: Label = %ContractDescription
 @onready var contract_target: Label = %ContractTarget
 @onready var contract_risk: Label = %ContractRisk
+@onready var risk_icon: TextureRect = %RiskIcon
 @onready var contract_payout: Label = %ContractPayout
 @onready var contract_requirement: Label = %ContractRequirement
 @onready var next_unlock_panel: VBoxContainer = %NextUnlockPanel
@@ -519,7 +523,14 @@ func _refresh_contracts() -> void:
 		tr(String(contract["description_key"])),
 	]
 	contract_target.text = _contract_target_text(contract_ref, contract, multiplier)
-	contract_risk.text = tr(_risk_key(int(sector["difficulty"])))
+	var difficulty := int(sector["difficulty"])
+	contract_risk.text = tr(_risk_key(difficulty))
+	if difficulty <= 3:
+		risk_icon.texture = STATUS_GREEN
+	elif difficulty <= 7:
+		risk_icon.texture = STATUS_YELLOW
+	else:
+		risk_icon.texture = STATUS_RED
 	contract_payout.text = tr("HQ_CONTRACT_PAY_FMT") % [base_pay, perfect_bonus]
 	%ContractShipName.text = tr("OPS_SHIP_NAME")
 	%ContractShipStatus.text = tr("HQ_SHIP_READY")

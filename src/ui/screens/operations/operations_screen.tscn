@@ -249,6 +249,7 @@ text = "CONTRACTS"
 
 [node name="ContractState" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentScroll/ContentShell/ContractsPanel/ContractsHeading"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "AVAILABLE"
@@ -356,6 +357,7 @@ theme_type_variation = &"TelemetryLabel"
 text = "TARGET"
 
 [node name="RiskIcon" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentScroll/ContentShell/ContractsPanel/ContractHero/ContractInfoCard/ContractInfoMargin/ContractInfo/ContractMeta"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("9")
