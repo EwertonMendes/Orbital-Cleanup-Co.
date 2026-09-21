@@ -308,7 +308,7 @@ msgid "HQ_UPGRADE_MAX"
 msgstr "MAX LEVEL"
 
 msgid "HQ_UPGRADE_COST_FMT"
-msgstr "UPGRADE · %d cr"
+msgstr "UPGRADE %d cr"
 
 msgid "HQ_UPGRADE_NEED_CREDITS"
 msgstr "Not enough Credits."
@@ -413,7 +413,7 @@ msgid "HQ_SHIP_BEAM_FMT"
 msgstr "Beam · %s"
 
 msgid "HQ_COSMETIC_EQUIPPED_FMT"
-msgstr "EQUIPPED · %s"
+msgstr "EQUIPPED: %s"
 
 msgid "HQ_COSMETIC_LOCKED_FMT"
 msgstr "LOCKED · %s"
