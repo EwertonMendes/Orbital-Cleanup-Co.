@@ -753,6 +753,8 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
 	_expect(screen.find_child("OperationsButton", true, false) is Button, "Free flight requires compact Operations access.")
 	_expect(screen.find_child("OperationsOverlayHost", true, false) is Control, "Flight requires an overlay host instead of routing to a full-screen menu.")
+	var operations_host := screen.find_child("OperationsOverlayHost", true, false) as Control
+	_expect(operations_host.mouse_filter == Control.MOUSE_FILTER_IGNORE, "Empty Operations overlay host must never intercept clicks intended for the flight HUD.")
 	_expect(screen.find_child("WarpTravelTransition", true, false) is WarpTravelTransition, "Flight requires reusable warp departure and arrival feedback.")
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
