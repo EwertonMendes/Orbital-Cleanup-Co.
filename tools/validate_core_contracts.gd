@@ -45,9 +45,14 @@ func _validate_app_root() -> void:
 	_expect(root.get_node_or_null("Services/SceneRouter") is SceneRouter, "AppRoot must own SceneRouter.")
 	_expect(root.get_node_or_null("Services/ProgressionService") is ProgressionService, "AppRoot must own ProgressionService.")
 	_expect(root.get_node_or_null("ScreenHost") is Control, "AppRoot must expose ScreenHost.")
+	_expect(root.get_node_or_null("TravelHandoffLayer/TravelCover") is ColorRect, "AppRoot must own a persistent travel handoff cover above routed screens.")
 	var app_source := FileAccess.get_file_as_string("res://src/core/app/app_root.gd")
 	_expect("const DEFAULT_SCREEN_PATH := FLIGHT_SCREEN_PATH" in app_source, "AppRoot must boot into continuous Flight instead of the legacy full-screen HQ.")
 	_expect("context[\"free_roam\"] = true" in app_source, "Default startup must explicitly enter contract-free flight.")
+	_expect("scene_router.configure(screen_host, travel_cover)" in app_source, "SceneRouter must receive the persistent travel cover from AppRoot.")
+	var router_source := FileAccess.get_file_as_string("res://src/core/app/scene_router.gd")
+	_expect("travel_handoff" in router_source, "SceneRouter must expose a dedicated travel handoff path instead of reusing generic screen fades.")
+	_expect("finish_travel_handoff" in router_source, "Travel handoff must wait for the destination before revealing it.")
 	root.free()
 
 func _validate_operations_screen() -> void:
@@ -774,6 +779,10 @@ func _validate_flight_screen() -> void:
 	_expect("depot_navigation.set_cargo_state" in flight_source, "Depot guide must react to cargo state without owning cargo rules.")
 	_expect("_contract_active = not bool(context.get(\"free_roam\", false))" in flight_source, "Flight must separate free-roam and contract states explicitly.")
 	_expect("warp_transition.play_departure" in flight_source and "warp_transition.play_arrival" in flight_source, "Travel must use the same reusable transition for departure and arrival.")
+	_expect("warp_transition.prime_arrival" in flight_source, "Destination warp must be primed behind the persistent cover before reveal.")
+	_expect("_router.begin_travel_handoff()" in flight_source and "_router.finish_travel_handoff()" in flight_source, "Contract deploy/abort must hide routed scene replacement inside the travel handoff.")
+	var warp_source := FileAccess.get_file_as_string("res://src/ui/components/warp_travel_transition.gd")
+	_expect("func prime_arrival" in warp_source and "func play_primed_arrival" in warp_source, "Warp transition must support a covered destination handoff without restarting the effect.")
 	_expect("_open_operations()" in flight_source, "Free flight must open Operations over the live world.")
 
 	var guide_source := FileAccess.get_file_as_string("res://src/ui/components/depot_navigation_guide.gd")
