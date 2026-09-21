@@ -42,7 +42,7 @@ func configure(context: Dictionary) -> void:
 
 	_target_percent = float(_contract_ref.get("target_percent", 100.0))
 	_target_count = int(_contract_ref.get("target_count", 0))
-	_target_value = int(_contract_ref.get("target_value", 0))
+	_target_value = int(round(float(_contract_ref.get("target_value", 0)) * _reward_multiplier))
 	_priority_salvage_id = String(_contract_ref.get("target_salvage_id", ""))
 
 	assert(not _sector_id.is_empty(), "ContractSession requires sector_id.")

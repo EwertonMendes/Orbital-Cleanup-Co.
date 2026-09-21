@@ -365,7 +365,8 @@ func _validate_contract_plan_feasibility(plan: Dictionary, registry: ContentRegi
 				var entry := value as Dictionary
 				var definition := registry.get_salvage_definition(String(entry["salvage_id"]))
 				total_value += int(round(float(definition.base_value) * multiplier))
-			_expect(int(contract_ref["target_value"]) <= total_value, "Valuable Recovery target cannot exceed generated recovery value.")
+			var scaled_target := int(round(float(contract_ref["target_value"]) * multiplier))
+			_expect(scaled_target <= total_value, "Valuable Recovery target cannot exceed generated recovery value.")
 		"priority_object":
 			var target_id := String(contract_ref["target_salvage_id"])
 			var required := int(contract_ref["target_count"])
