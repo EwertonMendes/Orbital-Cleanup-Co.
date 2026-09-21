@@ -707,6 +707,16 @@ def main() -> None:
             loaded["progression"]["career_ranks"],
             catalogs,
         )
+        require(len(loaded["biomes"]) >= 50, "Destination expansion requires at least 50 biomes")
+        require(len(loaded["sectors"]) >= 59, "Destination expansion requires at least 59 authored sectors")
+        primary_assets = {
+            str(item["visual_profile"]["primary_asset"])
+            for item in loaded["biomes"].values()
+        }
+        require(
+            len(primary_assets) == len(loaded["biomes"]),
+            "Every destination biome must own a unique primary asset",
+        )
 
         print(
             "Content validation passed: "

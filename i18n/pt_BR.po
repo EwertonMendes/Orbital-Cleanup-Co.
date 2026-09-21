@@ -879,3 +879,279 @@ msgstr "%d m"
 
 msgid "FLIGHT_DISTANCE_KM_FMT"
 msgstr "%.1f km"
+
+msgid "BIOME_MERCURY_TERMINATOR"
+msgstr "Terminador de Mercúrio"
+
+msgid "SECTOR_MERCURY_TERMINATOR_01"
+msgstr "Terminador de Mercúrio · Contrato 01"
+
+msgid "BIOME_VENUS_CLOUDS"
+msgstr "Nuvens de Vênus"
+
+msgid "SECTOR_VENUS_CLOUDS_01"
+msgstr "Nuvens de Vênus · Contrato 01"
+
+msgid "BIOME_ASTEROID_BELT"
+msgstr "Cinturão Principal de Asteroides"
+
+msgid "SECTOR_ASTEROID_BELT_01"
+msgstr "Cinturão Principal de Asteroides · Contrato 01"
+
+msgid "BIOME_CERES_ORBIT"
+msgstr "Órbita de Ceres"
+
+msgid "SECTOR_CERES_ORBIT_01"
+msgstr "Órbita de Ceres · Contrato 01"
+
+msgid "BIOME_JUPITER_CLOUDS"
+msgstr "Topo das Nuvens de Júpiter"
+
+msgid "SECTOR_JUPITER_CLOUDS_01"
+msgstr "Topo das Nuvens de Júpiter · Contrato 01"
+
+msgid "BIOME_IO_ORBIT"
+msgstr "Órbita Vulcânica de Io"
+
+msgid "SECTOR_IO_ORBIT_01"
+msgstr "Órbita Vulcânica de Io · Contrato 01"
+
+msgid "BIOME_EUROPA_ORBIT"
+msgstr "Órbita Gelada de Europa"
+
+msgid "SECTOR_EUROPA_ORBIT_01"
+msgstr "Órbita Gelada de Europa · Contrato 01"
+
+msgid "BIOME_GANYMEDE_ORBIT"
+msgstr "Magnetosfera de Ganimedes"
+
+msgid "SECTOR_GANYMEDE_ORBIT_01"
+msgstr "Magnetosfera de Ganimedes · Contrato 01"
+
+msgid "BIOME_CALLISTO_ORBIT"
+msgstr "Órbita Externa de Calisto"
+
+msgid "SECTOR_CALLISTO_ORBIT_01"
+msgstr "Órbita Externa de Calisto · Contrato 01"
+
+msgid "BIOME_SATURN_RINGS"
+msgstr "Plano dos Anéis de Saturno"
+
+msgid "SECTOR_SATURN_RINGS_01"
+msgstr "Plano dos Anéis de Saturno · Contrato 01"
+
+msgid "BIOME_TITAN_ORBIT"
+msgstr "Órbita Nebulosa de Titã"
+
+msgid "SECTOR_TITAN_ORBIT_01"
+msgstr "Órbita Nebulosa de Titã · Contrato 01"
+
+msgid "BIOME_ENCELADUS_ORBIT"
+msgstr "Órbita das Plumas de Encélado"
+
+msgid "SECTOR_ENCELADUS_ORBIT_01"
+msgstr "Órbita das Plumas de Encélado · Contrato 01"
+
+msgid "BIOME_RHEA_ORBIT"
+msgstr "Órbita das Crateras de Reia"
+
+msgid "SECTOR_RHEA_ORBIT_01"
+msgstr "Órbita das Crateras de Reia · Contrato 01"
+
+msgid "BIOME_IAPETUS_ORBIT"
+msgstr "Órbita da Crista de Jápeto"
+
+msgid "SECTOR_IAPETUS_ORBIT_01"
+msgstr "Órbita da Crista de Jápeto · Contrato 01"
+
+msgid "BIOME_URANUS_ORBIT"
+msgstr "Órbita Polar de Urano"
+
+msgid "SECTOR_URANUS_ORBIT_01"
+msgstr "Órbita Polar de Urano · Contrato 01"
+
+msgid "BIOME_TITANIA_ORBIT"
+msgstr "Órbita dos Cânions de Titânia"
+
+msgid "SECTOR_TITANIA_ORBIT_01"
+msgstr "Órbita dos Cânions de Titânia · Contrato 01"
+
+msgid "BIOME_OBERON_ORBIT"
+msgstr "Órbita Sombria de Oberon"
+
+msgid "SECTOR_OBERON_ORBIT_01"
+msgstr "Órbita Sombria de Oberon · Contrato 01"
+
+msgid "BIOME_NEPTUNE_ORBIT"
+msgstr "Órbita das Tempestades de Netuno"
+
+msgid "SECTOR_NEPTUNE_ORBIT_01"
+msgstr "Órbita das Tempestades de Netuno · Contrato 01"
+
+msgid "BIOME_TRITON_ORBIT"
+msgstr "Órbita Congelada de Tritão"
+
+msgid "SECTOR_TRITON_ORBIT_01"
+msgstr "Órbita Congelada de Tritão · Contrato 01"
+
+msgid "BIOME_PLUTO_ORBIT"
+msgstr "Órbita do Coração de Plutão"
+
+msgid "SECTOR_PLUTO_ORBIT_01"
+msgstr "Órbita do Coração de Plutão · Contrato 01"
+
+msgid "BIOME_CHARON_ORBIT"
+msgstr "Órbita Binária de Caronte"
+
+msgid "SECTOR_CHARON_ORBIT_01"
+msgstr "Órbita Binária de Caronte · Contrato 01"
+
+msgid "BIOME_KUIPER_BELT"
+msgstr "Deriva do Cinturão de Kuiper"
+
+msgid "SECTOR_KUIPER_BELT_01"
+msgstr "Deriva do Cinturão de Kuiper · Contrato 01"
+
+msgid "BIOME_ERIS_ORBIT"
+msgstr "Órbita Profunda de Éris"
+
+msgid "SECTOR_ERIS_ORBIT_01"
+msgstr "Órbita Profunda de Éris · Contrato 01"
+
+msgid "BIOME_HAUMEA_ORBIT"
+msgstr "Órbita Rápida de Haumea"
+
+msgid "SECTOR_HAUMEA_ORBIT_01"
+msgstr "Órbita Rápida de Haumea · Contrato 01"
+
+msgid "BIOME_MAKEMAKE_ORBIT"
+msgstr "Órbita Rubra de Makemake"
+
+msgid "SECTOR_MAKEMAKE_ORBIT_01"
+msgstr "Órbita Rubra de Makemake · Contrato 01"
+
+msgid "BIOME_SOLAR_CORONA"
+msgstr "Coroa Solar"
+
+msgid "SECTOR_SOLAR_CORONA_01"
+msgstr "Coroa Solar · Contrato 01"
+
+msgid "BIOME_ABANDONED_STATION"
+msgstr "Estação Orbital Abandonada"
+
+msgid "SECTOR_ABANDONED_STATION_01"
+msgstr "Estação Orbital Abandonada · Contrato 01"
+
+msgid "BIOME_SHIP_GRAVEYARD"
+msgstr "Cemitério de Naves do Espaço Profundo"
+
+msgid "SECTOR_SHIP_GRAVEYARD_01"
+msgstr "Cemitério de Naves do Espaço Profundo · Contrato 01"
+
+msgid "BIOME_ORBITAL_FACTORY_RUINS"
+msgstr "Ruínas de Fábrica Orbital"
+
+msgid "SECTOR_ORBITAL_FACTORY_RUINS_01"
+msgstr "Ruínas de Fábrica Orbital · Contrato 01"
+
+msgid "BIOME_ROGUE_PLANET"
+msgstr "Noite do Planeta Errante"
+
+msgid "SECTOR_ROGUE_PLANET_01"
+msgstr "Noite do Planeta Errante · Contrato 01"
+
+msgid "BIOME_RED_GIANT"
+msgstr "Perímetro da Gigante Vermelha"
+
+msgid "SECTOR_RED_GIANT_01"
+msgstr "Perímetro da Gigante Vermelha · Contrato 01"
+
+msgid "BIOME_WHITE_DWARF"
+msgstr "Halo da Anã Branca"
+
+msgid "SECTOR_WHITE_DWARF_01"
+msgstr "Halo da Anã Branca · Contrato 01"
+
+msgid "BIOME_PULSAR"
+msgstr "Zona dos Feixes do Pulsar"
+
+msgid "SECTOR_PULSAR_01"
+msgstr "Zona dos Feixes do Pulsar · Contrato 01"
+
+msgid "BIOME_NEUTRON_STAR"
+msgstr "Magnetosfera da Estrela de Nêutrons"
+
+msgid "SECTOR_NEUTRON_STAR_01"
+msgstr "Magnetosfera da Estrela de Nêutrons · Contrato 01"
+
+msgid "BIOME_BLACK_HOLE"
+msgstr "Zona de Acreção do Buraco Negro"
+
+msgid "SECTOR_BLACK_HOLE_01"
+msgstr "Zona de Acreção do Buraco Negro · Contrato 01"
+
+msgid "BIOME_BINARY_STAR"
+msgstr "Travessia de Estrelas Binárias"
+
+msgid "SECTOR_BINARY_STAR_01"
+msgstr "Travessia de Estrelas Binárias · Contrato 01"
+
+msgid "BIOME_PROXIMA_CENTAURI"
+msgstr "Operações em Proxima Centauri"
+
+msgid "SECTOR_PROXIMA_CENTAURI_01"
+msgstr "Operações em Proxima Centauri · Contrato 01"
+
+msgid "BIOME_TRAPPIST_1"
+msgstr "Sistema Interno TRAPPIST-1"
+
+msgid "SECTOR_TRAPPIST_1_01"
+msgstr "Sistema Interno TRAPPIST-1 · Contrato 01"
+
+msgid "BIOME_KEPLER_186F"
+msgstr "Órbita de Kepler-186f"
+
+msgid "SECTOR_KEPLER_186F_01"
+msgstr "Órbita de Kepler-186f · Contrato 01"
+
+msgid "BIOME_OCEAN_WORLD"
+msgstr "Exoplaneta Pelágico"
+
+msgid "SECTOR_OCEAN_WORLD_01"
+msgstr "Exoplaneta Pelágico · Contrato 01"
+
+msgid "BIOME_LAVA_WORLD"
+msgstr "Exoplaneta de Magma"
+
+msgid "SECTOR_LAVA_WORLD_01"
+msgstr "Exoplaneta de Magma · Contrato 01"
+
+msgid "BIOME_ICE_GIANT_EXOPLANET"
+msgstr "Gigante de Gelo Distante"
+
+msgid "SECTOR_ICE_GIANT_EXOPLANET_01"
+msgstr "Gigante de Gelo Distante · Contrato 01"
+
+msgid "BIOME_RINGED_EXOPLANET"
+msgstr "Exoplaneta Anelado"
+
+msgid "SECTOR_RINGED_EXOPLANET_01"
+msgstr "Exoplaneta Anelado · Contrato 01"
+
+msgid "BIOME_CRYSTAL_WORLD"
+msgstr "Mundo de Cristal"
+
+msgid "SECTOR_CRYSTAL_WORLD_01"
+msgstr "Mundo de Cristal · Contrato 01"
+
+msgid "BIOME_GREEN_NEBULA"
+msgstr "Nebulosa Esmeralda"
+
+msgid "SECTOR_GREEN_NEBULA_01"
+msgstr "Nebulosa Esmeralda · Contrato 01"
+
+msgid "BIOME_SUPERNOVA_REMNANT"
+msgstr "Remanescente de Supernova"
+
+msgid "SECTOR_SUPERNOVA_REMNANT_01"
+msgstr "Remanescente de Supernova · Contrato 01"
