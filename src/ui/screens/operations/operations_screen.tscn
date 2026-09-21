@@ -769,6 +769,7 @@ theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
 text = "CONTRACTS · 0"
 
 [node name="DiscoveryEmptyCard" type="PanelContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
 
@@ -801,6 +802,12 @@ theme_override_font_sizes/font_size = 11
 text = "Rare salvage and unusual recovered objects will appear here."
 horizontal_alignment = 1
 autowrap_mode = 2
+
+[node name="DiscoveryList" type="VBoxContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Footer" type="HBoxContainer" parent="SafeArea/Layout"]
 unique_name_in_owner = true

@@ -279,7 +279,7 @@ func _normalize_state(persisted: Dictionary) -> Dictionary:
 		var discoveries: Array[String] = []
 		for value in saved_discoveries as Array:
 			var salvage_id := String(value)
-			if not salvage_id.is_empty() and not discoveries.has(salvage_id):
+			if not salvage_id.is_empty() and _registry.has_salvage(salvage_id) and not discoveries.has(salvage_id):
 				discoveries.append(salvage_id)
 		discoveries.sort()
 		defaults["discoveries"] = discoveries
