@@ -1,1 +1,94 @@
-{"$schema":"https://json-schema.org/draft/2020-12/schema","title":"LandmarkDefinition","type":"object","additionalProperties":false,"required":["id","display_name_key","sprite","scale","reserved_radius","placement_radius","collision","spin_speed_range","drift_amplitude","ambient_effect"],"properties":{"id":{"type":"string","pattern":"^[a-z0-9_]+$"},"display_name_key":{"type":"string"},"sprite":{"type":"string","pattern":"^res://assets/"},"scale":{"type":"number","exclusiveMinimum":0},"reserved_radius":{"type":"number","minimum":0},"placement_radius":{"type":"array","prefixItems":[{"type":"number","minimum":0},{"type":"number","minimum":0}],"minItems":2,"maxItems":2},"collision":{"oneOf":[{"type":"object","additionalProperties":false,"required":["shape","radius"],"properties":{"shape":{"const":"circle"},"radius":{"type":"number","exclusiveMinimum":0}}},{"type":"object","additionalProperties":false,"required":["shape","size"],"properties":{"shape":{"const":"box"},"size":{"type":"array","prefixItems":[{"type":"number","exclusiveMinimum":0},{"type":"number","exclusiveMinimum":0}],"minItems":2,"maxItems":2}}}]},"spin_speed_range":{"type":"array","prefixItems":[{"type":"number"},{"type":"number"}],"minItems":2,"maxItems":2},"drift_amplitude":{"type":"number","minimum":0},"ambient_effect":{"type":"string"}}}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LandmarkDefinition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "display_name_key",
+    "sprite",
+    "scale",
+    "reserved_radius",
+    "placement_radius",
+    "collision",
+    "spin_speed_range",
+    "drift_amplitude",
+    "ambient_effect"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "display_name_key": {
+      "type": "string"
+    },
+    "sprite": {
+      "type": "string",
+      "pattern": "^res://assets/"
+    },
+    "scale": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "reserved_radius": {
+      "type": "number",
+      "minimum": 0
+    },
+    "placement_radius": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number", "minimum": 0 },
+        { "type": "number", "minimum": 0 }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "collision": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["shape", "radius"],
+          "properties": {
+            "shape": { "const": "circle" },
+            "radius": { "type": "number", "exclusiveMinimum": 0 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["shape", "size"],
+          "properties": {
+            "shape": { "const": "box" },
+            "size": {
+              "type": "array",
+              "prefixItems": [
+                { "type": "number", "exclusiveMinimum": 0 },
+                { "type": "number", "exclusiveMinimum": 0 }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      ]
+    },
+    "spin_speed_range": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "number" },
+        { "type": "number" }
+      ],
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "drift_amplitude": {
+      "type": "number",
+      "minimum": 0
+    },
+    "ambient_effect": {
+      "type": "string"
+    }
+  }
+}
