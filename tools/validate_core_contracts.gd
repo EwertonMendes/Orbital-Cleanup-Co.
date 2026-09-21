@@ -12,6 +12,7 @@ func _run() -> void:
 	_validate_ship_steering()
 	_validate_world_visual_language()
 	_validate_content_runtime()
+	_validate_environment_fields()
 	_validate_endless_contracts()
 	_validate_sector_preview()
 	_validate_contract_session()
@@ -216,6 +217,164 @@ func _validate_content_runtime() -> void:
 
 	var bounds := plan_a["play_bounds"] as Rect2
 	_expect(bounds.size.x >= 9000.0 and bounds.size.y >= 5500.0, "Generated training sector must preserve large play bounds.")
+
+func _validate_environment_fields() -> void:
+	var registry := ContentRegistry.new()
+	var scaler := DifficultyScaler.new()
+	scaler.configure(registry)
+	var generator := SectorGenerator.new()
+	generator.configure(registry, scaler)
+
+	var earth_plan := generator.generate("earth_orbit_03")
+	var lunar_plan := generator.generate("lunar_belt_01")
+	var mars_plan := generator.generate("mars_freight_01")
+	var blue_plan := generator.generate("blue_nebula_01")
+
+	_expect(
+		(earth_plan["environment_fields"] as Array).is_empty(),
+		"Earth Orbit must remain the neutral environmental baseline."
+	)
+
+	var lunar_kinds := _environment_kind_set(lunar_plan)
+	_expect(lunar_kinds.has("gravity_well"), "Lunar Belt requires gravity wells.")
+	_expect(lunar_kinds.has("safe_corridor"), "Lunar Belt requires a safe corridor.")
+
+	var mars_kinds := _environment_kind_set(mars_plan)
+	_expect(mars_kinds.has("drift_current"), "Mars Freight requires directional drift currents.")
+	_expect(
+		float((mars_plan["parameters"] as Dictionary)["mass_multiplier"]) >
+		float((earth_plan["parameters"] as Dictionary)["mass_multiplier"]),
+		"Mars Freight must make salvage meaningfully heavier than Earth Orbit."
+	)
+
+	var blue_kinds := _environment_kind_set(blue_plan)
+	for required_kind in [
+		"visibility_pocket",
+		"scanner_interference",
+		"tractor_distortion",
+		"magnetic_zone",
+	]:
+		_expect(
+			blue_kinds.has(required_kind),
+			"Blue Nebula missing environmental mechanic: %s" % required_kind
+		)
+
+	for field_value in lunar_plan["environment_fields"] as Array:
+		var field := field_value as Dictionary
+		if String(field["kind"]) != "safe_corridor":
+			continue
+		var half := (field["size"] as Vector2) * 0.5 + Vector2.ONE * 70.0
+		for obstacle_value in lunar_plan["obstacle_spawns"] as Array:
+			var obstacle := obstacle_value as Dictionary
+			var local := ((obstacle["position"] as Vector2) - (field["position"] as Vector2)).rotated(
+				-float(field["rotation"])
+			)
+			_expect(
+				not (absf(local.x) <= half.x and absf(local.y) <= half.y),
+				"Lunar safe corridor must remain clear of generated collision hazards."
+			)
+
+	var palette := {"accent": "#72d7ff", "nebula": "#183b72"}
+
+	var gravity := EnvironmentalField.new()
+	gravity.configure({
+		"kind": "gravity_well",
+		"shape": "circle",
+		"position": Vector2.ZERO,
+		"rotation": 0.0,
+		"radius": 500.0,
+		"strength": 0.6,
+		"color": "#c4d8ef",
+		"secondary_color": "#65758c",
+	}, palette)
+	var gravity_sample := gravity.sample(Vector2(180.0, 0.0))
+	_expect(
+		(gravity_sample["ship_force"] as Vector2).x < 0.0,
+		"Gravity well must pull the ship toward its center."
+	)
+	gravity.free()
+
+	var current := EnvironmentalField.new()
+	current.configure({
+		"kind": "drift_current",
+		"shape": "box",
+		"position": Vector2.ZERO,
+		"rotation": 0.0,
+		"size": Vector2(1200.0, 600.0),
+		"strength": 0.5,
+		"color": "#ff9c63",
+		"secondary_color": "#a84a32",
+	}, palette)
+	_expect(
+		(current.sample(Vector2.ZERO)["ship_force"] as Vector2).x > 0.0,
+		"Drift current must apply directional ship force."
+	)
+	current.free()
+
+	var scanner := EnvironmentalField.new()
+	scanner.configure({
+		"kind": "scanner_interference",
+		"shape": "circle",
+		"position": Vector2.ZERO,
+		"rotation": 0.0,
+		"radius": 600.0,
+		"strength": 0.7,
+		"color": "#80dfff",
+		"secondary_color": "#5a73d6",
+	}, palette)
+	_expect(
+		float(scanner.sample(Vector2.ZERO)["scanner_multiplier"]) < 1.0,
+		"Scanner interference must reduce effective scan range."
+	)
+	scanner.free()
+
+	var tractor := EnvironmentalField.new()
+	tractor.configure({
+		"kind": "tractor_distortion",
+		"shape": "circle",
+		"position": Vector2.ZERO,
+		"rotation": 0.0,
+		"radius": 600.0,
+		"strength": 0.7,
+		"color": "#a28bff",
+		"secondary_color": "#3157a5",
+	}, palette)
+	_expect(
+		float(tractor.sample(Vector2.ZERO)["tractor_multiplier"]) < 1.0,
+		"Tractor distortion must reduce collection efficiency."
+	)
+	tractor.free()
+
+	var visibility := EnvironmentalField.new()
+	visibility.configure({
+		"kind": "visibility_pocket",
+		"shape": "circle",
+		"position": Vector2.ZERO,
+		"rotation": 0.0,
+		"radius": 650.0,
+		"strength": 0.6,
+		"color": "#72d7ff",
+		"secondary_color": "#5849a5",
+	}, palette)
+	_expect(
+		float(visibility.sample(Vector2.ZERO)["visibility"]) < 1.0,
+		"Visibility pocket must reduce world visibility."
+	)
+	visibility.free()
+
+	for biome_id in ["earth_orbit", "lunar_belt", "mars_freight", "blue_nebula"]:
+		var biome := registry.get_biome(biome_id)
+		var visual := biome["visual_profile"] as Dictionary
+		var asset_path := String(visual["planet_asset"])
+		_expect(asset_path.begins_with("res://assets/original/planets/"), "Biome must use project-owned planet art: %s" % biome_id)
+		_expect(load(asset_path) is Texture2D, "Biome planet asset must import as Texture2D: %s" % biome_id)
+
+func _environment_kind_set(plan: Dictionary) -> Dictionary:
+	var output := {}
+	for value in plan["environment_fields"] as Array:
+		var field := value as Dictionary
+		output[String(field["kind"])] = true
+	return output
 
 func _validate_endless_contracts() -> void:
 	var registry := ContentRegistry.new()
@@ -522,12 +681,14 @@ func _validate_flight_screen() -> void:
 	_expect(screen is Control, "Flight screen must inherit Control.")
 	_expect(screen.find_child("PlayerShip", true, false) is PlayerShip, "Flight screen requires PlayerShip.")
 	_expect(screen.find_child("SectorRuntime", true, false) is SectorRuntime, "Flight screen requires generic SectorRuntime.")
+	_expect(screen.find_child("EnvironmentRuntime", true, false) is EnvironmentRuntime, "Flight screen requires reusable biome EnvironmentRuntime.")
 	_expect(screen.find_child("AmbientSpace", true, false) is SectorBackdrop, "Flight screen requires data-configurable SectorBackdrop.")
 	_expect(screen.find_child("UnloadDepot", true, false) is UnloadZone, "Flight screen requires cargo unload zone.")
 	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
 	_expect(screen.find_child("CleanupProgress", true, false) is ProgressBar, "Flight HUD requires sector cleanliness progress.")
+	_expect(screen.find_child("EnvironmentStatus", true, false) is Label, "Flight HUD must identify active environmental effects.")
 
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	_expect(
@@ -595,6 +756,12 @@ func _validate_polish_systems() -> void:
 
 	var post_source := FileAccess.get_file_as_string("res://src/game/visual/world_post_process.gdshader")
 	_expect("hint_screen_texture" in post_source, "Godot 4 post-process must read screen texture through hint_screen_texture.")
+	_expect("environment_fog_strength" in post_source, "World post-process must support localized biome visibility haze.")
+	_expect("environment_distortion" in post_source, "World post-process must support subtle biome interference distortion.")
+
+	var planet_source := FileAccess.get_file_as_string("res://src/game/visual/planet_surface.gdshader")
+	_expect("rotation_speed" in planet_source, "Biome planet shader must animate surface rotation.")
+	_expect("atmosphere_strength" in planet_source, "Biome planet shader must expose atmosphere treatment.")
 
 	var scanner := ProceduralSfx.scanner_ping()
 	var discovery := ProceduralSfx.discovery()
