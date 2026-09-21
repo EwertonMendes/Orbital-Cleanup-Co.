@@ -4,7 +4,7 @@ class_name SectorBackdrop
 const PLANET_SHADER := preload("res://src/game/visual/planet_surface.gdshader")
 const BACKGROUND_EXTENT := 18000.0
 const STAR_EXTENT := 11500.0
-const STAR_COUNT := 1650
+const STAR_COUNT := 1450
 
 var _play_bounds := Rect2(-4800.0, -3000.0, 9600.0, 6000.0)
 var _background_color := Color("#040b13")
@@ -12,14 +12,12 @@ var _nebula_color := Color("#0b3d4d")
 var _accent_color := Color("#53d7f1")
 var _biome_id := ""
 var _visual_profile: Dictionary = {}
-var _stars: Array[Dictionary] = []
-var _traffic: Array[Dictionary] = []
+var _star_field: MultiMeshInstance2D
 var _planet: Sprite2D
 var _planet_material: ShaderMaterial
 var _camera_origin := Vector2.ZERO
 var _camera_origin_set := false
-var _phase := 0.0
-var _redraw_accumulator := 0.0
+var _planet_rotation_speed := 0.0
 
 func configure(
 	play_bounds: Rect2,
@@ -37,34 +35,21 @@ func configure(
 	RenderingServer.set_default_clear_color(_background_color)
 	if is_inside_tree():
 		_rebuild_planet()
-		_rebuild_traffic()
 	queue_redraw()
 
 func _ready() -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 31051999
-	for _index in range(STAR_COUNT):
-		var bright := rng.randf() > 0.82
-		_stars.append({
-			"position": Vector2(
-				rng.randf_range(-STAR_EXTENT, STAR_EXTENT),
-				rng.randf_range(-STAR_EXTENT, STAR_EXTENT)
-			),
-			"radius": rng.randf_range(0.55, 1.45) if not bright else rng.randf_range(1.35, 2.35),
-			"alpha": rng.randf_range(0.12, 0.42) if not bright else rng.randf_range(0.48, 0.82),
-			"warm": bright and rng.randf() > 0.82,
-		})
+	_build_star_multimesh()
 	_rebuild_planet()
-	_rebuild_traffic()
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	_phase = fmod(_phase + delta, TAU * 100.0)
 	_update_planet_parallax()
-	_redraw_accumulator += delta
-	if _redraw_accumulator >= 1.0 / 12.0:
-		_redraw_accumulator = 0.0
-		queue_redraw()
+	if _planet != null and is_instance_valid(_planet):
+		_planet.rotation = wrapf(
+			_planet.rotation + _planet_rotation_speed * delta,
+			-PI,
+			PI
+		)
 
 func _draw() -> void:
 	draw_rect(
@@ -77,17 +62,50 @@ func _draw() -> void:
 	_draw_soft_cloud(Vector2(-3400, 2100), 2050.0, _nebula_color, 0.075)
 	_draw_biome_horizon()
 
-	for star in _stars:
-		var star_color := Color(1.0, 0.86, 0.55, float(star["alpha"])) if bool(star["warm"]) else Color(0.66, 0.90, 1.0, float(star["alpha"]))
-		draw_circle(star["position"], float(star["radius"]), star_color)
-
 	draw_arc(Vector2(1150, -650), 1100.0, deg_to_rad(192.0), deg_to_rad(342.0), 96, Color(_accent_color, 0.16), 2.0, true)
 	draw_arc(Vector2(-1800, 1300), 920.0, deg_to_rad(8.0), deg_to_rad(176.0), 84, Color(_accent_color, 0.09), 1.5, true)
 	draw_arc(Vector2(450, 260), 3200.0, deg_to_rad(208.0), deg_to_rad(304.0), 120, Color(_accent_color, 0.045), 1.0, true)
 	_draw_glint(Vector2(2200, 980), 10.0, Color(_accent_color, 0.5))
 	_draw_glint(Vector2(-2850, -1250), 7.0, Color(1.0, 0.82, 0.5, 0.42))
-	_draw_distant_traffic()
 	_draw_perimeter()
+
+func _build_star_multimesh() -> void:
+	if _star_field != null and is_instance_valid(_star_field):
+		_star_field.queue_free()
+
+	var texture := load("res://assets/third_party/kenney_simple_space/scenery/star_small.png") as Texture2D
+	assert(texture != null, "SectorBackdrop requires the curated star texture.")
+
+	var multimesh := MultiMesh.new()
+	multimesh.transform_format = MultiMesh.TRANSFORM_2D
+	multimesh.use_colors = true
+	multimesh.instance_count = STAR_COUNT
+
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 31051999
+	for index in range(STAR_COUNT):
+		var bright := rng.randf() > 0.82
+		var position := Vector2(
+			rng.randf_range(-STAR_EXTENT, STAR_EXTENT),
+			rng.randf_range(-STAR_EXTENT, STAR_EXTENT)
+		)
+		var scale_value := rng.randf_range(0.020, 0.045) if not bright else rng.randf_range(0.040, 0.075)
+		var transform := Transform2D(
+			rng.randf_range(-PI, PI),
+			Vector2.ONE * scale_value,
+			0.0,
+			position
+		)
+		multimesh.set_instance_transform_2d(index, transform)
+		var alpha := rng.randf_range(0.12, 0.42) if not bright else rng.randf_range(0.48, 0.82)
+		var color := Color(1.0, 0.86, 0.55, alpha) if bright and rng.randf() > 0.82 else Color(0.66, 0.90, 1.0, alpha)
+		multimesh.set_instance_color(index, color)
+
+	_star_field = MultiMeshInstance2D.new()
+	_star_field.multimesh = multimesh
+	_star_field.texture = texture
+	_star_field.z_index = -2
+	add_child(_star_field)
 
 func _draw_biome_horizon() -> void:
 	match _biome_id:
@@ -100,7 +118,7 @@ func _draw_biome_horizon() -> void:
 		"mars_freight":
 			_draw_soft_cloud(Vector2(1300.0, 760.0), 2100.0, Color("#8b3d29"), 0.12)
 			for index in range(5):
-				var y := -1200.0 + index * 620.0 + sin(_phase * 0.18 + index) * 45.0
+				var y := -1200.0 + index * 620.0
 				draw_line(Vector2(-5200.0, y), Vector2(5200.0, y + 520.0), Color("#f28b54", 0.035), 18.0, true)
 		"blue_nebula":
 			_draw_soft_cloud(Vector2(520.0, -180.0), 1550.0, _accent_color, 0.23)
@@ -162,10 +180,7 @@ func _rebuild_planet() -> void:
 			Color("#72d7ff")
 		)
 	)
-	_planet_material.set_shader_parameter(
-		"rotation_speed",
-		float(_visual_profile.get("planet_rotation_speed", 0.006))
-	)
+	_planet_rotation_speed = float(_visual_profile.get("planet_rotation_speed", 0.006))
 	_planet_material.set_shader_parameter(
 		"atmosphere_strength",
 		float(_visual_profile.get("atmosphere_strength", 0.42))
@@ -199,35 +214,6 @@ func _update_planet_parallax() -> void:
 	var base_scale := float(_visual_profile.get("planet_scale", 2.0))
 	var compact_scale := 0.72 if viewport_size.x < 700.0 else 1.0
 	_planet.scale = Vector2.ONE * base_scale * compact_scale
-
-func _rebuild_traffic() -> void:
-	_traffic.clear()
-	var count := int(_visual_profile.get("traffic_count", 0))
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 884321 + absi(int(hash(_biome_id)))
-	for index in range(count):
-		_traffic.append({
-			"origin": Vector2(
-				rng.randf_range(_play_bounds.position.x, _play_bounds.end.x),
-				rng.randf_range(_play_bounds.position.y, _play_bounds.end.y)
-			),
-			"span": rng.randf_range(650.0, 1600.0),
-			"phase": rng.randf(),
-			"speed": rng.randf_range(0.004, 0.014),
-			"length": rng.randf_range(12.0, 28.0),
-			"alpha": rng.randf_range(0.08, 0.20),
-		})
-
-func _draw_distant_traffic() -> void:
-	for item in _traffic:
-		var t := fposmod(float(item["phase"]) + _phase * float(item["speed"]), 1.0)
-		var origin := item["origin"] as Vector2
-		var span := float(item["span"])
-		var position := origin + Vector2(lerpf(-span, span, t), sin(t * TAU) * 36.0)
-		var length := float(item["length"])
-		var color := Color(_accent_color, float(item["alpha"]))
-		draw_line(position - Vector2(length, 0.0), position + Vector2(length, 0.0), color, 1.2, true)
-		draw_circle(position + Vector2(length, 0.0), 1.6, Color(_accent_color, color.a * 1.6))
 
 func _draw_perimeter() -> void:
 	var outer := _play_bounds

@@ -88,7 +88,7 @@ func contains_world_position(world_position: Vector2, padding: float = 0.0) -> b
 func _process(delta: float) -> void:
 	_phase = fmod(_phase + delta, TAU * 100.0)
 	_redraw_accumulator += delta
-	if _redraw_accumulator >= 1.0 / 24.0:
+	if _redraw_accumulator >= 1.0 / 15.0:
 		_redraw_accumulator = 0.0
 		queue_redraw()
 
@@ -143,7 +143,7 @@ func _draw() -> void:
 func _draw_gravity_well() -> void:
 	for index in range(4):
 		var radius := _radius * (0.34 + float(index) * 0.18) + sin(_phase * 0.7 + index) * 5.0
-		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 72, Color(_field_color, 0.045 + index * 0.018), 1.4, true)
+		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 36, Color(_field_color, 0.045 + index * 0.018), 1.4, true)
 	for index in range(8):
 		var angle := float(index) / 8.0 * TAU + _phase * 0.11
 		var outer := Vector2.from_angle(angle) * _radius * 0.78
@@ -181,13 +181,13 @@ func _draw_visibility_pocket() -> void:
 		var radius := _radius * ratio
 		var alpha := 0.012 + (1.0 - ratio) * 0.015
 		draw_circle(Vector2.ZERO, radius, Color(_secondary_color, alpha))
-	draw_arc(Vector2.ZERO, _radius, _phase * 0.06, _phase * 0.06 + 2.3, 72, Color(_field_color, 0.07), 1.2, true)
+	draw_arc(Vector2.ZERO, _radius, _phase * 0.06, _phase * 0.06 + 2.3, 36, Color(_field_color, 0.07), 1.2, true)
 
 func _draw_interference() -> void:
 	for index in range(4):
 		var radius := _radius * (0.35 + index * 0.17)
 		var start := _phase * (0.17 + index * 0.03) + index
-		draw_arc(Vector2.ZERO, radius, start, start + 1.3, 42, Color(_field_color, 0.12), 1.6, true)
+		draw_arc(Vector2.ZERO, radius, start, start + 1.3, 24, Color(_field_color, 0.12), 1.6, true)
 	for index in range(7):
 		var angle := float(index) * 0.9 + sin(_phase * 0.4 + index) * 0.25
 		var p := Vector2.from_angle(angle) * _radius * 0.72
@@ -197,7 +197,7 @@ func _draw_tractor_distortion() -> void:
 	for index in range(3):
 		var radius := _radius * (0.38 + index * 0.20)
 		var offset := sin(_phase * (0.7 + index * 0.12)) * 0.18
-		draw_arc(Vector2.ZERO, radius, offset + index, offset + index + 3.9, 64, Color(_field_color, 0.10), 2.0, true)
+		draw_arc(Vector2.ZERO, radius, offset + index, offset + index + 3.9, 32, Color(_field_color, 0.10), 2.0, true)
 	draw_circle(Vector2.ZERO, _radius * 0.18, Color(_secondary_color, 0.035))
 
 func _draw_magnetic_zone() -> void:
@@ -205,5 +205,5 @@ func _draw_magnetic_zone() -> void:
 		var angle := float(index) / 6.0 * TAU + _phase * 0.14
 		var p1 := Vector2.from_angle(angle) * _radius * 0.32
 		var p2 := Vector2.from_angle(angle + 0.34) * _radius * 0.78
-		draw_arc(Vector2.ZERO, p2.length(), angle - 0.22, angle + 0.22, 18, Color(_field_color, 0.09), 1.6, true)
+		draw_arc(Vector2.ZERO, p2.length(), angle - 0.22, angle + 0.22, 12, Color(_field_color, 0.09), 1.6, true)
 		draw_circle(p1, 2.4, Color(_field_color, 0.20))

@@ -32,6 +32,34 @@ function waitForConsole(page, marker, timeout = 60000) {
   });
 }
 
+async function measureFrameRate(page, durationMs = 1800) {
+  return await page.evaluate(async duration => {
+    const samples = [];
+    let previous = performance.now();
+    const started = previous;
+
+    await new Promise(resolve => {
+      function step(now) {
+        samples.push(now - previous);
+        previous = now;
+        if (now - started >= duration) {
+          resolve();
+          return;
+        }
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+
+    const usable = samples.slice(5).filter(value => value > 0 && value < 250);
+    if (!usable.length) return { fps: 0, p95Ms: 999 };
+    usable.sort((a, b) => a - b);
+    const averageMs = usable.reduce((sum, value) => sum + value, 0) / usable.length;
+    const p95Ms = usable[Math.min(usable.length - 1, Math.floor(usable.length * 0.95))];
+    return { fps: 1000 / averageMs, p95Ms };
+  }, durationMs);
+}
+
 async function dragTouch(page, viewport) {
   const session = await page.context().newCDPSession(page);
   const start = {
@@ -170,7 +198,12 @@ async function openQaDeepLinks() {
     await page.goto(`${url}?sector=${sample.sector}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
     await sectorReady;
     await flightReady;
-    await page.waitForTimeout(850);
+    await page.waitForTimeout(500);
+    const perf = await measureFrameRate(page);
+    console.log(`[QA] PERF biome=${sample.label} fps=${perf.fps.toFixed(1)} p95_ms=${perf.p95Ms.toFixed(1)}`);
+    if (perf.fps < 55 || perf.p95Ms > 24) {
+      throw new Error(`Biome ${sample.label} missed Web frame budget: ${perf.fps.toFixed(1)} FPS, p95 ${perf.p95Ms.toFixed(1)} ms`);
+    }
     await page.screenshot({ path: `build/smoke-qa-biome-${sample.label}.png`, fullPage: true });
     await page.close();
   }

@@ -683,6 +683,9 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("SectorRuntime", true, false) is SectorRuntime, "Flight screen requires generic SectorRuntime.")
 	_expect(screen.find_child("EnvironmentRuntime", true, false) is EnvironmentRuntime, "Flight screen requires reusable biome EnvironmentRuntime.")
 	_expect(screen.find_child("AmbientSpace", true, false) is SectorBackdrop, "Flight screen requires data-configurable SectorBackdrop.")
+	var backdrop_source := FileAccess.get_file_as_string("res://src/game/sector/sector_backdrop.gd")
+	_expect("MultiMeshInstance2D" in backdrop_source, "SectorBackdrop must batch the starfield through MultiMeshInstance2D.")
+	_expect("queue_redraw()" not in backdrop_source.split("func _process", false, 1)[1].split("func _draw", false, 1)[0], "SectorBackdrop must not redraw its static starfield during frame updates.")
 	_expect(screen.find_child("UnloadDepot", true, false) is UnloadZone, "Flight screen requires cargo unload zone.")
 	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
@@ -756,12 +759,17 @@ func _validate_polish_systems() -> void:
 
 	var post_source := FileAccess.get_file_as_string("res://src/game/visual/world_post_process.gdshader")
 	_expect("hint_screen_texture" in post_source, "Godot 4 post-process must read screen texture through hint_screen_texture.")
+	_expect(
+		post_source.count("texture(screen_texture") == 1,
+		"World post-process must keep exactly one full-screen texture fetch for Web performance."
+	)
 	_expect("environment_fog_strength" in post_source, "World post-process must support localized biome visibility haze.")
 	_expect("environment_distortion" in post_source, "World post-process must support subtle biome interference distortion.")
 
 	var planet_source := FileAccess.get_file_as_string("res://src/game/visual/planet_surface.gdshader")
 	_expect("rotation_speed" in planet_source, "Biome planet shader must animate surface rotation.")
 	_expect("atmosphere_strength" in planet_source, "Biome planet shader must expose atmosphere treatment.")
+	_expect("sin(" not in planet_source and "cos(" not in planet_source, "Planet shader must avoid per-pixel trigonometry.")
 
 	var scanner := ProceduralSfx.scanner_ping()
 	var discovery := ProceduralSfx.discovery()

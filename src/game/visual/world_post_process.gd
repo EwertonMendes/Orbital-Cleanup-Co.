@@ -3,6 +3,9 @@ class_name WorldPostProcess
 
 var _pulse_tween: Tween
 var _configured := false
+var _last_environment_visibility := -1.0
+var _last_environment_distortion := -1.0
+var _last_environment_color := Color.TRANSPARENT
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -26,14 +29,25 @@ func set_environment_state(
 	var shader_material := material as ShaderMaterial
 	if shader_material == null:
 		return
+	var normalized_visibility := clampf(visibility, 0.46, 1.0)
+	var normalized_distortion := clampf(distortion, 0.0, 1.0)
+	if (
+		absf(normalized_visibility - _last_environment_visibility) < 0.015
+		and absf(normalized_distortion - _last_environment_distortion) < 0.015
+		and environment_color.is_equal_approx(_last_environment_color)
+	):
+		return
+	_last_environment_visibility = normalized_visibility
+	_last_environment_distortion = normalized_distortion
+	_last_environment_color = environment_color
 	shader_material.set_shader_parameter("environment_color", environment_color)
 	shader_material.set_shader_parameter(
 		"environment_fog_strength",
-		clampf((1.0 - visibility) * 0.52, 0.0, 0.30)
+		clampf((1.0 - normalized_visibility) * 0.42, 0.0, 0.24)
 	)
 	shader_material.set_shader_parameter(
 		"environment_distortion",
-		clampf(distortion * 0.42, 0.0, 0.20)
+		clampf(normalized_distortion * 0.22, 0.0, 0.10)
 	)
 
 func pulse(color: Color, strength: float = 0.16, duration: float = 0.34) -> void:
@@ -61,5 +75,5 @@ func _apply_quality() -> void:
 	var viewport_size := get_viewport_rect().size
 	var compact := viewport_size.x < 700.0 or viewport_size.y < 430.0
 	shader_material.set_shader_parameter("effect_strength", 0.40 if compact else 0.62)
-	shader_material.set_shader_parameter("glow_strength", 0.045 if compact else 0.085)
-	shader_material.set_shader_parameter("grain_strength", 0.003 if compact else 0.007)
+	shader_material.set_shader_parameter("glow_strength", 0.025 if compact else 0.050)
+	shader_material.set_shader_parameter("grain_strength", 0.0)

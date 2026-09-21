@@ -12,7 +12,13 @@ var _sector_runtime: SectorRuntime
 var _post_process: WorldPostProcess
 var _last_label := ""
 var _last_intensity := -1.0
+const SHIP_SAMPLE_INTERVAL := 1.0 / 30.0
+const SALVAGE_SAMPLE_INTERVAL := 0.10
+
 var _fog_color := Color("#183b72")
+var _ship_sample_accumulator := 0.0
+var _salvage_sample_accumulator := 0.0
+var _salvage_nodes: Array[SalvageObject] = []
 
 func configure(
 	field_definitions: Array,
@@ -46,7 +52,9 @@ func bind(
 	_ship = ship
 	_sector_runtime = sector_runtime
 	_post_process = post_process
+	_salvage_nodes = sector_runtime.get_salvage_nodes()
 	_apply_ship_state(_neutral_state())
+	_update_salvage_forces()
 
 func get_field_count() -> int:
 	return _fields.size()
@@ -63,10 +71,18 @@ func _physics_process(delta: float) -> void:
 	if _ship == null or not is_instance_valid(_ship):
 		return
 
-	var ship_state := _sample(_ship.global_position)
-	_apply_ship_state(ship_state)
-	_apply_salvage_motion(delta)
-	_report_state(ship_state)
+	_ship_sample_accumulator += delta
+	_salvage_sample_accumulator += delta
+
+	if _ship_sample_accumulator >= SHIP_SAMPLE_INTERVAL:
+		_ship_sample_accumulator = fmod(_ship_sample_accumulator, SHIP_SAMPLE_INTERVAL)
+		var ship_state := _sample(_ship.global_position)
+		_apply_ship_state(ship_state)
+		_report_state(ship_state)
+
+	if _salvage_sample_accumulator >= SALVAGE_SAMPLE_INTERVAL:
+		_salvage_sample_accumulator = fmod(_salvage_sample_accumulator, SALVAGE_SAMPLE_INTERVAL)
+		_update_salvage_forces()
 
 func _sample(world_position: Vector2) -> Dictionary:
 	var output := _neutral_state()
@@ -133,16 +149,13 @@ func _apply_ship_state(state: Dictionary) -> void:
 			)
 		)
 
-func _apply_salvage_motion(delta: float) -> void:
-	if _sector_runtime == null:
-		return
-	for salvage in _sector_runtime.get_salvage_nodes():
-		if not is_instance_valid(salvage):
+func _update_salvage_forces() -> void:
+	for salvage in _salvage_nodes:
+		if not is_instance_valid(salvage) or salvage.is_queued_for_deletion():
 			continue
 		var state := _sample(salvage.global_position)
-		salvage.apply_environment_force(
+		salvage.set_environment_force(
 			state["salvage_force"] as Vector2,
-			delta,
 			_play_bounds
 		)
 
