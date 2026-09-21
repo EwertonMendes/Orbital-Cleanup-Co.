@@ -84,6 +84,13 @@ func get_salvage_nodes() -> Array[SalvageObject]:
 			output.append(child as SalvageObject)
 	return output
 
+func get_landmark_nodes() -> Array[SectorLandmark]:
+	var output: Array[SectorLandmark] = []
+	for child in landmark_root.get_children():
+		if child is SectorLandmark:
+			output.append(child as SectorLandmark)
+	return output
+
 func get_sector_display_name_key() -> String:
 	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
 	return String((_plan["sector"] as Dictionary)["display_name_key"])

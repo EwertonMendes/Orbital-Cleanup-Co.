@@ -214,6 +214,82 @@ async function openQaDeepLinks() {
     await page.close();
   }
 
+  const landmarkSamples = [
+    { sector: 'earth_orbit_04', landmark: 'relay_satellite', label: 'earth-relay' },
+    { sector: 'lunar_belt_02', landmark: 'fractured_moonlet', label: 'lunar-moonlet' },
+    { sector: 'mars_freight_02', landmark: 'comms_array', label: 'mars-comms' },
+    { sector: 'blue_nebula_02', landmark: 'derelict_explorer', label: 'blue-derelict' },
+  ];
+
+  for (const sample of landmarkSamples) {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+    watch(page, `qa-landmark-${sample.label}`);
+    const sectorReady = waitForConsole(page, `[Sector] READY id=${sample.sector}`, 60000);
+    const landmarkReady = waitForConsole(page, `[QA] LANDMARK_FOCUS id=${sample.landmark}`, 60000);
+    const flightReady = waitForConsole(page, '[Flight] READY', 60000);
+    await page.goto(
+      `${url}?sector=${sample.sector}&landmark_focus=${sample.landmark}`,
+      { waitUntil: 'domcontentloaded', timeout: 60000 },
+    );
+    await sectorReady;
+    await landmarkReady;
+    await flightReady;
+    await page.waitForTimeout(450);
+    await page.screenshot({ path: `build/smoke-qa-landmark-${sample.label}.png`, fullPage: true });
+    await page.close();
+  }
+
+  const depotNavSamples = [
+    { sector: 'earth_orbit_04', label: 'earth-orbit' },
+    { sector: 'lunar_belt_02', label: 'lunar-belt' },
+    { sector: 'mars_freight_02', label: 'mars-freight' },
+    { sector: 'blue_nebula_02', label: 'blue-nebula' },
+  ];
+
+  for (const sample of depotNavSamples) {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+    watch(page, `qa-depot-navigation-${sample.label}`);
+    const sectorReady = waitForConsole(page, `[Sector] READY id=${sample.sector}`, 60000);
+    const depotNavReady = waitForConsole(page, '[QA] DEPOT_NAV_PREVIEW', 60000);
+    const flightReady = waitForConsole(page, '[Flight] READY', 60000);
+    await page.goto(
+      `${url}?sector=${sample.sector}&depot_nav=1`,
+      { waitUntil: 'domcontentloaded', timeout: 60000 },
+    );
+    await sectorReady;
+    await depotNavReady;
+    await flightReady;
+    await page.waitForTimeout(500);
+    await page.screenshot({
+      path: `build/smoke-qa-depot-navigation-${sample.label}.png`,
+      fullPage: true,
+    });
+    await page.close();
+  }
+
+  const depotPortraitPage = await browser.newPage({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    isMobile: true,
+  });
+  watch(depotPortraitPage, 'qa-depot-navigation-portrait');
+  const depotPortraitSector = waitForConsole(depotPortraitPage, '[Sector] READY id=earth_training_01', 60000);
+  const depotPortraitReady = waitForConsole(depotPortraitPage, '[QA] DEPOT_NAV_PREVIEW', 60000);
+  const depotPortraitFlight = waitForConsole(depotPortraitPage, '[Flight] READY', 60000);
+  await depotPortraitPage.goto(
+    `${url}?sector=earth_training_01&depot_nav=1`,
+    { waitUntil: 'domcontentloaded', timeout: 60000 },
+  );
+  await depotPortraitSector;
+  await depotPortraitReady;
+  await depotPortraitFlight;
+  await depotPortraitPage.waitForTimeout(500);
+  await depotPortraitPage.screenshot({
+    path: 'build/smoke-qa-depot-navigation-portrait.png',
+    fullPage: true,
+  });
+  await depotPortraitPage.close();
+
   const lockedHqPage = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   watch(lockedHqPage, 'qa-hq-locked-lunar');
   const lockedHqReady = waitForConsole(lockedHqPage, '[HQ] READY tab=contracts', 60000);

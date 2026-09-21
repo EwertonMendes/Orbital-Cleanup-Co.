@@ -44,6 +44,7 @@ REQUIRED = [
     "src/ui/components/hq_rank_row.tscn",
     "src/ui/screens/flight/flight_screen.tscn",
     "src/ui/screens/flight/flight_screen.gd",
+    "src/ui/components/depot_navigation_guide.gd",
     "src/ui/screens/debrief/contract_debrief_screen.tscn",
     "src/ui/screens/debrief/contract_debrief_screen.gd",
     "src/ui/screens/debrief/debrief_celebration.gd",

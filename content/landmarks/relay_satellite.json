@@ -1,12 +1,24 @@
 {
   "id": "relay_satellite",
   "display_name_key": "LANDMARK_RELAY_SATELLITE",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
-  "scale": 1.7,
-  "reserved_radius": 190,
+  "sprite": "res://assets/original/landmarks/relay_satellite.svg",
+  "scale": 0.62,
+  "reserved_radius": 430,
   "placement_radius": [
-    1000,
-    2200
+    1350,
+    2450
   ],
+  "collision": {
+    "shape": "box",
+    "size": [
+      280,
+      390
+    ]
+  },
+  "spin_speed_range": [
+    -0.002,
+    0.002
+  ],
+  "drift_amplitude": 1,
   "ambient_effect": "none"
 }

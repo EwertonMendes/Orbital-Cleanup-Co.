@@ -14,16 +14,16 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**Living Biomes**
+**Memorable Orbital Landmarks**
 
-The four launch regions now have distinct data-driven environmental gameplay and visual identities instead of behaving like recolored debris fields.
+Major sector structures now use original OCC artwork and participate in navigation instead of behaving like enlarged decorative props.
 
-- Earth Orbit remains the clear, stable baseline with active orbital traffic and an animated Earth backdrop.
-- Lunar Belt adds gravity wells and an authored safe corridor that the obstacle generator keeps clear.
-- Mars Freight Route adds directional solar/dust currents and heavier salvage recovery.
-- Blue Nebula adds low-visibility pockets, scanner interference, Tractor Beam distortion and magnetic fields.
-
-All biome effects run through reusable environmental fields, while project-owned vector planets, parallax, animated atmosphere, ambient motion and distant traffic keep each location visibly alive.
+- Eight project-owned landmark silhouettes replace the generic small station/satellite stand-ins.
+- Landmark collision is authored through reusable circle/box data and uses the existing non-lethal bump response.
+- Reserved landmark clearance now affects deterministic generation, keeping salvage and hazards out of stations, wrecks and moonlets.
+- Large structures remain compatible with authored and Endless sectors through the generic Sector Engine.
+- Landmark ambient redraw is bounded rather than running expensive custom drawing every frame.
+- Contextual cargo-depot guidance remains available in every sector and points to the real data-driven depot position.
 
 The remaining player-facing work is tracked in `docs/PRODUCT_BACKLOG.md`.
 

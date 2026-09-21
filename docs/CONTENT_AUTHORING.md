@@ -264,17 +264,32 @@ A modifier does not duplicate a sector and does not own a custom phase script.
 
 ## Landmarks
 
-Landmarks are visually strong composition elements.
+Landmarks are large authored composition elements that shape a sector rather than acting as background decoration.
 
-The current generic landmark definition contains:
+A landmark definition owns:
 
-- sprite;
-- scale;
-- reserved radius;
+- sprite path;
+- visual scale;
+- `reserved_radius` — world-space clearance kept free of normal salvage and collision hazards;
 - placement radius;
+- data-driven collision shape (`circle` or `box`);
+- bounded spin-speed range;
+- optional small drift amplitude;
 - ambient-effect ID.
 
-The runtime uses one generic `SectorLandmark` class. Future landmark behavior should remain configurable wherever practical.
+The runtime still uses one generic `SectorLandmark` class. A normal landmark must not receive a custom scene or script merely because its silhouette differs.
+
+`SectorGenerator` treats landmark reserved radii as real composition constraints. Landmark-to-landmark placement accounts for both structures' clearance radii, and subsequent salvage/obstacle placement respects the reserved space. This prevents generated content from appearing inside a station, wreck or moonlet.
+
+Landmark collision uses the same non-lethal world collision layer as normal obstacles, so large structures alter routes and produce the existing soft ship bump response without introducing combat or damage.
+
+Original launch landmark art lives under:
+
+```text
+assets/original/landmarks/
+```
+
+Collision dimensions are final world-space values and intentionally separate from SVG dimensions. This keeps gameplay geometry explicit even when art is later refined.
 
 ## Contracts in this phase
 

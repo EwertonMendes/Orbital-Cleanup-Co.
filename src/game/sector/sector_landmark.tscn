@@ -3,7 +3,9 @@
 [ext_resource type="Script" path="res://src/game/sector/sector_landmark.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/landmark_marker.gd" id="2"]
 
-[node name="SectorLandmark" type="Node2D"]
+[node name="SectorLandmark" type="StaticBody2D"]
+collision_layer = 2
+collision_mask = 0
 script = ExtResource("1")
 
 [node name="Marker" type="Node2D" parent="."]
@@ -14,3 +16,6 @@ script = ExtResource("2")
 [node name="Sprite" type="Sprite2D" parent="."]
 unique_name_in_owner = true
 texture_filter = 2
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true

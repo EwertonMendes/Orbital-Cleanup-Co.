@@ -25,12 +25,11 @@ Add a real audio identity on top of the existing procedural gameplay SFX.
 
 ### 2. Stronger visual identity and world silhouettes
 
-Reduce the remaining "asset-pack prototype" feeling.
+Finish the remaining object-level identity now that biome planets and large orbital landmarks are project-owned.
 
 - Give Rare/Epic salvage more unique silhouettes instead of reusing the same satellite families.
-- Add more distinctive large authored structures such as cargo ships, solar arrays and ruins beyond the current biome planets and distant traffic.
-- Improve landmark uniqueness and composition.
-- Keep recoverable salvage, hazards and scenery semantically distinct.
+- Add smaller biome-specific prop families where they improve local storytelling without clutter.
+- Keep recoverable salvage, hazards, landmarks and scenery semantically distinct.
 
 ### 3. Expand upgrades and ship customization
 

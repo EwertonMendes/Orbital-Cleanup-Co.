@@ -179,16 +179,41 @@ def validate_tables(tables: dict[str, dict[str, Any]], salvage: dict[str, dict[s
 def validate_landmarks(items: dict[str, dict[str, Any]], catalogs: dict[str, set[str]]) -> None:
     for item_id, data in items.items():
         label = f"landmarks/{item_id}"
-        require_keys(data, ("display_name_key", "sprite", "scale", "reserved_radius", "placement_radius", "ambient_effect"), label)
+        require_keys(data, (
+            "display_name_key", "sprite", "scale", "reserved_radius", "placement_radius",
+            "collision", "spin_speed_range", "drift_amplitude", "ambient_effect",
+        ), label)
         require_localization_key(data["display_name_key"], label, catalogs)
         require_asset(data["sprite"], f"{label}.sprite")
         require_number(data["scale"], f"{label}.scale", 0.01)
-        require_number(data["reserved_radius"], f"{label}.reserved_radius", 0)
+        reserved_radius = require_number(data["reserved_radius"], f"{label}.reserved_radius", 80, 900)
         placement = data["placement_radius"]
         require(isinstance(placement, list) and len(placement) == 2, f"{label}.placement_radius must contain two values")
         low = require_number(placement[0], f"{label}.placement_radius[0]", 0)
         high = require_number(placement[1], f"{label}.placement_radius[1]", 0)
         require(low <= high, f"{label}.placement_radius min cannot exceed max")
+        collision = data["collision"]
+        require(isinstance(collision, dict), f"{label}.collision must be an object")
+        shape = collision.get("shape")
+        require(shape in {"circle", "box"}, f"{label}.collision.shape must be circle or box")
+        if shape == "circle":
+            require(set(collision) == {"shape", "radius"}, f"{label}.collision circle fields are invalid")
+            collision_extent = require_number(collision.get("radius"), f"{label}.collision.radius", 20, 600)
+        else:
+            require(set(collision) == {"shape", "size"}, f"{label}.collision box fields are invalid")
+            size = collision.get("size")
+            require(isinstance(size, list) and len(size) == 2, f"{label}.collision.size must contain two values")
+            width = require_number(size[0], f"{label}.collision.size[0]", 40, 900)
+            height = require_number(size[1], f"{label}.collision.size[1]", 40, 900)
+            collision_extent = max(width, height) * 0.5
+        require(reserved_radius >= collision_extent + 60, f"{label}.reserved_radius must leave navigation clearance around collision")
+        spin = data["spin_speed_range"]
+        require(isinstance(spin, list) and len(spin) == 2, f"{label}.spin_speed_range must contain two values")
+        spin_low = require_number(spin[0], f"{label}.spin_speed_range[0]", -0.08, 0.08)
+        spin_high = require_number(spin[1], f"{label}.spin_speed_range[1]", -0.08, 0.08)
+        require(spin_low <= spin_high, f"{label}.spin_speed_range min cannot exceed max")
+        require_number(data["drift_amplitude"], f"{label}.drift_amplitude", 0, 12)
+        require(isinstance(data["ambient_effect"], str), f"{label}.ambient_effect must be a string")
 
 
 def validate_contracts(items: dict[str, dict[str, Any]], catalogs: dict[str, set[str]]) -> None:

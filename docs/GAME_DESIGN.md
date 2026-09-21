@@ -200,3 +200,31 @@ Environmental pressure is deliberately bounded. Fields use smooth falloff, never
 
 Visual identity uses project-owned editable SVG planets under `assets/original/planets/`, a shared animated surface/atmosphere shader, camera-relative parallax, biome-specific ambient motion and distant traffic. HUD text identifies the dominant local environmental effect while the world itself provides matching field visuals.
 
+
+## Memorable orbital landmark implementation
+
+Large structures are now part of navigation, not just scenery.
+
+The launch landmark family uses eight project-owned silhouettes: service satellite, cargo waystation, relay tower, lunar mining rig, fractured moonlet, communications array, Blue Nebula research outpost and a large derelict explorer wreck. Their shapes are intentionally much larger and more recognizable than salvage.
+
+Landmarks remain data-driven. Content authors choose placement range, navigation clearance, circle/box collision geometry, restrained motion and visual asset through JSON. The generic Sector Engine places them deterministically.
+
+Their `reserved_radius` is an actual composition rule: normal salvage and collision hazards are generated outside the structure's protected footprint. The ship can collide with the authored structure itself using the existing non-lethal bump response, which creates corridors, detours and recognizable navigation anchors without introducing damage or combat.
+
+Major orbital structures should continue to be authored as distinct silhouettes rather than enlarged small props. A new normal sector must still require data only, not landmark-specific GDScript.
+
+
+## Cargo depot navigation
+
+The cargo depot is the ship's deployment/home point and must remain easy to find in every authored and Endless sector without turning the flight HUD into a minimap.
+
+Navigation uses two complementary cues:
+
+- the world depot has a restrained animated beacon and persistent local label;
+- when the depot leaves the usable viewport, a small edge guide points toward its real world position and displays approximate distance.
+
+The guide is generic: Flight binds it directly to the current sector's `UnloadDepot` node after the sector's data-driven depot position is applied. There are no biome IDs, sector IDs or hardcoded depot coordinates in normal gameplay.
+
+The edge guide projects the real depot world position through the active viewport canvas transform, so it stays correct with camera movement and responsive layouts. It hides automatically when the depot is visible or the ship is already nearby.
+
+Cargo state changes emphasis but not layout: normal travel uses calm cyan guidance; a full cargo hold promotes the same beacon/guide to amber. The guide updates at 30 Hz and the world beacon redraws at 20 Hz to preserve Web/mobile frame pacing.

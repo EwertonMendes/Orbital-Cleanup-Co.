@@ -144,8 +144,22 @@ func _validate_world_visual_language() -> void:
 	_expect(landmark_packed != null, "SectorLandmark scene must load.")
 	if landmark_packed != null:
 		var landmark := landmark_packed.instantiate()
+		_expect(landmark is StaticBody2D, "Landmarks must participate in navigation as static structures.")
 		_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
+		_expect(landmark.find_child("CollisionShape", true, false) is CollisionShape2D, "Landmarks require generic collision geometry.")
 		landmark.free()
+
+	for asset_path in [
+		"res://assets/original/landmarks/service_satellite.svg",
+		"res://assets/original/landmarks/cargo_waystation.svg",
+		"res://assets/original/landmarks/relay_satellite.svg",
+		"res://assets/original/landmarks/mining_rig.svg",
+		"res://assets/original/landmarks/fractured_moonlet.svg",
+		"res://assets/original/landmarks/comms_array.svg",
+		"res://assets/original/landmarks/research_outpost.svg",
+		"res://assets/original/landmarks/derelict_explorer.svg",
+	]:
+		_expect(load(asset_path) is Texture2D, "Original landmark SVG must import as texture: %s" % asset_path)
 
 	var recovery_color := WorldVisualLanguage.salvage_recovery_color()
 	var hazard_color := WorldVisualLanguage.hazard_color()
@@ -192,6 +206,7 @@ func _validate_content_runtime() -> void:
 		var contract := registry.get_contract(String(contract_ref["type"]))
 		authored_kinds[String(contract["kind"])] = true
 		_validate_contract_plan_feasibility(authored_plan, registry)
+		_validate_landmark_plan(authored_plan)
 	_expect(authored_kinds.size() == 5, "Authored content must exercise all five contract kinds.")
 
 	var plan_a := generator.generate("earth_training_01")
@@ -217,6 +232,36 @@ func _validate_content_runtime() -> void:
 
 	var bounds := plan_a["play_bounds"] as Rect2
 	_expect(bounds.size.x >= 9000.0 and bounds.size.y >= 5500.0, "Generated training sector must preserve large play bounds.")
+
+func _validate_landmark_plan(plan: Dictionary) -> void:
+	for landmark_value in plan["landmark_spawns"] as Array:
+		var landmark := landmark_value as Dictionary
+		var definition := landmark["definition"] as Dictionary
+		var asset_path := String(definition.get("sprite", ""))
+		_expect(
+			asset_path.begins_with("res://assets/original/landmarks/"),
+			"Authored landmarks must use project-owned OCC landmark art."
+		)
+		var collision := definition.get("collision", {}) as Dictionary
+		_expect(
+			String(collision.get("shape", "")) in ["circle", "box"],
+			"Landmark collision must be data-driven."
+		)
+		var landmark_position := landmark["position"] as Vector2
+		var reserved_radius := float(definition.get("reserved_radius", 0.0))
+		_expect(reserved_radius >= 80.0, "Landmark requires meaningful navigation clearance.")
+		for salvage_value in plan["salvage_spawns"] as Array:
+			var salvage := salvage_value as Dictionary
+			_expect(
+				landmark_position.distance_to(salvage["position"] as Vector2) >= reserved_radius,
+				"Salvage cannot spawn inside landmark reserved clearance."
+			)
+		for obstacle_value in plan["obstacle_spawns"] as Array:
+			var obstacle := obstacle_value as Dictionary
+			_expect(
+				landmark_position.distance_to(obstacle["position"] as Vector2) >= reserved_radius,
+				"Collision hazards cannot spawn inside landmark reserved clearance."
+			)
 
 func _validate_environment_fields() -> void:
 	var registry := ContentRegistry.new()
@@ -695,6 +740,8 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
 	_expect(screen.find_child("CleanupProgress", true, false) is ProgressBar, "Flight HUD requires sector cleanliness progress.")
 	_expect(screen.find_child("EnvironmentStatus", true, false) is Label, "Flight HUD must identify active environmental effects.")
+	_expect(screen.find_child("DepotNavigationGuide", true, false) is DepotNavigationGuide, "Flight HUD requires contextual cargo-depot guidance.")
+	_expect(screen.find_child("DepotNavLabel", true, false) is Label, "Depot navigation requires localized distance feedback.")
 
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	_expect(
@@ -702,6 +749,18 @@ func _validate_flight_screen() -> void:
 		and "depot.position = deployment_position" in flight_source,
 		"Flight deployment must place ship and cargo depot at the same sector position."
 	)
+
+	_expect("navigation.configure(ship, depot)" in flight_source, "Flight must bind depot navigation to the real per-sector depot world node.")
+	_expect("depot_navigation.set_cargo_state" in flight_source, "Depot guide must react to cargo state without owning cargo rules.")
+
+	var guide_source := FileAccess.get_file_as_string("res://src/ui/components/depot_navigation_guide.gd")
+	_expect("get_canvas_transform()" in guide_source, "Depot guide must project the real world target through the active camera transform.")
+	_expect("NEAR_DISTANCE" in guide_source, "Depot guide must hide near the depot instead of remaining invasive.")
+	_expect("UPDATE_INTERVAL := 1.0 / 30.0" in guide_source, "Depot guide must use a bounded lightweight update cadence.")
+
+	var depot_source := FileAccess.get_file_as_string("res://src/game/salvage/unload_zone.gd")
+	_expect("set_cargo_state" in depot_source, "Depot world beacon must react to full cargo.")
+	_expect("1.0 / 20.0" in depot_source, "Animated depot beacon must throttle redraws for Web performance.")
 
 	var authored_salvage := 0
 	for node in screen.find_children("*", "Area2D", true, false):

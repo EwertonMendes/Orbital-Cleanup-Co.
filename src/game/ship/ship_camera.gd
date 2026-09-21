@@ -4,6 +4,7 @@ class_name ShipCamera
 var _tuning: ShipMovementTuning
 var _motion_velocity := Vector2.ZERO
 var _lead_offset := Vector2.ZERO
+var _framing_offset := Vector2.ZERO
 var _shake_energy := 0.0
 var _rng := RandomNumberGenerator.new()
 
@@ -20,6 +21,9 @@ func set_motion_velocity(value: Vector2) -> void:
 
 func add_bump_shake(intensity: float) -> void:
 	_shake_energy = maxf(_shake_energy, clampf(intensity, 0.0, 1.0))
+
+func set_framing_offset(value: Vector2) -> void:
+	_framing_offset = value
 
 func _process(delta: float) -> void:
 	if _tuning == null:
@@ -39,4 +43,4 @@ func _process(delta: float) -> void:
 		shake = Vector2(_rng.randf_range(-1.0, 1.0), _rng.randf_range(-1.0, 1.0))
 		shake *= _tuning.camera_shake_strength * _shake_energy
 
-	offset = _lead_offset + shake
+	offset = _framing_offset + _lead_offset + shake

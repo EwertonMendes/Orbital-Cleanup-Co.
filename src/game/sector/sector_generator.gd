@@ -65,8 +65,11 @@ func generate_definition(source: Dictionary) -> Dictionary:
 		environment_profile.get("salvage_mass_multiplier", 1.0)
 	)
 
-	var occupied: Array[Vector2] = [Vector2.ZERO, depot_position]
-	var landmarks := _build_landmarks(sector, rng, occupied)
+	var occupied: Array[Dictionary] = [
+		_occupied_zone(Vector2.ZERO, 90.0),
+		_occupied_zone(depot_position, 260.0),
+	]
+	var landmarks := _build_landmarks(sector, rng, play_bounds, occupied)
 	var salvage_spawns := _build_salvage_spawns(
 		sector,
 		biome,
@@ -123,22 +126,27 @@ func _apply_modifiers(parameters: Dictionary, modifier_ids: Array) -> void:
 		parameters["obstacle_count"] = float(parameters["obstacle_count"]) * float(runtime.get("obstacle_count_multiplier", 1.0))
 		parameters["rare_weight_multiplier"] = float(parameters["rare_weight_multiplier"]) * float(runtime.get("rare_weight_multiplier", 1.0))
 
-func _build_landmarks(sector: Dictionary, rng: RandomNumberGenerator, occupied: Array[Vector2]) -> Array[Dictionary]:
+func _build_landmarks(
+	sector: Dictionary,
+	rng: RandomNumberGenerator,
+	play_bounds: Rect2,
+	occupied: Array[Dictionary]
+) -> Array[Dictionary]:
 	var output: Array[Dictionary] = []
 	for value in sector.get("landmarks", []):
 		var id := String(value)
 		var definition := _registry.get_landmark(id)
 		var placement := definition.get("placement_radius", [1000.0, 1800.0]) as Array
-		var radius := rng.randf_range(float(placement[0]), float(placement[1]))
-		var angle := rng.randf_range(0.0, TAU)
-		var position := Vector2.from_angle(angle) * radius
-		occupied.append(position)
+		var reserved_radius := float(definition.get("reserved_radius", 0.0))
+		var position := _find_landmark_position(rng, play_bounds, placement, reserved_radius, occupied)
+		occupied.append(_occupied_zone(position, reserved_radius))
+		var spin_range := definition.get("spin_speed_range", [0.0, 0.0]) as Array
 		output.append({
 			"id": id,
 			"definition": definition,
 			"position": position,
-			"rotation": rng.randf_range(-0.3, 0.3),
-			"spin_speed": rng.randf_range(-0.045, 0.045),
+			"rotation": rng.randf_range(-PI, PI),
+			"spin_speed": rng.randf_range(float(spin_range[0]), float(spin_range[1])),
 			"motion_phase": rng.randf_range(0.0, TAU),
 		})
 	return output
@@ -153,7 +161,7 @@ func _build_salvage_spawns(
 	starter_radius: float,
 	min_spacing: float,
 	edge_margin: float,
-	occupied: Array[Vector2],
+	occupied: Array[Dictionary],
 	rare_weight_multiplier: float
 ) -> Array[Dictionary]:
 	var output: Array[Dictionary] = []
@@ -170,7 +178,7 @@ func _build_salvage_spawns(
 		else:
 			position = _find_position(rng, play_bounds, edge_margin, min_spacing, occupied)
 
-		occupied.append(position)
+		occupied.append(_occupied_zone(position))
 		output.append({
 			"salvage_id": salvage_id,
 			"position": position,
@@ -204,7 +212,7 @@ func _build_obstacle_spawns(
 	count: int,
 	min_spacing: float,
 	edge_margin: float,
-	occupied: Array[Vector2],
+	occupied: Array[Dictionary],
 	environment_fields: Array[Dictionary]
 ) -> Array[Dictionary]:
 	var obstacle_definitions := biome.get("obstacles", []) as Array
@@ -222,7 +230,7 @@ func _build_obstacle_spawns(
 			occupied,
 			environment_fields
 		)
-		occupied.append(position)
+		occupied.append(_occupied_zone(position))
 		output.append({
 			"definition": definition.duplicate(true),
 			"position": position,
@@ -296,7 +304,7 @@ func _find_obstacle_position(
 	play_bounds: Rect2,
 	edge_margin: float,
 	min_spacing: float,
-	occupied: Array[Vector2],
+	occupied: Array[Dictionary],
 	environment_fields: Array[Dictionary]
 ) -> Vector2:
 	var left := play_bounds.position.x + edge_margin
@@ -359,29 +367,59 @@ func _weighted_pick(entries: Array, weight_key: String, rng: RandomNumberGenerat
 			return entry
 	return entries.back()
 
+func _find_landmark_position(
+	rng: RandomNumberGenerator,
+	play_bounds: Rect2,
+	placement_radius: Array,
+	reserved_radius: float,
+	occupied: Array[Dictionary]
+) -> Vector2:
+	var minimum_radius := float(placement_radius[0])
+	var maximum_radius := float(placement_radius[1])
+	var edge_padding := reserved_radius + 80.0
+	for _attempt in range(64):
+		var radius := rng.randf_range(minimum_radius, maximum_radius)
+		var candidate := Vector2.from_angle(rng.randf_range(0.0, TAU)) * radius
+		if not _point_inside_bounds(candidate, play_bounds, edge_padding):
+			continue
+		if _is_far_enough(candidate, occupied, 120.0, reserved_radius):
+			return candidate
+	return _find_position(rng, play_bounds, edge_padding, 120.0, occupied, reserved_radius)
+
+func _point_inside_bounds(point: Vector2, bounds: Rect2, padding: float) -> bool:
+	return (
+		point.x >= bounds.position.x + padding
+		and point.x <= bounds.end.x - padding
+		and point.y >= bounds.position.y + padding
+		and point.y <= bounds.end.y - padding
+	)
+
+func _occupied_zone(position: Vector2, radius: float = 0.0) -> Dictionary:
+	return {"position": position, "radius": maxf(radius, 0.0)}
+
 func _find_position(
 	rng: RandomNumberGenerator,
 	play_bounds: Rect2,
 	edge_margin: float,
 	min_spacing: float,
-	occupied: Array[Vector2]
+	occupied: Array[Dictionary],
+	candidate_radius: float = 0.0
 ) -> Vector2:
 	var left := play_bounds.position.x + edge_margin
 	var right := play_bounds.end.x - edge_margin
 	var top := play_bounds.position.y + edge_margin
 	var bottom := play_bounds.end.y - edge_margin
-
 	for _attempt in range(32):
 		var candidate := Vector2(rng.randf_range(left, right), rng.randf_range(top, bottom))
-		if _is_far_enough(candidate, occupied, min_spacing):
+		if _is_far_enough(candidate, occupied, min_spacing, candidate_radius):
 			return candidate
-
 	return Vector2(rng.randf_range(left, right), rng.randf_range(top, bottom))
 
-func _is_far_enough(candidate: Vector2, occupied: Array[Vector2], min_spacing: float) -> bool:
-	var minimum_sq := min_spacing * min_spacing
-	for position in occupied:
-		if candidate.distance_squared_to(position) < minimum_sq:
+func _is_far_enough(candidate: Vector2, occupied: Array[Dictionary], min_spacing: float, candidate_radius: float = 0.0) -> bool:
+	for zone in occupied:
+		var position := zone["position"] as Vector2
+		var required_distance := min_spacing + maxf(candidate_radius, 0.0) + float(zone.get("radius", 0.0))
+		if candidate.distance_squared_to(position) < required_distance * required_distance:
 			return false
 	return true
 
@@ -419,4 +457,8 @@ func _build_signature(
 		var entry: Dictionary = salvage[index] as Dictionary
 		var position := entry["position"] as Vector2
 		parts.append("%s@%.1f,%.1f" % [String(entry["salvage_id"]), position.x, position.y])
+	for index in range(mini(landmarks.size(), 4)):
+		var landmark := landmarks[index] as Dictionary
+		var landmark_position := landmark["position"] as Vector2
+		parts.append("landmark:%s@%.1f,%.1f" % [String(landmark["id"]), landmark_position.x, landmark_position.y])
 	return "|".join(parts)
