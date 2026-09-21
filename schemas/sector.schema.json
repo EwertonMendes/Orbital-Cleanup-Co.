@@ -6,6 +6,8 @@
   "required": [
     "id",
     "display_name_key",
+    "career_order",
+    "unlock_rank",
     "biome",
     "seed",
     "difficulty",
@@ -24,6 +26,14 @@
     "display_name_key": {
       "type": "string",
       "minLength": 1
+    },
+    "career_order": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "unlock_rank": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
     },
     "biome": {
       "type": "string",
