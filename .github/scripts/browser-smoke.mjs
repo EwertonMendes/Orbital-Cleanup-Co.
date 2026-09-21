@@ -155,6 +155,25 @@ async function openQaDeepLinks() {
     await page.close();
   }
 
+  const debriefViewports = [
+    { label: 'desktop', viewport: { width: 1280, height: 720 } },
+    { label: 'portrait', viewport: { width: 390, height: 844 } },
+  ];
+  for (const sample of debriefViewports) {
+    const page = await browser.newPage({
+      viewport: sample.viewport,
+      hasTouch: sample.label === 'portrait',
+      isMobile: sample.label === 'portrait',
+    });
+    watch(page, `qa-debrief-${sample.label}`);
+    const debriefReady = waitForConsole(page, '[Debrief] READY sector=earth_training_02 promoted=true', 60000);
+    await page.goto(`${url}?debrief=promotion`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await debriefReady;
+    await page.waitForTimeout(1900);
+    await page.screenshot({ path: `build/smoke-qa-debrief-${sample.label}.png`, fullPage: true });
+    await page.close();
+  }
+
   const endlessPage = await browser.newPage({ viewport: { width: 1100, height: 700 } });
   watch(endlessPage, 'qa-endless-10000');
   const endlessReady = waitForConsole(endlessPage, '[Sector] READY id=endless_010000 seed=4242', 60000);
