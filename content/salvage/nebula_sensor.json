@@ -1,7 +1,7 @@
 {
   "id": "nebula_sensor",
   "display_name_key": "SALVAGE_NEBULA_SENSOR",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/nebula_sensor.svg",
   "category": "research",
   "rarity": "uncommon",
   "base_value": 82,
@@ -11,6 +11,12 @@
   "cargo_units": 2,
   "visual_scale": 0.64,
   "collision_radius": 24,
+  "visual_profile": {
+    "motion": "drift",
+    "effect": "scan",
+    "spin_multiplier": 0.15,
+    "float_amplitude": 3.4
+  },
   "tags": [
     "nebula",
     "sensor",

@@ -1,7 +1,7 @@
 {
   "id": "dense_composite",
   "display_name_key": "SALVAGE_DENSE_COMPOSITE",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/dense_composite.svg",
   "category": "scrap",
   "rarity": "uncommon",
   "base_value": 55,
@@ -11,6 +11,12 @@
   "cargo_units": 3,
   "visual_scale": 0.7,
   "collision_radius": 30,
+  "visual_profile": {
+    "motion": "tumble",
+    "effect": "none",
+    "spin_multiplier": 0.55,
+    "float_amplitude": 2.5
+  },
   "tags": [
     "dense",
     "composite",

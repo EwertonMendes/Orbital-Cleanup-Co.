@@ -1,7 +1,7 @@
 {
   "id": "mining_coupler",
   "display_name_key": "SALVAGE_MINING_COUPLER",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/mining_coupler.svg",
   "category": "mining",
   "rarity": "common",
   "base_value": 28,
@@ -11,6 +11,12 @@
   "cargo_units": 1,
   "visual_scale": 0.92,
   "collision_radius": 21,
+  "visual_profile": {
+    "motion": "tumble",
+    "effect": "spark",
+    "spin_multiplier": 0.48,
+    "float_amplitude": 2.1
+  },
   "tags": [
     "lunar",
     "mining",

@@ -1,7 +1,7 @@
 {
   "id": "pressure_valve",
   "display_name_key": "SALVAGE_PRESSURE_VALVE",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/pressure_valve.svg",
   "category": "industrial",
   "rarity": "common",
   "base_value": 26,
@@ -11,6 +11,12 @@
   "cargo_units": 1,
   "visual_scale": 0.82,
   "collision_radius": 19,
+  "visual_profile": {
+    "motion": "tumble",
+    "effect": "spark",
+    "spin_multiplier": 0.36,
+    "float_amplitude": 1.6
+  },
   "tags": [
     "mars",
     "industrial",

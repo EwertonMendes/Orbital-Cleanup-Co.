@@ -1,7 +1,7 @@
 {
   "id": "orbital_battery",
   "display_name_key": "SALVAGE_ORBITAL_BATTERY",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/orbital_battery.svg",
   "category": "power",
   "rarity": "rare",
   "base_value": 148,
@@ -11,6 +11,12 @@
   "cargo_units": 3,
   "visual_scale": 0.7,
   "collision_radius": 28,
+  "visual_profile": {
+    "motion": "pulse",
+    "effect": "pulse",
+    "spin_multiplier": 0.06,
+    "float_amplitude": 2.2
+  },
   "tags": [
     "power",
     "battery",

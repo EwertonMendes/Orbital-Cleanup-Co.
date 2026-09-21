@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce9ed"/><stop offset=".48" stop-color="#78909b"/><stop offset="1" stop-color="#304d5a"/></linearGradient>
+    <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#24404d"/><stop offset="1" stop-color="#0d2334"/></linearGradient>
+  </defs>
+  <g stroke="#071424" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="64" cy="63" r="28" fill="url(#dark)"/><ellipse cx="64" cy="63" rx="50" ry="18" fill="none" stroke="url(#metal)" stroke-width="8"/><path d="M64 25v-9M64 110v-9M29 63H16M112 63H99" fill="none" stroke="#dce9ed" stroke-width="5"/><circle cx="64" cy="63" r="16" fill="#b68cff" opacity=".28"/><circle cx="64" cy="63" r="8" fill="#d59cff" stroke="none"/><path d="M52 52 76 74M76 52 52 74" fill="none" stroke="#f2f8fb" opacity=".65"/>
+  </g>
+  <g fill="none" stroke="#b68cff" stroke-width="2" stroke-linecap="round" opacity=".9"><path d="M23 107h22"/><circle cx="51" cy="107" r="2" fill="#b68cff" stroke="none"/></g>
+</svg>

@@ -1,7 +1,7 @@
 {
   "id": "antenna_array",
   "display_name_key": "SALVAGE_ANTENNA_ARRAY",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/antenna_array.svg",
   "category": "electronics",
   "rarity": "uncommon",
   "base_value": 52,
@@ -11,6 +11,12 @@
   "cargo_units": 2,
   "visual_scale": 0.8,
   "collision_radius": 30,
+  "visual_profile": {
+    "motion": "stable",
+    "effect": "scan",
+    "spin_multiplier": 0.18,
+    "float_amplitude": 2.2
+  },
   "tags": [
     "communications",
     "satellite",

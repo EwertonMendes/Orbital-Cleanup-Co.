@@ -1,7 +1,7 @@
 {
   "id": "alloy_plate",
   "display_name_key": "SALVAGE_ALLOY_PLATE",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/alloy_plate.svg",
   "category": "scrap",
   "rarity": "common",
   "base_value": 24,
@@ -11,6 +11,12 @@
   "cargo_units": 1,
   "visual_scale": 0.52,
   "collision_radius": 20,
+  "visual_profile": {
+    "motion": "tumble",
+    "effect": "none",
+    "spin_multiplier": 0.72,
+    "float_amplitude": 3.2
+  },
   "tags": [
     "metal",
     "panel",

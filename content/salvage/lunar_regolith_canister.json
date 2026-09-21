@@ -1,7 +1,7 @@
 {
   "id": "lunar_regolith_canister",
   "display_name_key": "SALVAGE_LUNAR_REGOLITH_CANISTER",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/lunar_regolith_canister.svg",
   "category": "mining",
   "rarity": "uncommon",
   "base_value": 62,
@@ -11,6 +11,12 @@
   "cargo_units": 3,
   "visual_scale": 0.54,
   "collision_radius": 27,
+  "visual_profile": {
+    "motion": "heavy",
+    "effect": "pulse",
+    "spin_multiplier": 0.22,
+    "float_amplitude": 1.5
+  },
   "tags": [
     "lunar",
     "mining",

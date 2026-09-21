@@ -1,7 +1,7 @@
 {
   "id": "station_bracket",
   "display_name_key": "SALVAGE_STATION_BRACKET",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/station_bracket.svg",
   "category": "scrap",
   "rarity": "common",
   "base_value": 20,
@@ -11,6 +11,12 @@
   "cargo_units": 1,
   "visual_scale": 0.88,
   "collision_radius": 20,
+  "visual_profile": {
+    "motion": "tumble",
+    "effect": "none",
+    "spin_multiplier": 0.44,
+    "float_amplitude": 2.2
+  },
   "tags": [
     "station",
     "metal",

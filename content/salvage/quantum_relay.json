@@ -1,7 +1,7 @@
 {
   "id": "quantum_relay",
   "display_name_key": "SALVAGE_QUANTUM_RELAY",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/quantum_relay.svg",
   "category": "electronics",
   "rarity": "epic",
   "base_value": 240,
@@ -11,6 +11,12 @@
   "cargo_units": 4,
   "visual_scale": 0.55,
   "collision_radius": 34,
+  "visual_profile": {
+    "motion": "stable",
+    "effect": "orbit",
+    "spin_multiplier": 0.08,
+    "float_amplitude": 3.2
+  },
   "tags": [
     "relay",
     "electronics",

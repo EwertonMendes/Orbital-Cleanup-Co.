@@ -1,7 +1,7 @@
 {
   "id": "sensor_pod",
   "display_name_key": "SALVAGE_SENSOR_POD",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_c.png",
+  "sprite": "res://assets/original/salvage/sensor_pod.svg",
   "category": "electronics",
   "rarity": "common",
   "base_value": 32,
@@ -11,6 +11,12 @@
   "cargo_units": 2,
   "visual_scale": 0.76,
   "collision_radius": 24,
+  "visual_profile": {
+    "motion": "stable",
+    "effect": "scan",
+    "spin_multiplier": 0.18,
+    "float_amplitude": 2.4
+  },
   "tags": [
     "electronics",
     "satellite",

@@ -1,7 +1,7 @@
 {
   "id": "solar_cell_bundle",
   "display_name_key": "SALVAGE_SOLAR_CELL_BUNDLE",
-  "sprite": "res://assets/third_party/kenney_simple_space/scenery/satellite_b.png",
+  "sprite": "res://assets/original/salvage/solar_cell_bundle.svg",
   "category": "power",
   "rarity": "uncommon",
   "base_value": 64,
@@ -11,6 +11,12 @@
   "cargo_units": 2,
   "visual_scale": 0.66,
   "collision_radius": 25,
+  "visual_profile": {
+    "motion": "drift",
+    "effect": "pulse",
+    "spin_multiplier": 0.12,
+    "float_amplitude": 2.4
+  },
   "tags": [
     "solar",
     "power",
