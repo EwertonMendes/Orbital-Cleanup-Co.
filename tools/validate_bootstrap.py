@@ -354,6 +354,8 @@ def validate_visual_foundation() -> None:
         fail("Complete Contract must use the green Kenney action state")
     if "HudThumbnailEmpty" not in flight_theme:
         fail("Biome thumbnail must not render a second internal cyan border")
+    if flight.count("size_flags_vertical = 4") < 2:
+        fail("Flight action buttons must not stretch to the height of the mission/cargo cards")
     if 'theme_override_styles/panel = SubResource("MissionPanel")' in flight or 'theme_override_styles/normal = SubResource("ReturnButtonNormal")' in flight:
         fail("Live flight HUD must not retain the legacy cyan flat-panel/button overrides")
 

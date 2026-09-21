@@ -467,7 +467,7 @@ func _refresh_copy() -> void:
 	if not is_node_ready():
 		return
 
-	operations_button.text = tr("FLIGHT_OPERATIONS")
+	operations_button.text = "%s >" % tr("FLIGHT_OPERATIONS")
 	operations_button.visible = not _contract_active
 	return_button.visible = _contract_active
 	cargo_card.visible = _contract_active

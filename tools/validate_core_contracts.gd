@@ -840,6 +840,7 @@ func _validate_flight_screen() -> void:
 	var flight_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.tscn")
 	_expect("occ_flight_hud_theme.tres" in flight_scene_source, "Live flight HUD must use the dedicated dark flight theme.")
 	_expect("HudActionButton" in flight_scene_source and "HudDangerButton" in flight_scene_source, "Flight Operations/abort actions must use compact HUD button variants.")
+	_expect(flight_scene_source.count("size_flags_vertical = 4") >= 2, "Flight action buttons must stay at native 48 px height instead of stretching with the HUD row.")
 	_expect("HudSuccessButton" in flight_source, "Completed contracts must switch the return action to the green success button state.")
 	_expect("_refresh_biome_thumbnail" in flight_source and 'visual_profile.get("primary_asset", "")' in flight_source, "Flight biome thumbnail must come from the same data-driven primary artwork used in the world.")
 	var flight_theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_flight_hud_theme.tres")

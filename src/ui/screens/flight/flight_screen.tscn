@@ -303,16 +303,18 @@ show_percentage = false
 [node name="ReturnButton" type="Button" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
 theme_type_variation = &"HudDangerButton"
 unique_name_in_owner = true
-custom_minimum_size = Vector2(150, 44)
+custom_minimum_size = Vector2(152, 48)
 layout_mode = 2
+size_flags_vertical = 4
 text = "RETURN"
 
 [node name="OperationsButton" type="Button" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
 theme_type_variation = &"HudActionButton"
 unique_name_in_owner = true
-custom_minimum_size = Vector2(126, 44)
+custom_minimum_size = Vector2(138, 48)
 layout_mode = 2
-text = "OPERATIONS"
+size_flags_vertical = 4
+text = "OPERATIONS >"
 
 [node name="MainSpacer" type="Control" parent="HUD/HudRoot/SafeArea/Layout"]
 layout_mode = 2
