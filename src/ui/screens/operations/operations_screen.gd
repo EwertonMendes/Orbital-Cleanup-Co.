@@ -49,6 +49,12 @@ const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card
 @onready var contract_target: Label = %ContractTarget
 @onready var contract_risk: Label = %ContractRisk
 @onready var contract_payout: Label = %ContractPayout
+@onready var contract_requirement: Label = %ContractRequirement
+@onready var next_unlock_panel: VBoxContainer = %NextUnlockPanel
+@onready var next_unlock_title: Label = %NextUnlockTitle
+@onready var next_unlock_label: Label = %NextUnlockLabel
+@onready var next_unlock_progress: ProgressBar = %NextUnlockProgress
+@onready var next_unlock_progress_label: Label = %NextUnlockProgressLabel
 @onready var last_result: Label = %LastResult
 @onready var ship_stats: Label = %ShipStats
 @onready var ship_preview: TextureRect = %ShipPreview
@@ -102,7 +108,8 @@ func configure(context: Dictionary) -> void:
 	_endless_generator.configure(_registry)
 	_sector_ids = _registry.list_sector_ids()
 	assert(not _sector_ids.is_empty(), "Headquarters requires at least one authored sector.")
-	var preferred_index := _sector_ids.find(DEFAULT_SECTOR_ID)
+	var requested_sector := String(context.get("debug_hq_sector_id", DEFAULT_SECTOR_ID))
+	var preferred_index := _sector_ids.find(requested_sector)
 	_selected_sector_index = preferred_index if preferred_index >= 0 else 0
 	_load_selected_sector()
 
@@ -138,6 +145,8 @@ func _validate_contracts() -> void:
 	assert(primary_action != null, "Headquarters requires PrimaryAction.")
 	assert(contract_selector != null, "Headquarters requires responsive ContractSelector.")
 	assert(previous_contract != null and endless_contract != null and next_contract != null and contract_position != null, "Headquarters requires contract navigation.")
+	assert(contract_requirement != null, "Headquarters requires active-contract access feedback.")
+	assert(next_unlock_panel != null and next_unlock_label != null and next_unlock_progress != null, "Headquarters requires next career unlock feedback.")
 	assert(upgrade_grid != null, "Headquarters requires UpgradeGrid.")
 	assert(career_list != null, "Headquarters requires CareerList.")
 	assert(ship_preview != null and contract_ship_art != null, "Headquarters requires cosmetic ship previews.")
@@ -203,6 +212,15 @@ func _apply_responsive_layout() -> void:
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
 func _deploy_training() -> void:
+	var access := _active_contract_access()
+	if not bool(access.get("unlocked", false)):
+		if _platform != null:
+			_platform.track_event("locked_contract_attempted", {
+				"type": String(access.get("type", "")),
+				"required_rank": String(access.get("rank_id", "")),
+			})
+		return
+
 	var scene := load(FLIGHT_SCREEN_PATH) as PackedScene
 	assert(scene != null, "Training flight screen must be loadable.")
 	var flight_context := _context.duplicate(true)
@@ -248,6 +266,38 @@ func _load_endless_contract() -> void:
 	_viewing_endless = true
 	_active_sector_definition = _endless_generator.create_sector_definition(_endless_number)
 	_sector_plan = _generator.generate_definition(_active_sector_definition)
+
+func _active_contract_access() -> Dictionary:
+	if _viewing_endless:
+		return _progression.get_endless_access()
+	return _progression.get_sector_access(String(_sector_ids[_selected_sector_index]))
+
+func _refresh_next_unlock() -> void:
+	var unlock := _progression.get_next_content_unlock()
+	next_unlock_panel.visible = not unlock.is_empty()
+	if unlock.is_empty():
+		return
+
+	var current_xp := int(unlock["current_xp"])
+	var required_xp := int(unlock["min_xp"])
+	var remaining := int(unlock["xp_remaining"])
+	var rank_requirement := _progression.get_rank_requirement(String(unlock["rank_id"]))
+
+	next_unlock_title.text = tr("HQ_NEXT_UNLOCK")
+	next_unlock_label.text = tr("HQ_NEXT_UNLOCK_FMT") % [
+		tr(String(unlock["content_display_name_key"])),
+		tr(String(rank_requirement["display_name_key"])),
+	]
+	next_unlock_progress.value = 100.0 if required_xp <= 0 else clampf(
+		float(current_xp) / float(required_xp) * 100.0,
+		0.0,
+		100.0
+	)
+	next_unlock_progress_label.text = tr("HQ_NEXT_UNLOCK_XP_FMT") % [
+		current_xp,
+		required_xp,
+		remaining,
+	]
 
 func _completed_contract_total() -> int:
 	var snapshot := _progression.get_snapshot()
@@ -304,6 +354,7 @@ func _refresh_all() -> void:
 	_refresh_header()
 	_refresh_tabs()
 	_refresh_contracts()
+	_refresh_next_unlock()
 	_refresh_upgrades()
 	_refresh_career()
 	_refresh_ship()
@@ -331,6 +382,8 @@ func _refresh_tabs() -> void:
 
 func _refresh_contracts() -> void:
 	var sector := _sector_plan["sector"] as Dictionary
+	var access := _active_contract_access()
+	var unlocked := bool(access["unlocked"])
 	var contract_ref := sector["contract"] as Dictionary
 	var contract := _registry.get_contract(String(contract_ref["type"]))
 	var params := _sector_plan["parameters"] as Dictionary
@@ -343,17 +396,17 @@ func _refresh_contracts() -> void:
 	previous_contract.text = tr("HQ_CONTRACT_PREVIOUS")
 	next_contract.text = tr("HQ_CONTRACT_NEXT")
 	if _viewing_endless:
-		contract_state.text = tr("HQ_ENDLESS_AVAILABLE")
+		contract_state.text = tr("HQ_ENDLESS_AVAILABLE") if unlocked else tr("HQ_CONTRACT_LOCKED")
 		contract_position.text = tr("HQ_ENDLESS_INDEX_FMT") % [_endless_number, int(sector["seed"])]
 		endless_contract.text = tr("HQ_AUTHORED_CONTRACTS")
-		previous_contract.disabled = _endless_number <= 1
-		next_contract.disabled = false
+		previous_contract.disabled = not unlocked or _endless_number <= 1
+		next_contract.disabled = not unlocked
 		contract_title.text = tr("SECTOR_ENDLESS_CONTRACT_FMT") % [
 			_endless_number,
 			tr(String((_sector_plan["biome"] as Dictionary)["display_name_key"])),
 		]
 	else:
-		contract_state.text = tr("HQ_CONTRACT_AVAILABLE")
+		contract_state.text = tr("HQ_CONTRACT_AVAILABLE") if unlocked else tr("HQ_CONTRACT_LOCKED")
 		contract_position.text = tr("HQ_CONTRACT_INDEX_FMT") % [_selected_sector_index + 1, _sector_ids.size()]
 		endless_contract.text = tr("HQ_ENDLESS_CONTRACTS")
 		previous_contract.disabled = _sector_ids.size() <= 1
@@ -368,7 +421,18 @@ func _refresh_contracts() -> void:
 	contract_payout.text = tr("HQ_CONTRACT_PAY_FMT") % [base_pay, perfect_bonus]
 	%ContractShipName.text = tr("OPS_SHIP_NAME")
 	%ContractShipStatus.text = tr("HQ_SHIP_READY")
-	primary_action.text = tr("HQ_DEPLOY")
+	var requirement := _progression.get_rank_requirement(String(access["rank_id"]))
+	primary_action.disabled = not unlocked
+	primary_action.text = tr("HQ_DEPLOY") if unlocked else tr("HQ_LOCKED_RANK_FMT") % tr(String(requirement["display_name_key"]))
+	contract_requirement.visible = not unlocked
+	contract_requirement.text = tr("HQ_CONTRACT_LOCK_REQUIREMENT_FMT") % [
+		tr(String(requirement["display_name_key"])),
+		int(access["min_xp"]),
+	]
+	contract_state.add_theme_color_override(
+		"font_color",
+		Color("#79e6c4") if unlocked else Color("#ffc857")
+	)
 
 	var result := _progression.get_last_contract_result()
 	last_result.visible = not result.is_empty()

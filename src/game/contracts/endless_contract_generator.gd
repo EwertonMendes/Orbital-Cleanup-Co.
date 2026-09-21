@@ -62,9 +62,12 @@ func create_sector_definition(contract_number: int, seed_override: int = -1, bio
 	var clusters := mini(4 + int((contract_number - 1) / 3), 10)
 	var depot := Vector2.from_angle(rng.randf_range(0.0, TAU)) * rng.randf_range(620.0, 1180.0)
 
+	var career := _registry.get_progression("career_ranks")
 	return {
 		"id": "endless_%06d" % contract_number,
 		"display_name_key": DISPLAY_NAME_KEY,
+		"career_order": 100000 + contract_number,
+		"unlock_rank": String(career.get("endless_unlock_rank", "deep_space_operator")),
 		"biome": biome_id,
 		"seed": seed,
 		"difficulty": contract_number,

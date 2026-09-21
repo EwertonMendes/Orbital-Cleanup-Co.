@@ -44,7 +44,7 @@ func has_salvage(id: String) -> bool:
 	return FileAccess.file_exists("%s/salvage/%s.json" % [CONTENT_ROOT, id])
 
 func list_sector_ids() -> PackedStringArray:
-	var ids := PackedStringArray()
+	var entries: Array[Dictionary] = []
 	var dir := DirAccess.open("%s/sectors" % CONTENT_ROOT)
 	assert(dir != null, "Unable to enumerate sector content.")
 
@@ -52,10 +52,26 @@ func list_sector_ids() -> PackedStringArray:
 	var filename := dir.get_next()
 	while not filename.is_empty():
 		if not dir.current_is_dir() and filename.ends_with(".json"):
-			ids.append(filename.left(filename.length() - 5))
+			var sector_id := filename.left(filename.length() - 5)
+			var sector := get_sector(sector_id)
+			entries.append({
+				"id": sector_id,
+				"career_order": int(sector.get("career_order", 999999)),
+			})
 		filename = dir.get_next()
 	dir.list_dir_end()
-	ids.sort()
+
+	entries.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var order_a := int(a["career_order"])
+		var order_b := int(b["career_order"])
+		if order_a == order_b:
+			return String(a["id"]) < String(b["id"])
+		return order_a < order_b
+	)
+
+	var ids := PackedStringArray()
+	for entry in entries:
+		ids.append(String(entry["id"]))
 	return ids
 
 func get_salvage_definition(id: String) -> SalvageDefinition:

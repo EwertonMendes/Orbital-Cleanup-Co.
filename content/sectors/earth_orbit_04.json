@@ -1,6 +1,8 @@
 {
   "id": "earth_orbit_04",
   "display_name_key": "SECTOR_EARTH_ORBIT_04",
+  "career_order": 4,
+  "unlock_rank": "junior_cleaner",
   "biome": "earth_orbit",
   "seed": 91827,
   "difficulty": 4,

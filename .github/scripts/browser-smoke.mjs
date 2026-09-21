@@ -155,6 +155,17 @@ async function openQaDeepLinks() {
     await page.close();
   }
 
+  const lockedHqPage = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  watch(lockedHqPage, 'qa-hq-locked-lunar');
+  const lockedHqReady = waitForConsole(lockedHqPage, '[HQ] READY tab=contracts', 60000);
+  const lockedRoute = waitForConsole(lockedHqPage, '[QA] DEEP_LINK hq_sector=lunar_belt_01', 60000);
+  await lockedHqPage.goto(`${url}?hq_sector=lunar_belt_01`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await lockedRoute;
+  await lockedHqReady;
+  await lockedHqPage.waitForTimeout(350);
+  await lockedHqPage.screenshot({ path: 'build/smoke-qa-hq-locked-lunar.png', fullPage: true });
+  await lockedHqPage.close();
+
   const debriefViewports = [
     { label: 'desktop', viewport: { width: 1280, height: 720 } },
     { label: 'portrait', viewport: { width: 390, height: 844 } },

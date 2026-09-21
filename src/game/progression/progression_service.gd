@@ -51,6 +51,73 @@ func get_rank_display_name_key() -> String:
 func get_rank_progress() -> Dictionary:
 	return _rank_progress_for(get_company_xp(), get_rank_id())
 
+func meets_rank_requirement(rank_id: String) -> bool:
+	var required_index := _rank_index(rank_id)
+	assert(required_index >= 0, "Unknown rank requirement: %s" % rank_id)
+	return _rank_index(get_rank_id()) >= required_index
+
+func get_rank_requirement(rank_id: String) -> Dictionary:
+	var rank := _find_rank(rank_id)
+	assert(not rank.is_empty(), "Unknown rank requirement: %s" % rank_id)
+	var min_xp := int(rank["min_xp"])
+	var current_xp := get_company_xp()
+	return {
+		"rank_id": rank_id,
+		"display_name_key": String(rank["display_name_key"]),
+		"min_xp": min_xp,
+		"current_xp": current_xp,
+		"xp_remaining": maxi(min_xp - current_xp, 0),
+		"unlocked": meets_rank_requirement(rank_id),
+	}
+
+func get_sector_access(sector_id: String) -> Dictionary:
+	var sector := _registry.get_sector(sector_id)
+	var requirement := get_rank_requirement(String(sector["unlock_rank"]))
+	requirement["type"] = "sector"
+	requirement["sector_id"] = sector_id
+	requirement["content_display_name_key"] = String(sector["display_name_key"])
+	requirement["career_order"] = int(sector["career_order"])
+	return requirement
+
+func is_sector_unlocked(sector_id: String) -> bool:
+	return bool(get_sector_access(sector_id)["unlocked"])
+
+func get_endless_unlock_rank() -> String:
+	return String(_rank_config.get("endless_unlock_rank", "deep_space_operator"))
+
+func get_endless_access() -> Dictionary:
+	var requirement := get_rank_requirement(get_endless_unlock_rank())
+	requirement["type"] = "endless"
+	requirement["content_display_name_key"] = "UNLOCK_ENDLESS_CONTRACTS"
+	requirement["career_order"] = 100000
+	return requirement
+
+func is_endless_unlocked() -> bool:
+	return bool(get_endless_access()["unlocked"])
+
+func get_next_content_unlock() -> Dictionary:
+	var candidates: Array[Dictionary] = []
+	for sector_id in _registry.list_sector_ids():
+		var access := get_sector_access(sector_id)
+		if not bool(access["unlocked"]):
+			candidates.append(access)
+
+	var endless_access := get_endless_access()
+	if not bool(endless_access["unlocked"]):
+		candidates.append(endless_access)
+
+	if candidates.is_empty():
+		return {}
+
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var xp_a := int(a["min_xp"])
+		var xp_b := int(b["min_xp"])
+		if xp_a == xp_b:
+			return int(a["career_order"]) < int(b["career_order"])
+		return xp_a < xp_b
+	)
+	return candidates[0].duplicate(true)
+
 func get_upgrade_definitions() -> Array[Dictionary]:
 	var output: Array[Dictionary] = []
 	for value in _upgrade_config.get("upgrades", []) as Array:
@@ -354,6 +421,28 @@ func _collect_unlocks_between_ranks(previous_rank: String, next_rank: String) ->
 	var output: Array[Dictionary] = []
 	if next_index <= previous_index:
 		return output
+
+	for sector_id in _registry.list_sector_ids():
+		var sector := _registry.get_sector(sector_id)
+		var unlock_rank := String(sector["unlock_rank"])
+		var unlock_index := _rank_index(unlock_rank)
+		if unlock_index > previous_index and unlock_index <= next_index:
+			output.append({
+				"type": "sector",
+				"id": sector_id,
+				"display_name_key": String(sector["display_name_key"]),
+				"unlock_rank": unlock_rank,
+			})
+
+	var endless_rank := get_endless_unlock_rank()
+	var endless_index := _rank_index(endless_rank)
+	if endless_index > previous_index and endless_index <= next_index:
+		output.append({
+			"type": "feature",
+			"id": "endless_contracts",
+			"display_name_key": "UNLOCK_ENDLESS_CONTRACTS",
+			"unlock_rank": endless_rank,
+		})
 
 	var categories := _cosmetic_config.get("categories", {}) as Dictionary
 	for category_variant in categories.keys():

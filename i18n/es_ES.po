@@ -819,3 +819,24 @@ msgstr "NUEVOS DESCUBRIMIENTOS"
 
 msgid "DEBRIEF_CONTINUE"
 msgstr "CONTINUAR A LA SEDE"
+
+msgid "HQ_CONTRACT_LOCKED"
+msgstr "CONTRATO BLOQUEADO"
+
+msgid "HQ_LOCKED_RANK_FMT"
+msgstr "BLOQUEADO · %s"
+
+msgid "HQ_CONTRACT_LOCK_REQUIREMENT_FMT"
+msgstr "Requiere %s · %d XP de Empresa"
+
+msgid "HQ_NEXT_UNLOCK"
+msgstr "PRÓXIMO DESBLOQUEO"
+
+msgid "HQ_NEXT_UNLOCK_FMT"
+msgstr "%s · %s"
+
+msgid "HQ_NEXT_UNLOCK_XP_FMT"
+msgstr "%d / %d XP · FALTAN %d"
+
+msgid "UNLOCK_ENDLESS_CONTRACTS"
+msgstr "Contratos Infinitos"

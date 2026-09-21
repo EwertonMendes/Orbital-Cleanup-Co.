@@ -1,6 +1,8 @@
 {
   "id": "blue_nebula_02",
   "display_name_key": "SECTOR_BLUE_NEBULA_02",
+  "career_order": 12,
+  "unlock_rank": "sector_specialist",
   "biome": "blue_nebula",
   "seed": 99531,
   "difficulty": 9,

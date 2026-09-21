@@ -1,6 +1,8 @@
 {
   "id": "earth_training_01",
   "display_name_key": "OPS_CONTRACT_TITLE",
+  "career_order": 1,
+  "unlock_rank": "trainee",
   "biome": "earth_orbit",
   "seed": 18422,
   "difficulty": 1,

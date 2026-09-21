@@ -5,11 +5,16 @@
   "additionalProperties": false,
   "required": [
     "id",
+    "endless_unlock_rank",
     "ranks"
   ],
   "properties": {
     "id": {
       "const": "career_ranks"
+    },
+    "endless_unlock_rank": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
     },
     "ranks": {
       "type": "array",

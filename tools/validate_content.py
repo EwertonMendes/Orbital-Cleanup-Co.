@@ -301,12 +301,17 @@ def validate_sectors(
 ) -> None:
     for item_id, data in items.items():
         label = f"sectors/{item_id}"
-        require_keys(data, ("display_name_key", "biome", "seed", "difficulty", "map", "salvage_tables", "landmarks", "contract", "modifiers", "depot"), label)
+        require_keys(data, ("display_name_key", "career_order", "unlock_rank", "biome", "seed", "difficulty", "map", "salvage_tables", "landmarks", "contract", "modifiers", "depot"), label)
         require_localization_key(data["display_name_key"], label, catalogs)
         biome_id = data["biome"]
         require(biome_id in biomes, f"{label}: Unknown biome: {biome_id}")
         biome = biomes[biome_id]
 
+        require_number(data["career_order"], f"{label}.career_order", 1)
+        require(
+            isinstance(data["unlock_rank"], str) and ID_RE.fullmatch(data["unlock_rank"]),
+            f"{label}.unlock_rank is invalid",
+        )
         require_number(data["seed"], f"{label}.seed", 0)
         require_number(data["difficulty"], f"{label}.difficulty", 1)
 
@@ -425,6 +430,47 @@ def validate_career_ranks(data: dict[str, Any], catalogs: dict[str, set[str]]) -
         require(min_xp > previous_xp, f"{label}: rank XP thresholds must be strictly increasing")
         previous_xp = min_xp
     require(int(ranks[0]["min_xp"]) == 0, f"{label}: first rank must start at 0 XP")
+    endless_rank = data.get("endless_unlock_rank")
+    require(endless_rank in seen, f"{label}.endless_unlock_rank: Unknown rank: {endless_rank}")
+
+
+def validate_sector_progression(
+    sectors: dict[str, dict[str, Any]],
+    ranks_data: dict[str, Any],
+) -> None:
+    label = "sector progression"
+    ranks = ranks_data.get("ranks", [])
+    rank_ids = [str(rank["id"]) for rank in ranks]
+    rank_index = {rank_id: index for index, rank_id in enumerate(rank_ids)}
+
+    ordered = sorted(sectors.values(), key=lambda sector: int(sector["career_order"]))
+    orders = [int(sector["career_order"]) for sector in ordered]
+    require(len(orders) == len(set(orders)), f"{label}: career_order values must be unique")
+    require(
+        orders == list(range(1, len(ordered) + 1)),
+        f"{label}: career_order must be contiguous from 1",
+    )
+
+    previous_rank_index = -1
+    for sector in ordered:
+        sector_id = str(sector["id"])
+        unlock_rank = str(sector["unlock_rank"])
+        require(
+            unlock_rank in rank_index,
+            f"{label}/{sector_id}: Unknown unlock rank: {unlock_rank}",
+        )
+        current_index = rank_index[unlock_rank]
+        require(
+            current_index >= previous_rank_index,
+            f"{label}/{sector_id}: unlock ranks cannot move backwards in career order",
+        )
+        previous_rank_index = current_index
+
+    endless_rank = ranks_data.get("endless_unlock_rank")
+    require(
+        endless_rank in rank_index,
+        f"{label}: Unknown Endless unlock rank: {endless_rank}",
+    )
 
 
 def validate_upgrades(data: dict[str, Any], catalogs: dict[str, set[str]]) -> None:
@@ -562,6 +608,10 @@ def main() -> None:
         require("upgrades" in loaded["progression"], "Missing progression/upgrades.json")
         validate_difficulty(loaded["progression"]["difficulty_scaling"])
         validate_career_ranks(loaded["progression"]["career_ranks"], catalogs)
+        validate_sector_progression(
+            loaded["sectors"],
+            loaded["progression"]["career_ranks"],
+        )
         validate_upgrades(loaded["progression"]["upgrades"], catalogs)
         require("ship_customization" in loaded["cosmetics"], "Missing cosmetics/ship_customization.json")
         validate_cosmetics(

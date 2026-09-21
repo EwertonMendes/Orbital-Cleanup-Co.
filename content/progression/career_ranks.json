@@ -1,5 +1,6 @@
 {
   "id": "career_ranks",
+  "endless_unlock_rank": "deep_space_operator",
   "ranks": [
     {
       "id": "trainee",
@@ -9,27 +10,27 @@
     {
       "id": "junior_cleaner",
       "display_name_key": "RANK_JUNIOR_CLEANER",
-      "min_xp": 400
+      "min_xp": 300
     },
     {
       "id": "orbital_cleaner",
       "display_name_key": "RANK_ORBITAL_CLEANER",
-      "min_xp": 1100
+      "min_xp": 650
     },
     {
       "id": "senior_cleaner",
       "display_name_key": "RANK_SENIOR_CLEANER",
-      "min_xp": 2400
+      "min_xp": 1150
     },
     {
       "id": "sector_specialist",
       "display_name_key": "RANK_SECTOR_SPECIALIST",
-      "min_xp": 4500
+      "min_xp": 1700
     },
     {
       "id": "deep_space_operator",
       "display_name_key": "RANK_DEEP_SPACE_OPERATOR",
-      "min_xp": 8000
+      "min_xp": 2150
     }
   ]
 }

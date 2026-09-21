@@ -46,6 +46,7 @@ func _resolve_startup_route() -> Dictionary:
 
 	var preview := platform_service.get_query_parameter("preview").to_lower()
 	var debrief := platform_service.get_query_parameter("debrief").to_lower()
+	var hq_sector := platform_service.get_query_parameter("hq_sector")
 	var requested_sector := platform_service.get_query_parameter("sector")
 	var endless_text := platform_service.get_query_parameter("endless")
 	var seed_text := platform_service.get_query_parameter("seed")
@@ -71,22 +72,22 @@ func _resolve_startup_route() -> Dictionary:
 		context["debrief_transition"] = {
 			"credits_before": 860,
 			"credits_after": 1665 if perfect else 1520,
-			"xp_before": 330 if promoted else 520,
-			"xp_after": 495 if promoted else 650,
+			"xp_before": 250 if promoted else 420,
+			"xp_after": 415 if promoted else 540,
 			"rank_before_id": "trainee" if promoted else "junior_cleaner",
 			"rank_after_id": "junior_cleaner",
 			"rank_before_key": "RANK_TRAINEE" if promoted else "RANK_JUNIOR_CLEANER",
 			"rank_after_key": "RANK_JUNIOR_CLEANER",
 			"rank_progress_before": {
-				"current_xp": 330 if promoted else 520,
+				"current_xp": 250 if promoted else 420,
 				"current_min_xp": 0 if promoted else 400,
-				"next_min_xp": 400 if promoted else 1100,
+				"next_min_xp": 300 if promoted else 650,
 				"is_max_rank": false,
 			},
 			"rank_progress_after": {
-				"current_xp": 495 if promoted else 650,
-				"current_min_xp": 400,
-				"next_min_xp": 1100,
+				"current_xp": 415 if promoted else 540,
+				"current_min_xp": 300,
+				"next_min_xp": 650,
 				"is_max_rank": false,
 			},
 			"promoted": promoted,
@@ -113,6 +114,13 @@ func _resolve_startup_route() -> Dictionary:
 		return {"screen_path": SECTOR_PREVIEW_SCREEN_PATH, "context": context}
 
 	var registry := ContentRegistry.new()
+	if not hq_sector.is_empty():
+		if registry.has_sector(hq_sector):
+			context["debug_hq_sector_id"] = hq_sector
+			print("[QA] DEEP_LINK hq_sector=%s" % hq_sector)
+			return {"screen_path": DEFAULT_SCREEN_PATH, "context": context}
+		push_warning("Unknown ?hq_sector= deep link: %s" % hq_sector)
+
 	if not requested_sector.is_empty():
 		if registry.has_sector(requested_sector):
 			context["sector_id"] = requested_sector

@@ -14,11 +14,13 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**Career & Reward Loop — Contract Debrief**
+**Career Progression & Region Unlocks**
 
-Completed contracts now flow through a dedicated Debrief before returning to Headquarters. The Debrief presents objective completion, cleanup, recovered objects, payout breakdown, animated account balance, Company XP, rank progress, promotion unlocks and discoveries recovered during the mission.
+Company XP now drives access to authored contracts and regions. Every authored sector declares an explicit career order and minimum rank, Headquarters lets players inspect locked work while preventing deployment, and a persistent next-unlock tracker shows the required rank and remaining XP.
 
-The remaining player-facing work is tracked in `docs/PRODUCT_BACKLOG.md`. That file is intentionally maintained as an unfinished-work list: completed items are removed instead of accumulating as historical checkmarks.
+Career pacing is balanced against the current 13-contract content set: Earth training leads into advanced Earth operations, Lunar Belt, Mars Freight Route and Blue Nebula. Endless Contracts become a Deep Space Operator endgame unlock. Promotions surface newly unlocked contracts alongside cosmetics in Contract Debrief.
+
+The remaining player-facing work is tracked in `docs/PRODUCT_BACKLOG.md`.
 
 ## Visual direction
 

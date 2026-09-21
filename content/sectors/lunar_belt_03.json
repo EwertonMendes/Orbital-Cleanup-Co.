@@ -1,6 +1,8 @@
 {
   "id": "lunar_belt_03",
   "display_name_key": "SECTOR_LUNAR_BELT_03",
+  "career_order": 7,
+  "unlock_rank": "orbital_cleaner",
   "biome": "lunar_belt",
   "seed": 44128,
   "difficulty": 6,
