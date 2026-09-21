@@ -799,6 +799,8 @@ func _validate_flight_screen() -> void:
 	_expect(operations_host.mouse_filter == Control.MOUSE_FILTER_IGNORE, "Empty Operations overlay host must never intercept clicks intended for the flight HUD.")
 	_expect(screen.find_child("WarpTravelTransition", true, false) is WarpTravelTransition, "Flight requires reusable warp departure and arrival feedback.")
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
+	var hud_root := screen.find_child("HudRoot", true, false) as Control
+	_expect(hud_root != null and hud_root.theme != null, "Flight HudRoot must own the Kenney theme because CanvasLayer interrupts Control theme inheritance.")
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
 	_expect(screen.find_child("CleanupProgress", true, false) is ProgressBar, "Flight HUD requires sector cleanliness progress.")
 	_expect(screen.find_child("EnvironmentStatus", true, false) is Label, "Flight HUD must identify active environmental effects.")

@@ -331,6 +331,8 @@ def validate_visual_foundation() -> None:
         fail("Flight scene must keep reusable post-processing, ambient motion and feedback systems")
     if "occ_operations_theme.tres" not in flight:
         fail("Live flight HUD must use the same Kenney UI design system as Operations")
+    if flight.count('theme = ExtResource("4")') < 2:
+        fail("Flight HUD theme must be applied directly below CanvasLayer so Kenney styles reach HudRoot controls")
     if 'theme_override_styles/panel = SubResource("MissionPanel")' in flight or 'theme_override_styles/normal = SubResource("ReturnButtonNormal")' in flight:
         fail("Live flight HUD must not retain the legacy cyan flat-panel/button overrides")
 
