@@ -205,6 +205,7 @@ theme_override_constants/separation = 12
 [node name="BiomeThumbFrame" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row"]
 custom_minimum_size = Vector2(58, 58)
 layout_mode = 2
+clip_contents = true
 theme_type_variation = &"HudThumbnailPanel"
 
 [node name="BiomeThumbMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/BiomeThumbFrame"]

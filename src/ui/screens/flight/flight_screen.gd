@@ -49,7 +49,6 @@ var _configured_sector_id := DEFAULT_SECTOR_ID
 var _contract_active := true
 var _operations_overlay: Control
 var _travel_in_progress := false
-var _biome_thumbnail_tween: Tween
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -307,23 +306,6 @@ func _refresh_biome_thumbnail() -> void:
 
 	biome_thumbnail.texture = texture
 	biome_thumbnail.visible = true
-	call_deferred("_start_biome_thumbnail_motion")
-
-func _start_biome_thumbnail_motion() -> void:
-	if not is_instance_valid(biome_thumbnail) or not biome_thumbnail.visible:
-		return
-	if _biome_thumbnail_tween != null and _biome_thumbnail_tween.is_valid():
-		_biome_thumbnail_tween.kill()
-
-	biome_thumbnail.pivot_offset = biome_thumbnail.size * 0.5
-	biome_thumbnail.rotation = 0.0
-	_biome_thumbnail_tween = create_tween().set_loops()
-	_biome_thumbnail_tween.tween_property(
-		biome_thumbnail,
-		"rotation",
-		TAU,
-		28.0
-	).from(0.0).set_trans(Tween.TRANS_LINEAR)
 
 func _return_to_operations() -> void:
 	if not _contract_active or _travel_in_progress:
