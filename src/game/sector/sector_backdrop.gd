@@ -19,6 +19,7 @@ var _planet_material: ShaderMaterial
 var _camera_origin := Vector2.ZERO
 var _camera_origin_set := false
 var _phase := 0.0
+var _redraw_accumulator := 0.0
 
 func configure(
 	play_bounds: Rect2,
@@ -60,7 +61,10 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_phase = fmod(_phase + delta, TAU * 100.0)
 	_update_planet_parallax()
-	queue_redraw()
+	_redraw_accumulator += delta
+	if _redraw_accumulator >= 1.0 / 12.0:
+		_redraw_accumulator = 0.0
+		queue_redraw()
 
 func _draw() -> void:
 	draw_rect(
@@ -200,7 +204,7 @@ func _rebuild_traffic() -> void:
 	_traffic.clear()
 	var count := int(_visual_profile.get("traffic_count", 0))
 	var rng := RandomNumberGenerator.new()
-	rng.seed = 884321 + int(hash(_biome_id))
+	rng.seed = 884321 + absi(int(hash(_biome_id)))
 	for index in range(count):
 		_traffic.append({
 			"origin": Vector2(

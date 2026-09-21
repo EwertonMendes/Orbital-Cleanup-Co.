@@ -10,6 +10,7 @@ var _strength := 0.5
 var _field_color := Color("#72d7ff")
 var _secondary_color := Color("#9effe6")
 var _phase := 0.0
+var _redraw_accumulator := 0.0
 
 func configure(definition: Dictionary, palette: Dictionary) -> void:
 	assert(not definition.is_empty(), "EnvironmentalField requires generated definition.")
@@ -86,7 +87,10 @@ func contains_world_position(world_position: Vector2, padding: float = 0.0) -> b
 
 func _process(delta: float) -> void:
 	_phase = fmod(_phase + delta, TAU * 100.0)
-	queue_redraw()
+	_redraw_accumulator += delta
+	if _redraw_accumulator >= 1.0 / 24.0:
+		_redraw_accumulator = 0.0
+		queue_redraw()
 
 func _influence_at_local(local: Vector2) -> float:
 	var normalized := 0.0
