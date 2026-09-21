@@ -103,7 +103,7 @@ func _validate_operations_screen() -> void:
 		"BeamStyleValue", "WorkshopStatus", "HullHeading", "PaintHeading", "TrailHeading", "BeamHeading",
 		"HullOptions", "PaintOptions", "TrailOptions", "BeamOptions", "DiscoveryTitle", "DiscoverySubtitle",
 		"DiscoveryEmptyTitle", "DiscoveryEmptyBody", "CloseOverlay", "OverlayScrim", "FloatingSurface",
-		"SettingsButton", "SettingsLayer", "SettingsClose", "VolumeDown", "VolumeUp", "VolumeValue",
+		"SettingsButton", "SettingsLayer", "SettingsModal", "SettingsClose", "VolumeDown", "VolumeUp", "VolumeValue",
 	]
 	for node_name in unique_refs:
 		_expect(
@@ -118,6 +118,7 @@ func _validate_operations_screen() -> void:
 	_expect("discovery_tab.visible = _progression.get_discovery_count() > 0" in operations_source, "Discovery navigation must stay hidden before first discovery.")
 	_expect("if not unlocked:" in operations_source and "continue" in operations_source, "Locked cosmetics must stay absent instead of cluttering the workshop.")
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
+	_expect("size.y < 520.0" in operations_source and "settings_modal.custom_minimum_size" in operations_source, "Operations must protect short landscape and compact Settings layouts from overflow.")
 	_expect("_reveal_active_panel" in operations_source, "Operations tab changes require restrained shared motion.")
 
 	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_operations_theme.tres")
