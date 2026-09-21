@@ -18,3 +18,9 @@ The project is intentionally delivered as focused PRs with playable previews.
 13. **Release Pipeline** — provider ZIPs, manifest, checksums and manual release workflow.
 
 Do not collapse these into one giant PR. Later milestones depend on approved foundations from earlier milestones.
+
+## Player-facing backlog
+
+The original vertical-slice roadmap is substantially complete. Ongoing game-quality work is now tracked in `docs/PRODUCT_BACKLOG.md`, which intentionally contains only unfinished player-facing work.
+
+Current PR: **Career & Reward Loop — Contract Debrief**. Completed contracts now route through a dedicated payout / XP / promotion / discovery result screen before returning to Headquarters.
