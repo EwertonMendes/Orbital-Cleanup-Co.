@@ -54,7 +54,8 @@ func _process(delta: float) -> void:
 	_visual_rotation = wrapf(_visual_rotation + _spin_speed * delta, -PI, PI)
 	var drift := float(_definition.get("drift_amplitude", 0.0))
 	var local_offset := Vector2(cos(_motion_phase * 0.23), sin(_motion_phase * 0.31)) * drift
+	# Presentation may breathe/drift, but gameplay collision remains anchored to the
+	# structure's deterministic world transform. This keeps routing stable and
+	# prevents a static landmark from becoming a moving collision target.
 	sprite.rotation = _visual_rotation
 	sprite.position = local_offset
-	collision_shape.rotation = _visual_rotation
-	collision_shape.position = local_offset
