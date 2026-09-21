@@ -33,6 +33,7 @@ var _pulse_speed := 10.0
 var _beam_start := Vector2.ZERO
 var _beam_finish := Vector2.ZERO
 var _beam_active := false
+var _scan_phase := 0.0
 
 func _ready() -> void:
 	_cargo_hold = get_node(cargo_hold_path) as CargoHold
@@ -84,6 +85,8 @@ func _apply_visual_style() -> void:
 	_beam_core.width = _core_base_width
 
 func _physics_process(delta: float) -> void:
+	_scan_phase = fposmod(_scan_phase + delta * 0.34, 1.0)
+	queue_redraw()
 	_prune_candidates()
 
 	if not _is_target_valid(_target):
@@ -223,6 +226,22 @@ func _update_beam_visual(target_global_position: Vector2, delta: float) -> void:
 
 func _draw() -> void:
 	if not _beam_active:
+		var scan_color := WorldVisualLanguage.salvage_recovery_color()
+		var scan_radius := lerpf(28.0, scan_range, _scan_phase)
+		var scan_alpha := pow(1.0 - _scan_phase, 1.7) * 0.13
+		draw_arc(Vector2.ZERO, scan_radius, 0.0, TAU, 72, Color(scan_color, scan_alpha), 1.15, true)
+		for index in range(4):
+			var center := float(index) * PI * 0.5 + _scan_phase * 0.45
+			draw_arc(
+				Vector2.ZERO,
+				scan_range,
+				center - 0.11,
+				center + 0.11,
+				6,
+				Color(scan_color, 0.055),
+				1.0,
+				true
+			)
 		return
 	var packet_color := _beam_core.default_color
 	for index in range(6):

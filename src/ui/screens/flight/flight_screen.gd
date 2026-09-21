@@ -67,7 +67,7 @@ func configure(context: Dictionary) -> void:
 		runtime.configure_sector_definition(generated_definition)
 	_contract_session.configure(runtime.get_contract_context())
 	var biome_palette := runtime.get_biome_palette()
-	backdrop.configure(runtime.get_play_bounds(), biome_palette)
+	backdrop.configure(runtime.get_play_bounds(), biome_palette, runtime.get_biome_id())
 	ambient_motion.configure(runtime.get_play_bounds(), biome_palette)
 	feedback.configure(biome_palette)
 

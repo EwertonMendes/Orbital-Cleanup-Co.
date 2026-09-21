@@ -39,6 +39,10 @@ func get_biome_display_name_key() -> String:
 	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
 	return String((_plan["biome"] as Dictionary)["display_name_key"])
 
+func get_biome_id() -> String:
+	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
+	return String((_plan["biome"] as Dictionary)["id"])
+
 func _ready() -> void:
 	assert(not _plan.is_empty(), "SectorRuntime must be configured before entering the tree.")
 	_spawn_generated_content()
