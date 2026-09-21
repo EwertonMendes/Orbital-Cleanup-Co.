@@ -182,28 +182,6 @@ func get_ship_modifiers() -> Dictionary:
 	return result
 
 func get_cosmetic_options(category: String) -> Array[Dictionary]:
-	for sector_id in _registry.list_sector_ids():
-		var sector := _registry.get_sector(sector_id)
-		var unlock_rank := String(sector["unlock_rank"])
-		var unlock_index := _rank_index(unlock_rank)
-		if unlock_index > previous_index and unlock_index <= next_index:
-			output.append({
-				"type": "sector",
-				"id": sector_id,
-				"display_name_key": String(sector["display_name_key"]),
-				"unlock_rank": unlock_rank,
-			})
-
-	var endless_rank := get_endless_unlock_rank()
-	var endless_index := _rank_index(endless_rank)
-	if endless_index > previous_index and endless_index <= next_index:
-		output.append({
-			"type": "feature",
-			"id": "endless_contracts",
-			"display_name_key": "UNLOCK_ENDLESS_CONTRACTS",
-			"unlock_rank": endless_rank,
-		})
-
 	var categories := _cosmetic_config.get("categories", {}) as Dictionary
 	assert(categories.has(category), "Unknown cosmetic category: %s" % category)
 	var output: Array[Dictionary] = []
@@ -443,6 +421,28 @@ func _collect_unlocks_between_ranks(previous_rank: String, next_rank: String) ->
 	var output: Array[Dictionary] = []
 	if next_index <= previous_index:
 		return output
+
+	for sector_id in _registry.list_sector_ids():
+		var sector := _registry.get_sector(sector_id)
+		var unlock_rank := String(sector["unlock_rank"])
+		var unlock_index := _rank_index(unlock_rank)
+		if unlock_index > previous_index and unlock_index <= next_index:
+			output.append({
+				"type": "sector",
+				"id": sector_id,
+				"display_name_key": String(sector["display_name_key"]),
+				"unlock_rank": unlock_rank,
+			})
+
+	var endless_rank := get_endless_unlock_rank()
+	var endless_index := _rank_index(endless_rank)
+	if endless_index > previous_index and endless_index <= next_index:
+		output.append({
+			"type": "feature",
+			"id": "endless_contracts",
+			"display_name_key": "UNLOCK_ENDLESS_CONTRACTS",
+			"unlock_rank": endless_rank,
+		})
 
 	var categories := _cosmetic_config.get("categories", {}) as Dictionary
 	for category_variant in categories.keys():
