@@ -224,3 +224,18 @@ CardPanel/base_type = &"PanelContainer"
 CardPanel/styles/panel = SubResource("GlassPanel")
 ElevatedPanel/base_type = &"PanelContainer"
 ElevatedPanel/styles/panel = SubResource("GlassPanel")
+
+SuccessValue/base_type = &"Label"
+SuccessValue/fonts/font = ExtResource("2")
+SuccessValue/font_sizes/font_size = 16
+SuccessValue/colors/font_color = Color(0.08, 0.42, 0.24, 1)
+
+RewardValue/base_type = &"Label"
+RewardValue/fonts/font = ExtResource("3")
+RewardValue/font_sizes/font_size = 16
+RewardValue/colors/font_color = Color(0.47, 0.33, 0.02, 1)
+
+AccentValue/base_type = &"Label"
+AccentValue/fonts/font = ExtResource("2")
+AccentValue/font_sizes/font_size = 12
+AccentValue/colors/font_color = Color(0.12, 0.32, 0.48, 1)

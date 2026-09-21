@@ -267,6 +267,9 @@ def validate_visual_foundation() -> None:
     operations_theme = (ROOT / "src" / "ui" / "themes" / "occ_operations_theme.tres").read_text(encoding="utf-8")
     flight_theme = (ROOT / "src" / "ui" / "themes" / "occ_flight_hud_theme.tres").read_text(encoding="utf-8")
     cursor_skin = (ROOT / "src" / "ui" / "themes" / "occ_cursor_skin.gd").read_text(encoding="utf-8")
+    debrief = (ROOT / "src" / "ui" / "screens" / "debrief" / "contract_debrief_screen.tscn").read_text(encoding="utf-8")
+    bootstrap = (ROOT / "src" / "ui" / "screens" / "bootstrap" / "bootstrap_screen.tscn").read_text(encoding="utf-8")
+    app_root_scene = (ROOT / "src" / "core" / "app" / "app_root.tscn").read_text(encoding="utf-8")
 
     if "occ_operations_theme.tres" not in operations:
         fail("Operations must use the dedicated original Kenney UI theme")
@@ -289,8 +292,10 @@ def validate_visual_foundation() -> None:
 
     if "InterfaceParticles" in operations:
         fail("Operations console must not cover the original Kenney kit with generic teal particles")
-    if "MenuWarpFX" not in operations or "menu_warp_fx.play" not in operations_source:
-        fail("Operations tab changes must use the contained warp-style transition")
+    if "MenuWarpFX" in operations or "menu_warp_fx" in operations_source:
+        fail("Operations tab changes must not use the blue warp-particle overlay")
+    if "position:x" not in operations_source:
+        fail("Operations tab changes must keep the smooth directional slide transition")
     if "button_square_header_blade_rectangle" in operations_theme:
         fail("Operations buttons must use neutral Kenney chrome; colored header blades are not allowed")
     if 'Button/styles/pressed = SubResource("ButtonDark")' not in operations_theme:
@@ -341,10 +346,28 @@ def validate_visual_foundation() -> None:
         fail("Flight HUD theme must be applied directly below CanvasLayer so styles reach HudRoot controls")
     if "BiomeThumbnail" not in flight:
         fail("Flight HUD must show the current biome primary artwork instead of a stretched numeric badge")
-    if "HudActionButton" not in flight_theme or "HudDangerButton" not in flight_theme:
-        fail("Flight HUD needs compact dark Operations/abort button variants")
+    if "HudActionButton" not in flight_theme or "HudDangerButton" not in flight_theme or "HudSuccessButton" not in flight_theme:
+        fail("Flight HUD needs distinct Operations, abort and complete button states")
+    if "Red/Double/bar_round_gloss_large.png" not in flight_theme:
+        fail("Abort Contract must use the red Kenney action state")
+    if "Green/Double/bar_round_gloss_large.png" not in flight_theme:
+        fail("Complete Contract must use the green Kenney action state")
+    if "HudThumbnailEmpty" not in flight_theme:
+        fail("Biome thumbnail must not render a second internal cyan border")
     if 'theme_override_styles/panel = SubResource("MissionPanel")' in flight or 'theme_override_styles/normal = SubResource("ReturnButtonNormal")' in flight:
         fail("Live flight HUD must not retain the legacy cyan flat-panel/button overrides")
+
+    for player_scene_name, player_scene in (
+        ("Contract Debrief", debrief),
+        ("Bootstrap", bootstrap),
+    ):
+        if "occ_operations_theme.tres" not in player_scene:
+            fail(f"{player_scene_name} must use the shared Kenney console theme")
+        if "occ_theme.tres" in player_scene or "StyleBoxFlat" in player_scene:
+            fail(f"{player_scene_name} must not use legacy flat UI chrome")
+
+    if "LoadingPanel" not in app_root_scene or "occ_operations_theme.tres" not in app_root_scene:
+        fail("Persistent loading/travel UI must use the shared Kenney console style")
 
 
     post_shader = (ROOT / "src" / "game" / "visual" / "world_post_process.gdshader").read_text(encoding="utf-8")

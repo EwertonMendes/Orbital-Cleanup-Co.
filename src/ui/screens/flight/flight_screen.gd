@@ -546,12 +546,19 @@ func _refresh_cleanup() -> void:
 func _refresh_return_button() -> void:
 	if not is_node_ready() or not _contract_active:
 		return
+
+	var completed := _contract_session.is_target_reached()
 	if _contract_session.is_perfect_cleanup():
 		return_button.text = tr("FLIGHT_RETURN_PERFECT")
-	elif _contract_session.is_target_reached():
+		completed = true
+	elif completed:
 		return_button.text = tr("FLIGHT_COMPLETE_CONTRACT")
 	else:
 		return_button.text = tr("FLIGHT_ABORT_CONTRACT")
+
+	return_button.theme_type_variation = (
+		&"HudSuccessButton" if completed else &"HudDangerButton"
+	)
 
 func _on_cleanliness_changed(_percent: float, _cleaned: float, _total: float) -> void:
 	_refresh_return_button()

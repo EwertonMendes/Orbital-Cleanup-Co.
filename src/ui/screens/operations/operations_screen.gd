@@ -91,7 +91,6 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var volume_down: Button = %VolumeDown
 @onready var volume_up: Button = %VolumeUp
 @onready var volume_value: Label = %VolumeValue
-@onready var menu_warp_fx: OccMenuWarpTransition = %MenuWarpFX
 
 var _context: Dictionary = {}
 var _settings: SettingsService
@@ -193,7 +192,7 @@ func _validate_contracts() -> void:
 	assert(discovery_empty_card != null and discovery_list != null, "Headquarters discovery catalog containers are required.")
 	assert(close_overlay != null and overlay_scrim != null and floating_surface != null, "Operations overlay chrome is required.")
 	assert(settings_button != null and settings_layer != null and settings_modal != null and settings_close != null, "Operations requires a dedicated settings panel.")
-	assert(volume_down != null and volume_up != null and volume_value != null and menu_warp_fx != null, "Operations settings and menu transition FX are required.")
+	assert(volume_down != null and volume_up != null and volume_value != null, "Operations settings controls are required.")
 	assert(not _sector_plan.is_empty(), "Operations requires sector data.")
 
 func _setup_tabs() -> void:
@@ -235,7 +234,6 @@ func _show_tab(tab: int, instant: bool = false) -> void:
 
 	_tab_transitioning = true
 	var direction := 1.0 if tab > previous_tab else -1.0
-	menu_warp_fx.play(direction)
 
 	if _tab_reveal_tween != null and _tab_reveal_tween.is_valid():
 		_tab_reveal_tween.kill()

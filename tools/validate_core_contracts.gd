@@ -46,10 +46,17 @@ func _validate_app_root() -> void:
 	_expect(root.get_node_or_null("Services/ProgressionService") is ProgressionService, "AppRoot must own ProgressionService.")
 	_expect(root.get_node_or_null("ScreenHost") is Control, "AppRoot must expose ScreenHost.")
 	_expect(root.get_node_or_null("TravelHandoffLayer/TravelCover") is ColorRect, "AppRoot must own a persistent travel handoff cover above routed screens.")
+	_expect(root.get_node_or_null("TravelHandoffLayer/TravelCover/LoadingCenter/LoadingPanel") is PanelContainer, "Travel cover must present the shared styled loading panel.")
+	_expect(root.get_node_or_null("TravelHandoffLayer/TravelCover/LoadingCenter/LoadingPanel/LoadingMargin/LoadingLayout/LoadingTitle") is Label, "Travel loading panel requires game-styled title copy.")
 	var app_source := FileAccess.get_file_as_string("res://src/core/app/app_root.gd")
 	_expect("const DEFAULT_SCREEN_PATH := FLIGHT_SCREEN_PATH" in app_source, "AppRoot must boot into continuous Flight instead of the legacy full-screen HQ.")
 	_expect("context[\"free_roam\"] = true" in app_source, "Default startup must explicitly enter contract-free flight.")
 	_expect("scene_router.configure(screen_host, travel_cover)" in app_source, "SceneRouter must receive the persistent travel cover from AppRoot.")
+	var app_scene_source := FileAccess.get_file_as_string("res://src/core/app/app_root.tscn")
+	_expect("occ_operations_theme.tres" in app_scene_source and "LoadingPanel" in app_scene_source, "Persistent loading UI must use the shared Kenney console style.")
+	var bootstrap_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/bootstrap/bootstrap_screen.tscn")
+	_expect("occ_operations_theme.tres" in bootstrap_scene_source, "Bootstrap/loading screen must use the shared Kenney game UI theme.")
+	_expect("StyleBoxFlat" not in bootstrap_scene_source, "Bootstrap/loading screen must not retain legacy flat UI chrome.")
 	var router_source := FileAccess.get_file_as_string("res://src/core/app/scene_router.gd")
 	_expect("travel_handoff" in router_source, "SceneRouter must expose a dedicated travel handoff path instead of reusing generic screen fades.")
 	_expect("finish_travel_handoff" in router_source, "Travel handoff must wait for the destination before revealing it.")
@@ -79,7 +86,7 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("VolumeDown", true, false) is Button and screen.find_child("VolumeUp", true, false) is Button, "Settings requires audio controls.")
 	_expect(screen.find_child("LanguageGroup", true, false) is HBoxContainer, "Language selection must live inside Settings.")
 	_expect(screen.find_child("InterfaceParticles", true, false) == null, "Operations must not cover native Kenney chrome with generic UI particles.")
-	_expect(screen.find_child("MenuWarpFX", true, false) is OccMenuWarpTransition, "Operations requires a contained warp-style menu transition.")
+	_expect(screen.find_child("MenuWarpFX", true, false) == null, "Operations tab changes must not overlay blue warp streak particles.")
 
 	for tab_name in ["ContractsTab", "UpgradesTab", "CareerTab", "ShipTab", "DiscoveryTab"]:
 		_expect(screen.find_child(tab_name, true, false) is Button, "Operations requires navigation button: %s" % tab_name)
@@ -104,7 +111,7 @@ func _validate_operations_screen() -> void:
 		"BeamStyleValue", "WorkshopStatus", "HullHeading", "PaintHeading", "TrailHeading", "BeamHeading",
 		"HullOptions", "PaintOptions", "TrailOptions", "BeamOptions", "DiscoveryTitle", "DiscoverySubtitle",
 		"DiscoveryEmptyTitle", "DiscoveryEmptyBody", "CloseOverlay", "OverlayScrim", "FloatingSurface",
-		"SettingsButton", "SettingsLayer", "SettingsModal", "SettingsClose", "VolumeDown", "VolumeUp", "VolumeValue", "MenuWarpFX",
+		"SettingsButton", "SettingsLayer", "SettingsModal", "SettingsClose", "VolumeDown", "VolumeUp", "VolumeValue",
 	]
 	for node_name in unique_refs:
 		_expect(
@@ -121,7 +128,8 @@ func _validate_operations_screen() -> void:
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
 	_expect("DisplayServer.window_get_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use real window orientation and a tall portrait console to prevent clipping.")
 	_expect("settings_modal.custom_minimum_size" in operations_source and "footer_spacer.visible = not portrait" in operations_source, "Operations must protect compact Settings and portrait deployment layouts from overflow.")
-	_expect("menu_warp_fx.play" in operations_source and "position:x" in operations_source and "_update_tab_visuals" in operations_source, "Operations tab changes require visible directional warp motion and explicit selected-tab styling.")
+	_expect("position:x" in operations_source and "_update_tab_visuals" in operations_source, "Operations tab changes require smooth directional panel motion and explicit selected-tab styling.")
+	_expect("menu_warp_fx" not in operations_source, "Operations tab changes must not use the removed blue warp-particle overlay.")
 	_expect('event.is_action_pressed("ui_cancel")' in operations_source, "Operations overlay must close from ESC / ui_cancel.")
 	var operations_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.tscn")
 	_expect('text = "-"' in operations_scene_source, "Settings volume-down must use an ASCII minus glyph supported by the display font.")
@@ -831,8 +839,13 @@ func _validate_flight_screen() -> void:
 	_expect('event.is_action_pressed("ui_cancel")' in flight_source, "Free flight must open Operations from ESC / ui_cancel.")
 	var flight_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.tscn")
 	_expect("occ_flight_hud_theme.tres" in flight_scene_source, "Live flight HUD must use the dedicated dark flight theme.")
-	_expect("HudActionButton" in flight_scene_source and "HudDangerButton" in flight_scene_source, "Flight Operations/abort actions must use compact dark HUD variants.")
+	_expect("HudActionButton" in flight_scene_source and "HudDangerButton" in flight_scene_source, "Flight Operations/abort actions must use compact HUD button variants.")
+	_expect("HudSuccessButton" in flight_source, "Completed contracts must switch the return action to the green success button state.")
 	_expect("_refresh_biome_thumbnail" in flight_source and 'visual_profile.get("primary_asset", "")' in flight_source, "Flight biome thumbnail must come from the same data-driven primary artwork used in the world.")
+	var flight_theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_flight_hud_theme.tres")
+	_expect("HudThumbnailEmpty" in flight_theme_source, "Biome preview must not draw a second internal cyan frame.")
+	_expect("Red/Double/bar_round_gloss_large.png" in flight_theme_source, "Abort Contract requires a clearly clickable red Kenney state.")
+	_expect("Green/Double/bar_round_gloss_large.png" in flight_theme_source, "Complete Contract requires a clearly clickable green Kenney state.")
 	_expect('theme_override_styles/panel = SubResource("MissionPanel")' not in flight_scene_source, "Flight mission HUD must not retain legacy cyan panel chrome.")
 	_expect('theme_override_styles/normal = SubResource("ReturnButtonNormal")' not in flight_scene_source, "Flight action buttons must use stable Kenney theme states.")
 
@@ -873,6 +886,11 @@ func _validate_debrief_screen() -> void:
 	_expect(screen.find_child("UnlocksList", true, false) is VBoxContainer, "Debrief requires unlock reveal.")
 	_expect(screen.find_child("DiscoveriesList", true, false) is VBoxContainer, "Debrief requires discovery reveal.")
 	_expect(screen.find_child("ContinueButton", true, false) is Button, "Debrief requires explicit Continue to Headquarters action.")
+	var debrief_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/debrief/contract_debrief_screen.tscn")
+	_expect("occ_operations_theme.tres" in debrief_scene_source, "Contract Debrief must use the shared Kenney game UI theme.")
+	_expect("theme_type_variation = &\"ConsolePanel\"" in debrief_scene_source, "Contract Debrief must use the physical console surface.")
+	_expect("theme_type_variation = &\"PrimaryButton\"" in debrief_scene_source, "Contract Debrief primary action must use the shared button language.")
+	_expect("occ_theme.tres" not in debrief_scene_source and "StyleBoxFlat" not in debrief_scene_source, "Contract Debrief must not retain legacy flat UI chrome.")
 	screen.free()
 
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")

@@ -19,13 +19,16 @@ const SECTOR_PREVIEW_SCREEN_PATH := "res://src/debug/sector_preview/sector_previ
 @onready var progression_service: ProgressionService = %ProgressionService
 @onready var screen_host: Control = %ScreenHost
 @onready var travel_cover: ColorRect = %TravelCover
+@onready var loading_title: Label = %LoadingTitle
+@onready var loading_status: Label = %LoadingStatus
 
 func _ready() -> void:
 	print("[OCC] BOOT")
 	_validate_contracts()
-
 	build_info.initialize()
 	settings_service.initialize()
+	_refresh_loading_copy()
+	settings_service.locale_changed.connect(_on_loading_locale_changed)
 	OccCursorSkin.apply()
 	audio_service.initialize(settings_service)
 	save_service.initialize()
@@ -42,6 +45,13 @@ func _ready() -> void:
 	scene_router.show_screen(screen, startup["context"] as Dictionary)
 
 	print("[OCC] READY")
+
+func _refresh_loading_copy() -> void:
+	loading_title.text = tr("LOADING_TITLE")
+	loading_status.text = tr("LOADING_STATUS")
+
+func _on_loading_locale_changed(_locale: String) -> void:
+	_refresh_loading_copy()
 
 func _resolve_startup_route() -> Dictionary:
 	var context := _service_context()
@@ -195,3 +205,4 @@ func _validate_contracts() -> void:
 	assert(progression_service != null, "ProgressionService is required.")
 	assert(screen_host != null, "ScreenHost is required.")
 	assert(travel_cover != null, "Persistent TravelCover is required.")
+	assert(loading_title != null and loading_status != null, "Travel loading cover requires styled loading copy.")

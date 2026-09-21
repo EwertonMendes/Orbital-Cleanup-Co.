@@ -11,13 +11,13 @@ msgid "BOOTSTRAP_SLOGAN"
 msgstr "Keeping the galaxy tidy, one orbit at a time."
 
 msgid "BOOTSTRAP_FOUNDATION"
-msgstr "FOUNDATION BUILD"
+msgstr "SYSTEM CHECK"
 
 msgid "BOOTSTRAP_STATUS"
-msgstr "Web foundation ready · %s · %s"
+msgstr "ORBITAL SYSTEMS READY"
 
 msgid "BOOTSTRAP_MESSAGE"
-msgstr "Infrastructure first. Gameplay systems arrive in the next focused PRs."
+msgstr "Preparing your next cleanup route."
 
 msgid "BOOTSTRAP_LANGUAGE"
 msgstr "LANGUAGE"
@@ -1176,3 +1176,9 @@ msgstr "Audio"
 
 msgid "HQ_SETTINGS_DONE"
 msgstr "Done"
+
+msgid "LOADING_TITLE"
+msgstr "ORBITAL CLEANUP CO."
+
+msgid "LOADING_STATUS"
+msgstr "PREPARING ORBIT..."

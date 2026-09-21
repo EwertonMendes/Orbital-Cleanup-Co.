@@ -34,6 +34,7 @@ The Operations redesign imports the original UI Pack - Sci-Fi files with their u
 
 - neutral `Extra/Double` dark rounded button bars plus screw/glass panels;
 - the original Yellow rounded gloss bar for selected navigation and primary actions;
+- original Red and Green rounded gloss bars for destructive/abort and successful/complete gameplay actions;
 - original blue progress art;
 - original cursor arrow, point and pressed states;
 - original colored status squares.

@@ -210,14 +210,14 @@ theme_type_variation = &"HudThumbnailPanel"
 
 [node name="BiomeThumbMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/BiomeThumbFrame"]
 layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
 
 [node name="BiomeThumbnail" type="TextureRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/BiomeThumbFrame/BiomeThumbMargin"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(54, 54)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1

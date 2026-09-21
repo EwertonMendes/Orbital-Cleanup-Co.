@@ -66,7 +66,7 @@ func _refresh_copy() -> void:
 	eyebrow_label.text = tr("BOOTSTRAP_EYEBROW")
 	slogan_label.text = tr("BOOTSTRAP_SLOGAN")
 	foundation_label.text = tr("BOOTSTRAP_FOUNDATION")
-	status_label.text = tr("BOOTSTRAP_STATUS") % [_provider_name, _short_commit()]
+	status_label.text = tr("BOOTSTRAP_STATUS")
 	message_label.text = tr("BOOTSTRAP_MESSAGE")
 	language_label.text = tr("BOOTSTRAP_LANGUAGE")
 	provider_label.text = "%s: %s" % [tr("BOOTSTRAP_PROVIDER"), _provider_name]

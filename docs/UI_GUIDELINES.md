@@ -20,11 +20,21 @@ Use the shared foundations before creating screen-local styling:
 
 - `src/ui/themes/occ_operations_theme.tres` for the light physical Operations console and its Kenney button/panel assets;
 - `src/ui/themes/occ_flight_hud_theme.tres` for compact dark in-flight cards and actions that preserve readability over moving space scenery;
-- `src/ui/themes/occ_theme.tres` only for remaining legacy surfaces while they are migrated;
+- `src/ui/themes/occ_theme.tres` is legacy-only and must not be used by player-facing screens;
 - `src/ui/themes/occ_cursor_skin.gd` for the original Kenney desktop cursor states;
 - screen layouts built from Containers, with `StyleBoxTexture`/NinePatch only where the source asset is designed to scale.
 
 If a reusable component already owns a pattern, do not copy its style into a new scene.
+
+## Player-facing UI contract
+
+All player-facing UI must use the current Orbital Cleanup Co. visual language. This includes Operations, in-flight HUD, Contract Debrief, bootstrap/loading surfaces, settings, transient travel/loading panels and future menus.
+
+- Do not introduce a new player screen on `occ_theme.tres` or with screen-local generic `StyleBoxFlat` chrome.
+- Light menu/report surfaces use `occ_operations_theme.tres`; gameplay overlays use `occ_flight_hud_theme.tres`.
+- Loading and transition UI is still product UI: it must use the same typography, Kenney-derived chrome, spacing and contrast standards.
+- Semantic action state is consistent everywhere: destructive/abort is red, successful completion is green, primary forward actions are yellow, neutral utilities remain dark/outlined.
+- A new UI surface is not complete until desktop, landscape-mobile and portrait-mobile smoke screenshots show no clipping, unreadable contrast or fallback styling.
 
 ## Floating gameplay interfaces
 
@@ -76,7 +86,7 @@ Operations deliberately uses the **original Kenney UI Pack - Sci-Fi visual langu
 - Never animate scale or height on Kenney panels/buttons. Control geometry must remain completely stable; menu-content transitions may slide the content panel inside a clipped viewport without moving the navigation buttons themselves.
 - Ordinary Operations buttons use a clean dark rounded Kenney bar with centered Neuropol labels. Colored blade/header overlays and screw-heavy button textures are not used for routine actions.
 - The active navigation tab uses the original full yellow Kenney bar with dark text and a very slow subtle glow pulse; inactive tabs remain dark.
-- Tab changes use a contained directional warp transition: the old content travels out, streaks cross the clipped content area, and the new content travels in.
+- Tab changes use a clean directional slide: the old content moves out and the new content moves in inside the clipped content area. Do not add warp streaks or blue transition particles over menus.
 - The live-flight HUD deliberately uses a darker companion theme for contrast over gameplay, while keeping the same fonts, spacing discipline and Kenney-derived action language.
 - The pack's own cursor art is used for arrow, pointing and pressed states on desktop.
 - Kenney Interface Sounds provide restrained hover, click and back cues through the centralized AudioService.
