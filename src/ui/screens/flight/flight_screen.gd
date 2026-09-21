@@ -1,6 +1,7 @@
 extends Control
 
 const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.tscn"
+const FLIGHT_SCREEN_PATH := "res://src/ui/screens/flight/flight_screen.tscn"
 const DEBRIEF_SCREEN_PATH := "res://src/ui/screens/debrief/contract_debrief_screen.tscn"
 const DEFAULT_SECTOR_ID := "earth_training_01"
 
@@ -23,6 +24,11 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var environment_runtime: EnvironmentRuntime = %EnvironmentRuntime
 @onready var environment_status: Label = %EnvironmentStatus
 @onready var depot_navigation: DepotNavigationGuide = %DepotNavigationGuide
+@onready var mission_card: PanelContainer = %MissionCard
+@onready var cargo_card: PanelContainer = %CargoCard
+@onready var operations_button: Button = %OperationsButton
+@onready var operations_overlay_host: Control = %OperationsOverlayHost
+@onready var warp_transition: WarpTravelTransition = %WarpTravelTransition
 
 var _context: Dictionary = {}
 var _router: SceneRouter
@@ -38,9 +44,13 @@ var _toast_tween: Tween
 var _active_salvage: SalvageDefinition
 var _new_discovery_ids: Array[String] = []
 var _configured_sector_id := DEFAULT_SECTOR_ID
+var _contract_active := true
+var _operations_overlay: Control
+var _travel_in_progress := false
 
 func configure(context: Dictionary) -> void:
 	_context = context
+	_contract_active = not bool(context.get("free_roam", false))
 	_router = context.get("router") as SceneRouter
 	_input_service = context.get("input") as InputService
 	_platform = context.get("platform") as PlatformService
@@ -77,7 +87,8 @@ func configure(context: Dictionary) -> void:
 		runtime.configure_sector(_configured_sector_id)
 	else:
 		runtime.configure_sector_definition(generated_definition)
-	_contract_session.configure(runtime.get_contract_context())
+	if _contract_active:
+		_contract_session.configure(runtime.get_contract_context())
 	var biome_palette := runtime.get_biome_palette()
 	var visual_profile := runtime.get_biome_visual_profile()
 	backdrop.configure(
@@ -103,6 +114,12 @@ func configure(context: Dictionary) -> void:
 	var deployment_position := runtime.get_depot_position()
 	depot.position = deployment_position
 	ship.position = deployment_position
+	if not _contract_active:
+		var bounds := runtime.get_play_bounds()
+		ship.position = Vector2(
+			clampf(deployment_position.x + 420.0, bounds.position.x + 180.0, bounds.end.x - 180.0),
+			clampf(deployment_position.y - 130.0, bounds.position.y + 180.0, bounds.end.y - 180.0)
+		)
 	ship.velocity = Vector2.ZERO
 	if _context.has("debug_ship_offset"):
 		ship.position += _context["debug_ship_offset"] as Vector2
@@ -127,6 +144,7 @@ func _ready() -> void:
 	_validate_contracts()
 	resized.connect(_apply_responsive_layout)
 	return_button.pressed.connect(_return_to_operations)
+	operations_button.pressed.connect(_open_operations)
 	player_ship.movement_started.connect(_schedule_hint_fade)
 	player_ship.cargo_changed.connect(_on_cargo_changed)
 	player_ship.tractor_target_changed.connect(_on_tractor_target_changed)
@@ -136,12 +154,17 @@ func _ready() -> void:
 	player_ship.bumped.connect(_on_ship_bumped)
 	unload_zone.cargo_unloaded.connect(_on_cargo_unloaded)
 	_input_service.input_mode_changed.connect(_on_input_mode_changed)
-	_contract_session.cleanliness_changed.connect(_on_cleanliness_changed)
-	_contract_session.objective_changed.connect(_on_objective_changed)
-	_contract_session.target_reached.connect(_on_contract_target_reached)
-	_contract_session.perfect_cleanup_reached.connect(_on_perfect_cleanup_reached)
 	environment_runtime.environment_state_changed.connect(_on_environment_state_changed)
-	_contract_session.start()
+
+	if _contract_active:
+		_contract_session.cleanliness_changed.connect(_on_cleanliness_changed)
+		_contract_session.objective_changed.connect(_on_objective_changed)
+		_contract_session.target_reached.connect(_on_contract_target_reached)
+		_contract_session.perfect_cleanup_reached.connect(_on_perfect_cleanup_reached)
+	else:
+		sector_runtime.set_salvage_enabled(false)
+		player_ship.set_collection_enabled(false)
+
 	_apply_debug_landmark_focus()
 
 	toast_panel.modulate.a = 0.0
@@ -154,9 +177,30 @@ func _ready() -> void:
 
 	if _platform != null:
 		_platform.gameplay_started()
-		_platform.track_event("contract_started", {"sector_id": _configured_sector_id})
 	_gameplay_active = true
-	print("[Flight] READY")
+
+	if bool(_context.get("arrival_warp", false)):
+		_travel_in_progress = true
+		var direction_sign := -1.0 if int(_context.get("travel_direction", 1)) < 0 else 1.0
+		var arrival_direction := Vector2.RIGHT * direction_sign
+		if bool(_context.get("travel_handoff", false)):
+			warp_transition.prime_arrival(player_ship, arrival_direction, _contract_active)
+			await _router.finish_travel_handoff()
+			await warp_transition.play_primed_arrival()
+			_context.erase("travel_handoff")
+		else:
+			await warp_transition.play_arrival(player_ship, arrival_direction, _contract_active)
+		_travel_in_progress = false
+
+	if _contract_active:
+		_contract_session.start()
+		if _platform != null:
+			_platform.track_event("contract_started", {"sector_id": _configured_sector_id})
+
+	if bool(_context.get("open_operations", false)) and not _contract_active:
+		call_deferred("_open_operations")
+
+	print("[Flight] READY mode=%s" % ("contract" if _contract_active else "free_roam"))
 
 func _apply_debug_landmark_focus() -> void:
 	var requested := String(_context.get("debug_landmark_focus", ""))
@@ -211,6 +255,9 @@ func _validate_contracts() -> void:
 	assert(flight_feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(environment_runtime != null and environment_status != null, "FlightScreen requires biome environment feedback.")
 	assert(depot_navigation != null, "FlightScreen requires contextual depot navigation.")
+	assert(mission_card != null and cargo_card != null, "FlightScreen requires compact flight cards.")
+	assert(operations_button != null and operations_overlay_host != null, "FlightScreen requires floating operations access.")
+	assert(warp_transition != null, "FlightScreen requires reusable warp travel transition.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
 
 func _apply_responsive_layout() -> void:
@@ -229,8 +276,13 @@ func _apply_responsive_layout() -> void:
 	toast_panel.custom_minimum_size.x = 280.0 if compact else 390.0
 
 func _return_to_operations() -> void:
+	if not _contract_active or _travel_in_progress:
+		return
+
 	var completed := _contract_session.is_target_reached()
 	_stop_gameplay()
+	_travel_in_progress = true
+	await warp_transition.play_departure(player_ship, Vector2.LEFT)
 
 	if completed:
 		var result := _contract_session.build_result()
@@ -251,9 +303,10 @@ func _return_to_operations() -> void:
 		var debrief_context := _context.duplicate(true)
 		debrief_context["debrief_result"] = result
 		debrief_context["debrief_transition"] = transition
-		debrief_context["debrief_return_screen_path"] = String(
-			_context.get("return_screen_path", OPERATIONS_SCREEN_PATH)
-		)
+		debrief_context["debrief_return_screen_path"] = FLIGHT_SCREEN_PATH
+		debrief_context["free_roam"] = true
+		debrief_context["arrival_warp"] = true
+		debrief_context["travel_direction"] = -1
 		debrief_context["debrief_mission"] = {
 			"sector_display_name_key": sector_runtime.get_sector_display_name_key(),
 			"biome_display_name_key": sector_runtime.get_biome_display_name_key(),
@@ -271,15 +324,85 @@ func _return_to_operations() -> void:
 	if _platform != null:
 		_platform.track_event("contract_aborted", {"sector_id": _configured_sector_id})
 
-	var return_path := String(_context.get("return_screen_path", OPERATIONS_SCREEN_PATH))
-	var scene := load(return_path) as PackedScene
-	assert(scene != null, "Return screen must be loadable: %s" % return_path)
+	await _router.begin_travel_handoff()
+	_route_to_home_orbit()
+
+func _route_to_home_orbit() -> void:
+	var scene := load(FLIGHT_SCREEN_PATH) as PackedScene
+	assert(scene != null, "Free-flight screen must be loadable.")
 	var return_context := _context.duplicate(true)
-	return_context.erase("sector_id")
-	return_context.erase("sector_definition")
-	return_context.erase("endless_number")
-	return_context.erase("return_screen_path")
+	for key in [
+		"sector_definition",
+		"endless_number",
+		"return_screen_path",
+		"debug_landmark_focus",
+		"debug_ship_offset",
+		"open_operations",
+	]:
+		return_context.erase(key)
+	return_context["sector_id"] = DEFAULT_SECTOR_ID
+	return_context["free_roam"] = true
+	return_context["arrival_warp"] = true
+	return_context["travel_direction"] = -1
+	return_context["travel_handoff"] = true
 	_router.show_screen(scene, return_context)
+
+func _open_operations() -> void:
+	if _contract_active or _travel_in_progress:
+		return
+	if _operations_overlay != null and is_instance_valid(_operations_overlay):
+		return
+
+	var packed := load(OPERATIONS_SCREEN_PATH) as PackedScene
+	assert(packed != null, "Operations overlay must be loadable.")
+	var overlay := packed.instantiate() as Control
+	assert(overlay != null, "Operations overlay must instantiate as Control.")
+
+	var overlay_context := _context.duplicate(true)
+	overlay_context["operations_overlay"] = true
+	overlay_context["debug_hq_sector_id"] = _configured_sector_id
+	overlay_context.erase("open_operations")
+	overlay.call("configure", overlay_context)
+	overlay.connect("deployment_requested", Callable(self, "_on_operations_deployment_requested"))
+	overlay.connect("close_requested", Callable(self, "_close_operations"))
+
+	player_ship.set_flight_controls_enabled(false)
+	_operations_overlay = overlay
+	operations_overlay_host.add_child(overlay)
+	overlay.modulate.a = 0.0
+	var reveal := create_tween()
+	reveal.tween_property(overlay, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	print("[Flight] OPERATIONS_OPEN")
+
+func _close_operations() -> void:
+	if _operations_overlay == null or not is_instance_valid(_operations_overlay):
+		return
+	var overlay := _operations_overlay
+	_operations_overlay = null
+	if overlay.get_parent() != null:
+		overlay.get_parent().remove_child(overlay)
+	overlay.queue_free()
+	player_ship.set_flight_controls_enabled(true)
+	print("[Flight] OPERATIONS_CLOSED")
+
+func _on_operations_deployment_requested(target_context: Dictionary) -> void:
+	if _travel_in_progress:
+		return
+	if _operations_overlay != null and is_instance_valid(_operations_overlay):
+		var overlay := _operations_overlay
+		_operations_overlay = null
+		if overlay.get_parent() != null:
+			overlay.get_parent().remove_child(overlay)
+		overlay.queue_free()
+
+	_travel_in_progress = true
+	_stop_gameplay()
+	await warp_transition.play_departure(player_ship, Vector2.RIGHT)
+	await _router.begin_travel_handoff()
+	var scene := load(FLIGHT_SCREEN_PATH) as PackedScene
+	assert(scene != null, "Contract flight screen must be loadable.")
+	target_context["travel_handoff"] = true
+	_router.show_screen(scene, target_context)
 
 func _stop_gameplay() -> void:
 	if not _gameplay_active:
@@ -295,6 +418,25 @@ func _on_input_mode_changed(_mode: InputService.InputMode) -> void:
 func _refresh_copy() -> void:
 	if not is_node_ready():
 		return
+
+	operations_button.text = tr("FLIGHT_OPERATIONS")
+	operations_button.visible = not _contract_active
+	return_button.visible = _contract_active
+	cargo_card.visible = _contract_active
+	depot_navigation.visible = _contract_active
+
+	if not _contract_active:
+		%FlightEyebrow.text = tr("FLIGHT_FREE_EYEBROW")
+		%FlightTitle.text = tr(sector_runtime.get_biome_display_name_key())
+		cleanup_status.text = tr("FLIGHT_FREE_STATUS")
+		cleanup_progress.visible = false
+		%DepotLabel.text = tr("FLIGHT_DEPOT")
+		environment_status.text = tr("FLIGHT_ENVIRONMENT_FMT") % tr("ENV_STABLE_ORBIT")
+		var steering_hint := tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
+		hint_label.text = "%s\n%s" % [steering_hint, tr("FLIGHT_VISUAL_LEGEND")]
+		return
+
+	cleanup_progress.visible = true
 	%FlightEyebrow.text = tr("FLIGHT_EYEBROW")
 	if _context.has("endless_number"):
 		%FlightTitle.text = tr("SECTOR_ENDLESS_CONTRACT_FMT") % [
@@ -317,7 +459,7 @@ func _refresh_copy() -> void:
 		beam_status.text = tr("FLIGHT_BEAM_LOCK_FMT") % tr(String(_active_salvage.display_name_key))
 
 func _refresh_cleanup() -> void:
-	if not is_node_ready():
+	if not is_node_ready() or not _contract_active:
 		return
 	var objective := _contract_session.get_objective_snapshot()
 	var progress := float(objective["progress_percent"])
@@ -354,7 +496,7 @@ func _refresh_cleanup() -> void:
 			]
 
 func _refresh_return_button() -> void:
-	if not is_node_ready():
+	if not is_node_ready() or not _contract_active:
 		return
 	if _contract_session.is_perfect_cleanup():
 		return_button.text = tr("FLIGHT_RETURN_PERFECT")
@@ -406,6 +548,8 @@ func _on_tractor_progress_changed(progress: float) -> void:
 	beam_progress.value = clampf(progress, 0.0, 1.0) * 100.0
 
 func _on_salvage_collected(definition, _used_units: int, _capacity: int) -> void:
+	if not _contract_active:
+		return
 	var salvage := definition as SalvageDefinition
 	if salvage == null:
 		return

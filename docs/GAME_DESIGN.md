@@ -50,15 +50,15 @@ The MVP should implement only what is required for the vertical slice and keep t
 
 ## Main loop
 
-`Headquarters → select contract → deploy → explore/collect → cargo unload → target achieved → optional 100% → return → payout → Company XP → upgrades/customization → next contract`.
+\`Free Flight / Home Orbit → open Operations overlay → select contract → engine preparation → warp departure → arrive in sector → explore/collect → cargo unload → target achieved → optional 100% → warp return → debrief/payout → Free Flight\`.
 
-Headquarters is a UI space, not a walkable map.
+The ship and the world are the default game state. Operations is a floating interface over live flight rather than a separate full-screen lobby. Scene/runtime replacement may still happen behind the warp transition, but the player-facing flow must remain spatial and continuous.
 
-## Headquarters
+## Operations overlay
 
-Headquarters is the between-contract decision space and remains interface-only rather than a walkable map.
+Operations is the between-contract decision space, presented as a focused floating interface over the live flight world rather than as a separate walkable HQ or full-screen starting scene.
 
-The vertical-slice HQ is organized into five focused work areas:
+The current Operations workspace is organized into five focused work areas:
 
 - Contract Board;
 - Equipment Upgrades;
@@ -66,7 +66,7 @@ The vertical-slice HQ is organized into five focused work areas:
 - Ship;
 - Discovery.
 
-Contract Board is the default view and the only place with the deploy CTA. Other sections exist to answer a specific player question instead of repeating the same information across multiple screens.
+Contract Board is the default view and the only place with the deploy CTA. Other sections exist to answer a specific player question instead of repeating the same information across multiple screens. Opening Operations temporarily suspends ship steering while the world remains visible behind the interface.
 
 ## Economy and progression
 
@@ -153,7 +153,7 @@ The initial contract target is 70%. Reaching the target allows the player to fin
 
 The first functional upgrades are Tractor Beam range, collection speed and cargo capacity. Their prices/effects and all career rank thresholds are authored in progression content rather than UI code.
 
-Aborting before the cleanup target returns to Operations without contract payout.
+Aborting before the cleanup target grants no contract payout and uses the same travel language in reverse: the ship departs the contract sector through warp and arrives back in Home Orbit free flight.
 
 ## Current customization slice
 
@@ -237,3 +237,18 @@ A destination is not a recolor. Each identity owns a unique primary SVG, palette
 
 Career progression intentionally introduces new visual families throughout the ladder: inner-system worlds at Junior Cleaner, Jupiter and its moons at Orbital Cleaner, Saturn/Uranus at Senior Cleaner, outer-system and industrial anomalies at Sector Specialist, then stellar and extrasolar space at Deep Space Operator.
 
+
+
+## Current continuous-flight UX slice
+
+The current UX experiment makes flight the persistent player-facing shell:
+
+- the game boots directly into Home Orbit with the ship controllable and no active contract;
+- salvage collection and contract objective logic are explicitly inactive during free flight;
+- Operations opens as a responsive floating interface over the live world and reuses the existing Contracts, Upgrades, Career, Ship and Discovery systems;
+- deploying a contract charges the engines, accelerates the ship off-screen, transitions through reusable warp streak/particle feedback, then brings the ship into the destination with a deceleration arrival;
+- aborting a contract uses the same travel component in reverse and returns to Home Orbit;
+- completed contracts still use the focused Debrief screen for reward/career presentation, then return through the arrival transition into free flight;
+- normal sectors remain data-driven and no destination-specific travel code is introduced.
+
+The scene swap that loads a new sector is deliberately hidden inside the warp interval. This keeps sector teardown/setup simple and reliable while preserving a continuous spatial experience for the player.

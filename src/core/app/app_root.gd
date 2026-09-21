@@ -1,8 +1,10 @@
 extends Node
 class_name AppRoot
 
-const DEFAULT_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.tscn"
+const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.tscn"
 const FLIGHT_SCREEN_PATH := "res://src/ui/screens/flight/flight_screen.tscn"
+const DEFAULT_SCREEN_PATH := FLIGHT_SCREEN_PATH
+const HOME_SECTOR_ID := "earth_training_01"
 const DEBRIEF_SCREEN_PATH := "res://src/ui/screens/debrief/contract_debrief_screen.tscn"
 const SECTOR_PREVIEW_SCREEN_PATH := "res://src/debug/sector_preview/sector_preview.tscn"
 
@@ -16,6 +18,7 @@ const SECTOR_PREVIEW_SCREEN_PATH := "res://src/debug/sector_preview/sector_previ
 @onready var scene_router: SceneRouter = %SceneRouter
 @onready var progression_service: ProgressionService = %ProgressionService
 @onready var screen_host: Control = %ScreenHost
+@onready var travel_cover: ColorRect = %TravelCover
 
 func _ready() -> void:
 	print("[OCC] BOOT")
@@ -29,7 +32,7 @@ func _ready() -> void:
 	input_service.initialize()
 	platform_service.initialize()
 	ad_service.initialize(platform_service, audio_service)
-	scene_router.configure(screen_host)
+	scene_router.configure(screen_host, travel_cover)
 
 	var startup := _resolve_startup_route()
 	var screen_path := String(startup["screen_path"])
@@ -41,6 +44,8 @@ func _ready() -> void:
 
 func _resolve_startup_route() -> Dictionary:
 	var context := _service_context()
+	context["sector_id"] = HOME_SECTOR_ID
+	context["free_roam"] = true
 	if not platform_service.is_debug_provider():
 		return {"screen_path": DEFAULT_SCREEN_PATH, "context": context}
 
@@ -50,6 +55,8 @@ func _resolve_startup_route() -> Dictionary:
 	var requested_sector := platform_service.get_query_parameter("sector")
 	var landmark_focus := platform_service.get_query_parameter("landmark_focus")
 	var depot_nav_preview := platform_service.get_query_parameter("depot_nav").to_lower()
+	var operations_preview := platform_service.get_query_parameter("operations").to_lower()
+	var arrival_preview := platform_service.get_query_parameter("arrival_warp").to_lower()
 	var endless_text := platform_service.get_query_parameter("endless")
 	var seed_text := platform_service.get_query_parameter("seed")
 
@@ -104,6 +111,9 @@ func _resolve_startup_route() -> Dictionary:
 			"biome_display_name_key": "BIOME_EARTH_ORBIT",
 		}
 		context["debrief_return_screen_path"] = DEFAULT_SCREEN_PATH
+		context["free_roam"] = true
+		context["arrival_warp"] = true
+		context["travel_direction"] = -1
 		print("[QA] DEEP_LINK debrief=%s" % debrief)
 		return {"screen_path": DEBRIEF_SCREEN_PATH, "context": context}
 
@@ -119,22 +129,28 @@ func _resolve_startup_route() -> Dictionary:
 	if not hq_sector.is_empty():
 		if registry.has_sector(hq_sector):
 			context["debug_hq_sector_id"] = hq_sector
+			context.erase("free_roam")
+			context.erase("sector_id")
 			print("[QA] DEEP_LINK hq_sector=%s" % hq_sector)
-			return {"screen_path": DEFAULT_SCREEN_PATH, "context": context}
+			return {"screen_path": OPERATIONS_SCREEN_PATH, "context": context}
 		push_warning("Unknown ?hq_sector= deep link: %s" % hq_sector)
 
 	if not requested_sector.is_empty():
 		if registry.has_sector(requested_sector):
+			context.erase("free_roam")
 			context["sector_id"] = requested_sector
 			if not landmark_focus.is_empty():
 				context["debug_landmark_focus"] = landmark_focus
 			if depot_nav_preview in ["1", "true", "yes"]:
 				context["debug_ship_offset"] = Vector2(1850.0, 980.0)
+			if arrival_preview in ["1", "true", "yes"]:
+				context["arrival_warp"] = true
 			print("[QA] DEEP_LINK sector=%s" % requested_sector)
 			return {"screen_path": FLIGHT_SCREEN_PATH, "context": context}
 		push_warning("Unknown ?sector= deep link: %s" % requested_sector)
 
 	if endless_text.is_valid_int():
+		context.erase("free_roam")
 		var contract_number := maxi(1, int(endless_text))
 		var endless := EndlessContractGenerator.new()
 		endless.configure(registry)
@@ -148,6 +164,9 @@ func _resolve_startup_route() -> Dictionary:
 		print("[QA] DEEP_LINK endless=%d seed=%d" % [contract_number, int(sector_definition["seed"])])
 		return {"screen_path": FLIGHT_SCREEN_PATH, "context": context}
 
+	if operations_preview in ["1", "true", "yes"]:
+		context["open_operations"] = true
+	print("[QA] FREE_FLIGHT sector=%s operations=%s" % [HOME_SECTOR_ID, str(context.get("open_operations", false))])
 	return {"screen_path": DEFAULT_SCREEN_PATH, "context": context}
 
 func _service_context() -> Dictionary:
@@ -174,3 +193,4 @@ func _validate_contracts() -> void:
 	assert(scene_router != null, "SceneRouter is required.")
 	assert(progression_service != null, "ProgressionService is required.")
 	assert(screen_host != null, "ScreenHost is required.")
+	assert(travel_cover != null, "Persistent TravelCover is required.")

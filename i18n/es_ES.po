@@ -1155,3 +1155,15 @@ msgstr "Remanente de Supernova"
 
 msgid "SECTOR_SUPERNOVA_REMNANT_01"
 msgstr "Remanente de Supernova · Contrato 01"
+
+msgid "FLIGHT_FREE_EYEBROW"
+msgstr "VUELO LIBRE"
+
+msgid "FLIGHT_FREE_STATUS"
+msgstr "SIN CONTRATO ACTIVO · ABRE OPERACIONES PARA VIAJAR"
+
+msgid "FLIGHT_OPERATIONS"
+msgstr "OPERACIONES"
+
+msgid "HQ_CLOSE"
+msgstr "CERRAR"

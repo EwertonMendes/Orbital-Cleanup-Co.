@@ -92,11 +92,14 @@ async function openBuild(viewport, label, touch = false) {
   const page = await browser.newPage({ viewport, hasTouch: touch, isMobile: touch });
   watch(page, label);
 
-  const hqReady = waitForConsole(page, '[HQ] READY tab=contracts');
+  const freeSectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 60000);
+  const freeFlightReady = waitForConsole(page, '[Flight] READY mode=free_roam', 60000);
   const ready = waitForConsole(page, '[OCC] READY');
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForSelector('canvas', { state: 'visible', timeout: 60000 });
   await ready;
+  await freeSectorReady;
+  await freeFlightReady;
   await page.waitForFunction(() => {
     const canvas = document.querySelector('canvas');
     return canvas && canvas.width > 100 && canvas.height > 100;
@@ -114,12 +117,17 @@ async function openBuild(viewport, label, touch = false) {
     throw new Error('Missing debug OCC_BUILD metadata');
   }
 
-  await hqReady;
+  // Startup is now the continuous gameplay shell, not a full-screen menu.
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `build/smoke-free-flight-${label}.png`, fullPage: true });
 
-  // Capture the player-facing headquarters before deployment so visual
-  // QA covers the HQ chrome as well as gameplay.
-  await page.waitForTimeout(250);
-  await page.screenshot({ path: `build/smoke-operations-${label}.png`, fullPage: true });
+  const operationsOpen = waitForConsole(page, '[Flight] OPERATIONS_OPEN', 60000);
+  const overlayReady = waitForConsole(page, '[HQ] READY tab=contracts mode=overlay', 60000);
+  await page.goto(`${url}?operations=1`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await overlayReady;
+  await operationsOpen;
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: `build/smoke-operations-overlay-${label}.png`, fullPage: true });
 
   const adStarted = waitForConsole(page, '[Ads] START kind=interstitial placement=qa_browser provider=debug', 10000);
   const adResult = waitForConsole(page, '[Ads] RESULT kind=interstitial placement=qa_browser completed=true', 10000);
@@ -138,7 +146,7 @@ async function openBuild(viewport, label, touch = false) {
   const sectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 30000);
   const contractStarted = waitForConsole(page, '[Contract] START sector=earth_training_01', 30000);
   const deploymentReady = waitForConsole(page, '[Flight] DEPLOYMENT', 30000);
-  const flightReady = waitForConsole(page, '[Flight] READY', 30000);
+  const flightReady = waitForConsole(page, '[Flight] READY mode=contract', 30000);
   await page.goto(`${url}?sector=earth_training_01`, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await sectorReady;
   await contractStarted;

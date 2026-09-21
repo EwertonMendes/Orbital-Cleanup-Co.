@@ -36,6 +36,7 @@ var _beam_active := false
 var _scan_phase := 0.0
 var _environment_scan_multiplier := 1.0
 var _environment_tractor_multiplier := 1.0
+var _interaction_enabled := true
 
 func _ready() -> void:
 	_cargo_hold = get_node(cargo_hold_path) as CargoHold
@@ -61,6 +62,18 @@ func _ready() -> void:
 	if not _style.is_empty():
 		_apply_visual_style()
 	_hide_beam()
+
+func set_interaction_enabled(enabled: bool) -> void:
+	_interaction_enabled = enabled
+	visible = enabled
+	if _scan_area != null:
+		_scan_area.set_deferred("monitoring", enabled)
+	if not enabled:
+		_candidates.clear()
+		_set_target(null)
+		_hide_beam()
+		progress_changed.emit(0.0)
+	queue_redraw()
 
 func set_environment_modifiers(scanner_multiplier: float, tractor_multiplier: float) -> void:
 	var next_scan := clampf(scanner_multiplier, 0.46, 1.0)
@@ -96,6 +109,8 @@ func _apply_visual_style() -> void:
 	_beam_core.width = _core_base_width
 
 func _physics_process(delta: float) -> void:
+	if not _interaction_enabled:
+		return
 	_scan_phase = fposmod(_scan_phase + delta * 0.34, 1.0)
 	queue_redraw()
 	_prune_candidates()
