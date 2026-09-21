@@ -118,7 +118,7 @@ vertical_alignment = 1
 
 [node name="SettingsButton" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(112, 48)
+custom_minimum_size = Vector2(140, 48)
 layout_mode = 2
 theme_type_variation = &"SettingsButton"
 text = "SETTINGS"
