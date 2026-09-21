@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://src/game/environment/environment_runtime.gd" id="14"]
 [ext_resource type="Script" path="res://src/ui/components/depot_navigation_guide.gd" id="15"]
 [ext_resource type="Script" path="res://src/ui/components/warp_travel_transition.gd" id="16"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/panel_glass_notches.png" id="17"]
 
 [sub_resource type="CircleShape2D" id="UnloadShape"]
 radius = 145.0
@@ -191,6 +192,17 @@ custom_minimum_size = Vector2(390, 104)
 layout_mode = 2
 theme_type_variation = &"HudPanel"
 
+[node name="MissionChrome" type="NinePatchRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard"]
+layout_mode = 2
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.28)
+texture = ExtResource("17")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+draw_center = false
+
 [node name="Margin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
@@ -269,6 +281,17 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(210, 80)
 layout_mode = 2
 theme_type_variation = &"HudPanel"
+
+[node name="CargoChrome" type="NinePatchRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard"]
+layout_mode = 2
+mouse_filter = 2
+modulate = Color(1, 1, 1, 0.28)
+texture = ExtResource("17")
+patch_margin_left = 20
+patch_margin_top = 20
+patch_margin_right = 20
+patch_margin_bottom = 20
+draw_center = false
 
 [node name="CargoMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard"]
 layout_mode = 2
