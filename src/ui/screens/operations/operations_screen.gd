@@ -257,6 +257,24 @@ func _completed_contract_total() -> int:
 		total += int(value)
 	return total
 
+func _contract_target_text(contract_ref: Dictionary, contract: Dictionary) -> String:
+	match String(contract["kind"]):
+		"cleanup":
+			return tr("HQ_CONTRACT_TARGET_FMT") % int(round(float(contract_ref["target_percent"])))
+		"full_cleanup":
+			return tr("HQ_CONTRACT_TARGET_FULL")
+		"recovery":
+			return tr("HQ_CONTRACT_TARGET_RECOVERY_FMT") % int(contract_ref["target_count"])
+		"valuable_recovery":
+			return tr("HQ_CONTRACT_TARGET_VALUE_FMT") % int(contract_ref["target_value"])
+		"priority_object":
+			var definition := _registry.get_salvage_definition(String(contract_ref["target_salvage_id"]))
+			return tr("HQ_CONTRACT_TARGET_PRIORITY_FMT") % [
+				int(contract_ref["target_count"]),
+				tr(String(definition.display_name_key)),
+			]
+	return tr("HQ_CONTRACT_TARGET_FULL")
+
 func _risk_key(difficulty: int) -> String:
 	if difficulty <= 3:
 		return "HQ_RISK_LOW"
@@ -340,8 +358,11 @@ func _refresh_contracts() -> void:
 		previous_contract.disabled = _sector_ids.size() <= 1
 		next_contract.disabled = _sector_ids.size() <= 1
 		contract_title.text = tr(String(sector["display_name_key"]))
-	contract_description.text = tr("HQ_CONTRACT_DESCRIPTION")
-	contract_target.text = tr("HQ_CONTRACT_TARGET_FMT") % int(round(float(contract_ref["target_percent"])))
+	contract_description.text = "%s · %s" % [
+		tr(String(contract["display_name_key"])),
+		tr(String(contract["description_key"])),
+	]
+	contract_target.text = _contract_target_text(contract_ref, contract)
 	contract_risk.text = tr(_risk_key(int(sector["difficulty"])))
 	contract_payout.text = tr("HQ_CONTRACT_PAY_FMT") % [base_pay, perfect_bonus]
 	%ContractShipName.text = tr("OPS_SHIP_NAME")
