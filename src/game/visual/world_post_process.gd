@@ -18,6 +18,24 @@ func configure(palette: Dictionary) -> void:
 	_configured = true
 	_apply_quality()
 
+func set_environment_state(
+	visibility: float,
+	environment_color: Color,
+	distortion: float
+) -> void:
+	var shader_material := material as ShaderMaterial
+	if shader_material == null:
+		return
+	shader_material.set_shader_parameter("environment_color", environment_color)
+	shader_material.set_shader_parameter(
+		"environment_fog_strength",
+		clampf((1.0 - visibility) * 0.52, 0.0, 0.30)
+	)
+	shader_material.set_shader_parameter(
+		"environment_distortion",
+		clampf(distortion * 0.42, 0.0, 0.20)
+	)
+
 func pulse(color: Color, strength: float = 0.16, duration: float = 0.34) -> void:
 	var shader_material := material as ShaderMaterial
 	if shader_material == null:

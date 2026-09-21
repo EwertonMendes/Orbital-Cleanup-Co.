@@ -34,6 +34,8 @@ var _beam_start := Vector2.ZERO
 var _beam_finish := Vector2.ZERO
 var _beam_active := false
 var _scan_phase := 0.0
+var _environment_scan_multiplier := 1.0
+var _environment_tractor_multiplier := 1.0
 
 func _ready() -> void:
 	_cargo_hold = get_node(cargo_hold_path) as CargoHold
@@ -51,7 +53,7 @@ func _ready() -> void:
 	assert(scan_collision != null, "TractorBeam scan requires CollisionShape2D.")
 	var circle := scan_collision.shape as CircleShape2D
 	assert(circle != null, "TractorBeam scan requires CircleShape2D.")
-	circle.radius = scan_range
+	circle.radius = _effective_scan_range()
 
 	_scan_area.area_entered.connect(_on_area_entered)
 	_scan_area.area_exited.connect(_on_area_exited)
@@ -59,6 +61,15 @@ func _ready() -> void:
 	if not _style.is_empty():
 		_apply_visual_style()
 	_hide_beam()
+
+func set_environment_modifiers(scanner_multiplier: float, tractor_multiplier: float) -> void:
+	var next_scan := clampf(scanner_multiplier, 0.46, 1.0)
+	var next_tractor := clampf(tractor_multiplier, 0.52, 1.0)
+	var scan_changed := not is_equal_approx(next_scan, _environment_scan_multiplier)
+	_environment_scan_multiplier = next_scan
+	_environment_tractor_multiplier = next_tractor
+	if scan_changed:
+		_sync_scan_shape()
 
 func apply_style(style: Dictionary) -> void:
 	assert(not style.is_empty(), "TractorBeam style cannot be empty.")
@@ -100,7 +111,12 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var anchor := _collect_anchor.global_position
-	_target.tractor_step(anchor, delta, pull_speed, collection_speed_multiplier)
+	_target.tractor_step(
+		anchor,
+		delta,
+		pull_speed * _environment_tractor_multiplier,
+		collection_speed_multiplier * _environment_tractor_multiplier
+	)
 	var progress := _target.get_tractor_progress()
 	progress_changed.emit(progress)
 	_update_beam_visual(_target.global_position, delta)
@@ -143,6 +159,8 @@ func _choose_target() -> SalvageObject:
 			continue
 
 		var distance := candidate.global_position.distance_squared_to(global_position)
+		if distance > _effective_scan_range() * _effective_scan_range():
+			continue
 		if distance < best_distance:
 			best_distance = distance
 			best = candidate
@@ -159,6 +177,7 @@ func _is_target_valid(candidate: SalvageObject) -> bool:
 		and is_instance_valid(candidate)
 		and not candidate.is_queued_for_deletion()
 		and _candidates.has(candidate)
+		and candidate.global_position.distance_to(global_position) <= _effective_scan_range() * 1.04
 		and _cargo_hold.can_accept(candidate.definition)
 	)
 
@@ -227,14 +246,15 @@ func _update_beam_visual(target_global_position: Vector2, delta: float) -> void:
 func _draw() -> void:
 	if not _beam_active:
 		var scan_color := WorldVisualLanguage.salvage_recovery_color()
-		var scan_radius := lerpf(28.0, scan_range, _scan_phase)
+		var effective_range := _effective_scan_range()
+		var scan_radius := lerpf(28.0, effective_range, _scan_phase)
 		var scan_alpha := pow(1.0 - _scan_phase, 1.7) * 0.13
 		draw_arc(Vector2.ZERO, scan_radius, 0.0, TAU, 72, Color(scan_color, scan_alpha), 1.15, true)
 		for index in range(4):
 			var center := float(index) * PI * 0.5 + _scan_phase * 0.45
 			draw_arc(
 				Vector2.ZERO,
-				scan_range,
+				effective_range,
 				center - 0.11,
 				center + 0.11,
 				6,
@@ -251,6 +271,19 @@ func _draw() -> void:
 		var size := 1.3 + (1.0 - t) * 1.5
 		draw_circle(position, size, Color(packet_color, 0.72 * (1.0 - t * 0.35)))
 	draw_circle(_beam_finish, 4.0 + sin(_beam_phase * 0.7) * 1.2, Color(packet_color, 0.18))
+
+func _effective_scan_range() -> float:
+	return maxf(scan_range * _environment_scan_multiplier, 80.0)
+
+func _sync_scan_shape() -> void:
+	if _scan_area == null:
+		return
+	var scan_collision := _scan_area.get_node("CollisionShape2D") as CollisionShape2D
+	if scan_collision == null:
+		return
+	var circle := scan_collision.shape as CircleShape2D
+	if circle != null:
+		circle.radius = _effective_scan_range()
 
 func _hide_beam() -> void:
 	_beam_active = false

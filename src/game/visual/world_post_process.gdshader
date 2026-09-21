@@ -8,6 +8,9 @@ uniform float effect_strength : hint_range(0.0, 1.0) = 0.58;
 uniform float glow_strength : hint_range(0.0, 0.3) = 0.08;
 uniform float grain_strength : hint_range(0.0, 0.04) = 0.008;
 uniform float flash_strength : hint_range(0.0, 1.0) = 0.0;
+uniform vec4 environment_color : source_color = vec4(0.12, 0.35, 0.58, 1.0);
+uniform float environment_fog_strength : hint_range(0.0, 0.4) = 0.0;
+uniform float environment_distortion : hint_range(0.0, 0.3) = 0.0;
 
 float luminance(vec3 color) {
 	return dot(color, vec3(0.2126, 0.7152, 0.0722));
@@ -19,6 +22,8 @@ float random_noise(vec2 p) {
 
 void fragment() {
 	vec2 uv = SCREEN_UV;
+	float env_wave = sin(uv.y * 21.0 + TIME * 0.42) * cos(uv.x * 13.0 - TIME * 0.31);
+	uv += vec2(env_wave, -env_wave * 0.62) * environment_distortion * 0.0035;
 	vec2 from_center = uv - vec2(0.5);
 	float edge = smoothstep(0.18, 0.72, length(from_center));
 	float aberration = 0.0012 * effect_strength * edge;
@@ -49,6 +54,9 @@ void fragment() {
 
 	float grain = random_noise(floor(uv / SCREEN_PIXEL_SIZE * 0.5)) - 0.5;
 	base += grain * grain_strength * effect_strength;
+	float fog_noise = random_noise(floor(uv * vec2(58.0, 41.0) + TIME * 0.8));
+	float fog_mix = environment_fog_strength * (0.72 + fog_noise * 0.28);
+	base = mix(base, environment_color.rgb, fog_mix);
 	base = mix(base, flash_color.rgb, clamp(flash_strength, 0.0, 1.0));
 
 	COLOR = vec4(max(base, vec3(0.0)), 1.0);

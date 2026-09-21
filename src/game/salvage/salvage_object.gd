@@ -16,12 +16,15 @@ var _tractor_velocity := Vector2.ZERO
 var _targeted := false
 var _base_scale := Vector2.ONE
 var _float_phase := 0.0
+var _environment_velocity := Vector2.ZERO
+var _environment_anchor := Vector2.ZERO
 
 func _ready() -> void:
 	assert(definition != null, "SalvageObject requires a SalvageDefinition.")
 	definition.validate()
 	add_to_group("salvage")
 	_float_phase = fposmod(float(hash(String(definition.id)) % 628), 628.0) / 100.0
+	_environment_anchor = global_position
 	_apply_definition()
 	queue_redraw()
 
@@ -48,7 +51,28 @@ func set_targeted(value: bool) -> void:
 	if not value:
 		_tractor_progress = 0.0
 		_tractor_velocity = Vector2.ZERO
+		_environment_anchor = global_position
 	queue_redraw()
+
+func apply_environment_force(force: Vector2, delta: float, play_bounds: Rect2) -> void:
+	if _targeted:
+		_environment_velocity = Vector2.ZERO
+		return
+
+	var desired_velocity := force * 0.16
+	var response := minf(delta * 2.6, 1.0)
+	_environment_velocity = _environment_velocity.lerp(desired_velocity, response)
+	_environment_velocity = _environment_velocity.move_toward(Vector2.ZERO, 7.5 * delta)
+	global_position += _environment_velocity * delta
+
+	var offset := global_position - _environment_anchor
+	if offset.length() > 220.0:
+		global_position = _environment_anchor + offset.limit_length(220.0)
+		_environment_velocity *= 0.35
+
+	var safe_bounds := play_bounds.grow(-42.0)
+	global_position.x = clampf(global_position.x, safe_bounds.position.x, safe_bounds.end.x)
+	global_position.y = clampf(global_position.y, safe_bounds.position.y, safe_bounds.end.y)
 
 func tractor_step(anchor: Vector2, delta: float, base_pull_speed: float, collection_speed_multiplier: float = 1.0) -> void:
 	assert(_targeted, "tractor_step requires an active target.")

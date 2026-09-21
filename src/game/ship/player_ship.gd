@@ -23,6 +23,8 @@ var _bump_feedback_cooldown := 0.0
 var _smoothed_intent := Vector2.ZERO
 var _facing_rotation := 0.0
 var _pending_cosmetics: Dictionary = {}
+var _environment_force := Vector2.ZERO
+var _environment_speed_multiplier := 1.0
 
 func configure(
 	input_service: InputService,
@@ -73,6 +75,10 @@ func _ready() -> void:
 	cargo_changed.emit(cargo_hold.used_units, cargo_hold.capacity)
 	print("[Ship] READY")
 
+func set_environment_motion(force: Vector2, speed_multiplier: float = 1.0) -> void:
+	_environment_force = force.limit_length(220.0)
+	_environment_speed_multiplier = clampf(speed_multiplier, 0.82, 1.08)
+
 func unload_cargo() -> int:
 	return cargo_hold.unload_all()
 
@@ -103,13 +109,16 @@ func _physics_process(delta: float) -> void:
 		_smoothed_intent = _smoothed_intent.lerp(raw_intent, steering_weight)
 
 	var intent := _attenuate_outward_intent(_smoothed_intent)
-	var desired_velocity := ShipSteering.target_velocity(intent, tuning.max_speed)
+	var environment_max_speed := tuning.max_speed * _environment_speed_multiplier
+	var desired_velocity := ShipSteering.target_velocity(intent, environment_max_speed)
 
 	var response := tuning.deceleration
 	if intent.length_squared() > 0.001:
 		response = tuning.acceleration * lerpf(0.46, 1.0, intent.length())
 
 	velocity = velocity.move_toward(desired_velocity, response * delta)
+	velocity += _environment_force * delta
+	velocity = velocity.limit_length(tuning.max_speed * 1.22)
 	_apply_soft_world_bounds(delta)
 
 	var turn_amount := _update_facing(intent, delta)
