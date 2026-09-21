@@ -45,6 +45,9 @@ func _validate_app_root() -> void:
 	_expect(root.get_node_or_null("Services/SceneRouter") is SceneRouter, "AppRoot must own SceneRouter.")
 	_expect(root.get_node_or_null("Services/ProgressionService") is ProgressionService, "AppRoot must own ProgressionService.")
 	_expect(root.get_node_or_null("ScreenHost") is Control, "AppRoot must expose ScreenHost.")
+	var app_source := FileAccess.get_file_as_string("res://src/core/app/app_root.gd")
+	_expect("const DEFAULT_SCREEN_PATH := FLIGHT_SCREEN_PATH" in app_source, "AppRoot must boot into continuous Flight instead of the legacy full-screen HQ.")
+	_expect("context[\"free_roam\"] = true" in app_source, "Default startup must explicitly enter contract-free flight.")
 	root.free()
 
 func _validate_operations_screen() -> void:
@@ -62,6 +65,9 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("PreviousContract", true, false) is Button, "Headquarters requires previous authored contract action.")
 	_expect(screen.find_child("NextContract", true, false) is Button, "Headquarters requires next authored contract action.")
 	_expect(screen.find_child("ContractPosition", true, false) is Label, "Headquarters requires authored contract position feedback.")
+	_expect(screen.find_child("CloseOverlay", true, false) is Button, "Operations requires a close action when embedded over flight.")
+	_expect(screen.find_child("OverlayScrim", true, false) is ColorRect, "Operations overlay requires a restrained world scrim.")
+	_expect(screen.find_child("FloatingSurface", true, false) is PanelContainer, "Operations overlay requires a floating surface.")
 
 	for tab_name in ["ContractsTab", "UpgradesTab", "CareerTab", "ShipTab", "DiscoveryTab"]:
 		_expect(screen.find_child(tab_name, true, false) is Button, "Headquarters requires tab: %s" % tab_name)
@@ -85,7 +91,7 @@ func _validate_operations_screen() -> void:
 		"ShipSubtitle", "ShipName", "ShipPreview", "ShipArt", "LoadoutTitle", "HullValue", "PaintValue", "TrailValue",
 		"BeamStyleValue", "WorkshopStatus", "HullHeading", "PaintHeading", "TrailHeading", "BeamHeading",
 		"HullOptions", "PaintOptions", "TrailOptions", "BeamOptions", "DiscoveryTitle", "DiscoverySubtitle",
-		"DiscoveryEmptyTitle", "DiscoveryEmptyBody",
+		"DiscoveryEmptyTitle", "DiscoveryEmptyBody", "CloseOverlay", "OverlayScrim", "FloatingSurface",
 	]
 	for node_name in unique_refs:
 		_expect(
@@ -96,6 +102,8 @@ func _validate_operations_screen() -> void:
 	_expect("_active_contract_access()" in operations_source, "Headquarters deploy must consult centralized progression access.")
 	_expect("primary_action.disabled = not unlocked" in operations_source, "Locked contracts must disable deploy action.")
 	_expect("_refresh_next_unlock()" in operations_source, "Headquarters must surface the next career unlock.")
+	_expect("signal deployment_requested" in operations_source, "Operations overlay must hand deployment intent back to the flight shell.")
+	_expect("_apply_overlay_presentation()" in operations_source, "Operations must own a reusable floating presentation mode.")
 	screen.free()
 
 func _validate_hq_components() -> void:
@@ -743,6 +751,9 @@ func _validate_flight_screen() -> void:
 	_expect("use_screen_texture_post_process" in quality_source, "Runtime quality profile must own post-process policy.")
 	_expect(screen.find_child("UnloadDepot", true, false) is UnloadZone, "Flight screen requires cargo unload zone.")
 	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
+	_expect(screen.find_child("OperationsButton", true, false) is Button, "Free flight requires compact Operations access.")
+	_expect(screen.find_child("OperationsOverlayHost", true, false) is Control, "Flight requires an overlay host instead of routing to a full-screen menu.")
+	_expect(screen.find_child("WarpTravelTransition", true, false) is WarpTravelTransition, "Flight requires reusable warp departure and arrival feedback.")
 	_expect(screen.find_child("TopBar", true, false) is BoxContainer, "Flight HUD requires responsive TopBar.")
 	_expect(screen.find_child("CleanupStatus", true, false) is Label, "Flight HUD requires sector cleanliness status.")
 	_expect(screen.find_child("CleanupProgress", true, false) is ProgressBar, "Flight HUD requires sector cleanliness progress.")
@@ -759,6 +770,9 @@ func _validate_flight_screen() -> void:
 
 	_expect("navigation.configure(ship, depot)" in flight_source, "Flight must bind depot navigation to the real per-sector depot world node.")
 	_expect("depot_navigation.set_cargo_state" in flight_source, "Depot guide must react to cargo state without owning cargo rules.")
+	_expect("_contract_active = not bool(context.get(\"free_roam\", false))" in flight_source, "Flight must separate free-roam and contract states explicitly.")
+	_expect("warp_transition.play_departure" in flight_source and "warp_transition.play_arrival" in flight_source, "Travel must use the same reusable transition for departure and arrival.")
+	_expect("_open_operations()" in flight_source, "Free flight must open Operations over the live world.")
 
 	var guide_source := FileAccess.get_file_as_string("res://src/ui/components/depot_navigation_guide.gd")
 	_expect("get_canvas_transform()" in guide_source, "Depot guide must project the real world target through the active camera transform.")
