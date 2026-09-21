@@ -50,6 +50,7 @@ func _resolve_startup_route() -> Dictionary:
 	var requested_sector := platform_service.get_query_parameter("sector")
 	var endless_text := platform_service.get_query_parameter("endless")
 	var seed_text := platform_service.get_query_parameter("seed")
+	var depot_nav_preview := platform_service.get_query_parameter("depot_nav").to_lower()
 
 	if not debrief.is_empty():
 		var promoted := debrief in ["1", "true", "yes", "promotion", "promoted"]
@@ -124,6 +125,8 @@ func _resolve_startup_route() -> Dictionary:
 	if not requested_sector.is_empty():
 		if registry.has_sector(requested_sector):
 			context["sector_id"] = requested_sector
+			if depot_nav_preview in ["1", "true", "yes"]:
+				context["debug_ship_offset"] = Vector2(1850.0, 980.0)
 			print("[QA] DEEP_LINK sector=%s" % requested_sector)
 			return {"screen_path": FLIGHT_SCREEN_PATH, "context": context}
 		push_warning("Unknown ?sector= deep link: %s" % requested_sector)

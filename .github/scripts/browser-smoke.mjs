@@ -214,6 +214,32 @@ async function openQaDeepLinks() {
     await page.close();
   }
 
+  const depotNavViewports = [
+    { label: 'desktop', viewport: { width: 1280, height: 720 }, mobile: false },
+    { label: 'portrait', viewport: { width: 390, height: 844 }, mobile: true },
+  ];
+  for (const sample of depotNavViewports) {
+    const page = await browser.newPage({
+      viewport: sample.viewport,
+      hasTouch: sample.mobile,
+      isMobile: sample.mobile,
+    });
+    watch(page, `qa-depot-navigation-${sample.label}`);
+    const depotSectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 60000);
+    const depotNavReady = waitForConsole(page, '[QA] DEPOT_NAV_PREVIEW', 60000);
+    const depotFlightReady = waitForConsole(page, '[Flight] READY', 60000);
+    await page.goto(`${url}?sector=earth_training_01&depot_nav=1`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await depotSectorReady;
+    await depotNavReady;
+    await depotFlightReady;
+    await page.waitForTimeout(500);
+    await page.screenshot({
+      path: `build/smoke-qa-depot-navigation-${sample.label}.png`,
+      fullPage: true,
+    });
+    await page.close();
+  }
+
   const lockedHqPage = await browser.newPage({ viewport: { width: 1280, height: 720 } });
   watch(lockedHqPage, 'qa-hq-locked-lunar');
   const lockedHqReady = waitForConsole(lockedHqPage, '[HQ] READY tab=contracts', 60000);

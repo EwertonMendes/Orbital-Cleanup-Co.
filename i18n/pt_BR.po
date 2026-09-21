@@ -867,3 +867,15 @@ msgstr "DISTORÇÃO DO TRATOR"
 
 msgid "ENV_MAGNETIC_ZONE"
 msgstr "CAMPO MAGNÉTICO"
+
+msgid "FLIGHT_DEPOT_NAV_FMT"
+msgstr "DEPÓSITO · %s"
+
+msgid "FLIGHT_DEPOT_NAV_FULL_FMT"
+msgstr "DEPÓSITO · %s · CARGA CHEIA"
+
+msgid "FLIGHT_DISTANCE_M_FMT"
+msgstr "%d m"
+
+msgid "FLIGHT_DISTANCE_KM_FMT"
+msgstr "%.1f km"
