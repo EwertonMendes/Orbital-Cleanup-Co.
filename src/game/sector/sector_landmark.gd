@@ -49,6 +49,12 @@ func _configure_collision() -> void:
 		_:
 			assert(false, "Unsupported landmark collision shape.")
 
+func get_landmark_id() -> String:
+	return String(_definition.get("id", ""))
+
+func get_reserved_radius() -> float:
+	return float(_definition.get("reserved_radius", 0.0))
+
 func _process(delta: float) -> void:
 	_motion_phase = fmod(_motion_phase + delta, TAU * 100.0)
 	_visual_rotation = wrapf(_visual_rotation + _spin_speed * delta, -PI, PI)
