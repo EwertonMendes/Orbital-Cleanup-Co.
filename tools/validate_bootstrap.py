@@ -44,6 +44,9 @@ REQUIRED = [
     "src/ui/components/hq_rank_row.tscn",
     "src/ui/screens/flight/flight_screen.tscn",
     "src/ui/screens/flight/flight_screen.gd",
+    "src/ui/screens/debrief/contract_debrief_screen.tscn",
+    "src/ui/screens/debrief/contract_debrief_screen.gd",
+    "src/ui/screens/debrief/debrief_celebration.gd",
     "src/ui/utilities/responsive_canvas.gd",
     "src/game/ship/player_ship.tscn",
     "src/game/ship/player_ship.gd",
@@ -121,6 +124,7 @@ REQUIRED = [
     "AGENTS.md",
     "docs/ASSETS.md",
     "docs/UI_GUIDELINES.md",
+    "docs/PRODUCT_BACKLOG.md",
 ]
 
 REQUIRED_ASSETS = [
