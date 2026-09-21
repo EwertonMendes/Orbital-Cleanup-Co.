@@ -57,39 +57,43 @@ func _validate_app_root() -> void:
 
 func _validate_operations_screen() -> void:
 	var packed := load("res://src/ui/screens/operations/operations_screen.tscn") as PackedScene
-	_expect(packed != null, "Headquarters screen must load.")
+	_expect(packed != null, "Operations screen must load.")
 	if packed == null:
 		return
 	var screen := packed.instantiate()
-	_expect(screen is Control, "Headquarters screen must inherit Control.")
-	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Headquarters requires deployment action.")
-	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Headquarters requires contract ship preview.")
-	_expect(screen.find_child("UpgradeGrid", true, false) is GridContainer, "Headquarters requires upgrade grid.")
-	_expect(screen.find_child("CareerList", true, false) is VBoxContainer, "Headquarters requires career ladder.")
-	_expect(screen.find_child("ContentScroll", true, false) is ScrollContainer, "Headquarters content must degrade gracefully on compact screens.")
-	_expect(screen.find_child("PreviousContract", true, false) is Button, "Headquarters requires previous authored contract action.")
-	_expect(screen.find_child("NextContract", true, false) is Button, "Headquarters requires next authored contract action.")
-	_expect(screen.find_child("ContractPosition", true, false) is Label, "Headquarters requires authored contract position feedback.")
+	_expect(screen is Control, "Operations screen must inherit Control.")
+	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Operations requires deployment action.")
+	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Operations requires contract ship preview.")
+	_expect(screen.find_child("UpgradeGrid", true, false) is GridContainer, "Operations requires upgrade grid.")
+	_expect(screen.find_child("CareerList", true, false) is VBoxContainer, "Operations requires focused career milestones.")
+	_expect(screen.find_child("ContentScroll", true, false) is ScrollContainer, "Operations content must degrade gracefully on compact screens.")
+	_expect(screen.find_child("PreviousContract", true, false) is Button, "Operations requires previous unlocked contract action.")
+	_expect(screen.find_child("NextContract", true, false) is Button, "Operations requires next unlocked contract action.")
+	_expect(screen.find_child("ContractPosition", true, false) is Label, "Operations requires contract position feedback.")
 	_expect(screen.find_child("CloseOverlay", true, false) is Button, "Operations requires a close action when embedded over flight.")
-	_expect(screen.find_child("OverlayScrim", true, false) is ColorRect, "Operations overlay requires a restrained world scrim.")
-	_expect(screen.find_child("FloatingSurface", true, false) is PanelContainer, "Operations overlay requires a floating surface.")
+	_expect(screen.find_child("OverlayScrim", true, false) is ColorRect, "Operations overlay requires a world scrim.")
+	_expect(screen.find_child("FloatingSurface", true, false) is PanelContainer, "Operations requires a centered console surface.")
 	_expect(screen.find_child("DiscoveryList", true, false) is GridContainer, "Discovery catalog must use a responsive card grid.")
-	_expect(screen.find_child("InterfaceParticles", true, false) is Control, "Operations requires restrained ambient UI particles.")
+	_expect(screen.find_child("SettingsLayer", true, false) is Control, "Operations requires a dedicated settings layer.")
+	_expect(screen.find_child("SettingsModal", true, false) is PanelContainer, "Operations requires a physical settings panel.")
+	_expect(screen.find_child("VolumeDown", true, false) is Button and screen.find_child("VolumeUp", true, false) is Button, "Settings requires audio controls.")
+	_expect(screen.find_child("LanguageGroup", true, false) is HBoxContainer, "Language selection must live inside Settings.")
+	_expect(screen.find_child("InterfaceParticles", true, false) == null, "Operations must not cover native Kenney chrome with generic UI particles.")
 
 	for tab_name in ["ContractsTab", "UpgradesTab", "CareerTab", "ShipTab", "DiscoveryTab"]:
-		_expect(screen.find_child(tab_name, true, false) is Button, "Headquarters requires tab: %s" % tab_name)
+		_expect(screen.find_child(tab_name, true, false) is Button, "Operations requires navigation button: %s" % tab_name)
 
 	for panel_name in ["ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel"]:
-		_expect(screen.find_child(panel_name, true, false) is VBoxContainer, "Headquarters requires panel: %s" % panel_name)
+		_expect(screen.find_child(panel_name, true, false) is VBoxContainer, "Operations requires panel: %s" % panel_name)
 
 	var unique_refs := [
-		"SafeArea", "Header", "TabGrid", "ContentScroll", "ContentShell",
+		"SafeArea", "Header", "MainRow", "TabGrid", "ContentScroll", "ContentShell",
 		"ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel",
 		"ContractHero", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
 		"CreditsLabel", "RankLabel", "XpLabel", "CareerRankValue", "CareerXpLabel", "CareerXpBar",
-		"ContractState", "ContractSelector", "ContractPosition", "PreviousContract", "EndlessContract", "NextContract", "ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk",
-		"ContractPayout", "ContractRequirement", "NextUnlockPanel", "NextUnlockTitle",
-		"NextUnlockLabel", "NextUnlockProgress", "NextUnlockProgressLabel",
+		"ContractState", "ContractSelector", "ContractPosition", "PreviousContract", "EndlessContract", "NextContract",
+		"ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk", "ContractPayout", "ContractRequirement",
+		"NextUnlockPanel", "NextUnlockTitle", "NextUnlockLabel", "NextUnlockProgress", "NextUnlockProgressLabel",
 		"LastResult", "ShipStats", "DiscoveryCount", "CompletedContracts",
 		"EnglishButton", "PortugueseButton", "SpanishButton", "ContractsTab", "UpgradesTab",
 		"CareerTab", "ShipTab", "DiscoveryTab", "CompanyLabel", "DeskLabel", "LanguageLabel",
@@ -99,24 +103,38 @@ func _validate_operations_screen() -> void:
 		"BeamStyleValue", "WorkshopStatus", "HullHeading", "PaintHeading", "TrailHeading", "BeamHeading",
 		"HullOptions", "PaintOptions", "TrailOptions", "BeamOptions", "DiscoveryTitle", "DiscoverySubtitle",
 		"DiscoveryEmptyTitle", "DiscoveryEmptyBody", "CloseOverlay", "OverlayScrim", "FloatingSurface",
+		"SettingsButton", "SettingsLayer", "SettingsClose", "VolumeDown", "VolumeUp", "VolumeValue",
 	]
 	for node_name in unique_refs:
 		_expect(
 			screen.get_node_or_null(NodePath("%" + node_name)) != null,
-			"Headquarters script reference must be unique: %%%s" % node_name
+			"Operations script reference must be unique: %%%s" % node_name
 		)
+
 	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
-	_expect("_active_contract_access()" in operations_source, "Headquarters deploy must consult centralized progression access.")
-	_expect("primary_action.disabled = not unlocked" in operations_source, "Locked contracts must disable deploy action.")
-	_expect("_refresh_next_unlock()" in operations_source, "Headquarters must surface the next career unlock.")
-	_expect("signal deployment_requested" in operations_source, "Operations overlay must hand deployment intent back to the flight shell.")
-	_expect("_apply_overlay_presentation()" in operations_source, "Operations must own a reusable floating presentation mode.")
-	_expect("_reveal_active_panel" in operations_source, "Operations tab changes require shared motion instead of abrupt visibility swaps.")
-	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_theme.tres")
-	_expect("NEUROPOL.ttf" in theme_source, "OCC display typography must use the licensed Neuropol game face.")
+	_expect("_active_contract_access()" in operations_source, "Operations deploy must consult centralized progression access.")
+	_expect("is_sector_unlocked" in operations_source, "Contract navigation must expose unlocked sectors only.")
+	_expect("endless_contract.visible = _progression.is_endless_unlocked()" in operations_source, "Endless navigation must stay hidden before unlock.")
+	_expect("discovery_tab.visible = _progression.get_discovery_count() > 0" in operations_source, "Discovery navigation must stay hidden before first discovery.")
+	_expect("if not unlocked:" in operations_source and "continue" in operations_source, "Locked cosmetics must stay absent instead of cluttering the workshop.")
+	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
+	_expect("_reveal_active_panel" in operations_source, "Operations tab changes require restrained shared motion.")
+
+	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_operations_theme.tres")
+	_expect("StyleBoxTexture" in theme_source, "Operations must skin controls with original Kenney textures.")
+	_expect("StyleBoxFlat" not in theme_source, "Operations must not redraw Kenney UI as generic Godot flat chrome.")
+	_expect("button_rectangle_depth.png" in theme_source, "Operations requires native Kenney button depth states.")
+	_expect("panel_rectangle_screws.png" in theme_source, "Operations requires native Kenney panel chrome.")
+	_expect("NEUROPOL.ttf" in theme_source, "OCC display typography must use Neuropol.")
 	_expect("Inter[opsz,wght].ttf" in theme_source, "OCC body typography must use Inter.")
 	_expect("JetBrainsMono[wght].ttf" in theme_source, "OCC telemetry typography must use JetBrains Mono.")
-	_expect("Oxanium" not in theme_source, "Oxanium must not remain in the shared UI theme.")
+
+	var cursor_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_cursor_skin.gd")
+	_expect("Input.set_custom_mouse_cursor" in cursor_source, "Desktop UI must use the original Kenney cursor set.")
+	var app_source := FileAccess.get_file_as_string("res://src/core/app/app_root.gd")
+	_expect("OccCursorSkin.apply()" in app_source, "AppRoot must install the custom cursor exactly once.")
+	var audio_source := FileAccess.get_file_as_string("res://src/core/audio/audio_service.gd")
+	_expect("play_ui_hover" in audio_source and "play_ui_click" in audio_source and "play_ui_back" in audio_source, "UI interactions require centralized Kenney audio feedback.")
 	screen.free()
 
 func _validate_hq_components() -> void:

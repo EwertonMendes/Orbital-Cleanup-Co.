@@ -129,6 +129,8 @@ REQUIRED = [
     "src/ui/screens/operations/operations_scenery_motion.gd",
     "src/ui/screens/operations/operations_backdrop.gd",
     "src/ui/themes/occ_theme.tres",
+    "src/ui/themes/occ_operations_theme.tres",
+    "src/ui/themes/occ_cursor_skin.gd",
     "src/ui/themes/occ_palette.gd",
     "tools/validate_core_contracts.gd",
     "AGENTS.md",
@@ -138,9 +140,20 @@ REQUIRED = [
 ]
 
 REQUIRED_ASSETS = [
-    "assets/third_party/kenney_ui_sci_fi/ui/panel_glass_notches.png",
-    "assets/third_party/kenney_ui_sci_fi/ui/button_header_blade.png",
-    "assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/button_rectangle.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/button_rectangle_depth.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/panel_rectangle_screws.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Blue/Double/button_square_header_blade_rectangle.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Grey/Double/button_square_header_blade_rectangle.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Green/Double/button_square_header_blade_rectangle.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Red/Double/button_square_header_blade_rectangle.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Yellow/Double/button_square_header_blade_rectangle.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Extra/cursor_h.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Extra/cursor_c.png",
+    "assets/third_party/kenney_ui_sci_fi/ui/Extra/cursor_d.png",
+    "assets/third_party/kenney_interface_sounds/audio/select_003.ogg",
+    "assets/third_party/kenney_interface_sounds/audio/click_001.ogg",
+    "assets/third_party/kenney_interface_sounds/audio/back_001.ogg",
     "assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png",
     "assets/third_party/kenney_space_shooter/effects/engine_speed.png",
     "assets/third_party/kenney_simple_space/scenery/station_a.png",
@@ -148,7 +161,6 @@ REQUIRED_ASSETS = [
     "assets/third_party/neuropol/NEUROPOL.ttf",
     "assets/third_party/inter/Inter[opsz,wght].ttf",
     "assets/third_party/jetbrains_mono/JetBrainsMono[wght].ttf",
-    "assets/original/ui/brand_rule.svg",
     "assets/original/salvage/navigation_core.svg",
 ]
 
@@ -250,42 +262,63 @@ def validate_asset_provenance() -> None:
 
 def validate_visual_foundation() -> None:
     operations = (ROOT / "src" / "ui" / "screens" / "operations" / "operations_screen.tscn").read_text(encoding="utf-8")
+    operations_source = (ROOT / "src" / "ui" / "screens" / "operations" / "operations_screen.gd").read_text(encoding="utf-8")
     flight = (ROOT / "src" / "ui" / "screens" / "flight" / "flight_screen.tscn").read_text(encoding="utf-8")
+    operations_theme = (ROOT / "src" / "ui" / "themes" / "occ_operations_theme.tres").read_text(encoding="utf-8")
+    cursor_skin = (ROOT / "src" / "ui" / "themes" / "occ_cursor_skin.gd").read_text(encoding="utf-8")
 
-    required_markers = (
-        "button_header_blade.png",
-        "brand_rule.svg",
-        "InterfaceParticles",
-        "kenney_space_shooter",
-        "kenney_simple_space",
+    if "occ_operations_theme.tres" not in operations:
+        fail("Operations must use the dedicated original Kenney UI theme")
+    if "StyleBoxTexture" not in operations_theme:
+        fail("Operations theme must use original Kenney textures through StyleBoxTexture")
+    if "StyleBoxFlat" in operations_theme:
+        fail("Operations theme must not redraw the selected Kenney kit as generic flat Godot chrome")
+
+    required_kenney_markers = (
+        "Extra/Double/button_rectangle_depth.png",
+        "Extra/Double/panel_rectangle_screws.png",
+        "Blue/Double/button_square_header_blade_rectangle.png",
+        "Grey/Double/button_square_header_blade_rectangle.png",
+        "Green/Double/button_square_header_blade_rectangle.png",
+        "Red/Double/button_square_header_blade_rectangle.png",
+        "Yellow/Double/button_square_header_blade_rectangle.png",
     )
-    missing = [marker for marker in required_markers if marker not in operations]
+    missing = [marker for marker in required_kenney_markers if marker not in operations_theme]
     if missing:
-        fail("Operations screen is missing visual foundation references: " + ", ".join(missing))
+        fail("Operations theme is missing original Kenney UI states: " + ", ".join(missing))
 
-    if "panel_glass_tab_blade.png" in operations or "panel_glass_tab_blade.png" in flight:
-        fail("Square Kenney tab assets must not be stretched into wide HUD/card frames")
+    if "InterfaceParticles" in operations:
+        fail("Operations console must not cover the original Kenney kit with generic teal particles")
+    if "SettingsLayer" not in operations or "VolumeDown" not in operations or "LanguageGroup" not in operations:
+        fail("Language and audio controls must live in the dedicated Settings panel")
+    if "is_sector_unlocked" not in operations_source:
+        fail("Operations contract browser must filter authored sectors to unlocked content")
+    if "is_endless_unlocked" not in operations_source:
+        fail("Endless contracts must stay hidden until actually unlocked")
+    if "discovery_tab.visible = _progression.get_discovery_count() > 0" not in operations_source:
+        fail("Discovery navigation must stay hidden until the player has a discovery")
+    if "if not unlocked:" not in operations_source or "continue" not in operations_source:
+        fail("Ship customization must not render future locked cosmetic choices")
+
+    for marker in ("cursor_h.png", "cursor_c.png", "cursor_d.png", "Input.set_custom_mouse_cursor"):
+        if marker not in cursor_skin:
+            fail(f"Custom Kenney cursor contract missing: {marker}")
 
     if 'scale = Vector2(1.15, 1.15)' in (ROOT / "src" / "game" / "ship" / "player_ship.tscn").read_text(encoding="utf-8"):
         fail("Player ship must render at native scale in gameplay")
-
     if "Provider:" in operations or "Build:" in operations:
         fail("Player-facing Operations UI must not expose debug/provider build metadata")
 
-    theme = (ROOT / "src" / "ui" / "themes" / "occ_theme.tres").read_text(encoding="utf-8")
     required_fonts = (
         "assets/third_party/neuropol/NEUROPOL.ttf",
         "assets/third_party/inter/Inter[opsz,wght].ttf",
         "assets/third_party/jetbrains_mono/JetBrainsMono[wght].ttf",
     )
-    missing_fonts = [font for font in required_fonts if font not in theme]
+    missing_fonts = [font for font in required_fonts if font not in operations_theme]
     if missing_fonts:
-        fail("Shared OCC Theme is missing professional typography families: " + ", ".join(missing_fonts))
-    if "oxanium" in theme.lower() or (ROOT / "assets" / "third_party" / "oxanium").exists():
-        fail("Oxanium must be fully removed from the project")
-    for variation in ("DisplayLabel/base_type", "TelemetryLabel/base_type", "PrimaryButton/base_type", "TabButton/base_type", "CardPanel/base_type"):
-        if variation not in theme:
-            fail(f"Shared OCC Theme is missing semantic variation: {variation}")
+        fail("Operations Theme is missing professional typography families: " + ", ".join(missing_fonts))
+    if "oxanium" in operations_theme.lower() or (ROOT / "assets" / "third_party" / "oxanium").exists():
+        fail("Oxanium must remain removed from the project")
 
     if "WorldPostProcess" not in flight or "AmbientMotion" not in flight or "FlightFeedback" not in flight:
         fail("Flight scene must keep reusable post-processing, ambient motion and feedback systems")

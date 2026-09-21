@@ -26,6 +26,7 @@ func _ready() -> void:
 
 	build_info.initialize()
 	settings_service.initialize()
+	OccCursorSkin.apply()
 	audio_service.initialize(settings_service)
 	save_service.initialize()
 	progression_service.initialize(save_service)

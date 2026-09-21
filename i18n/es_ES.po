@@ -1167,3 +1167,12 @@ msgstr "OPERACIONES"
 
 msgid "HQ_CLOSE"
 msgstr "CERRAR"
+
+msgid "HQ_SETTINGS"
+msgstr "Ajustes"
+
+msgid "HQ_SETTINGS_AUDIO"
+msgstr "Audio"
+
+msgid "HQ_SETTINGS_DONE"
+msgstr "Listo"

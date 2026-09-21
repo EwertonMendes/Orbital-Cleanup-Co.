@@ -7,6 +7,9 @@ The interface is part of the game's identity, not a debug surface around the gam
 - Give each screen one obvious primary purpose.
 - Prefer one dominant primary action. Secondary actions must look secondary.
 - Show only information that helps the player make the current decision.
+- Do not show future locked contracts or cosmetic choices in routine browsing. Endless and Discovery navigation remain absent until unlocked.
+- Language and master-audio controls belong in Settings, not in the persistent Operations header.
+- Career owns rank/XP/next-unlock information; Contracts should not repeat progression bookkeeping.
 - Do not expose provider names, build SHAs, workflow IDs, debug state or implementation details in normal player-facing UI.
 - Avoid decorative labels that repeat information already obvious from layout or iconography.
 - Prefer short, scannable copy over paragraphs.
@@ -15,10 +18,10 @@ The interface is part of the game's identity, not a debug surface around the gam
 
 Use the shared foundations before creating screen-local styling:
 
-- `src/ui/themes/occ_palette.gd` for semantic colors;
-- `src/ui/themes/occ_theme.tres` for scalable panels, buttons, progress bars and standard controls;
-- curated Kenney textures only for accents/plates whose native proportions are respected;
-- screen layouts built from Containers rather than stretched art pretending to be layout.
+- `src/ui/themes/occ_theme.tres` for the world/HUD foundation;
+- `src/ui/themes/occ_operations_theme.tres` for the physical Kenney console used by Operations;
+- `src/ui/themes/occ_cursor_skin.gd` for the original Kenney desktop cursor states;
+- screen layouts built from Containers, with `StyleBoxTexture`/NinePatch only where the source asset is designed to scale.
 
 If a reusable component already owns a pattern, do not copy its style into a new scene.
 
@@ -62,20 +65,19 @@ Typography is a semantic system, not one font stretched across every piece of UI
 
 Oxanium is not part of the Orbital Cleanup Co. typography system.
 
-## Kenney asset usage
+## Kenney UI Pack - Sci-Fi usage
 
-Kenney assets are raw material. They must be composed into Orbital Cleanup Co.'s own visual language.
+Operations deliberately uses the **original Kenney UI Pack - Sci-Fi visual language** rather than redrawing it as generic Godot rectangles.
 
-- Use a curated subset only.
-- Preserve the source aspect ratio unless an asset is explicitly designed for NinePatch use.
-- A square 128×128 panel must never be stretched into a wide header/card frame.
-- The current 384×128 header/blade assets are treated as 3:1 plates and rendered at 3:1.
-- Large resizable surfaces should use OCC StyleBox/PanelContainer styling, with Kenney art as accents instead of distorted backgrounds.
-- Interactive chrome must use OCC StyleBox-based components. Do not use a bright texture as the full surface of tabs, selectors or primary actions; Kenney UI textures are accents, not the button system.
-- Do not mix arbitrary color families from the pack on one screen.
-- Prefer blue/cyan structure, mint success/ready states and amber emphasis.
+- Keep the source pixels, colors, bevels, screws and highlights intact. Do not tint, recolor, paint over, blur or shader-modulate Kenney UI textures.
+- Use the pack's `Double` assets for resizable console chrome and preserve their corner geometry through `StyleBoxTexture` or `NinePatchRect`.
+- Use 9-slice scaling only on textures intended to form resizable buttons/panels. Decorative or cursor assets render at their native proportions.
+- Never animate scale on Kenney panels/buttons. Interaction motion may use opacity or tiny positional movement, while the texture state itself communicates press/selection.
+- Neutral gray is the default physical surface. Original blue/green/yellow/red pack variants are semantic accents, not a global recolor: blue selected/navigation, green positive/ready, yellow settings/reward/warning, red close/danger.
+- The pack's own cursor art is used for arrow, pointing and pressed states on desktop.
+- Kenney Interface Sounds provide restrained hover, click and back cues through the centralized AudioService.
+- Operations should read like a physical game console, not a corporate dashboard: one focused content area, compact vertical navigation, settings in a modal, and progression content revealed only when relevant.
 - Do not use combat-oriented assets such as enemy ships, guns or lasers for this game.
-- Keep background scenery subtle enough that controls and text remain the visual priority.
 
 ## Raster quality
 

@@ -3,17 +3,17 @@
 - Creator: Kenney
 - Official source: https://kenney.nl/assets/ui-pack-sci-fi
 - License: CC0 1.0
-- Imported: 2026-09-20
-- Purpose: curated raw textures for Orbital Cleanup Co. reusable UI components.
-- Acquisition: public `shorepine/kenney` mirror pinned at `3694c6879e487c108f55677be7dd2ca75b07cc3b`.
+- Imported: 2026-09-20; expanded 2026-09-21
+- Purpose: original physical game-console UI chrome and desktop cursor states.
+- Acquisition: public `shorepine/kenney` mirror, used as the binary transfer path.
 - Canonical provenance/license: the official Kenney page above.
 
-Curated files:
-- panel_glass_notches.png
-- panel_glass_tab_blade.png
-- panel_rectangle_screws.png
-- button_header_blade.png
-- button_rectangle_depth.png
-- bar_round_gloss_large.png
+The Operations UI intentionally keeps the selected files **unmodified**: original pixels, colors, bevels, screws and highlights. Godot uses StyleBoxTexture/NinePatch slicing only for source assets designed to form scalable controls.
 
-The pack is source material for OCC components, not a full unmodified theme.
+Curated families:
+- `Extra/Double`: neutral raised/pressed buttons, panel chrome and progress outline;
+- `Blue/Double`, `Grey/Double`, `Green/Double`, `Red/Double`, `Yellow/Double`: original semantic header/blade and progress states;
+- `Extra/cursor_h.png`, `cursor_c.png`, `cursor_d.png`: arrow, pointing and pressed desktop cursors;
+- `squareBlue.png`, `squareGreen.png`, `squareRed.png`, `squareYellow.png`: compact status indicators.
+
+Legacy flat-path files remain temporarily for existing Flight HUD references; new Operations work uses the upstream folder names above.

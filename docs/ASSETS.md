@@ -15,9 +15,9 @@ The repository validator enforces this contract.
 | --- | --- | --- | --- | --- | --- |
 | Space Shooter Remastered | Kenney | https://kenney.nl/assets/space-shooter-remastered | CC0 | primary ship, meteors/debris, beam/engine feedback | **curated subset imported** |
 | Simple Space | Kenney | https://kenney.nl/assets/simple-space | CC0 | station, satellites and environmental silhouettes | **curated subset imported** |
-| UI Pack - Sci-Fi | Kenney | https://kenney.nl/assets/ui-pack-sci-fi | CC0 | raw material for OCC reusable UI chrome | **curated subset imported** |
+| UI Pack - Sci-Fi | Kenney | https://kenney.nl/assets/ui-pack-sci-fi | CC0 | original physical console chrome, cursor states and semantic color variants | **curated subset imported** |
 | Space Shooter Extension | Kenney | https://kenney.nl/assets/space-shooter-extension | CC0 | possible future space props | approved source; not imported |
-| Interface Sounds | Kenney | https://kenney.nl/assets/interface-sounds | CC0 | hover/select/confirm/menu SFX | approved source; not imported |
+| Interface Sounds | Kenney | https://kenney.nl/assets/interface-sounds | CC0 | hover/select/confirm/menu SFX | **curated subset imported** |
 | Sci-fi Sounds | Kenney | https://kenney.nl/assets/sci-fi-sounds | CC0 | engine/beam/machinery/environmental SFX | approved source; not imported |
 | 2D Planet Pack 2 | Screaming Brain Studios | https://screamingbrainstudios.itch.io/2d-planet-pack-2 | CC0 | curated planet/moon/sun backgrounds | approved source; not imported |
 | Neuropol | Ray Larabie / Typodermic Fonts | https://typodermicfonts.com/public-domain/ | CC0 1.0 / public domain | principal display/game-identity typeface | **imported** |
@@ -28,17 +28,21 @@ The repository validator enforces this contract.
 
 ## Current Kenney import
 
-The visual-foundation PR imports **17 PNG files** from the three requested Kenney packs rather than dumping the full packs into the repository.
+The repository keeps a curated subset rather than dumping complete packs.
 
-Curated material includes:
+The Operations redesign imports the original UI Pack - Sci-Fi files with their upstream folder/color identity intact:
 
-- six Sci-Fi UI textures for panels, buttons and bars;
-- one blue player ship, one engine-speed effect, three grey meteors and one beam part from Space Shooter Remastered;
-- two satellites, one station, one detailed meteor and one star from Simple Space.
+- neutral `Extra/Double` raised/pressed buttons and screw/glass panels;
+- original Blue, Grey, Green, Red and Yellow header/blade variants;
+- original blue/green/yellow progress art;
+- original cursor arrow, point and pressed states;
+- original colored status squares.
 
-Enemies, guns and lasers are intentionally excluded because Orbital Cleanup Co. has no combat.
+No runtime tint or recolor is applied to these UI textures. Resizable chrome uses 9-slice geometry so corners, screws and bevels stay intact.
 
-Each imported source directory records the official Kenney page, CC0 license, import date and the pinned public mirror commit used to transfer binary files into Git.
+The Interface Sounds import contains only three CC0 cues: hover/select, click/activate and back/close. One blue player ship, engine feedback, selected space props and hazards from the other Kenney packs remain as before.
+
+Enemies, guns and lasers are intentionally excluded because Orbital Cleanup Co. has no combat. Each source directory records the official Kenney page, CC0 license and transfer provenance.
 
 ## Import policy
 
