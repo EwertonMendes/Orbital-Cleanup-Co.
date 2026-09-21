@@ -4,6 +4,7 @@ class_name ContractDebriefScreen
 const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_screen.tscn"
 
 @onready var safe_area: MarginContainer = %SafeArea
+@onready var debrief_card: PanelContainer = %DebriefCard
 @onready var content_grid: GridContainer = %ContentGrid
 @onready var reward_grid: GridContainer = %RewardGrid
 @onready var title_label: Label = %TitleLabel
@@ -95,7 +96,9 @@ func _apply_responsive_layout() -> void:
 	content_grid.columns = 1 if compact else 3
 	reward_grid.columns = 2 if compact else 4
 	var horizontal_margin := 14 if compact else 30
-	var vertical_margin := 14 if compact else 24
+	var vertical_margin := 10 if compact else 18
+	var available_width := maxf(size.x - float(horizontal_margin * 2), 280.0)
+	debrief_card.custom_minimum_size.x = minf(900.0, available_width)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
@@ -167,7 +170,7 @@ func _refresh_unlocks() -> void:
 	for value in unlocks:
 		var unlock := value as Dictionary
 		var row := Label.new()
-		row.text = "✦ %s" % tr(String(unlock.get("display_name_key", "")))
+		row.text = "> %s" % tr(String(unlock.get("display_name_key", "")))
 		row.add_theme_color_override("font_color", Color("#ffc857"))
 		row.add_theme_font_size_override("font_size", 14)
 		row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -185,7 +188,7 @@ func _refresh_discoveries() -> void:
 			continue
 		var definition := _registry.get_salvage_definition(salvage_id)
 		var row := Label.new()
-		row.text = "◆ %s · %s" % [
+		row.text = "> %s · %s" % [
 			tr(String(definition.display_name_key)),
 			tr(_rarity_key(String(definition.rarity))),
 		]
