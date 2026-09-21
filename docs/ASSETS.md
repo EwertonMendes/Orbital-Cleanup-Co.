@@ -76,3 +76,10 @@ Large sector landmarks now use original Orbital Cleanup Co. SVG artwork under `a
 The current set contains eight editable source assets: service satellite, cargo waystation, relay satellite, mining rig, fractured moonlet, communications array, research outpost and derelict explorer wreck.
 
 These files are authored for the OCC palette and top-down readability requirements. They add no third-party licensing or runtime dependency. Kenney remains useful for smaller source props, hazards and salvage, while major authored structures are now part of the project's own visual identity.
+
+## Expanded destination artwork
+
+The destination expansion adds 46 original editable SVG primary visuals under `assets/original/destinations/`. They are authored in-repository and introduce no new third-party dependency.
+
+The visual system intentionally treats these as generic primary destination artwork rather than assuming every scene is a planet. The same renderer can therefore present planets, moons, stars, stations, wreck fields, nebulae, pulsars, black holes and supernova remnants.
+

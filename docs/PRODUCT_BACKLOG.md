@@ -73,3 +73,11 @@ Improve first impression and collection motivation.
 - Expand Discovery with found/total progress, unknown silhouettes, origin biome and short corporate lore.
 - Add collection completion milestones/rewards.
 - Ensure returning players can reach gameplay with minimal friction.
+
+## Completed — destination breadth
+
+- [x] 50 distinct destination biomes with one-to-one project-owned primary artwork.
+- [x] 59 authored sectors ordered through career progression.
+- [x] Solar System coverage plus major Jupiter/Saturn moons and outer dwarf planets.
+- [x] Abandoned station, ship graveyard, orbital factory ruins, stars, pulsar, neutron star, black hole, exoplanets, nebula and supernova scenarios.
+

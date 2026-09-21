@@ -228,3 +228,12 @@ The guide is generic: Flight binds it directly to the current sector's `UnloadDe
 The edge guide projects the real depot world position through the active viewport canvas transform, so it stays correct with camera movement and responsive layouts. It hides automatically when the depot is visible or the ship is already nearby.
 
 Cargo state changes emphasis but not layout: normal travel uses calm cyan guidance; a full cargo hold promotes the same beacon/guide to amber. The guide updates at 30 Hz and the world beacon redraws at 20 Hz to preserve Web/mobile frame pacing.
+
+## Galactic destination library
+
+The authored destination target is now **50 distinct visual/gameplay identities** and **59 authored sectors**. The library includes every major planet of the Solar System, the Sun, major Jovian and Saturnian moons, outer-system dwarf planets, abandoned industrial locations, nearby-star operations, exoplanets, stellar remnants and extreme phenomena.
+
+A destination is not a recolor. Each identity owns a unique primary SVG, palette, horizon treatment, environmental-field mix and deterministic authored sector. Shared runtime systems remain generic so expanding from 50 to 100 destinations remains a content operation rather than a code rewrite.
+
+Career progression intentionally introduces new visual families throughout the ladder: inner-system worlds at Junior Cleaner, Jupiter and its moons at Orbital Cleaner, Saturn/Uranus at Senior Cleaner, outer-system and industrial anomalies at Sector Specialist, then stellar and extrasolar space at Deep Space Operator.
+
