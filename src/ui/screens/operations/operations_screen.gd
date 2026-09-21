@@ -256,17 +256,24 @@ func _reveal_active_panel(panel: Control) -> void:
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
-	var narrow := portrait or size.x < COMPACT_WIDTH
-	var compact := narrow or size.y < 520.0
-	header.vertical = narrow
+	var window_size := DisplayServer.window_get_size()
+	var narrow := portrait or window_size.x < int(COMPACT_WIDTH)
+	var compact := narrow
+
+	# Keep the physical-console header compact even in portrait. The 720 px
+	# portrait reference has enough room for brand, credits, settings and close.
+	header.vertical = window_size.x < 360
 	main_row.vertical = compact
 	contract_hero.vertical = narrow
 	ship_body.vertical = narrow
-	tab_grid.columns = 2 if size.x < 560.0 else (3 if compact else 1)
+	tab_grid.columns = 2 if portrait or window_size.x < 560 else (3 if compact else 1)
 	contract_selector.columns = 2 if narrow else 4
 	upgrade_grid.columns = 1 if narrow else 3
 	discovery_list.columns = 1 if narrow else 2
-	content_shell.custom_minimum_size.y = 260.0 if compact else 470.0
+
+	# ContentScroll already owns viewport expansion. Avoid an artificial minimum
+	# that creates a scrollbar on desktop when the active screen fits naturally.
+	content_shell.custom_minimum_size.y = 0.0
 
 	var horizontal_margin := 12 if compact else 22
 	var vertical_margin := 10 if compact else 20
@@ -277,14 +284,24 @@ func _apply_responsive_layout() -> void:
 
 	var available_width := maxf(size.x - (20.0 if compact else 80.0), 320.0)
 	var available_height := maxf(size.y - (20.0 if compact else 56.0), 300.0)
+	var console_height := 1180.0 if portrait else 650.0
 	floating_surface.custom_minimum_size = Vector2(
 		minf(1120.0, available_width),
-		minf(650.0, available_height)
+		minf(console_height, available_height)
 	)
+
+	var settings_width := 620.0 if portrait else 500.0
+	var settings_height := 390.0 if portrait else 330.0
 	settings_modal.custom_minimum_size = Vector2(
-		minf(500.0, maxf(size.x - 20.0, 300.0)),
-		minf(330.0, maxf(size.y - 20.0, 260.0))
+		minf(settings_width, maxf(size.x - 40.0, 300.0)),
+		minf(settings_height, maxf(size.y - 40.0, 260.0))
 	)
+
+	var footer_spacer := footer.get_node_or_null("FooterSpacer") as Control
+	if footer_spacer != null:
+		footer_spacer.visible = not portrait
+	primary_action.custom_minimum_size.x = 0.0 if portrait else 260.0
+	primary_action.size_flags_horizontal = Control.SIZE_EXPAND_FILL if portrait else Control.SIZE_SHRINK_BEGIN
 
 func _deploy_training() -> void:
 	var access := _active_contract_access()
