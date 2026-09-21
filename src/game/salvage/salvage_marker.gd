@@ -50,6 +50,14 @@ func _draw() -> void:
 	])
 	draw_colored_polygon(diamond, Color(rarity, 0.94))
 
+	var rarity_name := String(_definition.rarity)
+	if rarity_name in ["rare", "epic"]:
+		var mote_count := 2 if rarity_name == "epic" else 1
+		for index in range(mote_count):
+			var angle := _phase * (0.72 + float(index) * 0.18) + float(index) * PI
+			var mote_position := Vector2.from_angle(angle) * (radius + 16.0)
+			draw_circle(mote_position, 2.5 if rarity_name == "epic" else 2.0, Color(rarity, 0.72))
+
 	if not _targeted:
 		return
 

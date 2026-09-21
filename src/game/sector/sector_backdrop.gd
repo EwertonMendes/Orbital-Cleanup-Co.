@@ -9,14 +9,16 @@ var _play_bounds := Rect2(-4800.0, -3000.0, 9600.0, 6000.0)
 var _background_color := Color("#040b13")
 var _nebula_color := Color("#0b3d4d")
 var _accent_color := Color("#53d7f1")
+var _biome_id := ""
 var _stars: Array[Dictionary] = []
 
-func configure(play_bounds: Rect2, palette: Dictionary) -> void:
+func configure(play_bounds: Rect2, palette: Dictionary, biome_id: String = "") -> void:
 	assert(play_bounds.size.x > 0.0 and play_bounds.size.y > 0.0, "SectorBackdrop requires valid bounds.")
 	_play_bounds = play_bounds
 	_background_color = Color(String(palette.get("background", "#040b13")))
 	_nebula_color = Color(String(palette.get("nebula", "#0b3d4d")))
 	_accent_color = Color(String(palette.get("accent", "#53d7f1")))
+	_biome_id = biome_id
 	RenderingServer.set_default_clear_color(_background_color)
 	queue_redraw()
 
@@ -45,6 +47,7 @@ func _draw() -> void:
 	_draw_soft_cloud(Vector2(0, 80), 2650.0, _nebula_color, 0.16)
 	_draw_soft_cloud(Vector2(3000, -1900), 1850.0, _nebula_color, 0.085)
 	_draw_soft_cloud(Vector2(-3400, 2100), 2050.0, _nebula_color, 0.075)
+	_draw_biome_horizon()
 
 	for star in _stars:
 		var star_color := Color(1.0, 0.86, 0.55, float(star["alpha"])) if bool(star["warm"]) else Color(0.66, 0.90, 1.0, float(star["alpha"]))
@@ -56,6 +59,53 @@ func _draw() -> void:
 	_draw_glint(Vector2(2200, 980), 10.0, Color(_accent_color, 0.5))
 	_draw_glint(Vector2(-2850, -1250), 7.0, Color(1.0, 0.82, 0.5, 0.42))
 	_draw_perimeter()
+
+func _draw_biome_horizon() -> void:
+	match _biome_id:
+		"earth_orbit":
+			_draw_planet_horizon(
+				Vector2(610.0, 660.0),
+				900.0,
+				Color("#081d2b"),
+				Color("#4cc9ff"),
+				0.34
+			)
+		"lunar_belt":
+			_draw_planet_horizon(
+				Vector2(-650.0, 690.0),
+				920.0,
+				Color("#161d26"),
+				Color("#a9bed0"),
+				0.22
+			)
+		"mars_freight":
+			_draw_planet_horizon(
+				Vector2(650.0, 650.0),
+				940.0,
+				Color("#2b1413"),
+				Color("#ff9c63"),
+				0.30
+			)
+		"blue_nebula":
+			_draw_soft_cloud(Vector2(520.0, -180.0), 1550.0, _accent_color, 0.23)
+			_draw_soft_cloud(Vector2(-820.0, 580.0), 1250.0, Color("#7f65d8"), 0.13)
+		_:
+			pass
+
+func _draw_planet_horizon(
+	center: Vector2,
+	radius: float,
+	body_color: Color,
+	atmosphere: Color,
+	body_alpha: float
+) -> void:
+	for layer in range(7, 0, -1):
+		var expansion := float(layer) * 14.0
+		var alpha := 0.006 + float(8 - layer) * 0.006
+		draw_circle(center, radius + expansion, Color(atmosphere, alpha))
+	draw_circle(center, radius, Color(body_color, body_alpha))
+	draw_arc(center, radius + 3.0, deg_to_rad(196.0), deg_to_rad(344.0), 120, Color(atmosphere, 0.22), 2.2, true)
+	draw_arc(center, radius - 34.0, deg_to_rad(210.0), deg_to_rad(328.0), 100, Color(atmosphere, 0.055), 1.0, true)
 
 func _draw_soft_cloud(center: Vector2, radius: float, color: Color, strength: float) -> void:
 	for layer in range(8, 0, -1):

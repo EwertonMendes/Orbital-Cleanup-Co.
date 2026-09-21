@@ -14,6 +14,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 const UPGRADE_CARD_SCENE := preload("res://src/ui/components/hq_upgrade_card.tscn")
 const RANK_ROW_SCENE := preload("res://src/ui/components/hq_rank_row.tscn")
 const CHROME_BUTTON_SCENE := preload("res://src/ui/components/occ_chrome_button.tscn")
+const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card.tscn")
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var header: BoxContainer = %Header
@@ -58,6 +59,8 @@ const CHROME_BUTTON_SCENE := preload("res://src/ui/components/occ_chrome_button.
 @onready var beam_options: GridContainer = %BeamOptions
 @onready var discovery_count: Label = %DiscoveryCount
 @onready var completed_contracts: Label = %CompletedContracts
+@onready var discovery_empty_card: PanelContainer = %DiscoveryEmptyCard
+@onready var discovery_list: VBoxContainer = %DiscoveryList
 @onready var english_button: Button = %EnglishButton
 @onready var portuguese_button: Button = %PortugueseButton
 @onready var spanish_button: Button = %SpanishButton
@@ -141,6 +144,7 @@ func _validate_contracts() -> void:
 	assert(hull_options != null and paint_options != null and trail_options != null and beam_options != null, "Headquarters requires cosmetic option grids.")
 	assert(contracts_panel != null and upgrades_panel != null and career_panel != null, "Headquarters core panels are required.")
 	assert(ship_panel != null and discovery_panel != null, "Headquarters future-facing panels are required.")
+	assert(discovery_empty_card != null and discovery_list != null, "Headquarters discovery catalog containers are required.")
 	assert(not _sector_plan.is_empty(), "Headquarters requires sector data.")
 
 func _setup_tabs() -> void:
@@ -546,11 +550,64 @@ func _refresh_discovery() -> void:
 	%DiscoveryEmptyTitle.text = tr("HQ_DISCOVERY_EMPTY_TITLE")
 	%DiscoveryEmptyBody.text = tr("HQ_DISCOVERY_EMPTY_BODY")
 
+	var discoveries := _progression.get_discovery_ids()
 	var snapshot := _progression.get_snapshot()
-	var discoveries := snapshot.get("discoveries", []) as Array
 	var completed := snapshot.get("completed_contracts", {}) as Dictionary
 	var completed_total := 0
 	for value in completed.values():
 		completed_total += int(value)
 	discovery_count.text = tr("HQ_DISCOVERY_COUNT_FMT") % discoveries.size()
 	completed_contracts.text = tr("HQ_COMPLETED_CONTRACTS_FMT") % completed_total
+
+	discovery_empty_card.visible = discoveries.is_empty()
+	discovery_list.visible = not discoveries.is_empty()
+	for child in discovery_list.get_children():
+		child.queue_free()
+
+	for salvage_id in discoveries:
+		if not _registry.has_salvage(salvage_id):
+			continue
+		var definition := _registry.get_salvage_definition(salvage_id)
+		var card := DISCOVERY_CARD_SCENE.instantiate() as HqDiscoveryCard
+		assert(card != null, "Discovery card scene must instantiate.")
+		discovery_list.add_child(card)
+		var rarity_key := _rarity_key(String(definition.rarity))
+		var category_key := _category_key(String(definition.category))
+		card.configure(
+			definition.sprite,
+			tr(String(definition.display_name_key)),
+			tr("HQ_DISCOVERY_META_FMT") % [tr(category_key), tr(rarity_key)],
+			tr("HQ_DISCOVERY_VALUE_FMT") % definition.base_value,
+			tr(rarity_key),
+			WorldVisualLanguage.salvage_rarity_color(definition.rarity)
+		)
+
+func _rarity_key(rarity: String) -> String:
+	match rarity:
+		"uncommon":
+			return "RARITY_UNCOMMON"
+		"rare":
+			return "RARITY_RARE"
+		"epic":
+			return "RARITY_EPIC"
+		_:
+			return "RARITY_COMMON"
+
+func _category_key(category: String) -> String:
+	match category:
+		"electronics":
+			return "CATEGORY_ELECTRONICS"
+		"cargo":
+			return "CATEGORY_CARGO"
+		"research":
+			return "CATEGORY_RESEARCH"
+		"power":
+			return "CATEGORY_POWER"
+		"mining":
+			return "CATEGORY_MINING"
+		"industrial":
+			return "CATEGORY_INDUSTRIAL"
+		"propulsion":
+			return "CATEGORY_PROPULSION"
+		_:
+			return "CATEGORY_SCRAP"

@@ -18,6 +18,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var unload_zone: UnloadZone = %UnloadDepot
 @onready var sector_runtime: SectorRuntime = %SectorRuntime
 @onready var player_ship: PlayerShip = %PlayerShip
+@onready var flight_feedback: FlightFeedback = %FlightFeedback
 
 var _context: Dictionary = {}
 var _router: SceneRouter
@@ -48,11 +49,15 @@ func configure(context: Dictionary) -> void:
 	)
 	var runtime := get_node("World/SectorRuntime") as SectorRuntime
 	var backdrop := get_node("World/AmbientSpace") as SectorBackdrop
+	var ambient_motion := get_node("World/AmbientMotion") as AmbientOrbitLayer
+	var feedback := get_node("FlightFeedback") as FlightFeedback
 	var depot := get_node("World/UnloadDepot") as UnloadZone
 	var ship := get_node("World/PlayerShip") as PlayerShip
 
 	assert(runtime != null, "FlightScreen requires SectorRuntime.")
 	assert(backdrop != null, "FlightScreen requires SectorBackdrop.")
+	assert(ambient_motion != null, "FlightScreen requires AmbientOrbitLayer.")
+	assert(feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(depot != null, "FlightScreen requires UnloadZone.")
 	assert(ship != null, "FlightScreen requires PlayerShip.")
 
@@ -61,7 +66,10 @@ func configure(context: Dictionary) -> void:
 	else:
 		runtime.configure_sector_definition(generated_definition)
 	_contract_session.configure(runtime.get_contract_context())
-	backdrop.configure(runtime.get_play_bounds(), runtime.get_biome_palette())
+	var biome_palette := runtime.get_biome_palette()
+	backdrop.configure(runtime.get_play_bounds(), biome_palette, runtime.get_biome_id())
+	ambient_motion.configure(runtime.get_play_bounds(), biome_palette)
+	feedback.configure(biome_palette)
 
 	var deployment_position := runtime.get_depot_position()
 	depot.position = deployment_position
@@ -91,6 +99,7 @@ func _ready() -> void:
 	player_ship.tractor_progress_changed.connect(_on_tractor_progress_changed)
 	player_ship.salvage_collected.connect(_on_salvage_collected)
 	player_ship.cargo_collection_blocked.connect(_on_cargo_collection_blocked)
+	player_ship.bumped.connect(_on_ship_bumped)
 	unload_zone.cargo_unloaded.connect(_on_cargo_unloaded)
 	_input_service.input_mode_changed.connect(_on_input_mode_changed)
 	_contract_session.cleanliness_changed.connect(_on_cleanliness_changed)
@@ -126,6 +135,7 @@ func _validate_contracts() -> void:
 	assert(unload_zone != null, "FlightScreen requires UnloadZone.")
 	assert(sector_runtime != null, "FlightScreen requires SectorRuntime.")
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
+	assert(flight_feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
 
 func _apply_responsive_layout() -> void:
@@ -234,10 +244,12 @@ func _on_cleanliness_changed(_percent: float, _cleaned: float, _total: float) ->
 
 func _on_contract_target_reached() -> void:
 	_show_toast(tr("FLIGHT_CONTRACT_COMPLETE"))
+	flight_feedback.contract_target_reached()
 	_refresh_return_button()
 
 func _on_perfect_cleanup_reached() -> void:
 	_show_toast(tr("FLIGHT_PERFECT_CLEANUP"))
+	flight_feedback.perfect_cleanup()
 	_refresh_return_button()
 
 func _on_cargo_changed(used_units: int, capacity: int) -> void:
@@ -258,6 +270,7 @@ func _on_tractor_target_changed(definition) -> void:
 		return
 
 	beam_status.text = tr("FLIGHT_BEAM_LOCK_FMT") % tr(String(_active_salvage.display_name_key))
+	flight_feedback.target_acquired(_active_salvage)
 
 func _on_tractor_progress_changed(progress: float) -> void:
 	beam_progress.value = clampf(progress, 0.0, 1.0) * 100.0
@@ -266,8 +279,18 @@ func _on_salvage_collected(definition, _used_units: int, _capacity: int) -> void
 	var salvage := definition as SalvageDefinition
 	if salvage == null:
 		return
+	var is_new_discovery := _progression.register_discovery(salvage)
 	_contract_session.record_salvage(salvage)
-	_show_toast(tr("FLIGHT_RECOVERED_FMT") % tr(String(salvage.display_name_key)))
+	flight_feedback.salvage_collected(salvage, is_new_discovery, player_ship.global_position)
+	if is_new_discovery:
+		_show_toast(tr("FLIGHT_NEW_DISCOVERY_FMT") % tr(String(salvage.display_name_key)))
+		if _platform != null:
+			_platform.track_event("discovery_registered", {
+				"salvage_id": String(salvage.id),
+				"rarity": String(salvage.rarity),
+			})
+	else:
+		_show_toast(tr("FLIGHT_RECOVERED_FMT") % tr(String(salvage.display_name_key)))
 
 func _on_cargo_collection_blocked() -> void:
 	beam_status.text = tr("FLIGHT_CARGO_NO_SPACE")
@@ -275,7 +298,11 @@ func _on_cargo_collection_blocked() -> void:
 
 func _on_cargo_unloaded(units: int) -> void:
 	_show_toast(tr("FLIGHT_UNLOADED_FMT") % units)
+	flight_feedback.cargo_unloaded(units, unload_zone.global_position)
 	beam_status.text = tr("FLIGHT_BEAM_SCANNING")
+
+func _on_ship_bumped(intensity: float, _normal: Vector2) -> void:
+	flight_feedback.ship_bumped(intensity, player_ship.global_position)
 
 func _show_toast(message: String) -> void:
 	if _toast_tween != null and _toast_tween.is_valid():

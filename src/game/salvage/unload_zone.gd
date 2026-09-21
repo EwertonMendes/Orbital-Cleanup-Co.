@@ -6,6 +6,7 @@ signal cargo_unloaded(units: int)
 @export_range(60.0, 400.0, 5.0) var radius := 145.0
 
 var _pulse := 0.0
+var _unload_flash := 0.0
 
 func _ready() -> void:
 	var collision := get_node("CollisionShape2D") as CollisionShape2D
@@ -18,6 +19,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_pulse = fmod(_pulse + delta * 1.8, TAU)
+	_unload_flash = maxf(_unload_flash - delta * 2.8, 0.0)
 	queue_redraw()
 
 func _on_body_entered(body: Node2D) -> void:
@@ -29,6 +31,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if unloaded <= 0:
 		return
 
+	_unload_flash = 1.0
 	cargo_unloaded.emit(unloaded)
 	print("[Cargo] UNLOAD units=%d" % unloaded)
 
@@ -37,3 +40,25 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, radius, Color(0.18, 0.82, 0.72, 0.035))
 	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 72, Color(0.48, 0.96, 0.78, pulse_alpha + 0.18), 2.5, true)
 	draw_arc(Vector2.ZERO, radius - 16.0, 0.0, TAU, 72, Color(0.27, 0.70, 0.82, 0.15), 1.0, true)
+
+	for index in range(6):
+		var start := _pulse * 0.16 + float(index) * TAU / 6.0
+		draw_arc(
+			Vector2.ZERO,
+			radius + 9.0,
+			start,
+			start + 0.22,
+			8,
+			Color(0.56, 0.95, 0.81, 0.32 + _unload_flash * 0.34),
+			2.0 + _unload_flash * 1.8,
+			true
+		)
+
+	for index in range(4):
+		var angle := _pulse * 0.24 + float(index) * PI * 0.5
+		var beacon := Vector2.from_angle(angle) * (radius - 28.0)
+		draw_circle(beacon, 2.5 + _unload_flash * 2.0, Color(0.48, 0.96, 0.78, 0.68))
+
+	if _unload_flash > 0.0:
+		var flash_radius := lerpf(radius * 0.65, radius * 1.32, 1.0 - _unload_flash)
+		draw_arc(Vector2.ZERO, flash_radius, 0.0, TAU, 64, Color(0.56, 0.95, 0.81, _unload_flash * 0.58), 3.0, true)

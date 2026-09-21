@@ -14,22 +14,22 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**PR 3 — Core Movement + Cozy Ship**
+**Polish + Retention**
 
-This milestone turns the visual/core foundation into the first directly playable interaction:
+The core loop, data-driven sectors, Headquarters, customization, endless contracts and platform-provider boundary are already in place.
 
-- mouse steering with center deadzone and distance-based thrust;
-- WASD and arrow-key fallback;
-- one-finger touch/drag steering without a virtual joystick;
-- tuned acceleration, deceleration and max speed through a reusable Resource;
-- smooth ship facing and visual turn compression;
-- engine glow and persistent trail feedback;
-- camera smoothing, directional lead and light collision shake;
-- non-damaging asteroid bump response with sparks;
-- a curated ambient training space for movement evaluation;
-- executable steering/scene contracts in CI.
+This milestone focuses on making the existing game feel alive and rewarding:
 
-The next focused milestone is **Salvage Loop**.
+- lightweight world-only post-processing for Web/mobile;
+- animated orbit layers, twinkling space ambience and moving landmarks/hazards;
+- rare/epic salvage energy treatment and stronger Tractor Beam flow;
+- reusable collection, unload, impact and completion particles;
+- original procedural scanner/collection/discovery/unload/impact/Perfect Cleanup SFX;
+- persistent Discovery catalog with NEW DISCOVERY feedback;
+- smooth routed-screen transitions;
+- regression contracts that keep these presentation systems intact.
+
+The next major gameplay-content milestone after this polish pass is **Contract Variety**.
 
 ## Visual direction
 

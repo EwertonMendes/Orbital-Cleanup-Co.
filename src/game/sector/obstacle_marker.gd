@@ -19,7 +19,7 @@ func _draw() -> void:
 
 	draw_circle(Vector2.ZERO, _radius + 4.0, Color(0.0, 0.0, 0.0, 0.13))
 	for index in range(8):
-		var start := TAU * float(index) / 8.0 + 0.06
+		var start := TAU * float(index) / 8.0 + 0.06 + _phase * 0.11
 		var end := start + 0.28
 		draw_arc(
 			Vector2.ZERO,

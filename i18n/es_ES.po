@@ -639,3 +639,48 @@ msgstr "Infinito #%d · %s"
 
 msgid "FLIGHT_VISUAL_LEGEND"
 msgstr "MARCAS CIAN · objeto recuperable   •   ANILLO ÁMBAR · obstáculo de colisión"
+
+msgid "FLIGHT_NEW_DISCOVERY_FMT"
+msgstr "NUEVO DESCUBRIMIENTO · %s"
+
+msgid "HQ_DISCOVERY_META_FMT"
+msgstr "%s · %s"
+
+msgid "HQ_DISCOVERY_VALUE_FMT"
+msgstr "VALOR DE RECUPERACIÓN · %d CRÉDITOS"
+
+msgid "RARITY_COMMON"
+msgstr "COMÚN"
+
+msgid "RARITY_UNCOMMON"
+msgstr "POCO COMÚN"
+
+msgid "RARITY_RARE"
+msgstr "RARO"
+
+msgid "RARITY_EPIC"
+msgstr "ÉPICO"
+
+msgid "CATEGORY_SCRAP"
+msgstr "CHATARRA"
+
+msgid "CATEGORY_ELECTRONICS"
+msgstr "ELECTRÓNICA"
+
+msgid "CATEGORY_CARGO"
+msgstr "CARGA"
+
+msgid "CATEGORY_RESEARCH"
+msgstr "INVESTIGACIÓN"
+
+msgid "CATEGORY_POWER"
+msgstr "ENERGÍA"
+
+msgid "CATEGORY_MINING"
+msgstr "MINERÍA"
+
+msgid "CATEGORY_INDUSTRIAL"
+msgstr "INDUSTRIAL"
+
+msgid "CATEGORY_PROPULSION"
+msgstr "PROPULSIÓN"

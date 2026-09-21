@@ -5,6 +5,7 @@ class_name ShipVisuals
 @onready var ship_sprite: Sprite2D = %ShipSprite
 @onready var engine_glow: Sprite2D = %EngineGlow
 @onready var engine_trail: EngineTrail = %EngineTrail
+@onready var engine_particles: CPUParticles2D = %EngineParticles
 @onready var bump_particles: CPUParticles2D = %BumpParticles
 
 var _impact_tween: Tween
@@ -33,6 +34,7 @@ func apply_cosmetics(loadout: Dictionary) -> void:
 	engine_trail.apply_style(trail)
 	var glow_color := Color.from_string(String(trail.get("glow_color", "#55DFFF")), Color(0.33, 0.87, 1.0, 1.0))
 	engine_glow.modulate = Color(glow_color.r, glow_color.g, glow_color.b, engine_glow.modulate.a)
+	engine_particles.color = Color(glow_color.r, glow_color.g, glow_color.b, 0.72)
 
 func update_motion(
 	speed_ratio: float,
@@ -51,6 +53,9 @@ func update_motion(
 	engine_glow.modulate.a = lerpf(0.16, 0.76, engine_strength)
 	engine_glow.scale = Vector2(0.84 + engine_strength * 0.18, 0.78 + engine_strength * 0.42)
 	engine_trail.set_intensity(engine_strength)
+	engine_particles.emitting = engine_strength > 0.08
+	engine_particles.speed_scale = 0.72 + engine_strength * 0.85
+	engine_particles.modulate.a = lerpf(0.24, 0.88, engine_strength)
 
 func play_bump(intensity: float, normal: Vector2) -> void:
 	var strength := clampf(intensity, 0.0, 1.0)

@@ -5,10 +5,14 @@ class_name SectorLandmark
 @onready var marker: SectorLandmarkMarker = %Marker
 
 var _definition: Dictionary = {}
+var _spin_speed := 0.0
+var _motion_phase := 0.0
 
-func configure(definition: Dictionary) -> void:
+func configure(definition: Dictionary, spin_speed: float = 0.0, motion_phase: float = 0.0) -> void:
 	assert(not definition.is_empty(), "SectorLandmark requires definition.")
 	_definition = definition.duplicate(true)
+	_spin_speed = spin_speed
+	_motion_phase = motion_phase
 
 func _ready() -> void:
 	assert(not _definition.is_empty(), "SectorLandmark must be configured before entering the tree.")
@@ -21,3 +25,11 @@ func _ready() -> void:
 	sprite.modulate = Color(0.68, 0.84, 0.95, 0.48)
 	var texture_size := sprite.texture.get_size() * visual_scale
 	marker.configure(maxf(texture_size.x, texture_size.y) * 0.48)
+
+func _process(delta: float) -> void:
+	_motion_phase = fmod(_motion_phase + delta, TAU * 100.0)
+	sprite.rotation = wrapf(sprite.rotation + _spin_speed * delta, -PI, PI)
+	sprite.position = Vector2(
+		cos(_motion_phase * 0.23),
+		sin(_motion_phase * 0.31)
+	) * 4.5

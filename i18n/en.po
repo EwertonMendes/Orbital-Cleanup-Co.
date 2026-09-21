@@ -639,3 +639,48 @@ msgstr "Endless #%d · %s"
 
 msgid "FLIGHT_VISUAL_LEGEND"
 msgstr "CYAN BRACKETS · recoverable salvage   •   AMBER RING · collision hazard"
+
+msgid "FLIGHT_NEW_DISCOVERY_FMT"
+msgstr "NEW DISCOVERY · %s"
+
+msgid "HQ_DISCOVERY_META_FMT"
+msgstr "%s · %s"
+
+msgid "HQ_DISCOVERY_VALUE_FMT"
+msgstr "RECOVERY VALUE · %d CREDITS"
+
+msgid "RARITY_COMMON"
+msgstr "COMMON"
+
+msgid "RARITY_UNCOMMON"
+msgstr "UNCOMMON"
+
+msgid "RARITY_RARE"
+msgstr "RARE"
+
+msgid "RARITY_EPIC"
+msgstr "EPIC"
+
+msgid "CATEGORY_SCRAP"
+msgstr "SCRAP"
+
+msgid "CATEGORY_ELECTRONICS"
+msgstr "ELECTRONICS"
+
+msgid "CATEGORY_CARGO"
+msgstr "CARGO"
+
+msgid "CATEGORY_RESEARCH"
+msgstr "RESEARCH"
+
+msgid "CATEGORY_POWER"
+msgstr "POWER"
+
+msgid "CATEGORY_MINING"
+msgstr "MINING"
+
+msgid "CATEGORY_INDUSTRIAL"
+msgstr "INDUSTRIAL"
+
+msgid "CATEGORY_PROPULSION"
+msgstr "PROPULSION"

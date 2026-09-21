@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_backdrop.gd" id="2"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/button_header_blade.png" id="9"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="10"]
 [ext_resource type="Shader" path="res://src/game/customization/ship_paint.gdshader" id="11"]
+[ext_resource type="Script" path="res://src/ui/screens/operations/operations_scenery_motion.gd" id="12"]
 
 [sub_resource type="ShaderMaterial" id="ShipPaintPreviewMaterial"]
 resource_local_to_scene = true
@@ -46,6 +47,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("12")
 
 [node name="Station" type="TextureRect" parent="Scenery"]
 modulate = Color(0.55, 0.82, 0.95, 0.085)
@@ -769,6 +771,7 @@ theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
 text = "CONTRACTS · 0"
 
 [node name="DiscoveryEmptyCard" type="PanelContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
 
@@ -801,6 +804,12 @@ theme_override_font_sizes/font_size = 11
 text = "Rare salvage and unusual recovered objects will appear here."
 horizontal_alignment = 1
 autowrap_mode = 2
+
+[node name="DiscoveryList" type="VBoxContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Footer" type="HBoxContainer" parent="SafeArea/Layout"]
 unique_name_in_owner = true

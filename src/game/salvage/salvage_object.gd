@@ -1,6 +1,8 @@
 extends Area2D
 class_name SalvageObject
 
+const ENERGY_SHADER := preload("res://src/game/visual/salvage_energy.gdshader")
+
 @export var definition: SalvageDefinition
 @export_range(-3.0, 3.0, 0.05) var spin_speed := 0.35
 
@@ -12,16 +14,24 @@ var _tractor_progress := 0.0
 var _tractor_velocity := Vector2.ZERO
 var _targeted := false
 var _base_scale := Vector2.ONE
+var _float_phase := 0.0
 
 func _ready() -> void:
 	assert(definition != null, "SalvageObject requires a SalvageDefinition.")
 	definition.validate()
 	add_to_group("salvage")
+	_float_phase = fposmod(float(hash(String(definition.id)) % 628), 628.0) / 100.0
 	_apply_definition()
 	queue_redraw()
 
 func _process(delta: float) -> void:
 	sprite.rotation = wrapf(sprite.rotation + spin_speed * delta, -PI, PI)
+	_float_phase = fmod(_float_phase + delta, TAU * 100.0)
+	var float_strength := 1.6 if _targeted else 3.2
+	sprite.position = Vector2(
+		cos(_float_phase * 0.78),
+		sin(_float_phase * 1.07)
+	) * float_strength
 
 	if _targeted:
 		var pulse := 1.0 + sin(Time.get_ticks_msec() * 0.009) * 0.035
@@ -69,7 +79,19 @@ func _apply_definition() -> void:
 	_base_scale = Vector2.ONE * definition.visual_scale
 	sprite.scale = _base_scale
 	var category_tint := WorldVisualLanguage.salvage_category_color(definition.category)
-	sprite.modulate = Color.WHITE.lerp(category_tint, 0.16)
+	var rarity_tint := WorldVisualLanguage.salvage_rarity_color(definition.rarity)
+	var rarity_name := String(definition.rarity)
+	if rarity_name in ["rare", "epic"]:
+		var energy_material := ShaderMaterial.new()
+		energy_material.shader = ENERGY_SHADER
+		energy_material.set_shader_parameter("category_tint", category_tint)
+		energy_material.set_shader_parameter("rarity_tint", rarity_tint)
+		energy_material.set_shader_parameter("energy_strength", 0.72 if rarity_name == "rare" else 0.94)
+		sprite.material = energy_material
+		sprite.modulate = Color.WHITE
+	else:
+		sprite.material = null
+		sprite.modulate = Color.WHITE.lerp(category_tint, 0.16)
 	marker.configure(definition)
 
 	var circle := collision_shape.shape as CircleShape2D
