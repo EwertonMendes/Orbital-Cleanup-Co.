@@ -91,6 +91,13 @@ func get_landmark_nodes() -> Array[SectorLandmark]:
 			output.append(child as SectorLandmark)
 	return output
 
+func set_salvage_enabled(enabled: bool) -> void:
+	for salvage in get_salvage_nodes():
+		salvage.visible = enabled
+		salvage.process_mode = Node.PROCESS_MODE_INHERIT if enabled else Node.PROCESS_MODE_DISABLED
+		salvage.collision_layer = 4 if enabled else 0
+		salvage.monitorable = enabled
+
 func get_sector_display_name_key() -> String:
 	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
 	return String((_plan["sector"] as Dictionary)["display_name_key"])
