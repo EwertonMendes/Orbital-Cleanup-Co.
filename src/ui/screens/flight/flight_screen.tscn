@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://src/game/visual/flight_feedback.gd" id="13"]
 [ext_resource type="Script" path="res://src/game/environment/environment_runtime.gd" id="14"]
 [ext_resource type="Script" path="res://src/ui/components/depot_navigation_guide.gd" id="15"]
+[ext_resource type="Script" path="res://src/ui/components/warp_travel_transition.gd" id="16"]
 
 [sub_resource type="CircleShape2D" id="UnloadShape"]
 radius = 145.0
@@ -190,6 +191,20 @@ unique_name_in_owner = true
 script = ExtResource("13")
 world_path = NodePath("../World")
 post_process_path = NodePath("../WorldPost/WorldPostProcess")
+
+[node name="TravelFX" type="CanvasLayer" parent="."]
+layer = 8
+
+[node name="WarpTravelTransition" type="Control" parent="TravelFX"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("16")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 10
@@ -399,6 +414,16 @@ theme_override_styles/hover = SubResource("ReturnButtonHover")
 theme_override_styles/pressed = SubResource("ReturnButtonHover")
 text = "RETURN"
 
+[node name="OperationsButton" type="Button" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(156, 54)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("ReturnButtonNormal")
+theme_override_styles/hover = SubResource("ReturnButtonHover")
+theme_override_styles/pressed = SubResource("ReturnButtonHover")
+text = "OPERATIONS"
+
 [node name="MainSpacer" type="Control" parent="HUD/HudRoot/SafeArea/Layout"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -455,3 +480,13 @@ text = "Point to steer · WASD / arrows also work"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="OperationsOverlayHost" type="Control" parent="HUD/HudRoot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
