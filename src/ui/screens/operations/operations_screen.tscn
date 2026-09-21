@@ -154,11 +154,6 @@ theme_override_constants/margin_bottom = 12
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="NavLabel" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout"]
-layout_mode = 2
-theme_type_variation = &"TelemetryLabel"
-text = "OPERATIONS"
-
 [node name="TabGrid" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout"]
 unique_name_in_owner = true
 layout_mode = 2
