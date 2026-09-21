@@ -91,6 +91,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var volume_down: Button = %VolumeDown
 @onready var volume_up: Button = %VolumeUp
 @onready var volume_value: Label = %VolumeValue
+@onready var menu_warp_fx: OccMenuWarpTransition = %MenuWarpFX
 
 var _context: Dictionary = {}
 var _settings: SettingsService
@@ -107,10 +108,12 @@ var _viewing_endless := false
 var _endless_number := 1
 var _active_sector_definition: Dictionary = {}
 var _sector_plan: Dictionary = {}
-var _active_tab := Tab.CONTRACTS
+var _active_tab := -1
 var _tab_group := ButtonGroup.new()
 var _overlay_mode := false
 var _tab_reveal_tween: Tween
+var _tab_transitioning := false
+var _tab_pulse_tween: Tween
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -167,7 +170,7 @@ func _ready() -> void:
 	_apply_responsive_layout()
 	_refresh_all()
 	_wire_button_feedback(self)
-	_show_tab(Tab.CONTRACTS)
+	_show_tab(Tab.CONTRACTS, true)
 	print("[HQ] READY tab=contracts mode=%s" % ("overlay" if _overlay_mode else "screen"))
 
 func _validate_contracts() -> void:
@@ -190,7 +193,7 @@ func _validate_contracts() -> void:
 	assert(discovery_empty_card != null and discovery_list != null, "Headquarters discovery catalog containers are required.")
 	assert(close_overlay != null and overlay_scrim != null and floating_surface != null, "Operations overlay chrome is required.")
 	assert(settings_button != null and settings_layer != null and settings_modal != null and settings_close != null, "Operations requires a dedicated settings panel.")
-	assert(volume_down != null and volume_up != null and volume_value != null, "Operations settings require audio controls.")
+	assert(volume_down != null and volume_up != null and volume_value != null and menu_warp_fx != null, "Operations settings and menu transition FX are required.")
 	assert(not _sector_plan.is_empty(), "Operations requires sector data.")
 
 func _setup_tabs() -> void:
@@ -210,16 +213,49 @@ func _setup_tabs() -> void:
 		button.pressed.connect(_show_tab.bind(tab))
 	contracts_tab.button_pressed = true
 
-func _show_tab(tab: int) -> void:
-	_active_tab = tab
-	var panels: Array[Control] = [contracts_panel, upgrades_panel, career_panel, ship_panel, discovery_panel]
+func _show_tab(tab: int, instant: bool = false) -> void:
+	if _tab_transitioning:
+		return
+	if tab == _active_tab and not instant:
+		return
+
+	var previous_tab := _active_tab
+	var previous_panel := _panel_for_tab(previous_tab) if previous_tab >= 0 else null
 	var active_panel := _panel_for_tab(tab)
-	for panel in panels:
-		panel.visible = panel == active_panel
 
-	footer.visible = tab == Tab.CONTRACTS
+	if instant or previous_panel == null:
+		_active_tab = tab
+		_refresh_tab_content(tab)
+		_apply_panel_visibility(active_panel)
+		_update_tab_visuals()
+		content_scroll.scroll_vertical = 0
+		return
+
+	_tab_transitioning = true
+	var direction := 1.0 if tab > previous_tab else -1.0
+	menu_warp_fx.play(direction)
+
+	if _tab_reveal_tween != null and _tab_reveal_tween.is_valid():
+		_tab_reveal_tween.kill()
+	_tab_reveal_tween = create_tween()
+	_tab_reveal_tween.tween_property(previous_panel, "modulate:a", 0.0, 0.10).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	await _tab_reveal_tween.finished
+
+	_active_tab = tab
+	_refresh_tab_content(tab)
+	_apply_panel_visibility(active_panel)
 	content_scroll.scroll_vertical = 0
+	active_panel.modulate.a = 0.0
+	_update_tab_visuals()
 
+	_tab_reveal_tween = create_tween()
+	_tab_reveal_tween.tween_interval(0.04)
+	_tab_reveal_tween.tween_property(active_panel, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	await _tab_reveal_tween.finished
+	_tab_transitioning = false
+
+func _refresh_tab_content(tab: int) -> void:
+	footer.visible = tab == Tab.CONTRACTS
 	match tab:
 		Tab.UPGRADES:
 			_refresh_upgrades()
@@ -230,7 +266,11 @@ func _show_tab(tab: int) -> void:
 		Tab.DISCOVERY:
 			_refresh_discovery()
 
-	_reveal_active_panel(active_panel)
+func _apply_panel_visibility(active_panel: Control) -> void:
+	var panels: Array[Control] = [contracts_panel, upgrades_panel, career_panel, ship_panel, discovery_panel]
+	for panel in panels:
+		panel.visible = panel == active_panel
+		panel.modulate.a = 1.0
 
 func _panel_for_tab(tab: int) -> Control:
 	match tab:
@@ -245,14 +285,36 @@ func _panel_for_tab(tab: int) -> Control:
 		_:
 			return contracts_panel
 
-func _reveal_active_panel(panel: Control) -> void:
-	if panel == null:
+func _update_tab_visuals() -> void:
+	if _tab_pulse_tween != null and _tab_pulse_tween.is_valid():
+		_tab_pulse_tween.kill()
+
+	var tabs: Array[Button] = [contracts_tab, upgrades_tab, career_tab, ship_tab, discovery_tab]
+	for button in tabs:
+		button.self_modulate = Color.WHITE
+		button.remove_theme_color_override("font_color")
+		button.remove_theme_color_override("font_hover_color")
+		button.remove_theme_color_override("font_pressed_color")
+		button.remove_theme_color_override("font_hover_pressed_color")
+		button.remove_theme_color_override("font_outline_color")
+		button.remove_theme_constant_override("outline_size")
+
+	var active_button := tabs[_active_tab] if _active_tab >= 0 and _active_tab < tabs.size() else null
+	if active_button == null:
 		return
-	if _tab_reveal_tween != null and _tab_reveal_tween.is_valid():
-		_tab_reveal_tween.kill()
-	panel.modulate.a = 0.0
-	_tab_reveal_tween = create_tween()
-	_tab_reveal_tween.tween_property(panel, "modulate:a", 1.0, 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	var highlight := Color("#d7f6ff")
+	active_button.add_theme_color_override("font_color", highlight)
+	active_button.add_theme_color_override("font_hover_color", highlight)
+	active_button.add_theme_color_override("font_pressed_color", highlight)
+	active_button.add_theme_color_override("font_hover_pressed_color", highlight)
+	active_button.add_theme_color_override("font_outline_color", Color(0.20, 0.72, 0.88, 0.40))
+	active_button.add_theme_constant_override("outline_size", 1)
+	active_button.self_modulate = Color(0.72, 0.76, 0.82, 1.0)
+
+	_tab_pulse_tween = create_tween().set_loops()
+	_tab_pulse_tween.tween_property(active_button, "self_modulate", Color(0.80, 0.83, 0.88, 1.0), 1.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_tab_pulse_tween.tween_property(active_button, "self_modulate", Color(0.72, 0.76, 0.82, 1.0), 1.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
@@ -332,6 +394,17 @@ func _deploy_training() -> void:
 		deployment_requested.emit(flight_context)
 		return
 	_router.show_screen(scene, flight_context)
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed("ui_cancel"):
+		return
+	if settings_layer.visible:
+		_close_settings()
+	elif _overlay_mode:
+		_request_close()
+	else:
+		return
+	get_viewport().set_input_as_handled()
 
 func _request_close() -> void:
 	if not _overlay_mode:
@@ -512,8 +585,8 @@ func _refresh_contracts() -> void:
 
 	%ContractsTitle.text = tr("HQ_CONTRACTS_TITLE")
 	%ContractsSubtitle.text = tr("HQ_CONTRACTS_SUBTITLE")
-	previous_contract.text = tr("HQ_CONTRACT_PREVIOUS")
-	next_contract.text = tr("HQ_CONTRACT_NEXT")
+	previous_contract.text = "<  %s" % tr("HQ_CONTRACT_PREVIOUS")
+	next_contract.text = "%s  >" % tr("HQ_CONTRACT_NEXT")
 	endless_contract.visible = _progression.is_endless_unlocked()
 	if _viewing_endless:
 		contract_state.text = tr("HQ_ENDLESS_AVAILABLE") if unlocked else tr("HQ_CONTRACT_LOCKED")
