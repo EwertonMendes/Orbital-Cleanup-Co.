@@ -1,0 +1,39 @@
+{
+  "id": "mercury_terminator_01",
+  "display_name_key": "SECTOR_MERCURY_TERMINATOR_01",
+  "career_order": 5,
+  "unlock_rank": "junior_cleaner",
+  "biome": "mercury_terminator",
+  "seed": 73001,
+  "difficulty": 4,
+  "map": {
+    "half_extents": [
+      5000,
+      3100
+    ],
+    "debris_density": 0.82,
+    "cluster_count": 5
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "service_satellite"
+  ],
+  "contract": {
+    "type": "standard_cleanup",
+    "target_percent": 78
+  },
+  "modifiers": [
+    "light_debris"
+  ],
+  "depot": {
+    "position": [
+      -1050,
+      -620
+    ]
+  }
+}

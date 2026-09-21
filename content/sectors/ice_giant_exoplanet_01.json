@@ -1,0 +1,39 @@
+{
+  "id": "ice_giant_exoplanet_01",
+  "display_name_key": "SECTOR_ICE_GIANT_EXOPLANET_01",
+  "career_order": 55,
+  "unlock_rank": "deep_space_operator",
+  "biome": "ice_giant_exoplanet",
+  "seed": 397680,
+  "difficulty": 14,
+  "map": {
+    "half_extents": [
+      5220,
+      3460
+    ],
+    "debris_density": 0.91,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "relay_satellite"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 10
+  },
+  "modifiers": [
+    "meteor_front"
+  ],
+  "depot": {
+    "position": [
+      -740,
+      -210
+    ]
+  }
+}

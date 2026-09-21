@@ -1,0 +1,39 @@
+{
+  "id": "binary_star_01",
+  "display_name_key": "SECTOR_BINARY_STAR_01",
+  "career_order": 49,
+  "unlock_rank": "deep_space_operator",
+  "biome": "binary_star",
+  "seed": 350166,
+  "difficulty": 14,
+  "map": {
+    "half_extents": [
+      5660,
+      3460
+    ],
+    "debris_density": 0.82,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "relay_satellite"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "light_debris"
+  ],
+  "depot": {
+    "position": [
+      -1050,
+      610
+    ]
+  }
+}

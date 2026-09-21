@@ -1,0 +1,39 @@
+{
+  "id": "titan_orbit_01",
+  "display_name_key": "SECTOR_TITAN_ORBIT_01",
+  "career_order": 21,
+  "unlock_rank": "senior_cleaner",
+  "biome": "titan_orbit",
+  "seed": 152191,
+  "difficulty": 9,
+  "map": {
+    "half_extents": [
+      5440,
+      3280
+    ],
+    "debris_density": 0.82,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "mars_freight",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 420
+  },
+  "modifiers": [
+    "rich_recovery"
+  ],
+  "depot": {
+    "position": [
+      -1050,
+      200
+    ]
+  }
+}

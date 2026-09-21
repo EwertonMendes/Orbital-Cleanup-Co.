@@ -1,0 +1,39 @@
+{
+  "id": "ceres_orbit_01",
+  "display_name_key": "SECTOR_CERES_ORBIT_01",
+  "career_order": 8,
+  "unlock_rank": "junior_cleaner",
+  "biome": "ceres_orbit",
+  "seed": 96758,
+  "difficulty": 4,
+  "map": {
+    "half_extents": [
+      5660,
+      3100
+    ],
+    "debris_density": 1.09,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "mining_rig"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "rich_recovery"
+  ],
+  "depot": {
+    "position": [
+      -120,
+      610
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "abandoned_station_01",
+  "display_name_key": "SECTOR_ABANDONED_STATION_01",
+  "career_order": 39,
+  "unlock_rank": "sector_specialist",
+  "biome": "abandoned_station",
+  "seed": 278895,
+  "difficulty": 12,
+  "map": {
+    "half_extents": [
+      5440,
+      3460
+    ],
+    "debris_density": 0.91,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "earth_orbit_ops",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "cargo_waystation"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 510
+  },
+  "modifiers": [
+    "dense_debris"
+  ],
+  "depot": {
+    "position": [
+      -740,
+      200
+    ]
+  }
+}

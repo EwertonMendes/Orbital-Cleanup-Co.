@@ -1,0 +1,39 @@
+{
+  "id": "saturn_rings_01",
+  "display_name_key": "SECTOR_SATURN_RINGS_01",
+  "career_order": 20,
+  "unlock_rank": "senior_cleaner",
+  "biome": "saturn_rings",
+  "seed": 144272,
+  "difficulty": 8,
+  "map": {
+    "half_extents": [
+      5220,
+      3100
+    ],
+    "debris_density": 1.18,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "earth_orbit_ops",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "cargo_waystation"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 8
+  },
+  "modifiers": [
+    "sparse_corridor"
+  ],
+  "depot": {
+    "position": [
+      190,
+      -210
+    ]
+  }
+}

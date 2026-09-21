@@ -1,0 +1,39 @@
+{
+  "id": "white_dwarf_01",
+  "display_name_key": "SECTOR_WHITE_DWARF_01",
+  "career_order": 45,
+  "unlock_rank": "deep_space_operator",
+  "biome": "white_dwarf",
+  "seed": 318490,
+  "difficulty": 13,
+  "map": {
+    "half_extents": [
+      5660,
+      3280
+    ],
+    "debris_density": 0.91,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "relay_satellite"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "rich_recovery"
+  ],
+  "depot": {
+    "position": [
+      -740,
+      610
+    ]
+  }
+}

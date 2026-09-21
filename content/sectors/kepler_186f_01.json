@@ -1,0 +1,39 @@
+{
+  "id": "kepler_186f_01",
+  "display_name_key": "SECTOR_KEPLER_186F_01",
+  "career_order": 52,
+  "unlock_rank": "deep_space_operator",
+  "biome": "kepler_186f",
+  "seed": 373923,
+  "difficulty": 14,
+  "map": {
+    "half_extents": [
+      5440,
+      3460
+    ],
+    "debris_density": 1.09,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 690
+  },
+  "modifiers": [
+    "rich_recovery"
+  ],
+  "depot": {
+    "position": [
+      -120,
+      200
+    ]
+  }
+}

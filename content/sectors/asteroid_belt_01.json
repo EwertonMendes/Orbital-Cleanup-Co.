@@ -1,0 +1,39 @@
+{
+  "id": "asteroid_belt_01",
+  "display_name_key": "SECTOR_ASTEROID_BELT_01",
+  "career_order": 7,
+  "unlock_rank": "junior_cleaner",
+  "biome": "asteroid_belt",
+  "seed": 88839,
+  "difficulty": 6,
+  "map": {
+    "half_extents": [
+      5440,
+      3460
+    ],
+    "debris_density": 1,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "mining_rig"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 600
+  },
+  "modifiers": [
+    "sparse_corridor"
+  ],
+  "depot": {
+    "position": [
+      -430,
+      200
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "trappist_1_01",
+  "display_name_key": "SECTOR_TRAPPIST_1_01",
+  "career_order": 51,
+  "unlock_rank": "deep_space_operator",
+  "biome": "trappist_1",
+  "seed": 366004,
+  "difficulty": 13,
+  "map": {
+    "half_extents": [
+      5220,
+      3280
+    ],
+    "debris_density": 1,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "comms_array"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 9
+  },
+  "modifiers": [
+    "sparse_corridor"
+  ],
+  "depot": {
+    "position": [
+      -430,
+      -210
+    ]
+  }
+}

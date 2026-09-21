@@ -1,0 +1,39 @@
+{
+  "id": "io_orbit_01",
+  "display_name_key": "SECTOR_IO_ORBIT_01",
+  "career_order": 13,
+  "unlock_rank": "orbital_cleaner",
+  "biome": "io_orbit",
+  "seed": 112596,
+  "difficulty": 8,
+  "map": {
+    "half_extents": [
+      5220,
+      3460
+    ],
+    "debris_density": 0.82,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "mars_freight",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 10
+  },
+  "modifiers": [
+    "dense_debris"
+  ],
+  "depot": {
+    "position": [
+      -1050,
+      -210
+    ]
+  }
+}

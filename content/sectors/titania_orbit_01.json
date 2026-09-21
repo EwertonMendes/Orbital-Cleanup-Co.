@@ -1,0 +1,39 @@
+{
+  "id": "titania_orbit_01",
+  "display_name_key": "SECTOR_TITANIA_ORBIT_01",
+  "career_order": 26,
+  "unlock_rank": "senior_cleaner",
+  "biome": "titania_orbit",
+  "seed": 191786,
+  "difficulty": 8,
+  "map": {
+    "half_extents": [
+      5660,
+      3100
+    ],
+    "debris_density": 0.82,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "mining_rig"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "valuable_salvage"
+  ],
+  "depot": {
+    "position": [
+      -1050,
+      610
+    ]
+  }
+}

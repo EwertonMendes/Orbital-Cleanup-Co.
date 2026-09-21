@@ -1,0 +1,39 @@
+{
+  "id": "ship_graveyard_01",
+  "display_name_key": "SECTOR_SHIP_GRAVEYARD_01",
+  "career_order": 40,
+  "unlock_rank": "sector_specialist",
+  "biome": "ship_graveyard",
+  "seed": 286814,
+  "difficulty": 10,
+  "map": {
+    "half_extents": [
+      5660,
+      3100
+    ],
+    "debris_density": 1,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "earth_orbit_ops",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "derelict_explorer"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "meteor_front"
+  ],
+  "depot": {
+    "position": [
+      -430,
+      610
+    ]
+  }
+}

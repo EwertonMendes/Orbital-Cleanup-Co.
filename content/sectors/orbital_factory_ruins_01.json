@@ -1,0 +1,39 @@
+{
+  "id": "orbital_factory_ruins_01",
+  "display_name_key": "SECTOR_ORBITAL_FACTORY_RUINS_01",
+  "career_order": 41,
+  "unlock_rank": "sector_specialist",
+  "biome": "orbital_factory_ruins",
+  "seed": 294733,
+  "difficulty": 11,
+  "map": {
+    "half_extents": [
+      5000,
+      3280
+    ],
+    "debris_density": 1.09,
+    "cluster_count": 5
+  },
+  "salvage_tables": [
+    {
+      "id": "mars_freight",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "mining_rig"
+  ],
+  "contract": {
+    "type": "standard_cleanup",
+    "target_percent": 82
+  },
+  "modifiers": [
+    "light_debris"
+  ],
+  "depot": {
+    "position": [
+      -120,
+      -620
+    ]
+  }
+}

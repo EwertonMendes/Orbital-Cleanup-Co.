@@ -1,0 +1,39 @@
+{
+  "id": "jupiter_clouds_01",
+  "display_name_key": "SECTOR_JUPITER_CLOUDS_01",
+  "career_order": 12,
+  "unlock_rank": "orbital_cleaner",
+  "biome": "jupiter_clouds",
+  "seed": 104677,
+  "difficulty": 7,
+  "map": {
+    "half_extents": [
+      5000,
+      3280
+    ],
+    "debris_density": 1.18,
+    "cluster_count": 5
+  },
+  "salvage_tables": [
+    {
+      "id": "earth_orbit_ops",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "relay_satellite"
+  ],
+  "contract": {
+    "type": "standard_cleanup",
+    "target_percent": 82
+  },
+  "modifiers": [
+    "quiet_orbit"
+  ],
+  "depot": {
+    "position": [
+      190,
+      -620
+    ]
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "id": "iapetus_orbit",
+  "display_name_key": "BIOME_IAPETUS_ORBIT",
+  "palette": {
+    "background": "#030812",
+    "nebula": "#4c443f",
+    "accent": "#e7dbc0"
+  },
+  "visual_profile": {
+    "primary_asset": "res://assets/original/destinations/iapetus_orbit.svg",
+    "primary_scale": 1.95,
+    "primary_anchor": [
+      0.5,
+      0.75
+    ],
+    "primary_parallax": 0.048,
+    "primary_rotation_speed": -0.004,
+    "atmosphere_color": "#e7dbc0",
+    "atmosphere_strength": 0.44,
+    "shimmer_strength": 0.1,
+    "traffic_count": 6,
+    "dust_density": 1.1400000000000001,
+    "horizon_style": "dust",
+    "horizon_intensity": 0.65
+  },
+  "environment": {
+    "salvage_mass_multiplier": 0.95,
+    "volumes": [
+      {
+        "kind": "gravity_well",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.18,
+          0.4
+        ],
+        "placement": "random",
+        "color": "#e7dbc0",
+        "secondary_color": "#4c443f",
+        "radius_range": [
+          460,
+          820
+        ]
+      },
+      {
+        "kind": "scanner_interference",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.28,
+          0.54
+        ],
+        "placement": "random",
+        "color": "#e7dbc0",
+        "secondary_color": "#4c443f",
+        "radius_range": [
+          460,
+          780
+        ]
+      }
+    ]
+  },
+  "salvage_tables": [
+    "lunar_belt_industry"
+  ],
+  "landmarks": [
+    "derelict_explorer",
+    "service_satellite"
+  ],
+  "modifiers": [
+    "light_debris",
+    "dense_debris",
+    "valuable_salvage",
+    "sparse_corridor",
+    "meteor_front",
+    "rich_recovery",
+    "quiet_orbit"
+  ],
+  "spawn_rules": {
+    "min_spacing": 148,
+    "edge_margin": 355,
+    "starter_cluster_count": 3,
+    "starter_cluster_radius": 300
+  },
+  "obstacles": [
+    {
+      "id": "iapetus_orbit_large_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 20,
+      "collision_radius": 52,
+      "scale_min": 0.84,
+      "scale_max": 1.08
+    },
+    {
+      "id": "iapetus_orbit_medium_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 44,
+      "collision_radius": 36,
+      "scale_min": 0.84,
+      "scale_max": 1.1
+    },
+    {
+      "id": "iapetus_orbit_small_fragment",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 36,
+      "collision_radius": 27,
+      "scale_min": 0.9,
+      "scale_max": 1.25
+    }
+  ]
+}

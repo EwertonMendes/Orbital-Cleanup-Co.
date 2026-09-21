@@ -1,0 +1,39 @@
+{
+  "id": "venus_clouds_01",
+  "display_name_key": "SECTOR_VENUS_CLOUDS_01",
+  "career_order": 6,
+  "unlock_rank": "junior_cleaner",
+  "biome": "venus_clouds",
+  "seed": 80920,
+  "difficulty": 5,
+  "map": {
+    "half_extents": [
+      5220,
+      3280
+    ],
+    "debris_density": 0.91,
+    "cluster_count": 6
+  },
+  "salvage_tables": [
+    {
+      "id": "mars_freight",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "comms_array"
+  ],
+  "contract": {
+    "type": "recovery_run",
+    "target_count": 9
+  },
+  "modifiers": [
+    "valuable_salvage"
+  ],
+  "depot": {
+    "position": [
+      -740,
+      -210
+    ]
+  }
+}

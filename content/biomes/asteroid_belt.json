@@ -1,0 +1,121 @@
+{
+  "id": "asteroid_belt",
+  "display_name_key": "BIOME_ASTEROID_BELT",
+  "palette": {
+    "background": "#030812",
+    "nebula": "#393b42",
+    "accent": "#d3c3a6"
+  },
+  "visual_profile": {
+    "primary_asset": "res://assets/original/destinations/asteroid_belt.svg",
+    "primary_scale": 1.35,
+    "primary_anchor": [
+      0.8,
+      0.25
+    ],
+    "primary_parallax": 0.056,
+    "primary_rotation_speed": 0.004,
+    "atmosphere_color": "#d3c3a6",
+    "atmosphere_strength": 0.52,
+    "shimmer_strength": 0.14,
+    "traffic_count": 2,
+    "dust_density": 0.91,
+    "horizon_style": "rings",
+    "horizon_intensity": 0.75
+  },
+  "environment": {
+    "salvage_mass_multiplier": 1.02,
+    "volumes": [
+      {
+        "kind": "gravity_well",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.18,
+          0.4
+        ],
+        "placement": "random",
+        "color": "#d3c3a6",
+        "secondary_color": "#393b42",
+        "radius_range": [
+          460,
+          820
+        ]
+      },
+      {
+        "kind": "safe_corridor",
+        "count_range": [
+          1,
+          1
+        ],
+        "shape": "box",
+        "strength_range": [
+          0.72,
+          0.95
+        ],
+        "placement": "depot",
+        "color": "#d3c3a6",
+        "secondary_color": "#393b42",
+        "length_range": [
+          3200,
+          5200
+        ],
+        "width_range": [
+          560,
+          920
+        ]
+      }
+    ]
+  },
+  "salvage_tables": [
+    "lunar_belt_industry"
+  ],
+  "landmarks": [
+    "mining_rig",
+    "comms_array"
+  ],
+  "modifiers": [
+    "light_debris",
+    "dense_debris",
+    "valuable_salvage",
+    "sparse_corridor",
+    "meteor_front",
+    "rich_recovery",
+    "quiet_orbit"
+  ],
+  "spawn_rules": {
+    "min_spacing": 156,
+    "edge_margin": 380,
+    "starter_cluster_count": 2,
+    "starter_cluster_radius": 320
+  },
+  "obstacles": [
+    {
+      "id": "asteroid_belt_large_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "weight": 20,
+      "collision_radius": 52,
+      "scale_min": 0.84,
+      "scale_max": 1.08
+    },
+    {
+      "id": "asteroid_belt_medium_fragment",
+      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
+      "weight": 44,
+      "collision_radius": 36,
+      "scale_min": 0.84,
+      "scale_max": 1.1
+    },
+    {
+      "id": "asteroid_belt_small_fragment",
+      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "weight": 36,
+      "collision_radius": 27,
+      "scale_min": 0.9,
+      "scale_max": 1.25
+    }
+  ]
+}

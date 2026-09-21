@@ -1,0 +1,39 @@
+{
+  "id": "europa_orbit_01",
+  "display_name_key": "SECTOR_EUROPA_ORBIT_01",
+  "career_order": 14,
+  "unlock_rank": "orbital_cleaner",
+  "biome": "europa_orbit",
+  "seed": 120515,
+  "difficulty": 6,
+  "map": {
+    "half_extents": [
+      5440,
+      3100
+    ],
+    "debris_density": 0.91,
+    "cluster_count": 7
+  },
+  "salvage_tables": [
+    {
+      "id": "lunar_belt_industry",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "valuable_recovery",
+    "target_value": 510
+  },
+  "modifiers": [
+    "meteor_front"
+  ],
+  "depot": {
+    "position": [
+      -740,
+      200
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "ocean_world_01",
+  "display_name_key": "SECTOR_OCEAN_WORLD_01",
+  "career_order": 53,
+  "unlock_rank": "deep_space_operator",
+  "biome": "ocean_world",
+  "seed": 381842,
+  "difficulty": 12,
+  "map": {
+    "half_extents": [
+      5660,
+      3100
+    ],
+    "debris_density": 1.18,
+    "cluster_count": 8
+  },
+  "salvage_tables": [
+    {
+      "id": "blue_nebula_research",
+      "weight": 100
+    }
+  ],
+  "landmarks": [
+    "research_outpost"
+  ],
+  "contract": {
+    "type": "full_cleanup",
+    "target_percent": 100
+  },
+  "modifiers": [
+    "quiet_orbit"
+  ],
+  "depot": {
+    "position": [
+      190,
+      610
+    ]
+  }
+}
