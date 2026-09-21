@@ -196,16 +196,30 @@ def validate_contracts(items: dict[str, dict[str, Any]], catalogs: dict[str, set
     for item_id, data in items.items():
         label = f"contracts/{item_id}"
         require_keys(data, (
-            "display_name_key", "kind", "target_percent_range", "base_pay",
+            "display_name_key", "description_key", "kind", "base_pay",
             "perfect_bonus", "company_xp", "perfect_xp_bonus",
         ), label)
         require_localization_key(data["display_name_key"], label, catalogs)
-        require(data["kind"] in allowed, f"{label}: unsupported contract kind")
-        target = data["target_percent_range"]
-        require(isinstance(target, list) and len(target) == 2, f"{label}.target_percent_range must contain two values")
-        low = require_number(target[0], f"{label}.target_percent_range[0]", 1, 100)
-        high = require_number(target[1], f"{label}.target_percent_range[1]", 1, 100)
-        require(low <= high, f"{label}.target_percent_range min cannot exceed max")
+        require_localization_key(data["description_key"], label, catalogs)
+        kind = data["kind"]
+        require(kind in allowed, f"{label}: unsupported contract kind")
+
+        range_key = {
+            "cleanup": "target_percent_range",
+            "full_cleanup": "target_percent_range",
+            "recovery": "target_count_range",
+            "valuable_recovery": "target_value_range",
+            "priority_object": "target_count_range",
+        }[kind]
+        target = data.get(range_key)
+        require(isinstance(target, list) and len(target) == 2, f"{label}.{range_key} must contain two values")
+        maximum = 100 if range_key == "target_percent_range" else None
+        low = require_number(target[0], f"{label}.{range_key}[0]", 1, maximum)
+        high = require_number(target[1], f"{label}.{range_key}[1]", 1, maximum)
+        require(low <= high, f"{label}.{range_key} min cannot exceed max")
+        if kind == "full_cleanup":
+            require(low == 100 and high == 100, f"{label}: full cleanup must target exactly 100%")
+
         require_number(data["base_pay"], f"{label}.base_pay", 0)
         require_number(data["perfect_bonus"], f"{label}.perfect_bonus", 0)
         require_number(data["company_xp"], f"{label}.company_xp", 0)
@@ -282,6 +296,7 @@ def validate_sectors(
     landmarks: dict[str, dict[str, Any]],
     contracts: dict[str, dict[str, Any]],
     modifiers: dict[str, dict[str, Any]],
+    salvage: dict[str, dict[str, Any]],
     catalogs: dict[str, set[str]],
 ) -> None:
     for item_id, data in items.items():
@@ -331,9 +346,43 @@ def validate_sectors(
         require(isinstance(contract, dict), f"{label}.contract must be an object")
         contract_id = contract.get("type")
         require(contract_id in contracts, f"{label}: Unknown contract: {contract_id}")
-        target = require_number(contract.get("target_percent"), f"{label}.contract.target_percent", 1, 100)
-        allowed_range = contracts[contract_id]["target_percent_range"]
-        require(float(allowed_range[0]) <= target <= float(allowed_range[1]), f"{label}: target_percent outside contract range")
+        definition = contracts[contract_id]
+        kind = definition["kind"]
+
+        expected_fields = {"type"}
+        if kind in {"cleanup", "full_cleanup"}:
+            expected_fields.add("target_percent")
+            target = require_number(contract.get("target_percent"), f"{label}.contract.target_percent", 1, 100)
+            allowed_range = definition["target_percent_range"]
+            require(float(allowed_range[0]) <= target <= float(allowed_range[1]), f"{label}: target_percent outside contract range")
+        elif kind == "recovery":
+            expected_fields.add("target_count")
+            target = require_number(contract.get("target_count"), f"{label}.contract.target_count", 1)
+            allowed_range = definition["target_count_range"]
+            require(float(allowed_range[0]) <= target <= float(allowed_range[1]), f"{label}: target_count outside contract range")
+        elif kind == "valuable_recovery":
+            expected_fields.add("target_value")
+            target = require_number(contract.get("target_value"), f"{label}.contract.target_value", 1)
+            allowed_range = definition["target_value_range"]
+            require(float(allowed_range[0]) <= target <= float(allowed_range[1]), f"{label}: target_value outside contract range")
+        elif kind == "priority_object":
+            expected_fields.update({"target_count", "target_salvage_id"})
+            target = require_number(contract.get("target_count"), f"{label}.contract.target_count", 1)
+            allowed_range = definition["target_count_range"]
+            require(float(allowed_range[0]) <= target <= float(allowed_range[1]), f"{label}: target_count outside contract range")
+            target_salvage_id = contract.get("target_salvage_id")
+            require(target_salvage_id in salvage, f"{label}: Unknown priority salvage: {target_salvage_id}")
+            allowed_salvage = {
+                str(entry["salvage"])
+                for table_ref in table_refs
+                for entry in tables[str(table_ref["id"])]["entries"]
+            }
+            require(
+                target_salvage_id in allowed_salvage,
+                f"{label}: priority salvage '{target_salvage_id}' must exist in one of the sector salvage tables",
+            )
+
+        require(set(contract) == expected_fields, f"{label}.contract fields must be exactly {sorted(expected_fields)} for kind '{kind}'")
 
         depot = data["depot"]
         require(isinstance(depot, dict), f"{label}.depot must be an object")
@@ -505,6 +554,7 @@ def main() -> None:
             loaded["landmarks"],
             loaded["contracts"],
             loaded["modifiers"],
+            loaded["salvage"],
             catalogs,
         )
         require("difficulty_scaling" in loaded["progression"], "Missing progression/difficulty_scaling.json")

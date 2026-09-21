@@ -2,12 +2,14 @@ extends Node2D
 class_name SalvageMarker
 
 var _definition: SalvageDefinition
+var _priority_target := false
 var _targeted := false
 var _progress := 0.0
 var _phase := 0.0
 
-func configure(definition: SalvageDefinition) -> void:
+func configure(definition: SalvageDefinition, priority_target: bool = false) -> void:
 	_definition = definition
+	_priority_target = priority_target
 	queue_redraw()
 
 func set_targeted(value: bool) -> void:
@@ -57,6 +59,22 @@ func _draw() -> void:
 			var angle := _phase * (0.72 + float(index) * 0.18) + float(index) * PI
 			var mote_position := Vector2.from_angle(angle) * (radius + 16.0)
 			draw_circle(mote_position, 2.5 if rarity_name == "epic" else 2.0, Color(rarity, 0.72))
+
+	if _priority_target:
+		var priority_color := Color("#f4f9ff")
+		var priority_radius := radius + 18.0
+		for index in range(4):
+			var center_angle := float(index) * PI * 0.5 + _phase * 0.16
+			draw_arc(
+				Vector2.ZERO,
+				priority_radius,
+				center_angle - 0.16,
+				center_angle + 0.16,
+				8,
+				Color(priority_color, 0.72),
+				2.0,
+				true
+			)
 
 	if not _targeted:
 		return
