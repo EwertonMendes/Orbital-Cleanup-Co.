@@ -114,6 +114,8 @@ func _build_landmarks(sector: Dictionary, rng: RandomNumberGenerator, occupied: 
 			"definition": definition,
 			"position": position,
 			"rotation": rng.randf_range(-0.3, 0.3),
+			"spin_speed": rng.randf_range(-0.045, 0.045),
+			"motion_phase": rng.randf_range(0.0, TAU),
 		})
 	return output
 
@@ -175,6 +177,8 @@ func _build_obstacle_spawns(
 			"position": position,
 			"rotation": rng.randf_range(-PI, PI),
 			"scale": rng.randf_range(float(definition.get("scale_min", 1.0)), float(definition.get("scale_max", 1.0))),
+			"spin_speed": rng.randf_range(-0.24, 0.24),
+			"motion_phase": rng.randf_range(0.0, TAU),
 		})
 	return output
 

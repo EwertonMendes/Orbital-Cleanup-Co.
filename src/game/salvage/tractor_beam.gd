@@ -30,6 +30,9 @@ var _glow_base_width := 9.0
 var _core_base_width := 2.2
 var _pulse_width := 1.5
 var _pulse_speed := 10.0
+var _beam_start := Vector2.ZERO
+var _beam_finish := Vector2.ZERO
+var _beam_active := false
 
 func _ready() -> void:
 	_cargo_hold = get_node(cargo_hold_path) as CargoHold
@@ -199,6 +202,9 @@ func _update_beam_visual(target_global_position: Vector2, delta: float) -> void:
 	_beam_phase += delta * _pulse_speed
 	var start := to_local(_collect_anchor.global_position)
 	var finish := to_local(target_global_position)
+	_beam_start = start
+	_beam_finish = finish
+	_beam_active = true
 
 	_beam_glow.clear_points()
 	_beam_glow.add_point(start)
@@ -213,8 +219,23 @@ func _update_beam_visual(target_global_position: Vector2, delta: float) -> void:
 	_beam_glow.width = _glow_base_width + sin(_beam_phase) * _pulse_width
 	_beam_glow.modulate.a = 0.45 + sin(_beam_phase * 1.6) * 0.08
 	_beam_core.width = _core_base_width
+	queue_redraw()
+
+func _draw() -> void:
+	if not _beam_active:
+		return
+	var packet_color := _beam_core.default_color
+	for index in range(6):
+		var offset := float(index) / 6.0
+		var t := fposmod(offset + _beam_phase * 0.035, 1.0)
+		var position := _beam_finish.lerp(_beam_start, t)
+		var size := 1.3 + (1.0 - t) * 1.5
+		draw_circle(position, size, Color(packet_color, 0.72 * (1.0 - t * 0.35)))
+	draw_circle(_beam_finish, 4.0 + sin(_beam_phase * 0.7) * 1.2, Color(packet_color, 0.18))
 
 func _hide_beam() -> void:
+	_beam_active = false
+	queue_redraw()
 	if _beam_glow != null:
 		_beam_glow.visible = false
 	if _beam_core != null:

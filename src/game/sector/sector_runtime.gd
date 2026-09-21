@@ -124,7 +124,11 @@ func _spawn_generated_content() -> void:
 func _spawn_landmark(entry: Dictionary) -> void:
 	var landmark := LANDMARK_SCENE.instantiate() as SectorLandmark
 	assert(landmark != null, "Generic landmark scene must instantiate.")
-	landmark.configure(entry["definition"] as Dictionary)
+	landmark.configure(
+		entry["definition"] as Dictionary,
+		float(entry.get("spin_speed", 0.0)),
+		float(entry.get("motion_phase", 0.0))
+	)
 	landmark.position = entry["position"] as Vector2
 	landmark.rotation = float(entry["rotation"])
 	landmark_root.add_child(landmark)
@@ -132,7 +136,12 @@ func _spawn_landmark(entry: Dictionary) -> void:
 func _spawn_obstacle(entry: Dictionary) -> void:
 	var obstacle := OBSTACLE_SCENE.instantiate() as SectorObstacle
 	assert(obstacle != null, "Generic obstacle scene must instantiate.")
-	obstacle.configure(entry["definition"] as Dictionary, float(entry["scale"]))
+	obstacle.configure(
+		entry["definition"] as Dictionary,
+		float(entry["scale"]),
+		float(entry.get("spin_speed", 0.0)),
+		float(entry.get("motion_phase", 0.0))
+	)
 	obstacle.position = entry["position"] as Vector2
 	obstacle.rotation = float(entry["rotation"])
 	obstacle_root.add_child(obstacle)
