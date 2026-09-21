@@ -1,9 +1,0 @@
-{
-  "id": "valuable_salvage",
-  "display_name_key": "MODIFIER_VALUABLE_SALVAGE",
-  "runtime": {
-    "salvage_count_multiplier": 1,
-    "obstacle_count_multiplier": 0.9,
-    "rare_weight_multiplier": 1.75
-  }
-}

@@ -1,9 +1,0 @@
-{
-  "id": "quiet_orbit",
-  "display_name_key": "MODIFIER_QUIET_ORBIT",
-  "runtime": {
-    "salvage_count_multiplier": 0.9,
-    "obstacle_count_multiplier": 0.42,
-    "rare_weight_multiplier": 0.88
-  }
-}

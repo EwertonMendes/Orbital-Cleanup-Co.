@@ -1,9 +1,0 @@
-{
-  "id": "sparse_corridor",
-  "display_name_key": "MODIFIER_SPARSE_CORRIDOR",
-  "runtime": {
-    "salvage_count_multiplier": 0.82,
-    "obstacle_count_multiplier": 0.52,
-    "rare_weight_multiplier": 1
-  }
-}

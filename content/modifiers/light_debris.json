@@ -1,9 +1,0 @@
-{
-  "id": "light_debris",
-  "display_name_key": "MODIFIER_LIGHT_DEBRIS",
-  "runtime": {
-    "salvage_count_multiplier": 1,
-    "obstacle_count_multiplier": 0.7,
-    "rare_weight_multiplier": 1
-  }
-}

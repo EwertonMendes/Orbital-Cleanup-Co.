@@ -1,9 +1,0 @@
-{
-  "id": "meteor_front",
-  "display_name_key": "MODIFIER_METEOR_FRONT",
-  "runtime": {
-    "salvage_count_multiplier": 0.94,
-    "obstacle_count_multiplier": 1.75,
-    "rare_weight_multiplier": 1.08
-  }
-}
