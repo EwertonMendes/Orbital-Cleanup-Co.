@@ -78,6 +78,9 @@ func _build_star_multimesh() -> void:
 	var multimesh := MultiMesh.new()
 	multimesh.transform_format = MultiMesh.TRANSFORM_2D
 	multimesh.use_colors = true
+	var quad := QuadMesh.new()
+	quad.size = Vector2(float(texture.get_width()), float(texture.get_height()))
+	multimesh.mesh = quad
 	multimesh.instance_count = star_count
 
 	var rng := RandomNumberGenerator.new()

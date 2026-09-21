@@ -736,6 +736,7 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("AmbientSpace", true, false) is SectorBackdrop, "Flight screen requires data-configurable SectorBackdrop.")
 	var flight_backdrop_source := FileAccess.get_file_as_string("res://src/game/sector/sector_backdrop.gd")
 	_expect("MultiMeshInstance2D" in flight_backdrop_source, "SectorBackdrop must batch the starfield through MultiMeshInstance2D.")
+	_expect("multimesh.mesh = quad" in flight_backdrop_source, "SectorBackdrop MultiMesh must own an explicit QuadMesh for GLES3/Web rendering.")
 	_expect("queue_redraw()" not in flight_backdrop_source.split("func _process", false, 1)[1].split("func _draw", false, 1)[0], "SectorBackdrop must not redraw its static starfield during frame updates.")
 	var quality_source := FileAccess.get_file_as_string("res://src/core/performance/runtime_quality.gd")
 	_expect("OS.has_feature(\"web\")" in quality_source, "Runtime quality profile must explicitly protect Web builds.")
