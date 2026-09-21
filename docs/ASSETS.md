@@ -68,3 +68,11 @@ The launch-biome planets under `assets/original/planets/` are original Orbital C
 
 They are not derived from the approved-but-unimported external planet packs listed above and therefore do not add a third-party runtime dependency. Editable SVG source remains in Git, while Godot imports it as texture data at build time. A shared project shader supplies subtle rotation, atmosphere glow and shimmer instead of baking animation into duplicate image files.
 
+
+## Project-owned orbital landmark artwork
+
+Large sector landmarks now use original Orbital Cleanup Co. SVG artwork under `assets/original/landmarks/` instead of scaling small source-pack props into major structures.
+
+The current set contains eight editable source assets: service satellite, cargo waystation, relay satellite, mining rig, fractured moonlet, communications array, research outpost and derelict explorer wreck.
+
+These files are authored for the OCC palette and top-down readability requirements. They add no third-party licensing or runtime dependency. Kenney remains useful for smaller source props, hazards and salvage, while major authored structures are now part of the project's own visual identity.
