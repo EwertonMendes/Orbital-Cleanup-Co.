@@ -426,7 +426,8 @@ Biome JSON now owns two additional data-driven sections: `visual_profile` and `e
 `visual_profile` defines the project-owned primary destination asset and presentation parameters such as anchor, scale, parallax, surface rotation, atmosphere, shimmer, traffic and dust density. Primary destination art lives under:
 
 ```text
-assets/original/planets/ (original launch set)\nassets/original/destinations/ (expanded destination library)
+assets/original/planets/ (original launch set)
+assets/original/destinations/ (expanded destination library)
 ```
 
 Do not create a sector-specific scene just to change the primary destination visual or ambience.
