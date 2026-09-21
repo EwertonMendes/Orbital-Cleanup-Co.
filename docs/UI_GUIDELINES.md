@@ -22,6 +22,17 @@ Use the shared foundations before creating screen-local styling:
 
 If a reusable component already owns a pattern, do not copy its style into a new scene.
 
+## Floating gameplay interfaces
+
+The ship and live world are the default presentation layer. Between-contract decisions should normally appear over gameplay instead of replacing it with a full-screen lobby.
+
+- Operations uses a centered floating surface with generous world visibility around it on desktop/landscape.
+- A restrained scrim may reduce visual competition but must not read as a scene cut or black loading screen.
+- Opening an overlay suspends ship steering deliberately while ambient world motion remains alive.
+- Contract deployment and return transitions must visually originate from the ship; do not hide routing behind an abrupt screen fade.
+- Compact/mobile layouts may use more of the viewport when required for legibility, but must preserve the same hierarchy and close action.
+- Reuse the existing Operations screen in embedded mode rather than maintaining separate full-screen and in-flight copies of the same product UI.
+
 ## Gameplay world readability
 
 World objects use a semantic visual language that must remain consistent across every biome:
