@@ -170,3 +170,17 @@ Starting-rank alternatives are immediately selectable. Amber variants unlock at 
 
 Paint is applied by shader to the colored hull regions instead of shipping duplicate recolored sprites. Additional hull models can be added later through cosmetic content once their binary assets are imported through the normal provenance-controlled asset workflow.
 
+## Current polish and retention slice
+
+The current polish milestone turns presentation into reusable gameplay systems rather than one-off scene decoration.
+
+- rare and epic salvage are special Discoveries on first recovery and persist by salvage ID;
+- Discovery presentation resolves current content metadata instead of copying stale names/values into the save file;
+- recovery, impact, unload, contract-target and Perfect Cleanup events drive centralized visual/audio feedback;
+- sector ambience uses deterministic lightweight motion so authored and endless sectors share the same presentation path;
+- hazards may visually tumble and landmarks may drift without moving their collision/gameplay anchors;
+- the world post-process is deliberately below the HUD CanvasLayer so UI readability is not color-graded;
+- compact Web/mobile viewports use a reduced post-processing profile automatically;
+- screen transitions belong to SceneRouter, not individual screens.
+
+The visual pass must not turn the game into a combat spectacle. Effects should reward cleanup and navigation while preserving the cozy corporate-space tone.

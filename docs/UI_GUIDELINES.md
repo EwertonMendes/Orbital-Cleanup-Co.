@@ -103,3 +103,14 @@ Visual work is not done when it merely compiles.
 - Desktop, landscape-mobile and portrait-mobile screenshots must be reviewed.
 - Prefer structural assertions over brittle pixel-perfect snapshot tests.
 - A visual PR must provide its exact playable preview before merge.
+
+## World polish boundary
+
+World-space polish and UI chrome are separate systems.
+
+- Full-screen grading/post-processing belongs below the HUD CanvasLayer. Do not post-process HUD text or controls.
+- Use subtle vignette, restrained glow and minimal chromatic separation; readability wins over spectacle.
+- Rare/epic salvage can use animated energy treatment, but collision hazards keep the exclusive warm segmented-ring language.
+- Particle bursts are event-driven and short-lived. Avoid permanent high-count emitters on every salvage object.
+- Environmental motion must be visual-only unless a gameplay mechanic explicitly requires moving collision geometry.
+- Web/mobile performance is a first-class constraint: prefer CPUParticles2D for small portable bursts and reduce screen-effect strength on compact viewports.
