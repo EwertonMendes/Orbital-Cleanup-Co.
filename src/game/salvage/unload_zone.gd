@@ -7,6 +7,8 @@ signal cargo_unloaded(units: int)
 
 var _pulse := 0.0
 var _unload_flash := 0.0
+var _cargo_full := false
+var _redraw_accumulator := 0.0
 
 func _ready() -> void:
 	var collision := get_node("CollisionShape2D") as CollisionShape2D
@@ -20,6 +22,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_pulse = fmod(_pulse + delta * 1.8, TAU)
 	_unload_flash = maxf(_unload_flash - delta * 2.8, 0.0)
+	_redraw_accumulator += delta
+	if _redraw_accumulator >= 1.0 / 20.0:
+		_redraw_accumulator = 0.0
+		queue_redraw()
+
+func set_cargo_state(used_units: int, capacity: int) -> void:
+	var next_full := capacity > 0 and used_units >= capacity
+	if next_full == _cargo_full:
+		return
+	_cargo_full = next_full
 	queue_redraw()
 
 func _on_body_entered(body: Node2D) -> void:
@@ -37,6 +49,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 func _draw() -> void:
 	var pulse_alpha := 0.20 + (sin(_pulse) + 1.0) * 0.045
+	var beacon_color := Color("#ffc857") if _cargo_full else Color("#8ff2c7")
 	draw_circle(Vector2.ZERO, radius, Color(0.18, 0.82, 0.72, 0.035))
 	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 72, Color(0.48, 0.96, 0.78, pulse_alpha + 0.18), 2.5, true)
 	draw_arc(Vector2.ZERO, radius - 16.0, 0.0, TAU, 72, Color(0.27, 0.70, 0.82, 0.15), 1.0, true)
@@ -57,7 +70,17 @@ func _draw() -> void:
 	for index in range(4):
 		var angle := _pulse * 0.24 + float(index) * PI * 0.5
 		var beacon := Vector2.from_angle(angle) * (radius - 28.0)
-		draw_circle(beacon, 2.5 + _unload_flash * 2.0, Color(0.48, 0.96, 0.78, 0.68))
+		draw_circle(beacon, 2.5 + _unload_flash * 2.0, Color(beacon_color, 0.68))
+
+	var mast_top := Vector2(0.0, -radius - 62.0)
+	var mast_base := Vector2(0.0, -radius - 12.0)
+	draw_line(mast_base, mast_top, Color(beacon_color, 0.24), 1.4, true)
+	draw_circle(mast_top, 4.0 + sin(_pulse) * 0.7, Color(beacon_color, 0.88))
+	draw_arc(mast_top, 11.0, -PI * 0.82, -PI * 0.18, 12, Color(beacon_color, 0.34), 1.4, true)
+	draw_arc(mast_top, 19.0, -PI * 0.78, -PI * 0.22, 14, Color(beacon_color, 0.16), 1.2, true)
+
+	if _cargo_full:
+		draw_arc(Vector2.ZERO, radius + 22.0, 0.0, TAU, 36, Color(beacon_color, 0.20), 2.0, true)
 
 	if _unload_flash > 0.0:
 		var flash_radius := lerpf(radius * 0.65, radius * 1.32, 1.0 - _unload_flash)
