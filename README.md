@@ -14,18 +14,18 @@ Playable or visual work remains in its PR until explicitly approved. The AI must
 
 ## Current milestone
 
-**Galactic Destination Expansion**
+**Continuous Flight Operations**
 
-The authored game now contains **50 distinct destination biomes** and **59 authored sectors**, spanning the Solar System, major moons, abandoned orbital infrastructure, nearby stars, exoplanets and extreme deep-space phenomena.
+The game now treats the ship and live world as the default player state instead of starting inside a full-screen headquarters menu.
 
-- Every new destination has a project-owned editable SVG primary asset.
-- Visual composition is driven by generic `primary_asset` and `horizon_style` data instead of destination-specific code.
-- Environmental mechanics are recombined per destination so variety changes route planning as well as appearance.
-- Career order exposes new locations throughout progression instead of hiding the expansion entirely in endgame.
-- Core QA generates every authored sector and enforces one-to-one destination/primary-art ownership.
-- Browser QA samples Solar, ringed-planet, Saturn-moon, industrial, black-hole, nearby-star, exoplanet and supernova families.
+- Startup enters contract-free **Free Flight** in Home Orbit.
+- Contracts, upgrades, career, ship customization and discovery open as a focused floating Operations overlay over the live world.
+- Deploying a contract uses a reusable engine-charge / warp-departure / warp-arrival transition.
+- Aborting or returning from a contract uses the same travel language in reverse.
+- Contract-free flight disables salvage collection and mission UI without duplicating the Sector Engine.
+- The previously shipped **50 destination biomes / 59 authored sectors** remain fully data-driven and compatible with the continuous travel flow.
 
-See `docs/DESTINATIONS.md` for the full catalog.
+See `docs/GAME_DESIGN.md` for the continuous loop and `docs/DESTINATIONS.md` for the destination catalog.
 
 The remaining player-facing work is tracked in `docs/PRODUCT_BACKLOG.md`.
 
