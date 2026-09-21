@@ -18,8 +18,8 @@ The interface is part of the game's identity, not a debug surface around the gam
 
 Use the shared foundations before creating screen-local styling:
 
-- `src/ui/themes/occ_theme.tres` for the world/HUD foundation;
-- `src/ui/themes/occ_operations_theme.tres` for the physical Kenney console used by Operations;
+- `src/ui/themes/occ_operations_theme.tres` for the shared physical Kenney language used by both Operations and the live-flight HUD;
+- `src/ui/themes/occ_theme.tres` only for remaining legacy surfaces while they are migrated;
 - `src/ui/themes/occ_cursor_skin.gd` for the original Kenney desktop cursor states;
 - screen layouts built from Containers, with `StyleBoxTexture`/NinePatch only where the source asset is designed to scale.
 
@@ -58,10 +58,10 @@ Salvage identity is data-driven. Each definition owns an authored silhouette plu
 Typography is a semantic system, not one font stretched across every piece of UI.
 
 - **Neuropol** is the display/game-identity face for branding, major titles, section headings, tabs and important rarity labels.
-- **Inter** is the reading face for descriptions, utility labels, buttons and longer copy.
+- **Inter** is the reading face for descriptions, utility labels and longer copy. Interactive button labels use Neuropol so actions consistently carry the game identity.
 - **JetBrains Mono** is reserved for telemetry: credits, XP, numeric values, progress metadata and compact system-like readouts.
 - Font selection belongs in shared Theme type variations such as `DisplayLabel`, `UiBody`, `TelemetryLabel`, `PrimaryButton` and `TabButton`. Screens must not assign font files directly.
-- Neuropol is intentionally used selectively. Large amounts of body copy remain in Inter so the interface feels like a game without sacrificing readability.
+- Neuropol is intentionally concentrated in branding, headings and interactive controls. Large amounts of body copy remain in Inter so the interface feels like a game without sacrificing readability.
 
 Oxanium is not part of the Orbital Cleanup Co. typography system.
 
@@ -72,8 +72,10 @@ Operations deliberately uses the **original Kenney UI Pack - Sci-Fi visual langu
 - Keep the source pixels, colors, bevels, screws and highlights intact. Do not tint, recolor, paint over, blur or shader-modulate Kenney UI textures.
 - Use the pack's `Double` assets for resizable console chrome and preserve their corner geometry through `StyleBoxTexture` or `NinePatchRect`.
 - Use 9-slice scaling only on textures intended to form resizable buttons/panels. Decorative or cursor assets render at their native proportions.
-- Never animate scale on Kenney panels/buttons. Interaction motion may use opacity or tiny positional movement, while the texture state itself communicates press/selection.
-- Neutral gray is the default physical surface. Original blue/green/yellow/red pack variants are semantic accents, not a global recolor: blue selected/navigation, green positive/ready, yellow settings/reward/warning, red close/danger.
+- Never animate scale, height or layout position on Kenney panels/buttons. Hover/click feedback may use cursor/audio/opacity, but control geometry must remain completely stable.
+- Neutral gray is the default physical button surface. Do not place colored blade/header overlays on ordinary actions.
+- The active navigation tab darkens the whole neutral button, highlights its label and uses a very slow subtle pulse; inactive tabs remain neutral.
+- The live-flight HUD uses the same original Kenney panel/button family so the game does not switch visual languages when Operations closes.
 - The pack's own cursor art is used for arrow, pointing and pressed states on desktop.
 - Kenney Interface Sounds provide restrained hover, click and back cues through the centralized AudioService.
 - Operations should read like a physical game console, not a corporate dashboard: one focused content area, compact vertical navigation, settings in a modal, and progression content revealed only when relevant.

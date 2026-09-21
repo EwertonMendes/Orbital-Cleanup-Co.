@@ -79,6 +79,7 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("VolumeDown", true, false) is Button and screen.find_child("VolumeUp", true, false) is Button, "Settings requires audio controls.")
 	_expect(screen.find_child("LanguageGroup", true, false) is HBoxContainer, "Language selection must live inside Settings.")
 	_expect(screen.find_child("InterfaceParticles", true, false) == null, "Operations must not cover native Kenney chrome with generic UI particles.")
+	_expect(screen.find_child("MenuWarpFX", true, false) is OccMenuWarpTransition, "Operations requires a contained warp-style menu transition.")
 
 	for tab_name in ["ContractsTab", "UpgradesTab", "CareerTab", "ShipTab", "DiscoveryTab"]:
 		_expect(screen.find_child(tab_name, true, false) is Button, "Operations requires navigation button: %s" % tab_name)
@@ -103,7 +104,7 @@ func _validate_operations_screen() -> void:
 		"BeamStyleValue", "WorkshopStatus", "HullHeading", "PaintHeading", "TrailHeading", "BeamHeading",
 		"HullOptions", "PaintOptions", "TrailOptions", "BeamOptions", "DiscoveryTitle", "DiscoverySubtitle",
 		"DiscoveryEmptyTitle", "DiscoveryEmptyBody", "CloseOverlay", "OverlayScrim", "FloatingSurface",
-		"SettingsButton", "SettingsLayer", "SettingsModal", "SettingsClose", "VolumeDown", "VolumeUp", "VolumeValue",
+		"SettingsButton", "SettingsLayer", "SettingsModal", "SettingsClose", "VolumeDown", "VolumeUp", "VolumeValue", "MenuWarpFX",
 	]
 	for node_name in unique_refs:
 		_expect(
@@ -120,12 +121,16 @@ func _validate_operations_screen() -> void:
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
 	_expect("DisplayServer.window_get_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use real window orientation and a tall portrait console to prevent clipping.")
 	_expect("settings_modal.custom_minimum_size" in operations_source and "footer_spacer.visible = not portrait" in operations_source, "Operations must protect compact Settings and portrait deployment layouts from overflow.")
-	_expect("_reveal_active_panel" in operations_source, "Operations tab changes require restrained shared motion.")
+	_expect("menu_warp_fx.play" in operations_source and "_update_tab_visuals" in operations_source, "Operations tab changes require contained warp motion and explicit selected-tab styling.")
+	_expect('event.is_action_pressed("ui_cancel")' in operations_source, "Operations overlay must close from ESC / ui_cancel.")
 
 	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_operations_theme.tres")
 	_expect("StyleBoxTexture" in theme_source, "Operations must skin controls with original Kenney textures.")
 	_expect("StyleBoxFlat" not in theme_source, "Operations must not redraw Kenney UI as generic Godot flat chrome.")
 	_expect("button_rectangle_depth.png" in theme_source, "Operations requires native Kenney button depth states.")
+	_expect("button_square_header_blade_rectangle" not in theme_source, "Operations buttons must not use colored blade overlays.")
+	_expect('Button/styles/pressed = SubResource("ButtonDepth")' in theme_source, "Button press states must keep identical geometry.")
+	_expect('SecondaryButton/fonts/font = ExtResource("1")' in theme_source, "All interactive button labels must use Neuropol.")
 	_expect("panel_rectangle_screws.png" in theme_source, "Operations requires native Kenney panel chrome.")
 	_expect("NEUROPOL.ttf" in theme_source, "OCC display typography must use Neuropol.")
 	_expect("Inter[opsz,wght].ttf" in theme_source, "OCC body typography must use Inter.")
@@ -816,6 +821,11 @@ func _validate_flight_screen() -> void:
 	var warp_source := FileAccess.get_file_as_string("res://src/ui/components/warp_travel_transition.gd")
 	_expect("func prime_arrival" in warp_source and "func play_primed_arrival" in warp_source, "Warp transition must support a covered destination handoff without restarting the effect.")
 	_expect("_open_operations()" in flight_source, "Free flight must open Operations over the live world.")
+	_expect('event.is_action_pressed("ui_cancel")' in flight_source, "Free flight must open Operations from ESC / ui_cancel.")
+	var flight_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.tscn")
+	_expect("occ_operations_theme.tres" in flight_scene_source, "Live flight HUD must share the Kenney UI theme.")
+	_expect('theme_override_styles/panel = SubResource("MissionPanel")' not in flight_scene_source, "Flight mission HUD must not retain legacy cyan panel chrome.")
+	_expect('theme_override_styles/normal = SubResource("ReturnButtonNormal")' not in flight_scene_source, "Flight action buttons must use stable Kenney theme states.")
 
 	var guide_source := FileAccess.get_file_as_string("res://src/ui/components/depot_navigation_guide.gd")
 	_expect("get_canvas_transform()" in guide_source, "Depot guide must project the real world target through the active camera transform.")

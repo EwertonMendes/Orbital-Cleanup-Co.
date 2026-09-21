@@ -277,11 +277,9 @@ def validate_visual_foundation() -> None:
     required_kenney_markers = (
         "Extra/Double/button_rectangle_depth.png",
         "Extra/Double/panel_rectangle_screws.png",
-        "Blue/Double/button_square_header_blade_rectangle.png",
-        "Grey/Double/button_square_header_blade_rectangle.png",
-        "Green/Double/button_square_header_blade_rectangle.png",
-        "Red/Double/button_square_header_blade_rectangle.png",
-        "Yellow/Double/button_square_header_blade_rectangle.png",
+        "Extra/Double/panel_glass.png",
+        "Extra/Double/bar_shadow_round_outline_large.png",
+        "Blue/Double/bar_round_gloss_large.png",
     )
     missing = [marker for marker in required_kenney_markers if marker not in operations_theme]
     if missing:
@@ -289,6 +287,15 @@ def validate_visual_foundation() -> None:
 
     if "InterfaceParticles" in operations:
         fail("Operations console must not cover the original Kenney kit with generic teal particles")
+    if "MenuWarpFX" not in operations or "menu_warp_fx.play" not in operations_source:
+        fail("Operations tab changes must use the contained warp-style transition")
+    if "button_square_header_blade_rectangle" in operations_theme:
+        fail("Operations buttons must use neutral Kenney chrome; colored header blades are not allowed")
+    if 'Button/styles/pressed = SubResource("ButtonDepth")' not in operations_theme:
+        fail("Kenney buttons must keep one stable physical footprint across click states")
+    if 'SecondaryButton/fonts/font = ExtResource("1")' not in operations_theme:
+        fail("Interactive button labels must use the principal Neuropol game face")
+
     if "SettingsLayer" not in operations or "VolumeDown" not in operations or "LanguageGroup" not in operations:
         fail("Language and audio controls must live in the dedicated Settings panel")
     if "is_sector_unlocked" not in operations_source:
@@ -322,6 +329,11 @@ def validate_visual_foundation() -> None:
 
     if "WorldPostProcess" not in flight or "AmbientMotion" not in flight or "FlightFeedback" not in flight:
         fail("Flight scene must keep reusable post-processing, ambient motion and feedback systems")
+    if "occ_operations_theme.tres" not in flight:
+        fail("Live flight HUD must use the same Kenney UI design system as Operations")
+    if 'theme_override_styles/panel = SubResource("MissionPanel")' in flight or 'theme_override_styles/normal = SubResource("ReturnButtonNormal")' in flight:
+        fail("Live flight HUD must not retain the legacy cyan flat-panel/button overrides")
+
 
     post_shader = (ROOT / "src" / "game" / "visual" / "world_post_process.gdshader").read_text(encoding="utf-8")
     if "hint_screen_texture" not in post_shader:
