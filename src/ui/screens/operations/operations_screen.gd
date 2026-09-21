@@ -69,7 +69,7 @@ const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card
 @onready var discovery_count: Label = %DiscoveryCount
 @onready var completed_contracts: Label = %CompletedContracts
 @onready var discovery_empty_card: PanelContainer = %DiscoveryEmptyCard
-@onready var discovery_list: VBoxContainer = %DiscoveryList
+@onready var discovery_list: GridContainer = %DiscoveryList
 @onready var english_button: Button = %EnglishButton
 @onready var portuguese_button: Button = %PortugueseButton
 @onready var spanish_button: Button = %SpanishButton
@@ -99,6 +99,7 @@ var _sector_plan: Dictionary = {}
 var _active_tab := Tab.CONTRACTS
 var _tab_group := ButtonGroup.new()
 var _overlay_mode := false
+var _tab_reveal_tween: Tween
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -186,11 +187,11 @@ func _setup_tabs() -> void:
 
 func _show_tab(tab: int) -> void:
 	_active_tab = tab
-	contracts_panel.visible = tab == Tab.CONTRACTS
-	upgrades_panel.visible = tab == Tab.UPGRADES
-	career_panel.visible = tab == Tab.CAREER
-	ship_panel.visible = tab == Tab.SHIP
-	discovery_panel.visible = tab == Tab.DISCOVERY
+	var panels: Array[Control] = [contracts_panel, upgrades_panel, career_panel, ship_panel, discovery_panel]
+	var active_panel := _panel_for_tab(tab)
+	for panel in panels:
+		panel.visible = panel == active_panel
+
 	footer.visible = tab == Tab.CONTRACTS
 	content_scroll.scroll_vertical = 0
 
@@ -204,6 +205,33 @@ func _show_tab(tab: int) -> void:
 		Tab.DISCOVERY:
 			_refresh_discovery()
 
+	_reveal_active_panel(active_panel)
+
+func _panel_for_tab(tab: int) -> Control:
+	match tab:
+		Tab.UPGRADES:
+			return upgrades_panel
+		Tab.CAREER:
+			return career_panel
+		Tab.SHIP:
+			return ship_panel
+		Tab.DISCOVERY:
+			return discovery_panel
+		_:
+			return contracts_panel
+
+func _reveal_active_panel(panel: Control) -> void:
+	if panel == null:
+		return
+	if _tab_reveal_tween != null and _tab_reveal_tween.is_valid():
+		_tab_reveal_tween.kill()
+	panel.modulate.a = 0.0
+	panel.scale = Vector2(0.992, 0.992)
+	panel.pivot_offset = Vector2(panel.size.x * 0.5, 0.0)
+	_tab_reveal_tween = create_tween().set_parallel(true)
+	_tab_reveal_tween.tween_property(panel, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	_tab_reveal_tween.tween_property(panel, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
 	var compact := portrait or size.x < COMPACT_WIDTH
@@ -213,6 +241,7 @@ func _apply_responsive_layout() -> void:
 	tab_grid.columns = 3 if compact else 5
 	contract_selector.columns = 2 if compact else 4
 	upgrade_grid.columns = 1 if compact else 3
+	discovery_list.columns = 1 if compact else 2
 	content_shell.custom_minimum_size.y = 150.0 if size.y < 500.0 else 260.0
 
 	var horizontal_margin := 14 if compact else 28
@@ -699,6 +728,7 @@ func _refresh_discovery() -> void:
 	for child in discovery_list.get_children():
 		child.queue_free()
 
+	var discovery_index := 0
 	for salvage_id in discoveries:
 		if not _registry.has_salvage(salvage_id):
 			continue
@@ -716,6 +746,8 @@ func _refresh_discovery() -> void:
 			tr(rarity_key),
 			WorldVisualLanguage.salvage_rarity_color(definition.rarity)
 		)
+		card.call_deferred("reveal", minf(float(discovery_index) * 0.035, 0.24))
+		discovery_index += 1
 
 func _rarity_key(rarity: String) -> String:
 	match rarity:

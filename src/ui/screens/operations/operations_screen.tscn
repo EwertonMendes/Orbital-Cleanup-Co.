@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_backdrop.gd" id="2"]
@@ -9,9 +9,10 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/station_a.png" id="7"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/satellite_b.png" id="8"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/button_header_blade.png" id="9"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/bar_round_gloss_large.png" id="10"]
+[ext_resource type="Texture2D" path="res://assets/original/ui/brand_rule.svg" id="10"]
 [ext_resource type="Shader" path="res://src/game/customization/ship_paint.gdshader" id="11"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_scenery_motion.gd" id="12"]
+[ext_resource type="Script" path="res://src/ui/components/ui_ambient_particles.gd" id="13"]
 
 [sub_resource type="ShaderMaterial" id="ShipPaintPreviewMaterial"]
 resource_local_to_scene = true
@@ -77,6 +78,17 @@ texture = ExtResource("8")
 expand_mode = 1
 stretch_mode = 5
 
+
+[node name="InterfaceParticles" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("13")
+
 [node name="OverlayScrim" type="ColorRect" parent="."]
 unique_name_in_owner = true
 visible = false
@@ -90,6 +102,7 @@ mouse_filter = 2
 color = Color(0.006, 0.018, 0.028, 0.46)
 
 [node name="FloatingSurface" type="PanelContainer" parent="."]
+theme_type_variation = &"ElevatedPanel"
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -133,6 +146,7 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 1
 
 [node name="CompanyLabel" type="Label" parent="SafeArea/Layout/Header/Brand"]
+theme_type_variation = &"DisplayLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -140,6 +154,7 @@ theme_override_font_sizes/font_size = 25
 text = "ORBITAL CLEANUP CO."
 
 [node name="DeskLabel" type="Label" parent="SafeArea/Layout/Header/Brand"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.51, 0.68, 0.75, 1)
@@ -148,7 +163,7 @@ text = "HEADQUARTERS · OPERATIONS"
 
 [node name="BrandAccent" type="TextureRect" parent="SafeArea/Layout/Header/Brand"]
 modulate = Color(0.33, 0.85, 0.97, 0.72)
-custom_minimum_size = Vector2(82, 12)
+custom_minimum_size = Vector2(180, 12)
 layout_mode = 2
 size_flags_horizontal = 0
 mouse_filter = 2
@@ -161,6 +176,7 @@ layout_mode = 2
 theme_override_constants/separation = 14
 
 [node name="CreditsLabel" type="Label" parent="SafeArea/Layout/Header/CareerSummary"]
+theme_type_variation = &"ValueLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.82, 0.4, 1)
@@ -169,6 +185,7 @@ text = "CREDITS · 0"
 vertical_alignment = 1
 
 [node name="RankLabel" type="Label" parent="SafeArea/Layout/Header/CareerSummary"]
+theme_type_variation = &"ValueLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -177,6 +194,7 @@ text = "RANK · TRAINEE"
 vertical_alignment = 1
 
 [node name="XpLabel" type="Label" parent="SafeArea/Layout/Header/CareerSummary"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.58, 0.72, 0.79, 1)
@@ -189,6 +207,7 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="LanguageLabel" type="Label" parent="SafeArea/Layout/Header/LanguageGroup"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.51, 0.68, 0.75, 1)
@@ -197,24 +216,28 @@ text = "LANG"
 vertical_alignment = 1
 
 [node name="EnglishButton" type="Button" parent="SafeArea/Layout/Header/LanguageGroup"]
+theme_type_variation = &"UtilityButton"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 36)
 layout_mode = 2
 text = "EN"
 
 [node name="PortugueseButton" type="Button" parent="SafeArea/Layout/Header/LanguageGroup"]
+theme_type_variation = &"UtilityButton"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 36)
 layout_mode = 2
 text = "PT"
 
 [node name="SpanishButton" type="Button" parent="SafeArea/Layout/Header/LanguageGroup"]
+theme_type_variation = &"UtilityButton"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(42, 36)
 layout_mode = 2
 text = "ES"
 
 [node name="CloseOverlay" type="Button" parent="SafeArea/Layout/Header"]
+theme_type_variation = &"SecondaryButton"
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(86, 38)
@@ -232,6 +255,7 @@ theme_override_constants/v_separation = 6
 columns = 5
 
 [node name="ContractsTab" parent="SafeArea/Layout/TabGrid" instance=ExtResource("4")]
+role = "tab"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
@@ -239,6 +263,7 @@ size_flags_horizontal = 3
 text = "CONTRACTS"
 
 [node name="UpgradesTab" parent="SafeArea/Layout/TabGrid" instance=ExtResource("4")]
+role = "tab"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
@@ -246,6 +271,7 @@ size_flags_horizontal = 3
 text = "UPGRADES"
 
 [node name="CareerTab" parent="SafeArea/Layout/TabGrid" instance=ExtResource("4")]
+role = "tab"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
@@ -253,6 +279,7 @@ size_flags_horizontal = 3
 text = "CAREER"
 
 [node name="ShipTab" parent="SafeArea/Layout/TabGrid" instance=ExtResource("4")]
+role = "tab"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
@@ -260,6 +287,7 @@ size_flags_horizontal = 3
 text = "SHIP"
 
 [node name="DiscoveryTab" parent="SafeArea/Layout/TabGrid" instance=ExtResource("4")]
+role = "tab"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
@@ -273,6 +301,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="BasePanel" type="PanelContainer" parent="SafeArea/Layout/ContentShell"]
+theme_type_variation = &"CardPanel"
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -317,6 +346,7 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
 [node name="ContractsTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel"]
+theme_type_variation = &"ScreenTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -324,6 +354,7 @@ theme_override_font_sizes/font_size = 22
 text = "CONTRACT BOARD"
 
 [node name="ContractsSubtitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel"]
+theme_type_variation = &"UiBodyMuted"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -345,6 +376,7 @@ layout_mode = 2
 text = "PREVIOUS"
 
 [node name="ContractPosition" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractSelector"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -375,6 +407,7 @@ theme_override_constants/separation = 3
 layout_mode = 2
 
 [node name="NextUnlockTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/NextUnlockPanel/NextUnlockHeader"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -383,6 +416,7 @@ theme_override_font_sizes/font_size = 10
 text = "NEXT CAREER UNLOCK"
 
 [node name="NextUnlockLabel" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/NextUnlockPanel/NextUnlockHeader"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.83, 0.92, 0.96, 1)
@@ -397,6 +431,7 @@ layout_mode = 2
 show_percentage = false
 
 [node name="NextUnlockProgressLabel" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/NextUnlockPanel"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.48, 0.64, 0.71, 1)
@@ -434,6 +469,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="ContractState" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo/ContractPlate"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -448,6 +484,7 @@ text = "TRAINING CONTRACT"
 vertical_alignment = 1
 
 [node name="ContractTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo"]
+theme_type_variation = &"ScreenTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 30
@@ -455,6 +492,7 @@ text = "Earth Orbit · Route 01"
 autowrap_mode = 2
 
 [node name="ContractDescription" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo"]
+theme_type_variation = &"UiBody"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.68, 0.78, 0.83, 1)
@@ -463,6 +501,7 @@ text = "Training contract description."
 autowrap_mode = 2
 
 [node name="ContractRequirement" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo"]
+theme_type_variation = &"UiBodyMuted"
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -476,6 +515,7 @@ layout_mode = 2
 theme_override_constants/separation = 18
 
 [node name="ContractTarget" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo/ContractStats"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.53, 0.88, 0.96, 1)
@@ -483,6 +523,7 @@ theme_override_font_sizes/font_size = 11
 text = "TARGET · 70%"
 
 [node name="ContractRisk" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo/ContractStats"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -490,6 +531,7 @@ theme_override_font_sizes/font_size = 11
 text = "RISK · LOW"
 
 [node name="ContractPayout" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo/ContractStats"]
+theme_type_variation = &"ValueLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.82, 0.4, 1)
@@ -497,6 +539,7 @@ theme_override_font_sizes/font_size = 11
 text = "PAY · 240 + 160"
 
 [node name="LastResult" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractInfo"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -505,6 +548,7 @@ theme_override_font_sizes/font_size = 11
 text = "Last contract result"
 
 [node name="ContractShipCard" type="PanelContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero"]
+theme_type_variation = &"ElevatedPanel"
 custom_minimum_size = Vector2(280, 194)
 layout_mode = 2
 
@@ -520,6 +564,7 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="ContractShipName" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractShipCard/ShipMargin/ShipCardLayout"]
+theme_type_variation = &"SectionTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -537,6 +582,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="ContractShipStatus" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ContractsPanel/ContractHero/ContractShipCard/ShipMargin/ShipCardLayout"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -552,6 +598,7 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
 [node name="UpgradesTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/UpgradesPanel"]
+theme_type_variation = &"ScreenTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -559,6 +606,7 @@ theme_override_font_sizes/font_size = 22
 text = "EQUIPMENT UPGRADES"
 
 [node name="UpgradesSubtitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/UpgradesPanel"]
+theme_type_variation = &"UiBodyMuted"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -582,6 +630,7 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
 [node name="CareerTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/CareerPanel"]
+theme_type_variation = &"ScreenTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -589,6 +638,7 @@ theme_override_font_sizes/font_size = 22
 text = "CAREER"
 
 [node name="CareerSubtitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/CareerPanel"]
+theme_type_variation = &"UiBodyMuted"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -597,6 +647,7 @@ text = "Your standing inside Orbital Cleanup Co."
 autowrap_mode = 2
 
 [node name="CareerSummaryCard" type="PanelContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/CareerPanel"]
+theme_type_variation = &"CardPanel"
 layout_mode = 2
 
 [node name="CareerSummaryMargin" type="MarginContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/CareerPanel/CareerSummaryCard"]
@@ -611,12 +662,14 @@ layout_mode = 2
 theme_override_constants/separation = 6
 
 [node name="CareerRankValue" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/CareerPanel/CareerSummaryCard/CareerSummaryMargin/CareerSummaryLayout"]
+theme_type_variation = &"SectionTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 19
 text = "Trainee"
 
 [node name="CareerXpLabel" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/CareerPanel/CareerSummaryCard/CareerSummaryMargin/CareerSummaryLayout"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -642,6 +695,7 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
 [node name="ShipTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel"]
+theme_type_variation = &"ScreenTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -649,6 +703,7 @@ theme_override_font_sizes/font_size = 22
 text = "SHIP"
 
 [node name="ShipSubtitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel"]
+theme_type_variation = &"UiBodyMuted"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -663,6 +718,7 @@ theme_override_constants/separation = 14
 vertical = false
 
 [node name="ShipPreviewCard" type="PanelContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody"]
+theme_type_variation = &"CardPanel"
 custom_minimum_size = Vector2(330, 260)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -679,6 +735,7 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="ShipName" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/ShipPreviewCard/ShipPreviewMargin/ShipPreviewLayout"]
+theme_type_variation = &"SectionTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
@@ -695,6 +752,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="ShipStats" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/ShipPreviewCard/ShipPreviewMargin/ShipPreviewLayout"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -704,6 +762,7 @@ horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="LoadoutCard" type="PanelContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody"]
+theme_type_variation = &"CardPanel"
 custom_minimum_size = Vector2(330, 260)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -720,6 +779,7 @@ layout_mode = 2
 theme_override_constants/separation = 7
 
 [node name="LoadoutTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"SectionTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -727,21 +787,25 @@ theme_override_font_sizes/font_size = 15
 text = "VISUAL LOADOUT"
 
 [node name="HullValue" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"UiBody"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Hull · Pioneer-01"
 
 [node name="PaintValue" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"UiBody"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Paint · Company Blue"
 
 [node name="TrailValue" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"UiBody"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Trail · Standard Ion"
 
 [node name="BeamStyleValue" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"UiBody"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Beam · Standard Cyan"
@@ -750,6 +814,7 @@ text = "Beam · Standard Cyan"
 layout_mode = 2
 
 [node name="HullHeading" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -764,6 +829,7 @@ theme_override_constants/v_separation = 6
 columns = 2
 
 [node name="PaintHeading" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -778,6 +844,7 @@ theme_override_constants/v_separation = 6
 columns = 2
 
 [node name="TrailHeading" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -792,6 +859,7 @@ theme_override_constants/v_separation = 6
 columns = 2
 
 [node name="BeamHeading" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -806,6 +874,7 @@ theme_override_constants/v_separation = 6
 columns = 2
 
 [node name="WorkshopStatus" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.82, 0.4, 1)
@@ -821,6 +890,7 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
 [node name="DiscoveryTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
+theme_type_variation = &"ScreenTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
@@ -828,6 +898,7 @@ theme_override_font_sizes/font_size = 22
 text = "DISCOVERY CATALOG"
 
 [node name="DiscoverySubtitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
+theme_type_variation = &"UiBodyMuted"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -840,18 +911,21 @@ layout_mode = 2
 theme_override_constants/separation = 18
 
 [node name="DiscoveryCount" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel/DiscoveryStats"]
+theme_type_variation = &"ValueLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.56, 0.95, 0.81, 1)
 text = "SPECIAL FINDS · 0"
 
 [node name="CompletedContracts" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel/DiscoveryStats"]
+theme_type_variation = &"TelemetryLabel"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
 text = "CONTRACTS · 0"
 
 [node name="DiscoveryEmptyCard" type="PanelContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
+theme_type_variation = &"CardPanel"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 180)
 layout_mode = 2
@@ -870,6 +944,7 @@ theme_override_constants/separation = 8
 alignment = 1
 
 [node name="DiscoveryEmptyTitle" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel/DiscoveryEmptyCard/DiscoveryEmptyMargin/DiscoveryEmptyLayout"]
+theme_type_variation = &"SectionTitle"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.83, 0.94, 0.98, 1)
@@ -878,6 +953,7 @@ text = "NO SPECIAL DISCOVERIES YET"
 horizontal_alignment = 1
 
 [node name="DiscoveryEmptyBody" type="Label" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel/DiscoveryEmptyCard/DiscoveryEmptyMargin/DiscoveryEmptyLayout"]
+theme_type_variation = &"UiBodyMuted"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.63, 0.75, 0.81, 1)
@@ -886,11 +962,13 @@ text = "Rare salvage and unusual recovered objects will appear here."
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="DiscoveryList" type="VBoxContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
+[node name="DiscoveryList" type="GridContainer" parent="SafeArea/Layout/ContentShell/ContentMargin/ContentScroll/PanelHost/DiscoveryPanel"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
 
 [node name="Footer" type="HBoxContainer" parent="SafeArea/Layout"]
 unique_name_in_owner = true
