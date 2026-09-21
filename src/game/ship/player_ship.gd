@@ -25,6 +25,10 @@ var _facing_rotation := 0.0
 var _pending_cosmetics: Dictionary = {}
 var _environment_force := Vector2.ZERO
 var _environment_speed_multiplier := 1.0
+var _controls_enabled := true
+var _travel_mode := false
+var _travel_visual_intensity := 0.0
+var _travel_direction := Vector2.RIGHT
 
 func configure(
 	input_service: InputService,
@@ -88,7 +92,54 @@ func get_cargo_used() -> int:
 func get_cargo_capacity() -> int:
 	return cargo_hold.capacity
 
+func set_flight_controls_enabled(enabled: bool) -> void:
+	_controls_enabled = enabled
+	if not enabled:
+		velocity = Vector2.ZERO
+		_smoothed_intent = Vector2.ZERO
+		ship_camera.set_motion_velocity(Vector2.ZERO)
+
+func set_collection_enabled(enabled: bool) -> void:
+	tractor_beam.set_interaction_enabled(enabled)
+
+func begin_travel(direction: Vector2) -> void:
+	_travel_mode = true
+	_travel_direction = direction.normalized() if direction.length_squared() > 0.001 else Vector2.RIGHT
+	_travel_visual_intensity = 0.12
+	_facing_rotation = _travel_direction.angle() + PI * 0.5
+	set_flight_controls_enabled(false)
+	set_collection_enabled(false)
+	ship_camera.set_motion_velocity(Vector2.ZERO)
+	ship_camera.set_framing_offset(Vector2.ZERO)
+	ship_camera.offset = Vector2.ZERO
+	ship_camera.top_level = true
+	ship_camera.global_position = global_position
+	ship_camera.process_mode = Node.PROCESS_MODE_DISABLED
+
+func set_travel_visual_intensity(value: float) -> void:
+	_travel_visual_intensity = clampf(value, 0.0, 1.0)
+
+func end_travel(restore_collection: bool = true) -> void:
+	_travel_mode = false
+	_travel_visual_intensity = 0.0
+	ship_camera.top_level = false
+	ship_camera.position = Vector2.ZERO
+	ship_camera.process_mode = Node.PROCESS_MODE_INHERIT
+	set_flight_controls_enabled(true)
+	set_collection_enabled(restore_collection)
+	visuals.update_motion(0.0, 0.0, _facing_rotation, 0.0, 0.0)
+
 func _physics_process(delta: float) -> void:
+	if _travel_mode:
+		velocity = Vector2.ZERO
+		visuals.update_motion(_travel_visual_intensity, _travel_visual_intensity, _facing_rotation, 0.0, delta)
+		ship_camera.set_motion_velocity(Vector2.ZERO)
+		return
+	if not _controls_enabled:
+		velocity = Vector2.ZERO
+		visuals.update_motion(0.0, 0.0, _facing_rotation, 0.0, delta)
+		ship_camera.set_motion_velocity(Vector2.ZERO)
+		return
 	_bump_feedback_cooldown = maxf(_bump_feedback_cooldown - delta, 0.0)
 
 	var keyboard_intent := _input_service.get_navigation_vector()
