@@ -68,6 +68,22 @@ func get_biome_palette() -> Dictionary:
 	var biome := _plan["biome"] as Dictionary
 	return (biome.get("palette", {}) as Dictionary).duplicate(true)
 
+func get_biome_visual_profile() -> Dictionary:
+	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
+	var biome := _plan["biome"] as Dictionary
+	return (biome.get("visual_profile", {}) as Dictionary).duplicate(true)
+
+func get_environment_fields() -> Array:
+	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
+	return (_plan.get("environment_fields", []) as Array).duplicate(true)
+
+func get_salvage_nodes() -> Array[SalvageObject]:
+	var output: Array[SalvageObject] = []
+	for child in salvage_root.get_children():
+		if child is SalvageObject:
+			output.append(child as SalvageObject)
+	return output
+
 func get_sector_display_name_key() -> String:
 	assert(not _plan.is_empty(), "SectorRuntime is not configured.")
 	return String((_plan["sector"] as Dictionary)["display_name_key"])

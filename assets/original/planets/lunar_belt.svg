@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<defs><radialGradient id="m" cx="34%" cy="28%"><stop offset="0" stop-color="#dce4ea"/><stop offset=".55" stop-color="#8d9aa5"/><stop offset="1" stop-color="#3f4b55"/></radialGradient></defs>
+<circle cx="256" cy="256" r="226" fill="#cbd7df" opacity=".10"/><circle cx="256" cy="256" r="218" fill="url(#m)"/>
+<g fill="#64717b" opacity=".58"><circle cx="162" cy="166" r="42"/><circle cx="349" cy="144" r="28"/><circle cx="368" cy="306" r="48"/><circle cx="182" cy="338" r="31"/><circle cx="263" cy="236" r="22"/><circle cx="114" cy="273" r="18"/></g>
+<g fill="none" stroke="#e9f1f5" opacity=".27"><circle cx="162" cy="166" r="49" stroke-width="8"/><circle cx="368" cy="306" r="56" stroke-width="9"/><circle cx="182" cy="338" r="37" stroke-width="6"/></g>
+<path d="M71 340c94 47 198 57 344 10" fill="none" stroke="#e8f5ff" stroke-width="6" opacity=".12"/><circle cx="256" cy="256" r="218" fill="none" stroke="#e8f5ff" stroke-width="4" opacity=".34"/>
+</svg>

@@ -20,6 +20,8 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var sector_runtime: SectorRuntime = %SectorRuntime
 @onready var player_ship: PlayerShip = %PlayerShip
 @onready var flight_feedback: FlightFeedback = %FlightFeedback
+@onready var environment_runtime: EnvironmentRuntime = %EnvironmentRuntime
+@onready var environment_status: Label = %EnvironmentStatus
 
 var _context: Dictionary = {}
 var _router: SceneRouter
@@ -53,6 +55,8 @@ func configure(context: Dictionary) -> void:
 	var runtime := get_node("World/SectorRuntime") as SectorRuntime
 	var backdrop := get_node("World/AmbientSpace") as SectorBackdrop
 	var ambient_motion := get_node("World/AmbientMotion") as AmbientOrbitLayer
+	var environment := get_node("World/EnvironmentRuntime") as EnvironmentRuntime
+	var post_process := get_node("WorldPost/WorldPostProcess") as WorldPostProcess
 	var feedback := get_node("FlightFeedback") as FlightFeedback
 	var depot := get_node("World/UnloadDepot") as UnloadZone
 	var ship := get_node("World/PlayerShip") as PlayerShip
@@ -60,6 +64,8 @@ func configure(context: Dictionary) -> void:
 	assert(runtime != null, "FlightScreen requires SectorRuntime.")
 	assert(backdrop != null, "FlightScreen requires SectorBackdrop.")
 	assert(ambient_motion != null, "FlightScreen requires AmbientOrbitLayer.")
+	assert(environment != null, "FlightScreen requires EnvironmentRuntime.")
+	assert(post_process != null, "FlightScreen requires WorldPostProcess.")
 	assert(feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(depot != null, "FlightScreen requires UnloadZone.")
 	assert(ship != null, "FlightScreen requires PlayerShip.")
@@ -70,8 +76,25 @@ func configure(context: Dictionary) -> void:
 		runtime.configure_sector_definition(generated_definition)
 	_contract_session.configure(runtime.get_contract_context())
 	var biome_palette := runtime.get_biome_palette()
-	backdrop.configure(runtime.get_play_bounds(), biome_palette, runtime.get_biome_id())
-	ambient_motion.configure(runtime.get_play_bounds(), biome_palette)
+	var visual_profile := runtime.get_biome_visual_profile()
+	backdrop.configure(
+		runtime.get_play_bounds(),
+		biome_palette,
+		runtime.get_biome_id(),
+		visual_profile
+	)
+	ambient_motion.configure(
+		runtime.get_play_bounds(),
+		biome_palette,
+		runtime.get_biome_id(),
+		visual_profile
+	)
+	environment.configure(
+		runtime.get_environment_fields(),
+		runtime.get_play_bounds(),
+		biome_palette,
+		runtime.get_biome_id()
+	)
 	feedback.configure(biome_palette)
 
 	var deployment_position := runtime.get_depot_position()
@@ -85,6 +108,7 @@ func configure(context: Dictionary) -> void:
 		_progression.get_ship_modifiers(),
 		_progression.get_ship_cosmetics()
 	)
+	environment.bind(ship, runtime, post_process)
 	print("[Flight] DEPLOYMENT position=(%.1f, %.1f) depot=(%.1f, %.1f)" % [
 		ship.position.x,
 		ship.position.y,
@@ -109,6 +133,7 @@ func _ready() -> void:
 	_contract_session.objective_changed.connect(_on_objective_changed)
 	_contract_session.target_reached.connect(_on_contract_target_reached)
 	_contract_session.perfect_cleanup_reached.connect(_on_perfect_cleanup_reached)
+	environment_runtime.environment_state_changed.connect(_on_environment_state_changed)
 	_contract_session.start()
 
 	toast_panel.modulate.a = 0.0
@@ -140,6 +165,7 @@ func _validate_contracts() -> void:
 	assert(sector_runtime != null, "FlightScreen requires SectorRuntime.")
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
 	assert(flight_feedback != null, "FlightScreen requires FlightFeedback.")
+	assert(environment_runtime != null and environment_status != null, "FlightScreen requires biome environment feedback.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
 
 func _apply_responsive_layout() -> void:
@@ -235,6 +261,7 @@ func _refresh_copy() -> void:
 	var steering_hint := tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
 	hint_label.text = "%s\n%s" % [steering_hint, tr("FLIGHT_VISUAL_LEGEND")]
 	%DepotLabel.text = tr("FLIGHT_DEPOT")
+	environment_status.text = tr("FLIGHT_ENVIRONMENT_FMT") % tr("ENV_STABLE_ORBIT")
 	_refresh_return_button()
 	_refresh_cleanup()
 
@@ -358,6 +385,15 @@ func _on_cargo_unloaded(units: int) -> void:
 	_show_toast(tr("FLIGHT_UNLOADED_FMT") % units)
 	flight_feedback.cargo_unloaded(units, unload_zone.global_position)
 	beam_status.text = tr("FLIGHT_BEAM_SCANNING")
+
+func _on_environment_state_changed(label_key: String, intensity: float) -> void:
+	environment_status.text = tr("FLIGHT_ENVIRONMENT_FMT") % tr(label_key)
+	var calm := Color("#79e6c4")
+	var active := Color("#ffc857")
+	environment_status.add_theme_color_override(
+		"font_color",
+		calm.lerp(active, clampf(intensity, 0.0, 1.0))
+	)
 
 func _on_ship_bumped(intensity: float, _normal: Vector2) -> void:
 	flight_feedback.ship_bumped(intensity, player_ship.global_position)

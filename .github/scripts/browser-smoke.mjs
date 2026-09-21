@@ -4,6 +4,11 @@ const url = process.env.OCC_URL ?? 'http://127.0.0.1:8000';
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROME_BIN ?? '/usr/bin/google-chrome',
+  args: [
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
+  ],
 });
 
 const runtimeErrors = [];
@@ -30,6 +35,34 @@ function waitForConsole(page, marker, timeout = 60000) {
     predicate: message => message.text().includes(marker),
     timeout,
   });
+}
+
+async function measureFrameRate(page, durationMs = 1800) {
+  return await page.evaluate(async duration => {
+    const samples = [];
+    let previous = performance.now();
+    const started = previous;
+
+    await new Promise(resolve => {
+      function step(now) {
+        samples.push(now - previous);
+        previous = now;
+        if (now - started >= duration) {
+          resolve();
+          return;
+        }
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+
+    const usable = samples.slice(5).filter(value => value > 0 && value < 250);
+    if (!usable.length) return { fps: 0, p95Ms: 999 };
+    usable.sort((a, b) => a - b);
+    const averageMs = usable.reduce((sum, value) => sum + value, 0) / usable.length;
+    const p95Ms = usable[Math.min(usable.length - 1, Math.floor(usable.length * 0.95))];
+    return { fps: 1000 / averageMs, p95Ms };
+  }, durationMs);
 }
 
 async function dragTouch(page, viewport) {
@@ -152,6 +185,32 @@ async function openQaDeepLinks() {
     await flightReady;
     await page.waitForTimeout(250);
     await page.screenshot({ path: `build/smoke-qa-contract-${sample.label}.png`, fullPage: true });
+    await page.close();
+  }
+
+  const biomeSamples = [
+    { sector: 'earth_orbit_04', label: 'earth-orbit' },
+    { sector: 'lunar_belt_02', label: 'lunar-belt' },
+    { sector: 'mars_freight_02', label: 'mars-freight' },
+    { sector: 'blue_nebula_02', label: 'blue-nebula' },
+  ];
+
+  for (const sample of biomeSamples) {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+    watch(page, `qa-biome-${sample.label}`);
+    const sectorReady = waitForConsole(page, `[Sector] READY id=${sample.sector}`, 60000);
+    const flightReady = waitForConsole(page, '[Flight] READY', 60000);
+    await page.goto(`${url}?sector=${sample.sector}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await sectorReady;
+    await flightReady;
+    await page.waitForTimeout(500);
+    await page.bringToFront();
+    const perf = await measureFrameRate(page);
+    console.log(`[QA] PERF_OBSERVED biome=${sample.label} fps=${perf.fps.toFixed(1)} p95_ms=${perf.p95Ms.toFixed(1)}`);
+    // Hosted runners may use software rendering, so absolute FPS is diagnostic
+    // rather than a release gate. Structural performance contracts below keep
+    // Web from regressing into full-screen screen copies or per-frame world redraws.
+    await page.screenshot({ path: `build/smoke-qa-biome-${sample.label}.png`, fullPage: true });
     await page.close();
   }
 

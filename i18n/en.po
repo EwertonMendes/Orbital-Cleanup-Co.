@@ -840,3 +840,30 @@ msgstr "%d / %d XP · %d TO GO"
 
 msgid "UNLOCK_ENDLESS_CONTRACTS"
 msgstr "Endless Contracts"
+
+msgid "FLIGHT_ENVIRONMENT_FMT"
+msgstr "ENVIRONMENT · %s"
+
+msgid "ENV_STABLE_ORBIT"
+msgstr "STABLE ORBIT"
+
+msgid "ENV_GRAVITY_WELL"
+msgstr "GRAVITY WELL"
+
+msgid "ENV_SAFE_CORRIDOR"
+msgstr "SAFE CORRIDOR"
+
+msgid "ENV_SOLAR_CURRENT"
+msgstr "SOLAR CURRENT"
+
+msgid "ENV_LOW_VISIBILITY"
+msgstr "LOW VISIBILITY"
+
+msgid "ENV_SCANNER_INTERFERENCE"
+msgstr "SCANNER INTERFERENCE"
+
+msgid "ENV_TRACTOR_DISTORTION"
+msgstr "TRACTOR DISTORTION"
+
+msgid "ENV_MAGNETIC_ZONE"
+msgstr "MAGNETIC FIELD"

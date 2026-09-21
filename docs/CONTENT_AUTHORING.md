@@ -404,3 +404,43 @@ cargo_capacity_add
 
 Adding an unknown effect fails content validation until the runtime intentionally supports it.
 
+## Biome visual profiles and environmental fields
+
+Biome JSON now owns two additional data-driven sections: `visual_profile` and `environment`.
+
+`visual_profile` defines the project-owned planet asset and presentation parameters such as anchor, scale, parallax, surface rotation, atmosphere, shimmer, traffic and dust density. Planet art currently lives under:
+
+```text
+assets/original/planets/
+```
+
+Do not create a sector-specific scene just to change the planet or ambience.
+
+`environment` defines a biome-wide salvage-mass multiplier and reusable field templates. Supported field kinds are:
+
+```text
+gravity_well
+safe_corridor
+drift_current
+visibility_pocket
+scanner_interference
+tractor_distortion
+magnetic_zone
+```
+
+Each template supplies a deterministic count range, shape, strength range, placement rule and visual colors. Circular fields author a radius range; box fields author length/width ranges.
+
+The Sector Generator uses a dedicated deterministic environment RNG derived from the sector seed. This keeps environmental layouts repeatable without perturbing existing salvage/obstacle selection. Generated fields are also included in the sector generation signature.
+
+The generic Environment Runtime samples overlapping fields and combines bounded effects for:
+
+- ship force and small speed modifiers;
+- loose-salvage drift;
+- effective scanner range;
+- Tractor Beam pull/collection efficiency;
+- local visibility/post-processing.
+
+Safe corridors are stronger than decoration: obstacle placement rejects collision hazards inside the generated corridor plus safety padding.
+
+When adding a new biome mechanic, first determine whether it can be expressed as another reusable field kind. Do not add `if biome == "..."` branches to PlayerShip, TractorBeam or a normal sector script.
+
