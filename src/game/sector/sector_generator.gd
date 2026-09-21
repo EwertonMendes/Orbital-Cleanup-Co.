@@ -80,7 +80,14 @@ func generate_definition(source: Dictionary) -> Dictionary:
 		occupied
 	)
 
-	var signature := _build_signature(sector_id, int(sector["seed"]), salvage_spawns, obstacle_spawns, landmarks)
+	var signature := _build_signature(
+		sector_id,
+		int(sector["seed"]),
+		sector["contract"] as Dictionary,
+		salvage_spawns,
+		obstacle_spawns,
+		landmarks
+	)
 	return {
 		"sector": sector,
 		"biome": biome,
@@ -265,11 +272,19 @@ func _vector2_from_array(value: Array) -> Vector2:
 func _build_signature(
 	sector_id: String,
 	seed: int,
+	contract_ref: Dictionary,
 	salvage: Array[Dictionary],
 	obstacles: Array[Dictionary],
 	landmarks: Array[Dictionary]
 ) -> String:
-	var parts := PackedStringArray([sector_id, str(seed), str(salvage.size()), str(obstacles.size()), str(landmarks.size())])
+	var parts := PackedStringArray([
+		sector_id,
+		str(seed),
+		JSON.stringify(contract_ref),
+		str(salvage.size()),
+		str(obstacles.size()),
+		str(landmarks.size()),
+	])
 	for index in range(mini(salvage.size(), 5)):
 		var entry: Dictionary = salvage[index] as Dictionary
 		var position := entry["position"] as Vector2
