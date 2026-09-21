@@ -11,18 +11,7 @@ This file is the living list of **player-facing work that is still missing** bef
 
 ## Remaining priorities
 
-### 1. Career progression and region unlocks
-
-Turn Company XP and ranks into a visible progression path instead of letting every authored sector be available immediately.
-
-- Gate authored regions/contracts by career rank.
-- Start the player in Earth Orbit and progressively unlock Lunar Belt, Mars Freight Route and Blue Nebula.
-- Show locked contracts with the exact rank/XP requirement.
-- Show "next unlock" progress in Headquarters.
-- Allow ranks to unlock contract pools, modifiers, cosmetics and future equipment cleanly through data.
-- Preserve Endless Contracts as a late/progressive system instead of an always-equivalent alternative.
-
-### 2. Biome-specific gameplay mechanics
+### 1. Biome-specific gameplay mechanics
 
 Make each region change how the player flies and plans routes, not only palette, salvage tables and obstacle density.
 
@@ -33,7 +22,7 @@ Make each region change how the player flies and plans routes, not only palette,
 - Keep pressure non-lethal and cozy.
 - Author mechanics through reusable data-driven environmental volumes rather than sector-specific code.
 
-### 3. Music and environmental soundscape
+### 2. Music and environmental soundscape
 
 Add a real audio identity on top of the existing procedural gameplay SFX.
 
@@ -45,7 +34,7 @@ Add a real audio identity on top of the existing procedural gameplay SFX.
 - Separate music and SFX volume controls.
 - Record asset provenance and license for every external audio file.
 
-### 4. Stronger visual identity and world silhouettes
+### 3. Stronger visual identity and world silhouettes
 
 Reduce the remaining "asset-pack prototype" feeling.
 
@@ -55,7 +44,7 @@ Reduce the remaining "asset-pack prototype" feeling.
 - Improve landmark uniqueness and composition.
 - Keep recoverable salvage, hazards and scenery semantically distinct.
 
-### 5. Expand upgrades and ship customization
+### 4. Expand upgrades and ship customization
 
 Give Credits and career progression more meaningful long-term sinks.
 
@@ -67,7 +56,7 @@ Give Credits and career progression more meaningful long-term sinks.
 - Expand rank-unlocked paint, trail and beam families.
 - Keep cosmetics gameplay-neutral.
 
-### 6. Onboarding, pause/settings and complete gamepad support
+### 5. Onboarding, pause/settings and complete gamepad support
 
 Make the game understandable and comfortable without prior explanation.
 
@@ -78,7 +67,7 @@ Make the game understandable and comfortable without prior explanation.
 - Music/SFX settings plus accessibility-oriented options where useful.
 - Validate keyboard/mouse, touch and gamepad separately.
 
-### 7. Mastery, commendations and replay goals
+### 6. Mastery, commendations and replay goals
 
 Reward players who want to optimize without adding combat or punitive failure.
 
@@ -88,7 +77,7 @@ Reward players who want to optimize without adding combat or punitive failure.
 - Use commendations to unlock cosmetics or small non-power rewards where appropriate.
 - Add long-term goals without turning the cozy loop into a high-pressure score attack.
 
-### 8. Front-door presentation and Discovery depth
+### 7. Front-door presentation and Discovery depth
 
 Improve first impression and collection motivation.
 
