@@ -7,19 +7,21 @@
     "accent": "#72d7ff"
   },
   "visual_profile": {
-    "planet_asset": "res://assets/original/planets/blue_giant.svg",
-    "planet_scale": 1.82,
-    "planet_anchor": [
-      0.2,
-      0.23
-    ],
-    "planet_parallax": 0.045,
-    "planet_rotation_speed": -0.005,
     "atmosphere_color": "#91dfff",
     "atmosphere_strength": 0.58,
     "shimmer_strength": 0.15,
     "traffic_count": 3,
-    "dust_density": 1.45
+    "dust_density": 1.45,
+    "primary_asset": "res://assets/original/planets/blue_giant.svg",
+    "primary_scale": 1.82,
+    "primary_anchor": [
+      0.2,
+      0.23
+    ],
+    "primary_parallax": 0.045,
+    "primary_rotation_speed": -0.005,
+    "horizon_style": "nebula",
+    "horizon_intensity": 0.82
   },
   "environment": {
     "salvage_mass_multiplier": 0.94,

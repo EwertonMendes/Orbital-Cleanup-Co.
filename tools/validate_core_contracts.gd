@@ -407,12 +407,17 @@ func _validate_environment_fields() -> void:
 	)
 	visibility.free()
 
-	for biome_id in ["earth_orbit", "lunar_belt", "mars_freight", "blue_nebula"]:
+	var biome_ids := registry.list_biome_ids()
+	_expect(biome_ids.size() >= 4, "Biome registry must enumerate authored destinations.")
+	var primary_assets := {}
+	for biome_id in biome_ids:
 		var biome := registry.get_biome(biome_id)
 		var visual := biome["visual_profile"] as Dictionary
-		var asset_path := String(visual["planet_asset"])
-		_expect(asset_path.begins_with("res://assets/original/planets/"), "Biome must use project-owned planet art: %s" % biome_id)
-		_expect(load(asset_path) is Texture2D, "Biome planet asset must import as Texture2D: %s" % biome_id)
+		var asset_path := String(visual["primary_asset"])
+		_expect(asset_path.begins_with("res://assets/original/"), "Biome must use project-owned primary art: %s" % biome_id)
+		_expect(load(asset_path) is Texture2D, "Biome primary asset must import as Texture2D: %s" % biome_id)
+		_expect(not primary_assets.has(asset_path), "Every biome requires its own primary visual asset: %s" % biome_id)
+		primary_assets[asset_path] = true
 
 func _environment_kind_set(plan: Dictionary) -> Dictionary:
 	var output := {}

@@ -7,19 +7,21 @@
     "accent": "#f28b54"
   },
   "visual_profile": {
-    "planet_asset": "res://assets/original/planets/mars_freight.svg",
-    "planet_scale": 2.2,
-    "planet_anchor": [
-      0.81,
-      0.74
-    ],
-    "planet_parallax": 0.06,
-    "planet_rotation_speed": 0.0045,
     "atmosphere_color": "#ff9c63",
     "atmosphere_strength": 0.4,
     "shimmer_strength": 0.08,
     "traffic_count": 8,
-    "dust_density": 1.15
+    "dust_density": 1.15,
+    "primary_asset": "res://assets/original/planets/mars_freight.svg",
+    "primary_scale": 2.2,
+    "primary_anchor": [
+      0.81,
+      0.74
+    ],
+    "primary_parallax": 0.06,
+    "primary_rotation_speed": 0.0045,
+    "horizon_style": "dust",
+    "horizon_intensity": 0.72
   },
   "environment": {
     "salvage_mass_multiplier": 1.22,

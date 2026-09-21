@@ -11,11 +11,11 @@ var _accent_color := Color("#53d7f1")
 var _biome_id := ""
 var _visual_profile: Dictionary = {}
 var _star_field: MultiMeshInstance2D
-var _planet: Sprite2D
-var _planet_material: ShaderMaterial
+var _primary_visual: Sprite2D
+var _primary_material: ShaderMaterial
 var _camera_origin := Vector2.ZERO
 var _camera_origin_set := false
-var _planet_rotation_speed := 0.0
+var _primary_rotation_speed := 0.0
 
 func configure(
 	play_bounds: Rect2,
@@ -32,19 +32,19 @@ func configure(
 	_visual_profile = visual_profile.duplicate(true)
 	RenderingServer.set_default_clear_color(_background_color)
 	if is_inside_tree():
-		_rebuild_planet()
+		_rebuild_primary_visual()
 	queue_redraw()
 
 func _ready() -> void:
 	_build_star_multimesh()
-	_rebuild_planet()
+	_rebuild_primary_visual()
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	_update_planet_parallax()
-	if _planet != null and is_instance_valid(_planet):
-		_planet.rotation = wrapf(
-			_planet.rotation + _planet_rotation_speed * delta,
+	_update_primary_parallax()
+	if _primary_visual != null and is_instance_valid(_primary_visual):
+		_primary_visual.rotation = wrapf(
+			_primary_visual.rotation + _primary_rotation_speed * delta,
 			-PI,
 			PI
 		)
@@ -107,26 +107,51 @@ func _build_star_multimesh() -> void:
 	add_child(_star_field)
 
 func _draw_biome_horizon() -> void:
-	match _biome_id:
-		"earth_orbit":
-			_draw_soft_cloud(Vector2(1200.0, 820.0), 1750.0, Color("#197aa7"), 0.07)
-		"lunar_belt":
+	var style := String(_visual_profile.get("horizon_style", "clear"))
+	var intensity := clampf(float(_visual_profile.get("horizon_intensity", 0.6)), 0.0, 1.0)
+	match style:
+		"orbit":
+			_draw_soft_cloud(Vector2(1200.0, 820.0), 1750.0, _accent_color, 0.08 * intensity)
+			draw_arc(Vector2(-900.0, 420.0), 1500.0, 3.3, 5.7, 90, Color(_accent_color, 0.06 * intensity), 1.2, true)
+		"rings":
 			for index in range(5):
 				var radius := 680.0 + index * 260.0
-				draw_arc(Vector2(-1200.0, 500.0), radius, 3.5, 5.6, 72, Color(_accent_color, 0.025), 1.0, true)
-		"mars_freight":
-			_draw_soft_cloud(Vector2(1300.0, 760.0), 2100.0, Color("#8b3d29"), 0.12)
+				draw_arc(Vector2(-1200.0, 500.0), radius, 3.5, 5.6, 72, Color(_accent_color, (0.02 + index * 0.004) * intensity), 1.0, true)
+		"dust":
+			_draw_soft_cloud(Vector2(1300.0, 760.0), 2100.0, _nebula_color, 0.14 * intensity)
 			for index in range(5):
 				var y := -1200.0 + index * 620.0
-				draw_line(Vector2(-5200.0, y), Vector2(5200.0, y + 520.0), Color("#f28b54", 0.035), 18.0, true)
-		"blue_nebula":
-			_draw_soft_cloud(Vector2(520.0, -180.0), 1550.0, _accent_color, 0.23)
-			_draw_soft_cloud(Vector2(-820.0, 580.0), 1250.0, Color("#7f65d8"), 0.13)
-			_draw_soft_cloud(Vector2(2300.0, -1300.0), 1650.0, Color("#325fc7"), 0.10)
+				draw_line(Vector2(-5200.0, y), Vector2(5200.0, y + 520.0), Color(_accent_color, 0.03 * intensity), 18.0, true)
+		"nebula":
+			_draw_soft_cloud(Vector2(520.0, -180.0), 1550.0, _accent_color, 0.24 * intensity)
+			_draw_soft_cloud(Vector2(-820.0, 580.0), 1250.0, _nebula_color, 0.16 * intensity)
+			_draw_soft_cloud(Vector2(2300.0, -1300.0), 1650.0, _accent_color, 0.09 * intensity)
+		"solar":
+			_draw_soft_cloud(Vector2(1700.0, 250.0), 1900.0, _accent_color, 0.12 * intensity)
+			for index in range(4):
+				draw_arc(Vector2(900.0, 120.0), 900.0 + index * 290.0, 2.8, 5.9, 96, Color(_accent_color, 0.045 * intensity), 2.0, true)
+		"gas":
+			_draw_soft_cloud(Vector2(1500.0, 700.0), 2300.0, _nebula_color, 0.13 * intensity)
+			for index in range(4):
+				var y := -900.0 + index * 580.0
+				draw_line(Vector2(-4400.0, y), Vector2(4500.0, y + 210.0), Color(_accent_color, 0.025 * intensity), 24.0, true)
+		"ice":
+			_draw_soft_cloud(Vector2(-1300.0, 400.0), 1800.0, _accent_color, 0.09 * intensity)
+			for index in range(4):
+				draw_arc(Vector2(1000.0, 500.0), 700.0 + index * 310.0, 3.1, 5.4, 72, Color(_accent_color, 0.035 * intensity), 1.5, true)
+		"industrial":
+			for index in range(7):
+				var x := -4200.0 + index * 1400.0
+				draw_line(Vector2(x, -2600.0), Vector2(x + 800.0, 2600.0), Color(_accent_color, 0.025 * intensity), 2.0, true)
+			_draw_soft_cloud(Vector2(1800.0, -900.0), 1300.0, _nebula_color, 0.08 * intensity)
+		"anomaly":
+			_draw_soft_cloud(Vector2(0.0, 0.0), 1700.0, _nebula_color, 0.18 * intensity)
+			for index in range(4):
+				draw_arc(Vector2.ZERO, 900.0 + index * 430.0, 0.0, TAU, 96, Color(_accent_color, 0.025 * intensity), 1.5, true)
 		_:
 			pass
 
-func _draw_planet_horizon(
+func _draw_primary_horizon(
 	center: Vector2,
 	radius: float,
 	body_color: Color,
@@ -154,30 +179,30 @@ func _draw_glint(position: Vector2, size: float, color: Color) -> void:
 	draw_line(position - Vector2(0, size), position + Vector2(0, size), color, 1.2, true)
 	draw_circle(position, 2.0, Color(color, minf(color.a + 0.22, 1.0)))
 
-func _rebuild_planet() -> void:
-	if _planet != null and is_instance_valid(_planet):
-		_planet.queue_free()
-	_planet = null
-	_planet_material = null
+func _rebuild_primary_visual() -> void:
+	if _primary_visual != null and is_instance_valid(_primary_visual):
+		_primary_visual.queue_free()
+	_primary_visual = null
+	_primary_material = null
 	_camera_origin_set = false
 	if _visual_profile.is_empty():
 		return
 
-	var asset_path := String(_visual_profile.get("planet_asset", ""))
+	var asset_path := String(_visual_profile.get("primary_asset", ""))
 	var texture := load(asset_path) as Texture2D
-	assert(texture != null, "Biome planet asset must load: %s" % asset_path)
+	assert(texture != null, "Biome primary asset must load: %s" % asset_path)
 
-	_planet = Sprite2D.new()
-	_planet.texture = texture
-	_planet.centered = true
-	_planet.z_index = 1
-	_planet_rotation_speed = float(_visual_profile.get("planet_rotation_speed", 0.006))
-	_planet.material = null
-	add_child(_planet)
-	_update_planet_parallax()
+	_primary_visual = Sprite2D.new()
+	_primary_visual.texture = texture
+	_primary_visual.centered = true
+	_primary_visual.z_index = 1
+	_primary_rotation_speed = float(_visual_profile.get("primary_rotation_speed", 0.006))
+	_primary_visual.material = null
+	add_child(_primary_visual)
+	_update_primary_parallax()
 
-func _update_planet_parallax() -> void:
-	if _planet == null or not is_instance_valid(_planet):
+func _update_primary_parallax() -> void:
+	if _primary_visual == null or not is_instance_valid(_primary_visual):
 		return
 	var camera := get_viewport().get_camera_2d()
 	if camera == null:
@@ -187,16 +212,16 @@ func _update_planet_parallax() -> void:
 		_camera_origin_set = true
 
 	var viewport_size := get_viewport_rect().size
-	var anchor_data := _visual_profile.get("planet_anchor", [0.8, 0.75]) as Array
+	var anchor_data := _visual_profile.get("primary_anchor", [0.8, 0.75]) as Array
 	var anchor := Vector2(float(anchor_data[0]), float(anchor_data[1]))
 	var screen_offset := (anchor - Vector2(0.5, 0.5)) * viewport_size
-	var parallax := float(_visual_profile.get("planet_parallax", 0.06))
+	var parallax := float(_visual_profile.get("primary_parallax", 0.06))
 	var camera_delta := camera.global_position - _camera_origin
-	_planet.global_position = camera.global_position + screen_offset - camera_delta * parallax
+	_primary_visual.global_position = camera.global_position + screen_offset - camera_delta * parallax
 
-	var base_scale := float(_visual_profile.get("planet_scale", 2.0))
+	var base_scale := float(_visual_profile.get("primary_scale", 2.0))
 	var compact_scale := 0.72 if viewport_size.x < 700.0 else 1.0
-	_planet.scale = Vector2.ONE * base_scale * compact_scale
+	_primary_visual.scale = Vector2.ONE * base_scale * compact_scale
 
 func _draw_perimeter() -> void:
 	var outer := _play_bounds
