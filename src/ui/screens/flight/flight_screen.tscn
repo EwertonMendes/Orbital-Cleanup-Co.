@@ -266,6 +266,7 @@ theme_override_constants/separation = 10
 vertical = false
 
 [node name="MissionCard" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(410, 112)
 layout_mode = 2
 theme_override_styles/panel = SubResource("MissionPanel")
@@ -368,6 +369,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="CargoCard" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 88)
 layout_mode = 2
 theme_override_styles/panel = SubResource("CargoPanel")
