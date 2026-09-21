@@ -265,6 +265,7 @@ def validate_visual_foundation() -> None:
     operations_source = (ROOT / "src" / "ui" / "screens" / "operations" / "operations_screen.gd").read_text(encoding="utf-8")
     flight = (ROOT / "src" / "ui" / "screens" / "flight" / "flight_screen.tscn").read_text(encoding="utf-8")
     operations_theme = (ROOT / "src" / "ui" / "themes" / "occ_operations_theme.tres").read_text(encoding="utf-8")
+    flight_theme = (ROOT / "src" / "ui" / "themes" / "occ_flight_hud_theme.tres").read_text(encoding="utf-8")
     cursor_skin = (ROOT / "src" / "ui" / "themes" / "occ_cursor_skin.gd").read_text(encoding="utf-8")
 
     if "occ_operations_theme.tres" not in operations:
@@ -275,7 +276,8 @@ def validate_visual_foundation() -> None:
         fail("Operations theme must not redraw the selected Kenney kit as generic flat Godot chrome")
 
     required_kenney_markers = (
-        "Extra/Double/button_rectangle_depth.png",
+        "Extra/Double/bar_shadow_round_large.png",
+        "Yellow/Double/bar_round_gloss_large.png",
         "Extra/Double/panel_rectangle_screws.png",
         "Extra/Double/panel_glass.png",
         "Extra/Double/bar_shadow_round_outline_large.png",
@@ -291,8 +293,12 @@ def validate_visual_foundation() -> None:
         fail("Operations tab changes must use the contained warp-style transition")
     if "button_square_header_blade_rectangle" in operations_theme:
         fail("Operations buttons must use neutral Kenney chrome; colored header blades are not allowed")
-    if 'Button/styles/pressed = SubResource("ButtonDepth")' not in operations_theme:
+    if 'Button/styles/pressed = SubResource("ButtonDark")' not in operations_theme:
         fail("Kenney buttons must keep one stable physical footprint across click states")
+    if 'TabButton/styles/pressed = SubResource("ButtonYellow")' not in operations_theme:
+        fail("Selected Operations tabs must use the yellow full-surface state")
+    if 'text = "-"' not in operations:
+        fail("Settings volume-down must use the supported ASCII minus glyph")
     if 'SecondaryButton/fonts/font = ExtResource("1")' not in operations_theme:
         fail("Interactive button labels must use the principal Neuropol game face")
 
@@ -329,10 +335,14 @@ def validate_visual_foundation() -> None:
 
     if "WorldPostProcess" not in flight or "AmbientMotion" not in flight or "FlightFeedback" not in flight:
         fail("Flight scene must keep reusable post-processing, ambient motion and feedback systems")
-    if "occ_operations_theme.tres" not in flight:
-        fail("Live flight HUD must use the same Kenney UI design system as Operations")
+    if "occ_flight_hud_theme.tres" not in flight:
+        fail("Live flight HUD must use its dedicated dark, game-readable theme")
     if flight.count('theme = ExtResource("4")') < 2:
-        fail("Flight HUD theme must be applied directly below CanvasLayer so Kenney styles reach HudRoot controls")
+        fail("Flight HUD theme must be applied directly below CanvasLayer so styles reach HudRoot controls")
+    if "BiomeThumbnail" not in flight:
+        fail("Flight HUD must show the current biome primary artwork instead of a stretched numeric badge")
+    if "HudActionButton" not in flight_theme or "HudDangerButton" not in flight_theme:
+        fail("Flight HUD needs compact dark Operations/abort button variants")
     if 'theme_override_styles/panel = SubResource("MissionPanel")' in flight or 'theme_override_styles/normal = SubResource("ReturnButtonNormal")' in flight:
         fail("Live flight HUD must not retain the legacy cyan flat-panel/button overrides")
 

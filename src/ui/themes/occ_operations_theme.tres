@@ -1,27 +1,39 @@
-[gd_resource type="Theme" load_steps=15 format=3]
+[gd_resource type="Theme" load_steps=17 format=3]
 
 [ext_resource type="FontFile" path="res://assets/third_party/neuropol/NEUROPOL.ttf" id="1"]
 [ext_resource type="FontFile" path="res://assets/third_party/inter/Inter[opsz,wght].ttf" id="2"]
 [ext_resource type="FontFile" path="res://assets/third_party/jetbrains_mono/JetBrainsMono[wght].ttf" id="3"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/button_rectangle_depth.png" id="4"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/panel_rectangle_screws.png" id="5"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/panel_glass.png" id="6"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/bar_shadow_round_outline_large.png" id="7"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Blue/Double/bar_round_gloss_large.png" id="8"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/bar_shadow_round_large.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Yellow/Double/bar_round_gloss_large.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/panel_rectangle_screws.png" id="6"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/panel_glass.png" id="7"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/bar_shadow_round_outline_large.png" id="8"]
+[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Blue/Double/bar_round_gloss_large.png" id="9"]
 
-[sub_resource type="StyleBoxTexture" id="ButtonDepth"]
+[sub_resource type="StyleBoxTexture" id="ButtonDark"]
 texture = ExtResource("4")
-texture_margin_left = 34.0
-texture_margin_top = 26.0
-texture_margin_right = 34.0
-texture_margin_bottom = 30.0
-content_margin_left = 18.0
-content_margin_top = 11.0
-content_margin_right = 18.0
-content_margin_bottom = 13.0
+texture_margin_left = 28.0
+texture_margin_top = 14.0
+texture_margin_right = 28.0
+texture_margin_bottom = 14.0
+content_margin_left = 16.0
+content_margin_top = 9.0
+content_margin_right = 16.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonYellow"]
+texture = ExtResource("5")
+texture_margin_left = 28.0
+texture_margin_top = 14.0
+texture_margin_right = 28.0
+texture_margin_bottom = 14.0
+content_margin_left = 16.0
+content_margin_top = 9.0
+content_margin_right = 16.0
+content_margin_bottom = 9.0
 
 [sub_resource type="StyleBoxTexture" id="ConsolePanel"]
-texture = ExtResource("5")
+texture = ExtResource("6")
 texture_margin_left = 28.0
 texture_margin_top = 28.0
 texture_margin_right = 28.0
@@ -32,7 +44,7 @@ content_margin_right = 22.0
 content_margin_bottom = 22.0
 
 [sub_resource type="StyleBoxTexture" id="GlassPanel"]
-texture = ExtResource("6")
+texture = ExtResource("7")
 texture_margin_left = 24.0
 texture_margin_top = 24.0
 texture_margin_right = 24.0
@@ -43,14 +55,14 @@ content_margin_right = 18.0
 content_margin_bottom = 18.0
 
 [sub_resource type="StyleBoxTexture" id="ProgressBackground"]
-texture = ExtResource("7")
+texture = ExtResource("8")
 texture_margin_left = 22.0
 texture_margin_top = 14.0
 texture_margin_right = 22.0
 texture_margin_bottom = 14.0
 
 [sub_resource type="StyleBoxTexture" id="ProgressFill"]
-texture = ExtResource("8")
+texture = ExtResource("9")
 texture_margin_left = 22.0
 texture_margin_top = 14.0
 texture_margin_right = 22.0
@@ -62,20 +74,20 @@ texture_margin_bottom = 14.0
 default_font = ExtResource("2")
 default_font_size = 15
 Label/fonts/font = ExtResource("2")
-Label/colors/font_color = Color(0.29, 0.31, 0.36, 1)
+Label/colors/font_color = Color(0.17, 0.19, 0.23, 1)
 
 Button/fonts/font = ExtResource("1")
-Button/font_sizes/font_size = 13
-Button/colors/font_color = Color(0.24, 0.26, 0.31, 1)
-Button/colors/font_hover_color = Color(0.16, 0.19, 0.23, 1)
-Button/colors/font_pressed_color = Color(0.16, 0.19, 0.23, 1)
-Button/colors/font_hover_pressed_color = Color(0.16, 0.19, 0.23, 1)
-Button/colors/font_disabled_color = Color(0.47, 0.49, 0.54, 0.72)
-Button/styles/normal = SubResource("ButtonDepth")
-Button/styles/hover = SubResource("ButtonDepth")
-Button/styles/pressed = SubResource("ButtonDepth")
-Button/styles/hover_pressed = SubResource("ButtonDepth")
-Button/styles/disabled = SubResource("ButtonDepth")
+Button/font_sizes/font_size = 12
+Button/colors/font_color = Color(0.88, 0.91, 0.94, 1)
+Button/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+Button/colors/font_pressed_color = Color(0.88, 0.91, 0.94, 1)
+Button/colors/font_hover_pressed_color = Color(0.88, 0.91, 0.94, 1)
+Button/colors/font_disabled_color = Color(0.55, 0.58, 0.62, 0.75)
+Button/styles/normal = SubResource("ButtonDark")
+Button/styles/hover = SubResource("ButtonDark")
+Button/styles/pressed = SubResource("ButtonDark")
+Button/styles/hover_pressed = SubResource("ButtonDark")
+Button/styles/disabled = SubResource("ButtonDark")
 Button/styles/focus = SubResource("EmptyFocus")
 
 PanelContainer/styles/panel = SubResource("ConsolePanel")
@@ -85,101 +97,125 @@ ProgressBar/styles/fill = SubResource("ProgressFill")
 DisplayLabel/base_type = &"Label"
 DisplayLabel/fonts/font = ExtResource("1")
 DisplayLabel/font_sizes/font_size = 26
-DisplayLabel/colors/font_color = Color(0.18, 0.22, 0.28, 1)
+DisplayLabel/colors/font_color = Color(0.12, 0.15, 0.20, 1)
 
 ScreenTitle/base_type = &"Label"
 ScreenTitle/fonts/font = ExtResource("1")
 ScreenTitle/font_sizes/font_size = 20
-ScreenTitle/colors/font_color = Color(0.18, 0.22, 0.28, 1)
+ScreenTitle/colors/font_color = Color(0.12, 0.15, 0.20, 1)
 
 SectionTitle/base_type = &"Label"
 SectionTitle/fonts/font = ExtResource("2")
 SectionTitle/font_sizes/font_size = 17
-SectionTitle/colors/font_color = Color(0.24, 0.27, 0.32, 1)
+SectionTitle/colors/font_color = Color(0.17, 0.19, 0.23, 1)
 
 UiBody/base_type = &"Label"
 UiBody/fonts/font = ExtResource("2")
 UiBody/font_sizes/font_size = 13
-UiBody/colors/font_color = Color(0.32, 0.34, 0.39, 1)
+UiBody/colors/font_color = Color(0.20, 0.22, 0.26, 1)
 
 UiBodyMuted/base_type = &"Label"
 UiBodyMuted/fonts/font = ExtResource("2")
 UiBodyMuted/font_sizes/font_size = 12
-UiBodyMuted/colors/font_color = Color(0.43, 0.45, 0.50, 1)
+UiBodyMuted/colors/font_color = Color(0.29, 0.32, 0.37, 1)
 
 TelemetryLabel/base_type = &"Label"
 TelemetryLabel/fonts/font = ExtResource("3")
 TelemetryLabel/font_sizes/font_size = 10
-TelemetryLabel/colors/font_color = Color(0.35, 0.40, 0.46, 1)
+TelemetryLabel/colors/font_color = Color(0.27, 0.30, 0.35, 1)
 
 ValueLabel/base_type = &"Label"
 ValueLabel/fonts/font = ExtResource("3")
 ValueLabel/font_sizes/font_size = 12
-ValueLabel/colors/font_color = Color(0.24, 0.28, 0.34, 1)
+ValueLabel/colors/font_color = Color(0.16, 0.19, 0.23, 1)
 
 RarityLabel/base_type = &"Label"
 RarityLabel/fonts/font = ExtResource("2")
 RarityLabel/font_sizes/font_size = 10
-RarityLabel/colors/font_color = Color(0.27, 0.29, 0.34, 1)
+RarityLabel/colors/font_color = Color(0.20, 0.22, 0.26, 1)
 
 PrimaryButton/base_type = &"Button"
 PrimaryButton/fonts/font = ExtResource("1")
-PrimaryButton/font_sizes/font_size = 13
-PrimaryButton/styles/normal = SubResource("ButtonDepth")
-PrimaryButton/styles/hover = SubResource("ButtonDepth")
-PrimaryButton/styles/pressed = SubResource("ButtonDepth")
-PrimaryButton/styles/hover_pressed = SubResource("ButtonDepth")
-PrimaryButton/styles/disabled = SubResource("ButtonDepth")
+PrimaryButton/font_sizes/font_size = 12
+PrimaryButton/colors/font_color = Color(0.08, 0.09, 0.11, 1)
+PrimaryButton/colors/font_hover_color = Color(0.04, 0.05, 0.07, 1)
+PrimaryButton/colors/font_pressed_color = Color(0.08, 0.09, 0.11, 1)
+PrimaryButton/colors/font_hover_pressed_color = Color(0.08, 0.09, 0.11, 1)
+PrimaryButton/styles/normal = SubResource("ButtonYellow")
+PrimaryButton/styles/hover = SubResource("ButtonYellow")
+PrimaryButton/styles/pressed = SubResource("ButtonYellow")
+PrimaryButton/styles/hover_pressed = SubResource("ButtonYellow")
+PrimaryButton/styles/disabled = SubResource("ButtonDark")
 PrimaryButton/styles/focus = SubResource("EmptyFocus")
 
 SecondaryButton/base_type = &"Button"
 SecondaryButton/fonts/font = ExtResource("1")
-SecondaryButton/font_sizes/font_size = 13
-SecondaryButton/styles/normal = SubResource("ButtonDepth")
-SecondaryButton/styles/hover = SubResource("ButtonDepth")
-SecondaryButton/styles/pressed = SubResource("ButtonDepth")
-SecondaryButton/styles/hover_pressed = SubResource("ButtonDepth")
-SecondaryButton/styles/disabled = SubResource("ButtonDepth")
+SecondaryButton/font_sizes/font_size = 12
+SecondaryButton/colors/font_color = Color(0.88, 0.91, 0.94, 1)
+SecondaryButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+SecondaryButton/colors/font_pressed_color = Color(0.88, 0.91, 0.94, 1)
+SecondaryButton/colors/font_hover_pressed_color = Color(0.88, 0.91, 0.94, 1)
+SecondaryButton/styles/normal = SubResource("ButtonDark")
+SecondaryButton/styles/hover = SubResource("ButtonDark")
+SecondaryButton/styles/pressed = SubResource("ButtonDark")
+SecondaryButton/styles/hover_pressed = SubResource("ButtonDark")
+SecondaryButton/styles/disabled = SubResource("ButtonDark")
 SecondaryButton/styles/focus = SubResource("EmptyFocus")
 
 TabButton/base_type = &"Button"
 TabButton/fonts/font = ExtResource("1")
 TabButton/font_sizes/font_size = 12
-TabButton/styles/normal = SubResource("ButtonDepth")
-TabButton/styles/hover = SubResource("ButtonDepth")
-TabButton/styles/pressed = SubResource("ButtonDepth")
-TabButton/styles/hover_pressed = SubResource("ButtonDepth")
-TabButton/styles/disabled = SubResource("ButtonDepth")
+TabButton/colors/font_color = Color(0.86, 0.90, 0.93, 1)
+TabButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+TabButton/colors/font_pressed_color = Color(0.06, 0.07, 0.09, 1)
+TabButton/colors/font_hover_pressed_color = Color(0.06, 0.07, 0.09, 1)
+TabButton/styles/normal = SubResource("ButtonDark")
+TabButton/styles/hover = SubResource("ButtonDark")
+TabButton/styles/pressed = SubResource("ButtonYellow")
+TabButton/styles/hover_pressed = SubResource("ButtonYellow")
+TabButton/styles/disabled = SubResource("ButtonDark")
 TabButton/styles/focus = SubResource("EmptyFocus")
 
 UtilityButton/base_type = &"Button"
 UtilityButton/fonts/font = ExtResource("1")
-UtilityButton/font_sizes/font_size = 12
-UtilityButton/styles/normal = SubResource("ButtonDepth")
-UtilityButton/styles/hover = SubResource("ButtonDepth")
-UtilityButton/styles/pressed = SubResource("ButtonDepth")
-UtilityButton/styles/hover_pressed = SubResource("ButtonDepth")
-UtilityButton/styles/disabled = SubResource("ButtonDepth")
+UtilityButton/font_sizes/font_size = 11
+UtilityButton/colors/font_color = Color(0.86, 0.90, 0.93, 1)
+UtilityButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+UtilityButton/colors/font_pressed_color = Color(0.86, 0.90, 0.93, 1)
+UtilityButton/colors/font_hover_pressed_color = Color(0.86, 0.90, 0.93, 1)
+UtilityButton/styles/normal = SubResource("ButtonDark")
+UtilityButton/styles/hover = SubResource("ButtonDark")
+UtilityButton/styles/pressed = SubResource("ButtonDark")
+UtilityButton/styles/hover_pressed = SubResource("ButtonDark")
+UtilityButton/styles/disabled = SubResource("ButtonDark")
 UtilityButton/styles/focus = SubResource("EmptyFocus")
 
 DangerButton/base_type = &"Button"
 DangerButton/fonts/font = ExtResource("1")
-DangerButton/font_sizes/font_size = 12
-DangerButton/styles/normal = SubResource("ButtonDepth")
-DangerButton/styles/hover = SubResource("ButtonDepth")
-DangerButton/styles/pressed = SubResource("ButtonDepth")
-DangerButton/styles/hover_pressed = SubResource("ButtonDepth")
-DangerButton/styles/disabled = SubResource("ButtonDepth")
+DangerButton/font_sizes/font_size = 11
+DangerButton/colors/font_color = Color(1, 0.58, 0.62, 1)
+DangerButton/colors/font_hover_color = Color(1, 0.78, 0.80, 1)
+DangerButton/colors/font_pressed_color = Color(1, 0.58, 0.62, 1)
+DangerButton/colors/font_hover_pressed_color = Color(1, 0.58, 0.62, 1)
+DangerButton/styles/normal = SubResource("ButtonDark")
+DangerButton/styles/hover = SubResource("ButtonDark")
+DangerButton/styles/pressed = SubResource("ButtonDark")
+DangerButton/styles/hover_pressed = SubResource("ButtonDark")
+DangerButton/styles/disabled = SubResource("ButtonDark")
 DangerButton/styles/focus = SubResource("EmptyFocus")
 
 SettingsButton/base_type = &"Button"
 SettingsButton/fonts/font = ExtResource("1")
-SettingsButton/font_sizes/font_size = 12
-SettingsButton/styles/normal = SubResource("ButtonDepth")
-SettingsButton/styles/hover = SubResource("ButtonDepth")
-SettingsButton/styles/pressed = SubResource("ButtonDepth")
-SettingsButton/styles/hover_pressed = SubResource("ButtonDepth")
-SettingsButton/styles/disabled = SubResource("ButtonDepth")
+SettingsButton/font_sizes/font_size = 11
+SettingsButton/colors/font_color = Color(0.86, 0.90, 0.93, 1)
+SettingsButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+SettingsButton/colors/font_pressed_color = Color(0.86, 0.90, 0.93, 1)
+SettingsButton/colors/font_hover_pressed_color = Color(0.86, 0.90, 0.93, 1)
+SettingsButton/styles/normal = SubResource("ButtonDark")
+SettingsButton/styles/hover = SubResource("ButtonDark")
+SettingsButton/styles/pressed = SubResource("ButtonDark")
+SettingsButton/styles/hover_pressed = SubResource("ButtonDark")
+SettingsButton/styles/disabled = SubResource("ButtonDark")
 SettingsButton/styles/focus = SubResource("EmptyFocus")
 
 ConsolePanel/base_type = &"PanelContainer"

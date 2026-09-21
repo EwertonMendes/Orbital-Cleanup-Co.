@@ -215,6 +215,7 @@ func _setup_tabs() -> void:
 
 func _show_tab(tab: int, instant: bool = false) -> void:
 	if _tab_transitioning:
+		_sync_tab_selection()
 		return
 	if tab == _active_tab and not instant:
 		return
@@ -227,6 +228,7 @@ func _show_tab(tab: int, instant: bool = false) -> void:
 		_active_tab = tab
 		_refresh_tab_content(tab)
 		_apply_panel_visibility(active_panel)
+		_sync_tab_selection()
 		_update_tab_visuals()
 		content_scroll.scroll_vertical = 0
 		return
@@ -237,22 +239,66 @@ func _show_tab(tab: int, instant: bool = false) -> void:
 
 	if _tab_reveal_tween != null and _tab_reveal_tween.is_valid():
 		_tab_reveal_tween.kill()
+
+	var previous_origin := previous_panel.position
 	_tab_reveal_tween = create_tween()
-	_tab_reveal_tween.tween_property(previous_panel, "modulate:a", 0.0, 0.10).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_tab_reveal_tween.set_parallel(true)
+	_tab_reveal_tween.tween_property(
+		previous_panel,
+		"position:x",
+		previous_origin.x - direction * 84.0,
+		0.18
+	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+	_tab_reveal_tween.tween_property(
+		previous_panel,
+		"modulate:a",
+		0.0,
+		0.14
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await _tab_reveal_tween.finished
+	previous_panel.position = previous_origin
 
 	_active_tab = tab
 	_refresh_tab_content(tab)
 	_apply_panel_visibility(active_panel)
 	content_scroll.scroll_vertical = 0
-	active_panel.modulate.a = 0.0
+	_sync_tab_selection()
 	_update_tab_visuals()
 
+	await get_tree().process_frame
+	var active_origin := active_panel.position
+	active_panel.position = active_origin + Vector2(direction * 96.0, 0.0)
+	active_panel.modulate = Color(0.72, 0.90, 1.0, 0.0)
+
 	_tab_reveal_tween = create_tween()
-	_tab_reveal_tween.tween_interval(0.04)
-	_tab_reveal_tween.tween_property(active_panel, "modulate:a", 1.0, 0.18).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	_tab_reveal_tween.set_parallel(true)
+	_tab_reveal_tween.tween_property(
+		active_panel,
+		"position",
+		active_origin,
+		0.24
+	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	_tab_reveal_tween.tween_property(
+		active_panel,
+		"modulate",
+		Color.WHITE,
+		0.22
+	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	await _tab_reveal_tween.finished
+	active_panel.position = active_origin
+	active_panel.modulate = Color.WHITE
 	_tab_transitioning = false
+
+func _sync_tab_selection() -> void:
+	var tabs: Array[Button] = [
+		contracts_tab,
+		upgrades_tab,
+		career_tab,
+		ship_tab,
+		discovery_tab,
+	]
+	for index in range(tabs.size()):
+		tabs[index].button_pressed = index == _active_tab
 
 func _refresh_tab_content(tab: int) -> void:
 	footer.visible = tab == Tab.CONTRACTS
@@ -289,7 +335,13 @@ func _update_tab_visuals() -> void:
 	if _tab_pulse_tween != null and _tab_pulse_tween.is_valid():
 		_tab_pulse_tween.kill()
 
-	var tabs: Array[Button] = [contracts_tab, upgrades_tab, career_tab, ship_tab, discovery_tab]
+	var tabs: Array[Button] = [
+		contracts_tab,
+		upgrades_tab,
+		career_tab,
+		ship_tab,
+		discovery_tab,
+	]
 	for button in tabs:
 		button.self_modulate = Color.WHITE
 		button.remove_theme_color_override("font_color")
@@ -303,18 +355,22 @@ func _update_tab_visuals() -> void:
 	if active_button == null:
 		return
 
-	var highlight := Color("#d7f6ff")
-	active_button.add_theme_color_override("font_color", highlight)
-	active_button.add_theme_color_override("font_hover_color", highlight)
-	active_button.add_theme_color_override("font_pressed_color", highlight)
-	active_button.add_theme_color_override("font_hover_pressed_color", highlight)
-	active_button.add_theme_color_override("font_outline_color", Color(0.20, 0.72, 0.88, 0.40))
-	active_button.add_theme_constant_override("outline_size", 1)
-	active_button.self_modulate = Color(0.72, 0.76, 0.82, 1.0)
-
+	# The pressed TabButton state owns the yellow Kenney surface. This slow
+	# modulation adds a restrained glow without changing geometry or layout.
+	active_button.self_modulate = Color(1.0, 0.98, 0.88, 1.0)
 	_tab_pulse_tween = create_tween().set_loops()
-	_tab_pulse_tween.tween_property(active_button, "self_modulate", Color(0.80, 0.83, 0.88, 1.0), 1.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_tab_pulse_tween.tween_property(active_button, "self_modulate", Color(0.72, 0.76, 0.82, 1.0), 1.55).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_tab_pulse_tween.tween_property(
+		active_button,
+		"self_modulate",
+		Color(1.0, 0.90, 0.64, 1.0),
+		1.70
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	_tab_pulse_tween.tween_property(
+		active_button,
+		"self_modulate",
+		Color(1.0, 0.98, 0.88, 1.0),
+		1.70
+	).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
@@ -956,10 +1012,8 @@ func _play_ui_click() -> void:
 	if _audio != null:
 		_audio.play_ui_click()
 
-func _on_ui_button_down(button: Button) -> void:
+func _on_ui_button_down(_button: Button) -> void:
 	OccCursorSkin.set_pressed()
-	button.self_modulate.a = 0.90
 
-func _on_ui_button_up(button: Button) -> void:
+func _on_ui_button_up(_button: Button) -> void:
 	OccCursorSkin.set_pointing()
-	button.self_modulate.a = 1.0

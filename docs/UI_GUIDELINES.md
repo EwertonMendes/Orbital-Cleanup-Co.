@@ -18,7 +18,8 @@ The interface is part of the game's identity, not a debug surface around the gam
 
 Use the shared foundations before creating screen-local styling:
 
-- `src/ui/themes/occ_operations_theme.tres` for the shared physical Kenney language used by both Operations and the live-flight HUD;
+- `src/ui/themes/occ_operations_theme.tres` for the light physical Operations console and its Kenney button/panel assets;
+- `src/ui/themes/occ_flight_hud_theme.tres` for compact dark in-flight cards and actions that preserve readability over moving space scenery;
 - `src/ui/themes/occ_theme.tres` only for remaining legacy surfaces while they are migrated;
 - `src/ui/themes/occ_cursor_skin.gd` for the original Kenney desktop cursor states;
 - screen layouts built from Containers, with `StyleBoxTexture`/NinePatch only where the source asset is designed to scale.
@@ -72,10 +73,11 @@ Operations deliberately uses the **original Kenney UI Pack - Sci-Fi visual langu
 - Keep the source pixels, colors, bevels, screws and highlights intact. Do not tint, recolor, paint over, blur or shader-modulate Kenney UI textures.
 - Use the pack's `Double` assets for resizable console chrome and preserve their corner geometry through `StyleBoxTexture` or `NinePatchRect`.
 - Use 9-slice scaling only on textures intended to form resizable buttons/panels. Decorative or cursor assets render at their native proportions.
-- Never animate scale, height or layout position on Kenney panels/buttons. Hover/click feedback may use cursor/audio/opacity, but control geometry must remain completely stable.
-- Neutral gray is the default physical button surface. Do not place colored blade/header overlays on ordinary actions.
-- The active navigation tab darkens the whole neutral button, highlights its label and uses a very slow subtle pulse; inactive tabs remain neutral.
-- The live-flight HUD uses the same original Kenney panel/button family so the game does not switch visual languages when Operations closes.
+- Never animate scale or height on Kenney panels/buttons. Control geometry must remain completely stable; menu-content transitions may slide the content panel inside a clipped viewport without moving the navigation buttons themselves.
+- Ordinary Operations buttons use a clean dark rounded Kenney bar with centered Neuropol labels. Colored blade/header overlays and screw-heavy button textures are not used for routine actions.
+- The active navigation tab uses the original full yellow Kenney bar with dark text and a very slow subtle glow pulse; inactive tabs remain dark.
+- Tab changes use a contained directional warp transition: the old content travels out, streaks cross the clipped content area, and the new content travels in.
+- The live-flight HUD deliberately uses a darker companion theme for contrast over gameplay, while keeping the same fonts, spacing discipline and Kenney-derived action language.
 - The pack's own cursor art is used for arrow, pointing and pressed states on desktop.
 - Kenney Interface Sounds provide restrained hover, click and back cues through the centralized AudioService.
 - Operations should read like a physical game console, not a corporate dashboard: one focused content area, compact vertical navigation, settings in a modal, and progression content revealed only when relevant.
@@ -96,7 +98,7 @@ The gameplay ship is a small raster source and must not be magnified casually.
 
 Preferred spacing steps are **6, 10, 14, 18, 24 and 32 px** at the 1280×720 reference viewport.
 
-- Touch/click targets should normally be at least 44–46 px tall.
+- Touch/click targets should normally be at least 44–48 px tall. Standard Operations actions use a 48 px native control height to avoid texture distortion.
 - Cards need enough internal breathing room that text does not touch their chrome.
 - Dense stat rows should be reserved for information that genuinely benefits from side-by-side comparison.
 - A smaller screen may stack sections rather than squeezing them.
@@ -113,7 +115,7 @@ The baseline viewport is 1280×720, but the UI must remain usable on Web/mobile.
 
 ## Accessibility and interaction
 
-- Maintain strong text/background contrast.
+- Maintain strong text/background contrast. Muted copy on the light Operations board must still be dark enough to read without relying on opacity.
 - Keyboard/gamepad focus must be visible.
 - Interactive elements should use appropriate pointer cursors on desktop.
 - Do not rely on color alone for important state.

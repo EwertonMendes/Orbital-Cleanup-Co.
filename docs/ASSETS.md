@@ -32,13 +32,13 @@ The repository keeps a curated subset rather than dumping complete packs.
 
 The Operations redesign imports the original UI Pack - Sci-Fi files with their upstream folder/color identity intact:
 
-- neutral `Extra/Double` raised/pressed buttons and screw/glass panels;
-- original Blue, Grey, Green, Red and Yellow header/blade variants;
-- original blue/green/yellow progress art;
+- neutral `Extra/Double` dark rounded button bars plus screw/glass panels;
+- the original Yellow rounded gloss bar for selected navigation and primary actions;
+- original blue progress art;
 - original cursor arrow, point and pressed states;
 - original colored status squares.
 
-No runtime tint or recolor is applied to these UI textures. Resizable chrome uses 9-slice geometry so corners, screws and bevels stay intact.
+No runtime recolor is baked into these UI textures. Resizable chrome uses 9-slice geometry with symmetric margins so button height stays stable, text remains centered and decorative details are never duplicated.
 
 The Interface Sounds import contains only three CC0 cues: hover/select, click/activate and back/close. One blue player ship, engine feedback, selected space props and hazards from the other Kenney packs remain as before.
 

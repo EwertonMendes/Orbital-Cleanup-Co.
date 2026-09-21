@@ -1,12 +1,10 @@
-[gd_scene load_steps=24 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
 [ext_resource type="PackedScene" path="res://src/game/ship/player_ship.tscn" id="3"]
-[ext_resource type="Theme" path="res://src/ui/themes/occ_operations_theme.tres" id="4"]
+[ext_resource type="Theme" path="res://src/ui/themes/occ_flight_hud_theme.tres" id="4"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/station_a.png" id="5"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/squareBlue.png" id="6"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Blue/Double/bar_round_gloss_large.png" id="7"]
 [ext_resource type="Script" path="res://src/game/salvage/unload_zone.gd" id="8"]
 [ext_resource type="PackedScene" path="res://src/game/sector/sector_runtime.tscn" id="9"]
 [ext_resource type="Script" path="res://src/game/visual/ambient_orbit_layer.gd" id="10"]
@@ -29,84 +27,6 @@ shader_parameter/effect_strength = 0.58
 shader_parameter/glow_strength = 0.08
 shader_parameter/grain_strength = 0.008
 shader_parameter/flash_strength = 0.0
-
-[sub_resource type="StyleBoxFlat" id="MissionPanel"]
-bg_color = Color(0.012, 0.044, 0.068, 0.94)
-border_width_left = 3
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.32, 0.83, 0.96, 0.62)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
-shadow_color = Color(0, 0, 0, 0.32)
-shadow_size = 10
-
-[sub_resource type="StyleBoxFlat" id="CargoPanel"]
-bg_color = Color(0.022, 0.062, 0.082, 0.94)
-border_width_left = 3
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 0.68, 0.28, 0.62)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.26)
-shadow_size = 8
-
-[sub_resource type="StyleBoxFlat" id="HintPanelStyle"]
-bg_color = Color(0.018, 0.052, 0.078, 0.86)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.25, 0.62, 0.74, 0.32)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-
-[sub_resource type="StyleBoxFlat" id="ToastPanelStyle"]
-bg_color = Color(0.025, 0.12, 0.13, 0.94)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.45, 0.92, 0.74, 0.72)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
-shadow_color = Color(0, 0, 0, 0.28)
-shadow_size = 7
-
-[sub_resource type="StyleBoxFlat" id="ReturnButtonNormal"]
-bg_color = Color(0.025, 0.105, 0.15, 0.98)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.3, 0.75, 0.88, 0.72)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="ReturnButtonHover"]
-bg_color = Color(0.035, 0.22, 0.28, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.45, 0.90, 1, 0.95)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
 
 [node name="FlightScreen" type="Control"]
 layout_mode = 3
@@ -262,14 +182,14 @@ theme_override_constants/separation = 10
 [node name="TopBar" type="BoxContainer" parent="HUD/HudRoot/SafeArea/Layout"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 vertical = false
 
 [node name="MissionCard" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(410, 112)
+custom_minimum_size = Vector2(390, 104)
 layout_mode = 2
-theme_type_variation = &"CardPanel"
+theme_type_variation = &"HudPanel"
 
 [node name="Margin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard"]
 layout_mode = 2
@@ -282,34 +202,25 @@ theme_override_constants/margin_bottom = 8
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Badge" type="Control" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row"]
-custom_minimum_size = Vector2(64, 64)
+[node name="BiomeThumbFrame" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row"]
+custom_minimum_size = Vector2(58, 58)
 layout_mode = 2
+theme_type_variation = &"HudThumbnailPanel"
 
-[node name="Asset" type="TextureRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Badge"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="BiomeThumbMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/BiomeThumbFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="BiomeThumbnail" type="TextureRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/BiomeThumbFrame/BiomeThumbMargin"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
 mouse_filter = 2
-texture = ExtResource("6")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="Number" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Badge"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0.91, 0.98, 1, 1)
-theme_override_font_sizes/font_size = 18
-text = "01"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="Copy" type="VBoxContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row"]
 layout_mode = 2
@@ -317,25 +228,22 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 2
 
 [node name="FlightEyebrow" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
-theme_type_variation = &"TelemetryLabel"
+theme_type_variation = &"HudEyebrow"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
 text = "TRAINING FLIGHT"
 
 [node name="FlightTitle" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
-theme_type_variation = &"SectionTitle"
+theme_type_variation = &"HudTitle"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 19
 text = "Earth Orbit · Route 01"
 autowrap_mode = 2
 
 [node name="CleanupStatus" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
-theme_type_variation = &"TelemetryLabel"
+theme_type_variation = &"HudTelemetry"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
 text = "SECTOR CLEANLINESS · 0% / 70%"
 
 [node name="CleanupProgress" type="ProgressBar" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
@@ -345,21 +253,11 @@ layout_mode = 2
 show_percentage = false
 
 [node name="EnvironmentStatus" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
-theme_type_variation = &"TelemetryLabel"
+theme_type_variation = &"HudTelemetry"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
 text = "ENVIRONMENT · STABLE ORBIT"
 clip_text = true
-
-[node name="Accent" type="TextureRect" parent="HUD/HudRoot/SafeArea/Layout/TopBar/MissionCard/Margin/Row/Copy"]
-custom_minimum_size = Vector2(64, 16)
-layout_mode = 2
-size_flags_horizontal = 0
-mouse_filter = 2
-texture = ExtResource("7")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="TopSpacer" type="Control" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
 layout_mode = 2
@@ -367,9 +265,9 @@ size_flags_horizontal = 3
 
 [node name="CargoCard" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 88)
+custom_minimum_size = Vector2(210, 80)
 layout_mode = 2
-theme_type_variation = &"CardPanel"
+theme_type_variation = &"HudPanel"
 
 [node name="CargoMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard"]
 layout_mode = 2
@@ -383,16 +281,15 @@ layout_mode = 2
 theme_override_constants/separation = 5
 
 [node name="CargoLabel" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard/CargoMargin/CargoContent"]
-theme_type_variation = &"SectionTitle"
+theme_type_variation = &"HudTitleSmall"
 unique_name_in_owner = true
 layout_mode = 2
 text = "CARGO · 0 / 12"
 
 [node name="BeamStatus" type="Label" parent="HUD/HudRoot/SafeArea/Layout/TopBar/CargoCard/CargoMargin/CargoContent"]
-theme_type_variation = &"TelemetryLabel"
+theme_type_variation = &"HudTelemetry"
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 11
 text = "TRACTOR · SCANNING"
 clip_text = true
 
@@ -403,16 +300,16 @@ layout_mode = 2
 show_percentage = false
 
 [node name="ReturnButton" type="Button" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
-theme_type_variation = &"SecondaryButton"
+theme_type_variation = &"HudDangerButton"
 unique_name_in_owner = true
-custom_minimum_size = Vector2(176, 54)
+custom_minimum_size = Vector2(150, 44)
 layout_mode = 2
 text = "RETURN"
 
 [node name="OperationsButton" type="Button" parent="HUD/HudRoot/SafeArea/Layout/TopBar"]
-theme_type_variation = &"SecondaryButton"
+theme_type_variation = &"HudActionButton"
 unique_name_in_owner = true
-custom_minimum_size = Vector2(156, 54)
+custom_minimum_size = Vector2(126, 44)
 layout_mode = 2
 text = "OPERATIONS"
 
@@ -428,7 +325,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(390, 42)
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = &"CardPanel"
+theme_type_variation = &"HudSoftPanel"
 
 [node name="ToastMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/ToastCenter/ToastPanel"]
 layout_mode = 2
@@ -438,7 +335,7 @@ theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 7
 
 [node name="ToastLabel" type="Label" parent="HUD/HudRoot/SafeArea/Layout/ToastCenter/ToastPanel/ToastMargin"]
-theme_type_variation = &"UiBody"
+theme_type_variation = &"HudBody"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
@@ -454,7 +351,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(520, 60)
 layout_mode = 2
 mouse_filter = 2
-theme_type_variation = &"CardPanel"
+theme_type_variation = &"HudSoftPanel"
 
 [node name="HintMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/HintCenter/HintPanel"]
 layout_mode = 2
@@ -464,7 +361,7 @@ theme_override_constants/margin_right = 18
 theme_override_constants/margin_bottom = 8
 
 [node name="HintLabel" type="Label" parent="HUD/HudRoot/SafeArea/Layout/HintCenter/HintPanel/HintMargin"]
-theme_type_variation = &"UiBodyMuted"
+theme_type_variation = &"HudBody"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 12

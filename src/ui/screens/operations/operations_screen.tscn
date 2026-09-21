@@ -166,7 +166,7 @@ columns = 1
 
 [node name="ContractsTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 54)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -174,7 +174,7 @@ text = "CONTRACTS"
 
 [node name="UpgradesTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 54)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -182,7 +182,7 @@ text = "UPGRADES"
 
 [node name="CareerTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 54)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -190,7 +190,7 @@ text = "CAREER"
 
 [node name="ShipTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 54)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -199,7 +199,7 @@ text = "SHIP"
 [node name="DiscoveryTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(160, 54)
+custom_minimum_size = Vector2(160, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -214,6 +214,7 @@ theme_override_constants/separation = 10
 [node name="ContentScroll" type="ScrollContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn"]
 unique_name_in_owner = true
 layout_mode = 2
+clip_contents = true
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
@@ -273,7 +274,7 @@ columns = 4
 
 [node name="PreviousContract" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentScroll/ContentShell/ContractsPanel/ContractSelector"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 46)
+custom_minimum_size = Vector2(120, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SecondaryButton"
@@ -290,7 +291,7 @@ vertical_alignment = 1
 
 [node name="NextContract" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentScroll/ContentShell/ContractsPanel/ContractSelector"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 46)
+custom_minimum_size = Vector2(120, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SecondaryButton"
@@ -299,7 +300,7 @@ text = "NEXT"
 [node name="EndlessContract" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentScroll/ContentShell/ContractsPanel/ContractSelector"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(126, 46)
+custom_minimum_size = Vector2(126, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SecondaryButton"
@@ -805,7 +806,7 @@ size_flags_horizontal = 3
 
 [node name="PrimaryAction" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/Footer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(260, 58)
+custom_minimum_size = Vector2(260, 48)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
 text = "START CONTRACT"
@@ -919,7 +920,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(72, 48)
 layout_mode = 2
 theme_type_variation = &"SecondaryButton"
-text = "−"
+text = "-"
 
 [node name="VolumeValue" type="Label" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout/VolumeRow"]
 unique_name_in_owner = true
@@ -943,7 +944,7 @@ size_flags_vertical = 3
 
 [node name="SettingsClose" type="Button" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_type_variation = &"PrimaryButton"
 text = "DONE"

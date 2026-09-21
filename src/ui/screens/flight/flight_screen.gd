@@ -25,6 +25,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var environment_status: Label = %EnvironmentStatus
 @onready var depot_navigation: DepotNavigationGuide = %DepotNavigationGuide
 @onready var mission_card: PanelContainer = %MissionCard
+@onready var biome_thumbnail: TextureRect = %BiomeThumbnail
 @onready var cargo_card: PanelContainer = %CargoCard
 @onready var operations_button: Button = %OperationsButton
 @onready var operations_overlay_host: Control = %OperationsOverlayHost
@@ -48,6 +49,7 @@ var _configured_sector_id := DEFAULT_SECTOR_ID
 var _contract_active := true
 var _operations_overlay: Control
 var _travel_in_progress := false
+var _biome_thumbnail_tween: Tween
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -176,6 +178,7 @@ func _ready() -> void:
 	cleanup_progress.value = 0.0
 	_apply_responsive_layout()
 	_refresh_copy()
+	_refresh_biome_thumbnail()
 	_refresh_cleanup()
 	_on_cargo_changed(player_ship.get_cargo_used(), player_ship.get_cargo_capacity())
 
@@ -269,7 +272,7 @@ func _validate_contracts() -> void:
 	assert(flight_feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(environment_runtime != null and environment_status != null, "FlightScreen requires biome environment feedback.")
 	assert(depot_navigation != null, "FlightScreen requires contextual depot navigation.")
-	assert(mission_card != null and cargo_card != null, "FlightScreen requires compact flight cards.")
+	assert(mission_card != null and cargo_card != null and biome_thumbnail != null, "FlightScreen requires compact flight cards and biome thumbnail.")
 	assert(operations_button != null and operations_overlay_host != null, "FlightScreen requires floating operations access.")
 	assert(warp_transition != null, "FlightScreen requires reusable warp travel transition.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
@@ -288,6 +291,39 @@ func _apply_responsive_layout() -> void:
 
 	hint_panel.custom_minimum_size.x = 300.0 if compact else 500.0
 	toast_panel.custom_minimum_size.x = 280.0 if compact else 390.0
+
+func _refresh_biome_thumbnail() -> void:
+	var visual_profile := sector_runtime.get_biome_visual_profile()
+	var asset_path := String(visual_profile.get("primary_asset", ""))
+	if asset_path.is_empty():
+		biome_thumbnail.visible = false
+		return
+
+	var texture := load(asset_path) as Texture2D
+	if texture == null:
+		push_warning("Flight HUD could not load biome thumbnail: %s" % asset_path)
+		biome_thumbnail.visible = false
+		return
+
+	biome_thumbnail.texture = texture
+	biome_thumbnail.visible = true
+	call_deferred("_start_biome_thumbnail_motion")
+
+func _start_biome_thumbnail_motion() -> void:
+	if not is_instance_valid(biome_thumbnail) or not biome_thumbnail.visible:
+		return
+	if _biome_thumbnail_tween != null and _biome_thumbnail_tween.is_valid():
+		_biome_thumbnail_tween.kill()
+
+	biome_thumbnail.pivot_offset = biome_thumbnail.size * 0.5
+	biome_thumbnail.rotation = 0.0
+	_biome_thumbnail_tween = create_tween().set_loops()
+	_biome_thumbnail_tween.tween_property(
+		biome_thumbnail,
+		"rotation",
+		TAU,
+		28.0
+	).from(0.0).set_trans(Tween.TRANS_LINEAR)
 
 func _return_to_operations() -> void:
 	if not _contract_active or _travel_in_progress:
