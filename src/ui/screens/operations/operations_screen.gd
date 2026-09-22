@@ -749,6 +749,15 @@ func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 		"cargo_capacity":
 			var value := float(effects.get("cargo_capacity_add", 0.0))
 			return tr("HQ_UPGRADE_EFFECT_CARGO_FMT") % int(round(value * float(level)))
+		"pulse_boost":
+			var recharge := float(effects.get("boost_recharge_rate_add", 0.0)) * float(level)
+			var duration := float(effects.get("boost_duration_bonus_add", 0.0)) * float(level)
+			return tr("HQ_UPGRADE_EFFECT_BOOST_FMT") % [
+				int(round(recharge * 100.0)),
+				int(round(duration * 1000.0)),
+			]
+		"boost_capacitor":
+			return tr("HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT") % (1 + level)
 	return ""
 
 func _refresh_career() -> void:
