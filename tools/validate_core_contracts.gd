@@ -77,8 +77,24 @@ func _validate_responsive_ui() -> void:
 		"390x844 must use the phone-portrait UI profile."
 	)
 	_expect(
-		ResponsiveUiProfile.touch_target_height(ResponsiveUiProfile.Profile.PHONE_LANDSCAPE) >= 84.0,
-		"Phone UI requires comfortable shared touch targets."
+		ResponsiveUiProfile.touch_target_height(
+			ResponsiveUiProfile.Profile.PHONE_LANDSCAPE,
+			Vector2i(844, 390)
+		) >= 90.0,
+		"Phone UI must compensate touch targets for the physical Web canvas scale."
+	)
+	_expect(
+		ResponsiveUiProfile.font_scale(
+			ResponsiveUiProfile.Profile.PHONE_LANDSCAPE,
+			Vector2i(844, 390)
+		) > 2.0,
+		"Phone typography must compensate for downscaled Web canvases."
+	)
+
+	var canvas_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_canvas.gd")
+	_expect(
+		"JavaScriptBridge.get_interface("window")" in canvas_source and "innerWidth" in canvas_source and "innerHeight" in canvas_source,
+		"Web responsive layout must read the real browser CSS viewport instead of the fixed Godot override."
 	)
 
 	var profile_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_ui_profile.gd")
@@ -91,6 +107,7 @@ func _validate_responsive_ui() -> void:
 	var touch_source := FileAccess.get_file_as_string("res://src/ui/components/touch_flight_controls.gd")
 	_expect("ResponsiveUiProfile.current()" in flight_source, "Flight must consume the shared responsive UI profile.")
 	_expect("ResponsiveUiProfile.current()" in operations_source, "Operations must consume the shared responsive UI profile.")
+	_expect("available_width if phone" in operations_source, "Phone Operations must use the available viewport instead of the desktop console width cap.")
 	_expect("ResponsiveUiProfile.current()" in debrief_source, "Debrief must consume the shared responsive UI profile.")
 	_expect("touch_target_height" in touch_source, "Touch flight controls must size from the shared UI profile.")
 
