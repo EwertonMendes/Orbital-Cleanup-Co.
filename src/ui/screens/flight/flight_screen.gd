@@ -30,6 +30,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var operations_button: Button = %OperationsButton
 @onready var operations_overlay_host: Control = %OperationsOverlayHost
 @onready var warp_transition: WarpTravelTransition = %WarpTravelTransition
+@onready var touch_controls: TouchFlightControls = %TouchFlightControls
 
 var _context: Dictionary = {}
 var _router: SceneRouter
@@ -75,6 +76,7 @@ func configure(context: Dictionary) -> void:
 	var depot := get_node("World/UnloadDepot") as UnloadZone
 	var ship := get_node("World/PlayerShip") as PlayerShip
 	var navigation := get_node("HUD/HudRoot/DepotNavigationGuide") as DepotNavigationGuide
+	var touch := get_node("HUD/HudRoot/TouchFlightControls") as TouchFlightControls
 
 	assert(runtime != null, "FlightScreen requires SectorRuntime.")
 	assert(backdrop != null, "FlightScreen requires SectorBackdrop.")
@@ -85,6 +87,7 @@ func configure(context: Dictionary) -> void:
 	assert(depot != null, "FlightScreen requires UnloadZone.")
 	assert(ship != null, "FlightScreen requires PlayerShip.")
 	assert(navigation != null, "FlightScreen requires DepotNavigationGuide.")
+	assert(touch != null, "FlightScreen requires TouchFlightControls.")
 
 	if generated_definition.is_empty():
 		runtime.configure_sector(_configured_sector_id)
@@ -134,6 +137,7 @@ func configure(context: Dictionary) -> void:
 		_progression.get_ship_modifiers(),
 		_progression.get_ship_cosmetics()
 	)
+	touch.configure(_input_service, ship)
 	environment.bind(ship, runtime, post_process)
 	navigation.configure(ship, depot)
 	print("[Flight] DEPLOYMENT position=(%.1f, %.1f) depot=(%.1f, %.1f)" % [
@@ -187,6 +191,7 @@ func _ready() -> void:
 
 	if bool(_context.get("arrival_warp", false)):
 		_travel_in_progress = true
+		touch_controls.set_controls_enabled(false)
 		var direction_sign := -1.0 if int(_context.get("travel_direction", 1)) < 0 else 1.0
 		var arrival_direction := Vector2.RIGHT * direction_sign
 		if bool(_context.get("travel_handoff", false)):
@@ -197,6 +202,7 @@ func _ready() -> void:
 		else:
 			await warp_transition.play_arrival(player_ship, arrival_direction, _contract_active)
 		_travel_in_progress = false
+		touch_controls.set_controls_enabled(true)
 
 	if _contract_active:
 		_contract_session.start()
@@ -274,6 +280,7 @@ func _validate_contracts() -> void:
 	assert(mission_card != null and cargo_card != null and biome_thumbnail != null, "FlightScreen requires compact flight cards and biome thumbnail.")
 	assert(operations_button != null and operations_overlay_host != null, "FlightScreen requires floating operations access.")
 	assert(warp_transition != null, "FlightScreen requires reusable warp travel transition.")
+	assert(touch_controls != null, "FlightScreen requires reusable touch flight controls.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
 
 func _apply_responsive_layout() -> void:
@@ -314,6 +321,7 @@ func _return_to_operations() -> void:
 	var completed := _contract_session.is_target_reached()
 	_stop_gameplay()
 	_travel_in_progress = true
+	touch_controls.set_controls_enabled(false)
 	await warp_transition.play_departure(player_ship, Vector2.LEFT)
 
 	if completed:
@@ -399,6 +407,7 @@ func _open_operations() -> void:
 	overlay.connect("close_requested", Callable(self, "_close_operations"))
 
 	player_ship.set_flight_controls_enabled(false)
+	touch_controls.set_controls_enabled(false)
 	_operations_overlay = overlay
 	operations_overlay_host.add_child(overlay)
 	overlay.modulate.a = 0.0
@@ -415,6 +424,7 @@ func _close_operations() -> void:
 		overlay.get_parent().remove_child(overlay)
 	overlay.queue_free()
 	player_ship.set_flight_controls_enabled(true)
+	touch_controls.set_controls_enabled(true)
 	print("[Flight] OPERATIONS_CLOSED")
 
 func _on_operations_deployment_requested(target_context: Dictionary) -> void:
@@ -429,6 +439,7 @@ func _on_operations_deployment_requested(target_context: Dictionary) -> void:
 
 	_travel_in_progress = true
 	_stop_gameplay()
+	touch_controls.set_controls_enabled(false)
 	await warp_transition.play_departure(player_ship, Vector2.RIGHT)
 	await _router.begin_travel_handoff()
 	var scene := load(FLIGHT_SCREEN_PATH) as PackedScene
