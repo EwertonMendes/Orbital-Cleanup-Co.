@@ -380,6 +380,16 @@ try {
     true,
   );
   await openBuild(
+    { width: 740, height: 360 },
+    'mobile-landscape-740x360',
+    true,
+  );
+  await openBuild(
+    { width: 915, height: 412 },
+    'mobile-landscape-915x412',
+    true,
+  );
+  await openBuild(
     { width: 390, height: 844 },
     'mobile-portrait-390x844',
     true,
