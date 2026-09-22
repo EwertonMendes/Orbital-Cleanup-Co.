@@ -52,7 +52,7 @@ var _contract_active := true
 var _operations_overlay: Control
 var _travel_in_progress := false
 var _base_hud_theme: Theme
-var _ui_profile := -1
+var _ui_density_key := -1
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -292,13 +292,20 @@ func _apply_responsive_layout() -> void:
 	var profile := ResponsiveUiProfile.current()
 	var phone := ResponsiveUiProfile.is_phone(profile)
 	var compact := ResponsiveUiProfile.is_compact(profile)
-	var window_size := DisplayServer.window_get_size()
+	var window_size := ResponsiveUiProfile.viewport_size()
+	var density_key := ResponsiveUiProfile.density_key(profile)
 
-	if _ui_profile != int(profile):
+	if _ui_density_key != density_key:
 		var adapted_theme := ResponsiveUiProfile.build_theme(_base_hud_theme, profile)
 		theme = adapted_theme
 		hud_root.theme = adapted_theme
-		_ui_profile = int(profile)
+		_ui_density_key = density_key
+		print("[UI] PROFILE screen=flight profile=%s viewport=%s font_scale=%.2f touch_target=%.1f" % [
+			ResponsiveUiProfile.profile_name(profile),
+			str(window_size),
+			ResponsiveUiProfile.font_scale(profile),
+			ResponsiveUiProfile.touch_target_height(profile),
+		])
 	ResponsiveUiProfile.apply_minimum_touch_targets(hud_root, profile)
 
 	# Phone landscape keeps the HUD horizontal so the live world remains visible.
