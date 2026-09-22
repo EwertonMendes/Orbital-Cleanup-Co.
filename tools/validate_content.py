@@ -604,7 +604,8 @@ def validate_upgrades(data: dict[str, Any], catalogs: dict[str, set[str]]) -> No
     }
     require(set(base_ship) == allowed_base, f"{label}.base_ship must define exactly {sorted(allowed_base)}")
     for key, value in base_ship.items():
-        require_number(value, f"{label}.base_ship.{key}", 0.01)
+        minimum = 0.0 if key == "boost_duration_bonus" else 0.01
+        require_number(value, f"{label}.base_ship.{key}", minimum)
 
     upgrades = data.get("upgrades")
     require(isinstance(upgrades, list) and len(upgrades) >= 3, f"{label}.upgrades must contain at least three upgrades")
