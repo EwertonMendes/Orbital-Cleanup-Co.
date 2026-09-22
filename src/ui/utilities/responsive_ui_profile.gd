@@ -12,9 +12,12 @@ const PHONE_SHORT_SIDE_MAX := 520
 const COMPACT_WIDTH_MAX := 980
 const COMPACT_HEIGHT_MAX := 620
 
+const REFERENCE_SHORT_SIDE := 720.0
 const BASE_TOUCH_TARGET := 48.0
 const COMPACT_TOUCH_TARGET := 56.0
-const PHONE_TOUCH_TARGET := 84.0
+const PHONE_TOUCH_TARGET_CSS := 50.0
+const PHONE_FONT_PHYSICAL_BOOST := 1.30
+const MAX_PHONE_COMPENSATION := 3.25
 
 const FONT_MINIMUMS := {
 	&"HudEyebrow": 18,
@@ -45,7 +48,10 @@ const FONT_MINIMUMS := {
 }
 
 static func current() -> Profile:
-	return classify(DisplayServer.window_get_size())
+	return classify(viewport_size())
+
+static func viewport_size() -> Vector2i:
+	return ResponsiveCanvas.viewport_size()
 
 static func classify(window_size: Vector2i) -> Profile:
 	if window_size.x <= 0 or window_size.y <= 0:
@@ -66,26 +72,39 @@ static func is_compact(profile: Profile) -> bool:
 	return profile != Profile.DESKTOP
 
 static func is_portrait_window() -> bool:
-	var window_size := DisplayServer.window_get_size()
+	var window_size := viewport_size()
 	return window_size.y > window_size.x
 
-static func font_scale(profile: Profile) -> float:
+static func phone_compensation(viewport_override := Vector2i.ZERO) -> float:
+	var viewport := viewport_override if viewport_override != Vector2i.ZERO else viewport_size()
+	if viewport.x <= 0 or viewport.y <= 0:
+		return 1.0
+	var short_side := float(mini(viewport.x, viewport.y))
+	return clampf(REFERENCE_SHORT_SIDE / short_side, 1.0, MAX_PHONE_COMPENSATION)
+
+static func font_scale(profile: Profile, viewport_override := Vector2i.ZERO) -> float:
 	match profile:
 		Profile.COMPACT:
 			return 1.12
 		Profile.PHONE_LANDSCAPE, Profile.PHONE_PORTRAIT:
-			return 1.75
+			return phone_compensation(viewport_override) * PHONE_FONT_PHYSICAL_BOOST
 		_:
 			return 1.0
 
-static func touch_target_height(profile: Profile) -> float:
+static func touch_target_height(profile: Profile, viewport_override := Vector2i.ZERO) -> float:
 	match profile:
 		Profile.COMPACT:
 			return COMPACT_TOUCH_TARGET
 		Profile.PHONE_LANDSCAPE, Profile.PHONE_PORTRAIT:
-			return PHONE_TOUCH_TARGET
+			return PHONE_TOUCH_TARGET_CSS * phone_compensation(viewport_override)
 		_:
 			return BASE_TOUCH_TARGET
+
+static func density_key(profile: Profile) -> int:
+	return int(round(font_scale(profile) * 100.0))
+
+static func profile_name(profile: Profile) -> String:
+	return Profile.keys()[int(profile)]
 
 static func build_theme(base_theme: Theme, profile: Profile) -> Theme:
 	assert(base_theme != null, "ResponsiveUiProfile requires a base Theme.")
