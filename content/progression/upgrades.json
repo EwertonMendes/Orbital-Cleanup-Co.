@@ -3,7 +3,10 @@
   "base_ship": {
     "scan_range": 320,
     "collection_speed_multiplier": 1,
-    "cargo_capacity": 12
+    "cargo_capacity": 12,
+    "boost_recharge_rate": 1,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1
   },
   "upgrades": [
     {
@@ -37,6 +40,29 @@
       "cost_multiplier": 1.68,
       "effects": {
         "cargo_capacity_add": 3
+      }
+    },
+    {
+      "id": "pulse_boost",
+      "display_name_key": "UPGRADE_PULSE_BOOST",
+      "description_key": "UPGRADE_PULSE_BOOST_DESC",
+      "max_level": 4,
+      "base_cost": 260,
+      "cost_multiplier": 1.72,
+      "effects": {
+        "boost_recharge_rate_add": 0.09,
+        "boost_duration_bonus_add": 0.02
+      }
+    },
+    {
+      "id": "boost_capacitor",
+      "display_name_key": "UPGRADE_BOOST_CAPACITOR",
+      "description_key": "UPGRADE_BOOST_CAPACITOR_DESC",
+      "max_level": 1,
+      "base_cost": 720,
+      "cost_multiplier": 1,
+      "effects": {
+        "boost_charge_capacity_add": 1
       }
     }
   ]
