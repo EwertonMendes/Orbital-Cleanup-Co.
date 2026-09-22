@@ -100,7 +100,7 @@ static func build_theme(base_theme: Theme, profile: Profile) -> Theme:
 	)
 
 	for type_variant in FONT_MINIMUMS:
-		var theme_type := type_variant as StringName
+		var theme_type := StringName(type_variant)
 		if not adapted.has_font_size(&"font_size", theme_type):
 			continue
 		var current_size := adapted.get_font_size(&"font_size", theme_type)
