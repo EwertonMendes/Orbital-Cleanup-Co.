@@ -51,7 +51,7 @@ func update_motion(
 	steering_visual.scale = Vector2.ONE
 
 	var boost := clampf(boost_ratio, 0.0, 1.0)
-	var engine_strength := clampf(maxf(thrust_ratio, speed_ratio * 0.52, boost), 0.0, 1.0)
+	var engine_strength := clampf(maxf(maxf(thrust_ratio, speed_ratio * 0.52), boost), 0.0, 1.0)
 	engine_glow.modulate.a = clampf(lerpf(0.16, 0.76, engine_strength) + boost * 0.18, 0.0, 1.0)
 	engine_glow.scale = Vector2(
 		0.84 + engine_strength * 0.18 + boost * 0.10,
