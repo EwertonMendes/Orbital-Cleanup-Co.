@@ -93,7 +93,7 @@ func _validate_responsive_ui() -> void:
 
 	var canvas_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_canvas.gd")
 	_expect(
-		"JavaScriptBridge.get_interface("window")" in canvas_source and "innerWidth" in canvas_source and "innerHeight" in canvas_source,
+		"JavaScriptBridge.get_interface(\"window\")" in canvas_source and "innerWidth" in canvas_source and "innerHeight" in canvas_source,
 		"Web responsive layout must read the real browser CSS viewport instead of the fixed Godot override."
 	)
 
