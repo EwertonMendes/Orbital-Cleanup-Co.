@@ -44,7 +44,7 @@ var _promotion_player: AudioStreamPlayer
 var _reward_player: AudioStreamPlayer
 var _animation_finished := false
 var _base_theme: Theme
-var _ui_profile := -1
+var _ui_density_key := -1
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -102,9 +102,16 @@ func _apply_responsive_layout() -> void:
 	var phone := ResponsiveUiProfile.is_phone(profile)
 	var compact := ResponsiveUiProfile.is_compact(profile) or portrait
 
-	if _ui_profile != int(profile):
+	var density_key := ResponsiveUiProfile.density_key(profile)
+	if _ui_density_key != density_key:
 		theme = ResponsiveUiProfile.build_theme(_base_theme, profile)
-		_ui_profile = int(profile)
+		_ui_density_key = density_key
+		print("[UI] PROFILE screen=debrief profile=%s viewport=%s font_scale=%.2f touch_target=%.1f" % [
+			ResponsiveUiProfile.profile_name(profile),
+			str(ResponsiveUiProfile.viewport_size()),
+			ResponsiveUiProfile.font_scale(profile),
+			ResponsiveUiProfile.touch_target_height(profile),
+		])
 	ResponsiveUiProfile.apply_minimum_touch_targets(self, profile)
 
 	content_grid.columns = 1 if compact else 3
@@ -112,7 +119,7 @@ func _apply_responsive_layout() -> void:
 	var horizontal_margin := 12 if phone else (14 if compact else 30)
 	var vertical_margin := 10 if compact else 18
 	var available_width := maxf(size.x - float(horizontal_margin * 2), 280.0)
-	debrief_card.custom_minimum_size.x = minf(900.0, available_width)
+	debrief_card.custom_minimum_size.x = available_width if phone else minf(900.0, available_width)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
