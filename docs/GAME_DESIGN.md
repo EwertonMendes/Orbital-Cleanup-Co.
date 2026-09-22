@@ -10,7 +10,9 @@ There is no combat, enemy, death or failure-by-destruction. Challenge comes from
 
 Desktop movement is primarily pointer-directed: the cursor defines direction and distance from the ship influences desired acceleration, with a center deadzone and smooth deceleration. WASD and arrows are an alternative.
 
-Mobile uses one-finger drag/hold direction input. A mandatory on-screen joystick should not occupy the playfield. Landscape is preferred; portrait must remain functional.
+Mobile uses a floating relative steering pad: the first steering touch becomes a temporary origin, short thumb drags produce an analog direction vector, and releasing returns the ship to smooth deceleration. The control only appears while touching and does not require chasing the ship across the screen. A dedicated right-side Boost action supports two-thumb play without placing a permanent joystick over the playfield. Landscape is preferred; portrait must remain functional.
+
+Desktop keeps pointer-directed steering; an unhandled left click or Space triggers the same device-agnostic Pulse Boost action. UI clicks never trigger boost.
 
 The most important early feel target is simply moving the ship. Movement should be enjoyable before deeper systems exist.
 
@@ -77,6 +79,7 @@ Permanent upgrade families:
 - Tractor Beam range / later multi-target;
 - Collection Speed;
 - Engine acceleration / top speed;
+- Pulse Boost recharge / duration and stored-charge capacity;
 - Cargo capacity;
 - Scanner detection / rare guidance;
 - Recycler value bonuses.
@@ -252,3 +255,10 @@ The current UX experiment makes flight the persistent player-facing shell:
 - normal sectors remain data-driven and no destination-specific travel code is introduced.
 
 The scene swap that loads a new sector is deliberately hidden inside the warp interval. This keeps sector teardown/setup simple and reliable while preserving a continuous spatial experience for the player.
+
+
+## Pulse Boost
+
+Pulse Boost is a short mobility pulse, not a permanent sprint. The baseline pulse raises ship speed to roughly 1.38× normal for about 0.62 seconds with reduced-but-responsive steering, then returns smoothly to normal flight. Collisions cancel the active pulse, environmental speed modifiers still apply, and world boundaries retain their normal damping/containment behavior.
+
+Progression improves availability rather than raw top speed. Pulse Boost Tuning raises recharge rate and adds a small duration bonus; the Auxiliary Boost Capacitor adds a second stored charge. The boost speed multiplier itself does not scale through these upgrades, so later progression improves routing flexibility without invalidating hazards, biome forces or sector scale.
