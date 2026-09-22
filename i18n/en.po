@@ -89,11 +89,17 @@ msgid "FLIGHT_RETURN"
 msgstr "RETURN TO OPERATIONS"
 
 msgid "FLIGHT_HINT_POINTER"
-msgstr "Point to steer · WASD / arrows also work"
+msgstr "Point to steer · click / Space to boost · WASD / arrows also work"
 
 msgid "FLIGHT_HINT_TOUCH"
-msgstr "Touch and drag anywhere to steer"
+msgstr "Drag from where you touch to steer · BOOST on the right"
 
+
+msgid "FLIGHT_BOOST"
+msgstr "BOOST"
+
+msgid "FLIGHT_BOOST_CHARGES_FMT"
+msgstr "BOOST %d / %d"
 msgid "FLIGHT_CARGO_FMT"
 msgstr "CARGO · %d / %d"
 
@@ -244,6 +250,18 @@ msgstr "Cargo"
 msgid "UPGRADE_CARGO_CAPACITY_DESC"
 msgstr "Adds more cargo space before unloading is required."
 
+
+msgid "UPGRADE_PULSE_BOOST"
+msgstr "Pulse Boost Tuning"
+
+msgid "UPGRADE_PULSE_BOOST_DESC"
+msgstr "Improves boost recharge and extends each pulse without raising its top-speed multiplier."
+
+msgid "UPGRADE_BOOST_CAPACITOR"
+msgstr "Auxiliary Boost Capacitor"
+
+msgid "UPGRADE_BOOST_CAPACITOR_DESC"
+msgstr "Adds a second stored boost charge while preserving the same pulse speed."
 msgid "HQ_COMPANY"
 msgstr "ORBITAL CLEANUP CO."
 
@@ -322,6 +340,12 @@ msgstr "Installed recovery bonus · +%d%%"
 msgid "HQ_UPGRADE_EFFECT_CARGO_FMT"
 msgstr "Installed cargo bonus · +%d"
 
+
+msgid "HQ_UPGRADE_EFFECT_BOOST_FMT"
+msgstr "Boost recharge +%d%% · pulse +%d ms"
+
+msgid "HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT"
+msgstr "Stored boost capacity · %d"
 msgid "HQ_CAREER_TITLE"
 msgstr "CAREER"
 

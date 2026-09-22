@@ -68,7 +68,7 @@ async function measureFrameRate(page, durationMs = 1800) {
 async function dragTouch(page, viewport) {
   const session = await page.context().newCDPSession(page);
   const start = {
-    x: Math.round(viewport.width * 0.66),
+    x: Math.round(viewport.width * 0.36),
     y: Math.round(viewport.height * 0.52),
     radiusX: 1,
     radiusY: 1,
@@ -77,7 +77,7 @@ async function dragTouch(page, viewport) {
   };
   const end = {
     ...start,
-    x: Math.round(viewport.width * 0.84),
+    x: Math.round(viewport.width * 0.52),
     y: Math.round(viewport.height * 0.47),
   };
 

@@ -3,6 +3,7 @@ class_name InputService
 
 signal input_mode_changed(mode: InputMode)
 signal primary_pointer_changed(position: Vector2, active: bool)
+signal boost_requested
 
 enum InputMode {
 	POINTER_KEYBOARD,
@@ -14,17 +15,21 @@ const MOVE_LEFT := &"occ_move_left"
 const MOVE_RIGHT := &"occ_move_right"
 const MOVE_UP := &"occ_move_up"
 const MOVE_DOWN := &"occ_move_down"
+const BOOST := &"occ_boost"
 const TOUCH_MOUSE_SUPPRESSION_MS := 350
 
 var current_mode := InputMode.POINTER_KEYBOARD
 
 var _primary_touch_index := -1
 var _touch_position := Vector2.ZERO
+var _touch_navigation_vector := Vector2.ZERO
 var _suppress_mouse_until_msec := 0
 
 func initialize() -> void:
 	_ensure_default_navigation_actions()
+	_ensure_key_action(BOOST, [KEY_SPACE])
 	set_process_input(true)
+	set_process_unhandled_input(true)
 
 func _input(event: InputEvent) -> void:
 	var next_mode := current_mode
@@ -47,8 +52,35 @@ func _input(event: InputEvent) -> void:
 		current_mode = next_mode
 		input_mode_changed.emit(current_mode)
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(BOOST):
+		request_boost()
+		get_viewport().set_input_as_handled()
+		return
+
+	if (
+		event is InputEventMouseButton
+		and event.button_index == MOUSE_BUTTON_LEFT
+		and event.pressed
+		and current_mode == InputMode.POINTER_KEYBOARD
+	):
+		request_boost()
+		get_viewport().set_input_as_handled()
+
 func get_navigation_vector() -> Vector2:
-	return Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN)
+	var action_vector := Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN)
+	if action_vector.length_squared() > 0.001:
+		return action_vector.limit_length(1.0)
+	return _touch_navigation_vector.limit_length(1.0)
+
+func set_touch_navigation_vector(value: Vector2) -> void:
+	_touch_navigation_vector = value.limit_length(1.0)
+
+func clear_touch_navigation() -> void:
+	_touch_navigation_vector = Vector2.ZERO
+
+func request_boost() -> void:
+	boost_requested.emit()
 
 func get_primary_pointer_position() -> Vector2:
 	if current_mode == InputMode.TOUCH:
@@ -58,6 +90,9 @@ func get_primary_pointer_position() -> Vector2:
 func is_primary_pointer_active() -> bool:
 	if current_mode == InputMode.TOUCH:
 		return _primary_touch_index >= 0
+	return current_mode == InputMode.POINTER_KEYBOARD
+
+func uses_pointer_steering() -> bool:
 	return current_mode == InputMode.POINTER_KEYBOARD
 
 func prefers_touch() -> bool:

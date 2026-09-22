@@ -89,11 +89,17 @@ msgid "FLIGHT_RETURN"
 msgstr "VOLVER A OPERACIONES"
 
 msgid "FLIGHT_HINT_POINTER"
-msgstr "Apunta para pilotar · WASD / flechas también funcionan"
+msgstr "Apunta para pilotar · clic / Espacio para boost · WASD / flechas también funcionan"
 
 msgid "FLIGHT_HINT_TOUCH"
-msgstr "Toca y arrastra en cualquier lugar para pilotar"
+msgstr "Arrastra desde donde tocas para pilotar · BOOST a la derecha"
 
+
+msgid "FLIGHT_BOOST"
+msgstr "BOOST"
+
+msgid "FLIGHT_BOOST_CHARGES_FMT"
+msgstr "BOOST %d / %d"
 msgid "FLIGHT_CARGO_FMT"
 msgstr "CARGA · %d / %d"
 
@@ -244,6 +250,18 @@ msgstr "Carga"
 msgid "UPGRADE_CARGO_CAPACITY_DESC"
 msgstr "Añade más espacio de carga antes de tener que descargar."
 
+
+msgid "UPGRADE_PULSE_BOOST"
+msgstr "Ajuste del Pulse Boost"
+
+msgid "UPGRADE_PULSE_BOOST_DESC"
+msgstr "Mejora la recarga del boost y prolonga cada impulso sin aumentar su multiplicador de velocidad máxima."
+
+msgid "UPGRADE_BOOST_CAPACITOR"
+msgstr "Capacitor Auxiliar de Boost"
+
+msgid "UPGRADE_BOOST_CAPACITOR_DESC"
+msgstr "Añade una segunda carga de boost almacenada sin cambiar la velocidad del impulso."
 msgid "HQ_COMPANY"
 msgstr "ORBITAL CLEANUP CO."
 
@@ -322,6 +340,12 @@ msgstr "Bono de recuperación instalado · +%d%%"
 msgid "HQ_UPGRADE_EFFECT_CARGO_FMT"
 msgstr "Bono de carga instalado · +%d"
 
+
+msgid "HQ_UPGRADE_EFFECT_BOOST_FMT"
+msgstr "Recarga del boost +%d%% · impulso +%d ms"
+
+msgid "HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT"
+msgstr "Capacidad de boosts almacenados · %d"
 msgid "HQ_CAREER_TITLE"
 msgstr "CARRERA"
 

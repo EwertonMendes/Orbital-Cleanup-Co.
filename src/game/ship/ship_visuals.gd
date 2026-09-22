@@ -41,7 +41,8 @@ func update_motion(
 	thrust_ratio: float,
 	facing_rotation: float,
 	_turn_amount: float,
-	_delta: float
+	_delta: float,
+	boost_ratio: float = 0.0
 ) -> void:
 	# Keep the ship silhouette rigid. Continuous skew/scale changes on a small
 	# raster sprite cause visible shimmer while steering in Web builds.
@@ -49,13 +50,21 @@ func update_motion(
 	steering_visual.skew = 0.0
 	steering_visual.scale = Vector2.ONE
 
-	var engine_strength := clampf(maxf(thrust_ratio, speed_ratio * 0.52), 0.0, 1.0)
-	engine_glow.modulate.a = lerpf(0.16, 0.76, engine_strength)
-	engine_glow.scale = Vector2(0.84 + engine_strength * 0.18, 0.78 + engine_strength * 0.42)
-	engine_trail.set_intensity(engine_strength)
+	var boost := clampf(boost_ratio, 0.0, 1.0)
+	var engine_strength := clampf(maxf(maxf(thrust_ratio, speed_ratio * 0.52), boost), 0.0, 1.0)
+	engine_glow.modulate.a = clampf(lerpf(0.16, 0.76, engine_strength) + boost * 0.18, 0.0, 1.0)
+	engine_glow.scale = Vector2(
+		0.84 + engine_strength * 0.18 + boost * 0.10,
+		0.78 + engine_strength * 0.42 + boost * 0.34
+	)
+	engine_trail.set_intensity(maxf(engine_strength, boost))
 	engine_particles.emitting = engine_strength > 0.08
-	engine_particles.speed_scale = 0.72 + engine_strength * 0.85
-	engine_particles.modulate.a = lerpf(0.24, 0.88, engine_strength)
+	engine_particles.speed_scale = 0.72 + engine_strength * 0.85 + boost * 0.62
+	engine_particles.modulate.a = clampf(lerpf(0.24, 0.88, engine_strength) + boost * 0.10, 0.0, 1.0)
+
+func play_boost() -> void:
+	engine_trail.set_intensity(1.0)
+	engine_particles.restart()
 
 func play_bump(intensity: float, normal: Vector2) -> void:
 	var strength := clampf(intensity, 0.0, 1.0)

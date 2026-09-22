@@ -677,6 +677,8 @@ func _validate_progression_service() -> void:
 	var base_ship := progression.get_ship_modifiers()
 	_expect(is_equal_approx(float(base_ship["scan_range"]), 320.0), "Base Tractor Beam range must come from progression data.")
 	_expect(int(round(float(base_ship["cargo_capacity"]))) == 12, "Base cargo capacity must come from progression data.")
+	_expect(is_equal_approx(float(base_ship["boost_recharge_rate"]), 1.0), "Base boost recharge must come from progression data.")
+	_expect(int(round(float(base_ship["boost_charge_capacity"]))) == 1, "Base ship must start with one boost charge.")
 	var default_cosmetics := progression.get_equipped_cosmetic_ids()
 	_expect(String(default_cosmetics["hull"]) == "pioneer_01", "Default hull must come from cosmetic content.")
 	_expect(String(default_cosmetics["paint"]) == "company_blue", "Default paint must come from cosmetic content.")
@@ -783,6 +785,11 @@ func _validate_player_ship() -> void:
 		_expect(tuning.pointer_deadzone >= 70.0, "Pointer deadzone should prevent twitchy center steering.")
 		_expect(tuning.pointer_full_thrust_distance >= 360.0, "Pointer full-thrust distance should preserve fine control.")
 		_expect(tuning.boundary_soft_margin > tuning.boundary_hard_padding, "Soft boundary margin must precede hard containment.")
+		_expect(tuning.boost_speed_multiplier > 1.0 and tuning.boost_speed_multiplier < 1.5, "Pulse boost must be meaningful without trivializing sector traversal.")
+		_expect(tuning.boost_recharge_seconds > tuning.boost_duration, "Pulse boost must recharge slower than its active window.")
+	var input_source := FileAccess.get_file_as_string("res://src/core/input/input_service.gd")
+	_expect("set_touch_navigation_vector" in input_source, "Touch steering must use a dedicated analog navigation vector.")
+	_expect("signal boost_requested" in input_source, "InputService must expose one device-agnostic boost request.")
 	ship.free()
 
 func _validate_flight_screen() -> void:
@@ -795,6 +802,7 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("PlayerShip", true, false) is PlayerShip, "Flight screen requires PlayerShip.")
 	_expect(screen.find_child("SectorRuntime", true, false) is SectorRuntime, "Flight screen requires generic SectorRuntime.")
 	_expect(screen.find_child("EnvironmentRuntime", true, false) is EnvironmentRuntime, "Flight screen requires reusable biome EnvironmentRuntime.")
+	_expect(screen.find_child("TouchFlightControls", true, false) is TouchFlightControls, "Flight screen requires dedicated floating touch steering and boost controls.")
 	_expect(screen.find_child("AmbientSpace", true, false) is SectorBackdrop, "Flight screen requires data-configurable SectorBackdrop.")
 	var flight_backdrop_source := FileAccess.get_file_as_string("res://src/game/sector/sector_backdrop.gd")
 	_expect("MultiMeshInstance2D" in flight_backdrop_source, "SectorBackdrop must batch the starfield through MultiMeshInstance2D.")
