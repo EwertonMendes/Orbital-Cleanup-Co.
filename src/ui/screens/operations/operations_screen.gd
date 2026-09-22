@@ -113,6 +113,8 @@ var _overlay_mode := false
 var _tab_reveal_tween: Tween
 var _tab_transitioning := false
 var _tab_pulse_tween: Tween
+var _base_theme: Theme
+var _ui_profile := -1
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -141,6 +143,7 @@ func configure(context: Dictionary) -> void:
 	_load_selected_sector()
 
 func _ready() -> void:
+	_base_theme = theme
 	_validate_contracts()
 	resized.connect(_apply_responsive_layout)
 	primary_action.pressed.connect(_deploy_training)
@@ -373,51 +376,62 @@ func _update_tab_visuals() -> void:
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
 	var window_size := DisplayServer.window_get_size()
-	var narrow := portrait or window_size.x < int(COMPACT_WIDTH)
-	var compact := narrow
+	var profile := ResponsiveUiProfile.current()
+	var phone := ResponsiveUiProfile.is_phone(profile)
+	var compact := ResponsiveUiProfile.is_compact(profile)
+	var narrow := portrait or phone or window_size.x < int(COMPACT_WIDTH)
 
-	# Keep the physical-console header compact even in portrait. The 720 px
-	# portrait reference has enough room for brand, credits, settings and close.
-	header.vertical = window_size.x < 360
-	main_row.vertical = compact
+	if _ui_profile != int(profile):
+		theme = ResponsiveUiProfile.build_theme(_base_theme, profile)
+		_ui_profile = int(profile)
+	ResponsiveUiProfile.apply_minimum_touch_targets(self, profile)
+
+	# On phones the console reflows instead of shrinking desktop geometry.
+	header.vertical = profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT
+	main_row.vertical = narrow
 	contract_hero.vertical = narrow
 	ship_body.vertical = narrow
-	tab_grid.columns = 2 if portrait or window_size.x < 560 else (3 if compact else 1)
-	contract_selector.columns = 3 if narrow else 4
+	tab_grid.columns = (
+		2 if portrait or window_size.x < 560
+		else (3 if compact else 1)
+	)
+	contract_selector.columns = 2 if portrait else (3 if narrow else 4)
 	upgrade_grid.columns = 1 if narrow else 3
 	discovery_list.columns = 1 if narrow else 2
 
-	# ContentScroll already owns viewport expansion. Avoid an artificial minimum
-	# that creates a scrollbar on desktop when the active screen fits naturally.
+	# ContentScroll owns overflow. Larger phone typography must scroll rather
+	# than be compressed to fit the old desktop density.
 	content_shell.custom_minimum_size.y = 0.0
 
-	var horizontal_margin := 18 if portrait else (12 if compact else 22)
-	var vertical_margin := 14 if portrait else (10 if compact else 20)
+	var horizontal_margin := 12 if phone else (14 if compact else 22)
+	var vertical_margin := 10 if phone else (12 if compact else 20)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
-	var available_width := maxf(size.x - (20.0 if compact else 80.0), 320.0)
-	var available_height := maxf(size.y - (20.0 if compact else 56.0), 300.0)
+	var available_width := maxf(size.x - (16.0 if compact else 80.0), 320.0)
+	var available_height := maxf(size.y - (16.0 if compact else 56.0), 300.0)
 	var console_height := 1180.0 if portrait else 650.0
 	floating_surface.custom_minimum_size = Vector2(
 		minf(1120.0, available_width),
 		minf(console_height, available_height)
 	)
 
-	var settings_width := 620.0 if portrait else 500.0
-	var settings_height := 390.0 if portrait else 330.0
+	var settings_width := 620.0 if portrait else (720.0 if phone else 500.0)
+	var settings_height := 460.0 if phone else (390.0 if portrait else 330.0)
 	settings_modal.custom_minimum_size = Vector2(
-		minf(settings_width, maxf(size.x - 40.0, 300.0)),
-		minf(settings_height, maxf(size.y - 40.0, 260.0))
+		minf(settings_width, maxf(size.x - 32.0, 300.0)),
+		minf(settings_height, maxf(size.y - 32.0, 260.0))
 	)
 
 	var footer_spacer := footer.get_node_or_null("FooterSpacer") as Control
 	if footer_spacer != null:
-		footer_spacer.visible = not portrait
-	primary_action.custom_minimum_size.x = 0.0 if portrait else 260.0
-	primary_action.size_flags_horizontal = Control.SIZE_EXPAND_FILL if portrait else Control.SIZE_SHRINK_BEGIN
+		footer_spacer.visible = not portrait and not phone
+	primary_action.custom_minimum_size.x = 0.0 if portrait or phone else 260.0
+	primary_action.size_flags_horizontal = (
+		Control.SIZE_EXPAND_FILL if portrait or phone else Control.SIZE_SHRINK_BEGIN
+	)
 
 func _deploy_training() -> void:
 	var access := _active_contract_access()
