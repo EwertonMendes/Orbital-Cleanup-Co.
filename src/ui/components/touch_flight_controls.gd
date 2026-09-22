@@ -17,6 +17,7 @@ var _controls_enabled := true
 var _steering_touch_index := -1
 var _touch_origin := Vector2.ZERO
 var _touch_position := Vector2.ZERO
+var _ui_profile := -1
 
 func configure(input_service: InputService, ship: PlayerShip) -> void:
 	assert(input_service != null, "TouchFlightControls requires InputService.")
@@ -26,12 +27,14 @@ func configure(input_service: InputService, ship: PlayerShip) -> void:
 
 func _ready() -> void:
 	assert(_input_service != null and _ship != null, "TouchFlightControls must be configured before entering the tree.")
+	resized.connect(_apply_responsive_layout)
 	steering_area.gui_input.connect(_on_steering_input)
 	boost_button.pressed.connect(_on_boost_pressed)
 	_input_service.input_mode_changed.connect(_on_input_mode_changed)
 	boost_button.focus_mode = Control.FOCUS_NONE
 	_refresh_visibility()
 	_refresh_copy()
+	_apply_responsive_layout()
 	queue_redraw()
 
 func _process(_delta: float) -> void:
@@ -63,6 +66,39 @@ func _refresh_visibility() -> void:
 
 func _refresh_copy() -> void:
 	boost_button.text = tr("FLIGHT_BOOST")
+
+func _apply_responsive_layout() -> void:
+	var profile := ResponsiveUiProfile.current()
+	if _ui_profile == int(profile):
+		return
+	_ui_profile = int(profile)
+
+	var phone := ResponsiveUiProfile.is_phone(profile)
+	var button_width := 156.0 if phone else 104.0
+	var button_height := maxf(
+		56.0,
+		ResponsiveUiProfile.touch_target_height(profile)
+	)
+	var right_margin := 24.0
+	var bottom_margin := 30.0
+	var status_height := 28.0 if phone else 22.0
+	var status_gap := 8.0 if phone else 4.0
+
+	boost_button.custom_minimum_size = Vector2(button_width, button_height)
+	boost_button.offset_left = -(right_margin + button_width)
+	boost_button.offset_right = -right_margin
+	boost_button.offset_bottom = -bottom_margin
+	boost_button.offset_top = -(bottom_margin + button_height)
+
+	boost_status.offset_left = -(right_margin + button_width)
+	boost_status.offset_right = -right_margin
+	boost_status.offset_bottom = boost_button.offset_top - status_gap
+	boost_status.offset_top = boost_status.offset_bottom - status_height
+
+	recharge_bar.offset_left = -(right_margin + button_width)
+	recharge_bar.offset_right = -right_margin
+	recharge_bar.offset_top = -22.0
+	recharge_bar.offset_bottom = -14.0
 
 func _on_boost_pressed() -> void:
 	if _input_service != null:
@@ -117,6 +153,7 @@ func _draw() -> void:
 		return
 	var offset := _touch_position - _touch_origin
 	var knob_offset := offset.limit_length(STEERING_FULL_THRUST_DISTANCE)
-	draw_circle(_touch_origin, RING_RADIUS, Color(0.03, 0.08, 0.12, 0.32))
+	var visual_scale := 1.25 if ResponsiveUiProfile.is_phone(ResponsiveUiProfile.current()) else 1.0
+	draw_circle(_touch_origin, RING_RADIUS * visual_scale, Color(0.03, 0.08, 0.12, 0.32))
 	draw_arc(_touch_origin, STEERING_FULL_THRUST_DISTANCE, 0.0, TAU, 48, Color(0.58, 0.91, 1.0, 0.38), 2.0, true)
-	draw_circle(_touch_origin + knob_offset, KNOB_RADIUS, Color(0.68, 0.95, 1.0, 0.66))
+	draw_circle(_touch_origin + knob_offset, KNOB_RADIUS * visual_scale, Color(0.68, 0.95, 1.0, 0.66))
