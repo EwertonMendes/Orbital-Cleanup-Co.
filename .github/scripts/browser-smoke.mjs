@@ -92,14 +92,19 @@ async function openBuild(viewport, label, touch = false) {
   const page = await browser.newPage({ viewport, hasTouch: touch, isMobile: touch });
   watch(page, label);
 
+  const expectedProfile = touch
+    ? (viewport.height > viewport.width ? 'PHONE_PORTRAIT' : 'PHONE_LANDSCAPE')
+    : 'DESKTOP';
   const freeSectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 60000);
   const freeFlightReady = waitForConsole(page, '[Flight] READY mode=free_roam', 60000);
+  const flightUiReady = waitForConsole(page, `[UI] PROFILE screen=flight profile=${expectedProfile}`, 60000);
   const ready = waitForConsole(page, '[OCC] READY');
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForSelector('canvas', { state: 'visible', timeout: 60000 });
   await ready;
   await freeSectorReady;
   await freeFlightReady;
+  await flightUiReady;
   await page.waitForFunction(() => {
     const canvas = document.querySelector('canvas');
     return canvas && canvas.width > 100 && canvas.height > 100;
@@ -123,9 +128,11 @@ async function openBuild(viewport, label, touch = false) {
 
   const operationsOpen = waitForConsole(page, '[Flight] OPERATIONS_OPEN', 60000);
   const overlayReady = waitForConsole(page, '[HQ] READY tab=contracts mode=overlay', 60000);
+  const operationsUiReady = waitForConsole(page, `[UI] PROFILE screen=operations profile=${expectedProfile}`, 60000);
   await page.goto(`${url}?operations=1`, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await overlayReady;
   await operationsOpen;
+  await operationsUiReady;
   await page.waitForTimeout(300);
   await page.screenshot({ path: `build/smoke-operations-overlay-${label}.png`, fullPage: true });
 
