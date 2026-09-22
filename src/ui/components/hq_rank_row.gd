@@ -7,6 +7,8 @@ class_name HqRankRow
 
 func _ready() -> void:
 	assert(status_label != null and name_label != null and xp_label != null, "HqRankRow nodes are required.")
+	if ResponsiveUiProfile.is_phone(ResponsiveUiProfile.current()):
+		status_label.custom_minimum_size.x = 132.0
 
 func configure(rank_name: String, min_xp: int, unlocked: bool, current: bool) -> void:
 	name_label.text = rank_name
