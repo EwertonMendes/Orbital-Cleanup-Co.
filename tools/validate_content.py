@@ -594,7 +594,14 @@ def validate_upgrades(data: dict[str, Any], catalogs: dict[str, set[str]]) -> No
     label = "progression/upgrades"
     base_ship = data.get("base_ship")
     require(isinstance(base_ship, dict), f"{label}.base_ship must be an object")
-    allowed_base = {"scan_range", "collection_speed_multiplier", "cargo_capacity"}
+    allowed_base = {
+        "scan_range",
+        "collection_speed_multiplier",
+        "cargo_capacity",
+        "boost_recharge_rate",
+        "boost_duration_bonus",
+        "boost_charge_capacity",
+    }
     require(set(base_ship) == allowed_base, f"{label}.base_ship must define exactly {sorted(allowed_base)}")
     for key, value in base_ship.items():
         require_number(value, f"{label}.base_ship.{key}", 0.01)
@@ -602,7 +609,14 @@ def validate_upgrades(data: dict[str, Any], catalogs: dict[str, set[str]]) -> No
     upgrades = data.get("upgrades")
     require(isinstance(upgrades, list) and len(upgrades) >= 3, f"{label}.upgrades must contain at least three upgrades")
     seen: set[str] = set()
-    allowed_effects = {"scan_range_add", "collection_speed_multiplier_add", "cargo_capacity_add"}
+    allowed_effects = {
+        "scan_range_add",
+        "collection_speed_multiplier_add",
+        "cargo_capacity_add",
+        "boost_recharge_rate_add",
+        "boost_duration_bonus_add",
+        "boost_charge_capacity_add",
+    }
     for index, upgrade in enumerate(upgrades):
         require(isinstance(upgrade, dict), f"{label}.upgrades[{index}] must be an object")
         upgrade_id = upgrade.get("id")
