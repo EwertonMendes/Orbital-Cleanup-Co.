@@ -114,7 +114,7 @@ var _tab_reveal_tween: Tween
 var _tab_transitioning := false
 var _tab_pulse_tween: Tween
 var _base_theme: Theme
-var _ui_profile := -1
+var _ui_density_key := -1
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -375,15 +375,22 @@ func _update_tab_visuals() -> void:
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
-	var window_size := DisplayServer.window_get_size()
+	var window_size := ResponsiveUiProfile.viewport_size()
 	var profile := ResponsiveUiProfile.current()
 	var phone := ResponsiveUiProfile.is_phone(profile)
 	var compact := ResponsiveUiProfile.is_compact(profile)
 	var narrow := portrait or phone or window_size.x < int(COMPACT_WIDTH)
 
-	if _ui_profile != int(profile):
+	var density_key := ResponsiveUiProfile.density_key(profile)
+	if _ui_density_key != density_key:
 		theme = ResponsiveUiProfile.build_theme(_base_theme, profile)
-		_ui_profile = int(profile)
+		_ui_density_key = density_key
+		print("[UI] PROFILE screen=operations profile=%s viewport=%s font_scale=%.2f touch_target=%.1f" % [
+			ResponsiveUiProfile.profile_name(profile),
+			str(window_size),
+			ResponsiveUiProfile.font_scale(profile),
+			ResponsiveUiProfile.touch_target_height(profile),
+		])
 	ResponsiveUiProfile.apply_minimum_touch_targets(self, profile)
 
 	# On phones the console reflows instead of shrinking desktop geometry.
@@ -414,8 +421,8 @@ func _apply_responsive_layout() -> void:
 	var available_height := maxf(size.y - (16.0 if compact else 56.0), 300.0)
 	var console_height := 1180.0 if portrait else 650.0
 	floating_surface.custom_minimum_size = Vector2(
-		minf(1120.0, available_width),
-		minf(console_height, available_height)
+		available_width if phone else minf(1120.0, available_width),
+		available_height if phone else minf(console_height, available_height)
 	)
 
 	var settings_width := 620.0 if portrait else (720.0 if phone else 500.0)
