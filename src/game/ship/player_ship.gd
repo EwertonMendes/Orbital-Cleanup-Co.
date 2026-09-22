@@ -8,6 +8,8 @@ signal tractor_target_changed(definition)
 signal tractor_progress_changed(progress: float)
 signal salvage_collected(definition, used_units: int, capacity: int)
 signal cargo_collection_blocked
+signal boost_started
+signal boost_ended
 
 @export var tuning: ShipMovementTuning
 
@@ -29,6 +31,13 @@ var _controls_enabled := true
 var _travel_mode := false
 var _travel_visual_intensity := 0.0
 var _travel_direction := Vector2.RIGHT
+var _boost_recharge_rate := 1.0
+var _boost_duration_bonus := 0.0
+var _boost_charge_capacity := 1
+var _boost_charges := 1
+var _boost_recharge_elapsed := 0.0
+var _boost_remaining := 0.0
+var _boost_direction := Vector2.UP
 
 func configure(
 	input_service: InputService,
@@ -38,6 +47,8 @@ func configure(
 ) -> void:
 	assert(input_service != null, "PlayerShip requires InputService.")
 	_input_service = input_service
+	if not _input_service.boost_requested.is_connected(_on_boost_requested):
+		_input_service.boost_requested.connect(_on_boost_requested)
 	_world_bounds = world_bounds
 	_pending_cosmetics = ship_cosmetics.duplicate(true)
 
@@ -51,6 +62,12 @@ func configure(
 			float(ship_modifiers.get("collection_speed_multiplier", beam.collection_speed_multiplier)),
 			0.1
 		)
+
+	_boost_recharge_rate = maxf(float(ship_modifiers.get("boost_recharge_rate", 1.0)), 0.5)
+	_boost_duration_bonus = maxf(float(ship_modifiers.get("boost_duration_bonus", 0.0)), 0.0)
+	_boost_charge_capacity = clampi(int(round(float(ship_modifiers.get("boost_charge_capacity", 1.0)))), 1, 2)
+	_boost_charges = _boost_charge_capacity
+	_boost_recharge_elapsed = 0.0
 
 func _ready() -> void:
 	assert(tuning != null, "PlayerShip requires ShipMovementTuning.")
@@ -97,6 +114,8 @@ func set_flight_controls_enabled(enabled: bool) -> void:
 	if not enabled:
 		velocity = Vector2.ZERO
 		_smoothed_intent = Vector2.ZERO
+		_input_service.clear_touch_navigation()
+		_cancel_boost()
 		ship_camera.set_motion_velocity(Vector2.ZERO)
 
 func set_collection_enabled(enabled: bool) -> void:
@@ -130,6 +149,7 @@ func end_travel(restore_collection: bool = true) -> void:
 	visuals.update_motion(0.0, 0.0, _facing_rotation, 0.0, 0.0)
 
 func _physics_process(delta: float) -> void:
+	_update_boost_recharge(delta)
 	if _travel_mode:
 		velocity = Vector2.ZERO
 		visuals.update_motion(_travel_visual_intensity, _travel_visual_intensity, _facing_rotation, 0.0, delta)
@@ -142,10 +162,10 @@ func _physics_process(delta: float) -> void:
 		return
 	_bump_feedback_cooldown = maxf(_bump_feedback_cooldown - delta, 0.0)
 
-	var keyboard_intent := _input_service.get_navigation_vector()
-	var raw_intent := keyboard_intent
+	var navigation_intent := _input_service.get_navigation_vector()
+	var raw_intent := navigation_intent
 
-	if keyboard_intent.length_squared() <= 0.001 and _input_service.is_primary_pointer_active():
+	if navigation_intent.length_squared() <= 0.001 and _input_service.uses_pointer_steering():
 		raw_intent = ShipSteering.pointer_intent(
 			get_global_transform_with_canvas().origin,
 			_input_service.get_primary_pointer_position(),
@@ -153,23 +173,38 @@ func _physics_process(delta: float) -> void:
 			tuning.pointer_full_thrust_distance
 		)
 
-	if keyboard_intent.length_squared() > 0.001:
-		_smoothed_intent = keyboard_intent.limit_length(1.0)
+	if navigation_intent.length_squared() > 0.001:
+		_smoothed_intent = navigation_intent.limit_length(1.0)
 	else:
 		var steering_weight := 1.0 - exp(-tuning.pointer_steering_response * delta)
 		_smoothed_intent = _smoothed_intent.lerp(raw_intent, steering_weight)
 
 	var intent := _attenuate_outward_intent(_smoothed_intent)
+	if _boost_remaining > 0.0:
+		_boost_remaining = maxf(_boost_remaining - delta, 0.0)
+		if _boost_remaining <= 0.0:
+			boost_ended.emit()
+	var boosting := _boost_remaining > 0.0
 	var environment_max_speed := tuning.max_speed * _environment_speed_multiplier
 	var desired_velocity := ShipSteering.target_velocity(intent, environment_max_speed)
 
 	var response := tuning.deceleration
-	if intent.length_squared() > 0.001:
+	if boosting:
+		_update_boost_direction(intent, delta)
+		var boost_throttle := 1.0
+		if intent.length_squared() > 0.001:
+			boost_throttle = lerpf(0.55, 1.0, intent.length())
+		desired_velocity = _boost_direction * environment_max_speed * tuning.boost_speed_multiplier * boost_throttle
+		response = tuning.acceleration * tuning.boost_acceleration_multiplier
+	elif intent.length_squared() > 0.001:
 		response = tuning.acceleration * lerpf(0.46, 1.0, intent.length())
 
 	velocity = velocity.move_toward(desired_velocity, response * delta)
 	velocity += _environment_force * delta
-	velocity = velocity.limit_length(tuning.max_speed * 1.22)
+	var velocity_cap := tuning.max_speed * 1.22
+	if boosting:
+		velocity_cap = tuning.max_speed * tuning.boost_speed_multiplier * _environment_speed_multiplier
+	velocity = velocity.limit_length(velocity_cap)
 	_apply_soft_world_bounds(delta)
 
 	var turn_amount := _update_facing(intent, delta)
@@ -180,7 +215,7 @@ func _physics_process(delta: float) -> void:
 	_enforce_hard_world_bounds()
 
 	var speed_ratio := clampf(velocity.length() / tuning.max_speed, 0.0, 1.0)
-	visuals.update_motion(speed_ratio, intent.length(), _facing_rotation, turn_amount, delta)
+	visuals.update_motion(speed_ratio, intent.length(), _facing_rotation, turn_amount, delta, 1.0 if boosting else 0.0)
 	ship_camera.set_motion_velocity(velocity)
 
 	if not _has_started_moving and speed_ratio > 0.08:
@@ -285,6 +320,7 @@ func _enforce_hard_world_bounds() -> void:
 		velocity.y = 0.0
 
 func _apply_bump(collision: KinematicCollision2D) -> void:
+	_cancel_boost()
 	var normal := collision.get_normal()
 	var incoming_speed := velocity.length()
 	if incoming_speed <= 1.0:
@@ -304,6 +340,67 @@ func _apply_bump(collision: KinematicCollision2D) -> void:
 	visuals.play_bump(intensity, normal)
 	ship_camera.add_bump_shake(intensity)
 	bumped.emit(intensity, normal)
+
+func can_boost() -> bool:
+	return _controls_enabled and not _travel_mode and _boost_charges > 0 and _boost_remaining <= 0.001
+
+func is_boosting() -> bool:
+	return _boost_remaining > 0.0
+
+func get_boost_charges() -> int:
+	return _boost_charges
+
+func get_boost_capacity() -> int:
+	return _boost_charge_capacity
+
+func get_boost_recharge_progress() -> float:
+	if _boost_charges >= _boost_charge_capacity:
+		return 1.0
+	return clampf(_boost_recharge_elapsed / maxf(tuning.boost_recharge_seconds, 0.001), 0.0, 1.0)
+
+func _on_boost_requested() -> void:
+	if not can_boost():
+		return
+	var launch_direction := _smoothed_intent
+	if launch_direction.length_squared() <= 0.001 and velocity.length_squared() > 64.0:
+		launch_direction = velocity.normalized()
+	if launch_direction.length_squared() <= 0.001:
+		launch_direction = Vector2.UP.rotated(_facing_rotation)
+	_boost_direction = launch_direction.normalized()
+	_boost_charges -= 1
+	_boost_recharge_elapsed = 0.0
+	_boost_remaining = tuning.boost_duration + _boost_duration_bonus
+	visuals.play_boost()
+	ship_camera.add_bump_shake(0.18)
+	boost_started.emit()
+
+func _update_boost_direction(intent: Vector2, delta: float) -> void:
+	if intent.length_squared() <= 0.001:
+		return
+	var target_direction := intent.normalized()
+	var weight := 1.0 - exp(-tuning.turn_response * tuning.boost_turn_authority * delta)
+	var blended := _boost_direction.lerp(target_direction, weight)
+	if blended.length_squared() > 0.001:
+		_boost_direction = blended.normalized()
+
+func _update_boost_recharge(delta: float) -> void:
+	if _boost_charges >= _boost_charge_capacity:
+		_boost_recharge_elapsed = 0.0
+		return
+	if _boost_remaining > 0.0:
+		return
+	_boost_recharge_elapsed += delta * _boost_recharge_rate
+	while _boost_recharge_elapsed >= tuning.boost_recharge_seconds and _boost_charges < _boost_charge_capacity:
+		_boost_recharge_elapsed -= tuning.boost_recharge_seconds
+		_boost_charges += 1
+	if _boost_charges >= _boost_charge_capacity:
+		_boost_recharge_elapsed = 0.0
+
+func _cancel_boost() -> void:
+	if _boost_remaining <= 0.0:
+		return
+	_boost_remaining = 0.0
+	boost_ended.emit()
 
 func _on_cargo_changed(used_units: int, capacity: int) -> void:
 	cargo_changed.emit(used_units, capacity)
