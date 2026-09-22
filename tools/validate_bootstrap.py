@@ -360,10 +360,12 @@ def validate_visual_foundation() -> None:
         fail("Biome thumbnail must not render a second internal cyan border")
     if 'StyleBoxEmpty" id="HudPanel"' not in flight_theme:
         fail("Flight mission/cargo hosts must not draw a second flat border around the Kenney asset")
-    if flight.count("panel_glass_notches.png") < 1 or "MissionChrome" not in flight or "CargoChrome" not in flight:
-        fail("Flight mission/cargo cards must reuse the existing Kenney glass-notch chrome")
-    if flight.count("self_modulate = Color(0.26, 0.28, 0.31, 1)") < 2:
-        fail("Flight mission/cargo Kenney frames must use the shared dark-mode treatment")
+    if flight.count("panel_glass.png") < 1 or "MissionChrome" not in flight or "CargoChrome" not in flight:
+        fail("Flight mission/cargo cards must reuse the rounded Kenney glass chrome")
+    if "panel_glass_notches.png" in flight:
+        fail("Flight mission/cargo cards must not regress to the notched octagonal chrome")
+    if flight.count("self_modulate = Color(0.12, 0.13, 0.15, 1)") < 2:
+        fail("Flight mission/cargo Kenney frames must use the shared near-black treatment")
     if flight.count("draw_center = true") < 2:
         fail("Dark-mode Kenney status cards must provide their own full background")
     if flight.count("size_flags_vertical = 4") < 2:
