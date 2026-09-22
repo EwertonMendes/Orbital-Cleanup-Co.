@@ -17,7 +17,7 @@ var _controls_enabled := true
 var _steering_touch_index := -1
 var _touch_origin := Vector2.ZERO
 var _touch_position := Vector2.ZERO
-var _ui_profile := -1
+var _ui_density_key := -1
 
 func configure(input_service: InputService, ship: PlayerShip) -> void:
 	assert(input_service != null, "TouchFlightControls requires InputService.")
@@ -69,19 +69,20 @@ func _refresh_copy() -> void:
 
 func _apply_responsive_layout() -> void:
 	var profile := ResponsiveUiProfile.current()
-	if _ui_profile == int(profile):
+	var density_key := ResponsiveUiProfile.density_key(profile)
+	if _ui_density_key == density_key:
 		return
-	_ui_profile = int(profile)
+	_ui_density_key = density_key
 
 	var phone := ResponsiveUiProfile.is_phone(profile)
-	var button_width := 156.0 if phone else 104.0
 	var button_height := maxf(
 		56.0,
 		ResponsiveUiProfile.touch_target_height(profile)
 	)
+	var button_width := maxf(156.0, button_height * 1.72) if phone else 104.0
 	var right_margin := 24.0
 	var bottom_margin := 30.0
-	var status_height := 28.0 if phone else 22.0
+	var status_height := maxf(28.0, button_height * 0.34) if phone else 22.0
 	var status_gap := 8.0 if phone else 4.0
 
 	boost_button.custom_minimum_size = Vector2(button_width, button_height)
@@ -95,10 +96,11 @@ func _apply_responsive_layout() -> void:
 	boost_status.offset_bottom = boost_button.offset_top - status_gap
 	boost_status.offset_top = boost_status.offset_bottom - status_height
 
+	var recharge_height := maxf(10.0, button_height * 0.12) if phone else 8.0
 	recharge_bar.offset_left = -(right_margin + button_width)
 	recharge_bar.offset_right = -right_margin
-	recharge_bar.offset_top = -22.0
 	recharge_bar.offset_bottom = -14.0
+	recharge_bar.offset_top = recharge_bar.offset_bottom - recharge_height
 
 func _on_boost_pressed() -> void:
 	if _input_service != null:
