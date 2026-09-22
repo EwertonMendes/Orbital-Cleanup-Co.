@@ -12,7 +12,11 @@ class_name OccChromeButton
 		_apply_type_variation()
 
 func _ready() -> void:
-	custom_minimum_size.y = maxf(custom_minimum_size.y, 48.0)
+	var profile := ResponsiveUiProfile.current()
+	custom_minimum_size.y = maxf(
+		custom_minimum_size.y,
+		ResponsiveUiProfile.touch_target_height(profile)
+	)
 	focus_mode = Control.FOCUS_ALL
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button_down.connect(_pressed_visual)
