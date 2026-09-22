@@ -31,6 +31,19 @@
         "cargo_capacity": {
           "type": "number",
           "minimum": 1
+        },
+        "boost_recharge_rate": {
+          "type": "number",
+          "minimum": 0.5
+        },
+        "boost_duration_bonus": {
+          "type": "number",
+          "minimum": 0
+        },
+        "boost_charge_capacity": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 2
         }
       }
     },
