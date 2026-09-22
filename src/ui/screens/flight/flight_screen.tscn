@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://src/ui/components/depot_navigation_guide.gd" id="15"]
 [ext_resource type="Script" path="res://src/ui/components/warp_travel_transition.gd" id="16"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/Extra/Double/panel_glass.png" id="17"]
+[ext_resource type="PackedScene" path="res://src/ui/components/touch_flight_controls.tscn" id="18"]
 
 [sub_resource type="CircleShape2D" id="UnloadShape"]
 radius = 145.0
@@ -408,6 +409,9 @@ text = "Point to steer · WASD / arrows also work"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+
+[node name="TouchFlightControls" parent="HUD/HudRoot" instance=ExtResource("18")]
+unique_name_in_owner = true
 
 [node name="OperationsOverlayHost" type="Control" parent="HUD/HudRoot"]
 unique_name_in_owner = true
