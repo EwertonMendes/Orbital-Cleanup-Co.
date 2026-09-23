@@ -77,6 +77,10 @@ func _validate_responsive_ui() -> void:
 		"390x844 must use the phone-portrait UI profile."
 	)
 	_expect(
+		ResponsiveUiProfile.classify(Vector2i(1536, 691), true) == ResponsiveUiProfile.Profile.PHONE_LANDSCAPE,
+		"Touch devices must keep phone-landscape density even when the browser reports a desktop-sized viewport."
+	)
+	_expect(
 		ResponsiveUiProfile.touch_target_height(
 			ResponsiveUiProfile.Profile.PHONE_LANDSCAPE,
 			Vector2i(844, 390)
@@ -93,8 +97,12 @@ func _validate_responsive_ui() -> void:
 
 	var canvas_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_canvas.gd")
 	_expect(
-		"JavaScriptBridge.get_interface(\"window\")" in canvas_source and "innerWidth" in canvas_source and "innerHeight" in canvas_source,
-		"Web responsive layout must read the real browser CSS viewport instead of the fixed Godot override."
+		"JavaScriptBridge.get_interface(\"window\")" in canvas_source and "visualViewport" in canvas_source and "innerWidth" in canvas_source and "innerHeight" in canvas_source,
+		"Web responsive layout must prefer the real visual viewport and fall back to the browser CSS viewport."
+	)
+	_expect(
+		"DisplayServer.is_touchscreen_available()" in canvas_source and "maxTouchPoints" in canvas_source,
+		"Web responsive layout must identify touch devices independently from inflated landscape viewport dimensions."
 	)
 
 	var profile_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_ui_profile.gd")
@@ -110,6 +118,9 @@ func _validate_responsive_ui() -> void:
 	_expect("available_width if phone" in operations_source, "Phone Operations must use the available viewport instead of the desktop console width cap.")
 	_expect("ResponsiveUiProfile.current()" in debrief_source, "Debrief must consume the shared responsive UI profile.")
 	_expect("touch_target_height" in touch_source, "Touch flight controls must size from the shared UI profile.")
+	_expect("visible = _controls_enabled" in touch_source, "Boost HUD must remain visible on desktop as well as touch devices.")
+	_expect("steering_area.visible = touch_steering" in touch_source, "Only the floating steering surface should be touch-specific.")
+	_expect("recharge_bar.visible = true" in touch_source, "Boost recharge feedback must stay visible on desktop and mobile.")
 
 	var flight_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.tscn")
 	_expect("theme_override_font_sizes/font_size = 11" not in flight_scene_source, "Flight depot telemetry must inherit semantic responsive typography.")
