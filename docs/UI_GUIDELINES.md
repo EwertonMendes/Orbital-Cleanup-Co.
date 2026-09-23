@@ -129,6 +129,17 @@ The baseline viewport is 1280×720, but the UI must remain usable on Web/mobile.
 - Avoid absolute positions for primary layout. Use Containers, anchors and margins.
 - Decorative art may use anchors/offsets, but cannot determine the usability of controls.
 
+## Global dark console language
+
+Operations, Settings, Bootstrap/loading and Contract Debrief share the same Kenney sci-fi console language.
+
+- Preserve the original Kenney nine-patch geometry, including corner screws, bevels and gloss. Dark mode is applied at the shared Theme/StyleBoxTexture layer rather than by replacing panels with generic flat rectangles.
+- Primary console surfaces are near-black blue/graphite. Nested cards are slightly lighter so hierarchy remains visible without returning to light-gray panels.
+- Body text uses high-contrast cool white; secondary copy uses blue-gray; success uses mint; rewards use amber; discovery/technical accents use cyan or rarity color.
+- Yellow remains the selected/primary-action accent. Blue, red and green remain semantic action colors where already established.
+- Do not add screen-local dark overlays, per-node color hacks or duplicated mobile/desktop dark assets. Fix shared themes or semantic variants first.
+- Loading, modal and completion surfaces must remain comfortable in low-light viewing and meet the same contrast rules as Operations.
+
 ## Accessibility and interaction
 
 - Maintain strong text/background contrast. Muted copy on the light Operations board must still be dark enough to read without relying on opacity.
