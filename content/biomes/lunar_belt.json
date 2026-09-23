@@ -12,8 +12,8 @@
     "shimmer_strength": 0.035,
     "traffic_count": 4,
     "dust_density": 0.85,
-    "primary_asset": "res://assets/original/planets/lunar_belt.svg",
-    "primary_scale": 2,
+    "primary_asset": "res://assets/original/planets/lunar_belt_hd.webp",
+    "primary_scale": 0.9,
     "primary_anchor": [
       0.18,
       0.75
