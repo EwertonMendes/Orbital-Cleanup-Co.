@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=18 format=3]
+[gd_resource type="Theme" load_steps=21 format=3]
 
 [ext_resource type="FontFile" path="res://assets/third_party/neuropol/NEUROPOL.ttf" id="1"]
 [ext_resource type="FontFile" path="res://assets/third_party/inter/Inter[opsz,wght].ttf" id="2"]
@@ -45,6 +45,7 @@ content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxTexture" id="HudButtonAction"]
 texture = ExtResource("7")
+modulate_color = Color(0.93, 0.93, 0.93, 1)
 texture_margin_left = 22.0
 texture_margin_top = 12.0
 texture_margin_right = 22.0
@@ -54,7 +55,34 @@ content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
 
+[sub_resource type="StyleBoxTexture" id="HudButtonActionHover"]
+texture = ExtResource("7")
+texture_margin_left = 22.0
+texture_margin_top = 12.0
+texture_margin_right = 22.0
+texture_margin_bottom = 12.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
 [sub_resource type="StyleBoxTexture" id="HudButtonDanger"]
+texture = ExtResource("5")
+modulate_color = Color(0.93, 0.93, 0.93, 1)
+texture_margin_left = 22.0
+texture_margin_top = 12.0
+texture_margin_right = 22.0
+texture_margin_bottom = 12.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="HudButtonDangerHover"]
 texture = ExtResource("5")
 texture_margin_left = 22.0
 texture_margin_top = 12.0
@@ -64,8 +92,24 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
 
 [sub_resource type="StyleBoxTexture" id="HudButtonSuccess"]
+texture = ExtResource("6")
+modulate_color = Color(0.93, 0.93, 0.93, 1)
+texture_margin_left = 22.0
+texture_margin_top = 12.0
+texture_margin_right = 22.0
+texture_margin_bottom = 12.0
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxTexture" id="HudButtonSuccessHover"]
 texture = ExtResource("6")
 texture_margin_left = 22.0
 texture_margin_top = 12.0
@@ -75,6 +119,10 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
 
 [sub_resource type="StyleBoxFlat" id="HudProgressBackground"]
 bg_color = Color(0.035, 0.04, 0.048, 0.98)
@@ -136,11 +184,12 @@ HudActionButton/base_type = &"Button"
 HudActionButton/fonts/font = ExtResource("1")
 HudActionButton/font_sizes/font_size = 10
 HudActionButton/colors/font_color = Color(0.02, 0.09, 0.14, 1)
-HudActionButton/colors/font_hover_color = Color(0.01, 0.05, 0.08, 1)
+HudActionButton/colors/font_hover_color = Color(0.02, 0.09, 0.14, 1)
 HudActionButton/colors/font_pressed_color = Color(0.02, 0.09, 0.14, 1)
+HudActionButton/colors/font_focus_color = Color(0.02, 0.09, 0.14, 1)
 HudActionButton/colors/font_hover_pressed_color = Color(0.02, 0.09, 0.14, 1)
 HudActionButton/styles/normal = SubResource("HudButtonAction")
-HudActionButton/styles/hover = SubResource("HudButtonAction")
+HudActionButton/styles/hover = SubResource("HudButtonActionHover")
 HudActionButton/styles/pressed = SubResource("HudButtonAction")
 HudActionButton/styles/hover_pressed = SubResource("HudButtonAction")
 HudActionButton/styles/focus = SubResource("EmptyFocus")
@@ -149,11 +198,12 @@ HudDangerButton/base_type = &"Button"
 HudDangerButton/fonts/font = ExtResource("1")
 HudDangerButton/font_sizes/font_size = 10
 HudDangerButton/colors/font_color = Color(0.12, 0.06, 0.07, 1)
-HudDangerButton/colors/font_hover_color = Color(0.05, 0.03, 0.03, 1)
+HudDangerButton/colors/font_hover_color = Color(0.12, 0.06, 0.07, 1)
 HudDangerButton/colors/font_pressed_color = Color(0.12, 0.06, 0.07, 1)
+HudDangerButton/colors/font_focus_color = Color(0.12, 0.06, 0.07, 1)
 HudDangerButton/colors/font_hover_pressed_color = Color(0.12, 0.06, 0.07, 1)
 HudDangerButton/styles/normal = SubResource("HudButtonDanger")
-HudDangerButton/styles/hover = SubResource("HudButtonDanger")
+HudDangerButton/styles/hover = SubResource("HudButtonDangerHover")
 HudDangerButton/styles/pressed = SubResource("HudButtonDanger")
 HudDangerButton/styles/hover_pressed = SubResource("HudButtonDanger")
 HudDangerButton/styles/focus = SubResource("EmptyFocus")
@@ -162,11 +212,12 @@ HudSuccessButton/base_type = &"Button"
 HudSuccessButton/fonts/font = ExtResource("1")
 HudSuccessButton/font_sizes/font_size = 10
 HudSuccessButton/colors/font_color = Color(0.035, 0.11, 0.07, 1)
-HudSuccessButton/colors/font_hover_color = Color(0.015, 0.06, 0.035, 1)
+HudSuccessButton/colors/font_hover_color = Color(0.035, 0.11, 0.07, 1)
 HudSuccessButton/colors/font_pressed_color = Color(0.035, 0.11, 0.07, 1)
+HudSuccessButton/colors/font_focus_color = Color(0.035, 0.11, 0.07, 1)
 HudSuccessButton/colors/font_hover_pressed_color = Color(0.035, 0.11, 0.07, 1)
 HudSuccessButton/styles/normal = SubResource("HudButtonSuccess")
-HudSuccessButton/styles/hover = SubResource("HudButtonSuccess")
+HudSuccessButton/styles/hover = SubResource("HudButtonSuccessHover")
 HudSuccessButton/styles/pressed = SubResource("HudButtonSuccess")
 HudSuccessButton/styles/hover_pressed = SubResource("HudButtonSuccess")
 HudSuccessButton/styles/focus = SubResource("EmptyFocus")
