@@ -7,6 +7,7 @@ func _init() -> void:
 
 func _run() -> void:
 	_validate_app_root()
+	_validate_responsive_ui()
 	_validate_operations_screen()
 	_validate_hq_components()
 	_validate_ship_steering()
@@ -61,6 +62,69 @@ func _validate_app_root() -> void:
 	_expect("travel_handoff" in router_source, "SceneRouter must expose a dedicated travel handoff path instead of reusing generic screen fades.")
 	_expect("finish_travel_handoff" in router_source, "Travel handoff must wait for the destination before revealing it.")
 	root.free()
+
+func _validate_responsive_ui() -> void:
+	_expect(
+		ResponsiveUiProfile.classify(Vector2i(1280, 720)) == ResponsiveUiProfile.Profile.DESKTOP,
+		"1280x720 must preserve desktop UI density."
+	)
+	_expect(
+		ResponsiveUiProfile.classify(Vector2i(844, 390)) == ResponsiveUiProfile.Profile.PHONE_LANDSCAPE,
+		"844x390 must use the phone-landscape UI profile."
+	)
+	_expect(
+		ResponsiveUiProfile.classify(Vector2i(390, 844)) == ResponsiveUiProfile.Profile.PHONE_PORTRAIT,
+		"390x844 must use the phone-portrait UI profile."
+	)
+	_expect(
+		ResponsiveUiProfile.classify(Vector2i(1536, 691), true) == ResponsiveUiProfile.Profile.PHONE_LANDSCAPE,
+		"Touch devices must keep phone-landscape density even when the browser reports a desktop-sized viewport."
+	)
+	_expect(
+		ResponsiveUiProfile.touch_target_height(
+			ResponsiveUiProfile.Profile.PHONE_LANDSCAPE,
+			Vector2i(844, 390)
+		) >= 90.0,
+		"Phone UI must compensate touch targets for the physical Web canvas scale."
+	)
+	_expect(
+		ResponsiveUiProfile.font_scale(
+			ResponsiveUiProfile.Profile.PHONE_LANDSCAPE,
+			Vector2i(844, 390)
+		) > 2.0,
+		"Phone typography must compensate for downscaled Web canvases."
+	)
+
+	var canvas_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_canvas.gd")
+	_expect(
+		"JavaScriptBridge.get_interface(\"window\")" in canvas_source and "visualViewport" in canvas_source and "innerWidth" in canvas_source and "innerHeight" in canvas_source,
+		"Web responsive layout must prefer the real visual viewport and fall back to the browser CSS viewport."
+	)
+	_expect(
+		"DisplayServer.is_touchscreen_available()" in canvas_source and "maxTouchPoints" in canvas_source,
+		"Web responsive layout must identify touch devices independently from inflated landscape viewport dimensions."
+	)
+
+	var profile_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_ui_profile.gd")
+	_expect("FONT_MINIMUMS" in profile_source and "build_theme" in profile_source, "Responsive UI must centralize semantic typography density.")
+	_expect("apply_minimum_touch_targets" in profile_source, "Responsive UI must centralize minimum touch-target sizing.")
+
+	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
+	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
+	var debrief_source := FileAccess.get_file_as_string("res://src/ui/screens/debrief/contract_debrief_screen.gd")
+	var touch_source := FileAccess.get_file_as_string("res://src/ui/components/touch_flight_controls.gd")
+	_expect("ResponsiveUiProfile.current()" in flight_source, "Flight must consume the shared responsive UI profile.")
+	_expect("ResponsiveUiProfile.current()" in operations_source, "Operations must consume the shared responsive UI profile.")
+	_expect("available_width if phone" in operations_source, "Phone Operations must use the available viewport instead of the desktop console width cap.")
+	_expect("ResponsiveUiProfile.current()" in debrief_source, "Debrief must consume the shared responsive UI profile.")
+	_expect("touch_target_height" in touch_source, "Touch flight controls must size from the shared UI profile.")
+	_expect("visible = _controls_enabled" in touch_source, "Boost HUD must remain visible on desktop as well as touch devices.")
+	_expect("steering_area.visible = touch_steering" in touch_source, "Only the floating steering surface should be touch-specific.")
+	_expect("recharge_bar.visible = true" in touch_source, "Boost recharge feedback must stay visible on desktop and mobile.")
+
+	var flight_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.tscn")
+	_expect("theme_override_font_sizes/font_size = 11" not in flight_scene_source, "Flight depot telemetry must inherit semantic responsive typography.")
+
 
 func _validate_operations_screen() -> void:
 	var packed := load("res://src/ui/screens/operations/operations_screen.tscn") as PackedScene
@@ -126,7 +190,7 @@ func _validate_operations_screen() -> void:
 	_expect("discovery_tab.visible = _progression.get_discovery_count() > 0" in operations_source, "Discovery navigation must stay hidden before first discovery.")
 	_expect("if not unlocked:" in operations_source and "continue" in operations_source, "Locked cosmetics must stay absent instead of cluttering the workshop.")
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
-	_expect("DisplayServer.window_get_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use real window orientation and a tall portrait console to prevent clipping.")
+	_expect("ResponsiveUiProfile.viewport_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use the shared real viewport source and a tall portrait console to prevent clipping.")
 	_expect("settings_modal.custom_minimum_size" in operations_source and "footer_spacer.visible = not portrait" in operations_source, "Operations must protect compact Settings and portrait deployment layouts from overflow.")
 	_expect("position:x" in operations_source and "_update_tab_visuals" in operations_source, "Operations tab changes require smooth directional panel motion and explicit selected-tab styling.")
 	_expect("menu_warp_fx" not in operations_source, "Operations tab changes must not use the removed blue warp-particle overlay.")

@@ -5,6 +5,7 @@ const FLIGHT_SCREEN_PATH := "res://src/ui/screens/flight/flight_screen.tscn"
 const DEBRIEF_SCREEN_PATH := "res://src/ui/screens/debrief/contract_debrief_screen.tscn"
 const DEFAULT_SECTOR_ID := "earth_training_01"
 
+@onready var hud_root: Control = $HUD/HudRoot
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var top_bar: BoxContainer = %TopBar
 @onready var return_button: Button = %ReturnButton
@@ -50,6 +51,8 @@ var _configured_sector_id := DEFAULT_SECTOR_ID
 var _contract_active := true
 var _operations_overlay: Control
 var _travel_in_progress := false
+var _base_hud_theme: Theme
+var _ui_density_key := -1
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -148,6 +151,7 @@ func configure(context: Dictionary) -> void:
 	])
 
 func _ready() -> void:
+	_base_hud_theme = hud_root.theme
 	_validate_contracts()
 	resized.connect(_apply_responsive_layout)
 	return_button.pressed.connect(_return_to_operations)
@@ -285,18 +289,38 @@ func _validate_contracts() -> void:
 
 func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
-	var compact := portrait or size.x < 640.0
-	top_bar.vertical = compact
+	var profile := ResponsiveUiProfile.current()
+	var phone := ResponsiveUiProfile.is_phone(profile)
+	var compact := ResponsiveUiProfile.is_compact(profile)
+	var window_size := ResponsiveUiProfile.viewport_size()
+	var density_key := ResponsiveUiProfile.density_key(profile)
 
-	var horizontal_margin := 14 if compact else 24
-	var vertical_margin := 14 if compact else 20
+	if _ui_density_key != density_key:
+		var adapted_theme := ResponsiveUiProfile.build_theme(_base_hud_theme, profile)
+		theme = adapted_theme
+		hud_root.theme = adapted_theme
+		_ui_density_key = density_key
+		print("[UI] PROFILE screen=flight profile=%s viewport=%s font_scale=%.2f touch_target=%.1f" % [
+			ResponsiveUiProfile.profile_name(profile),
+			str(window_size),
+			ResponsiveUiProfile.font_scale(profile),
+			ResponsiveUiProfile.touch_target_height(profile),
+		])
+	ResponsiveUiProfile.apply_minimum_touch_targets(hud_root, profile)
+
+	# Phone landscape keeps the HUD horizontal so the live world remains visible.
+	# Portrait and truly narrow windows stack instead of squeezing the cards.
+	top_bar.vertical = portrait or window_size.x < 640
+
+	var horizontal_margin := 12 if phone else (14 if compact else 24)
+	var vertical_margin := 10 if phone else (14 if compact else 20)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
-	hint_panel.custom_minimum_size.x = 300.0 if compact else 500.0
-	toast_panel.custom_minimum_size.x = 280.0 if compact else 390.0
+	hint_panel.custom_minimum_size.x = 360.0 if phone else (300.0 if compact else 500.0)
+	toast_panel.custom_minimum_size.x = 320.0 if phone else (280.0 if compact else 390.0)
 
 func _refresh_biome_thumbnail() -> void:
 	var visual_profile := sector_runtime.get_biome_visual_profile()
