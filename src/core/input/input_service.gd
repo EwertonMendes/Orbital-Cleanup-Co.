@@ -56,16 +56,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(BOOST):
 		request_boost()
 		get_viewport().set_input_as_handled()
-		return
-
-	if (
-		event is InputEventMouseButton
-		and event.button_index == MOUSE_BUTTON_LEFT
-		and event.pressed
-		and current_mode == InputMode.POINTER_KEYBOARD
-	):
-		request_boost()
-		get_viewport().set_input_as_handled()
 
 func get_navigation_vector() -> Vector2:
 	var action_vector := Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN)
