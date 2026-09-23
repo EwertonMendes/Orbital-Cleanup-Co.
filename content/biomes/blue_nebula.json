@@ -12,8 +12,8 @@
     "shimmer_strength": 0.15,
     "traffic_count": 3,
     "dust_density": 1.45,
-    "primary_asset": "res://assets/original/planets/blue_giant.svg",
-    "primary_scale": 1.82,
+    "primary_asset": "res://assets/original/planets/blue_giant_hd.webp",
+    "primary_scale": 0.87,
     "primary_anchor": [
       0.2,
       0.23
