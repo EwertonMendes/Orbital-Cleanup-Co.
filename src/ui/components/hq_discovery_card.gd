@@ -25,9 +25,9 @@ func configure(
 	meta_label.text = meta
 	value_label.text = value_text
 	rarity_badge.text = rarity_text
-	rarity_badge.add_theme_color_override("font_color", rarity_color.darkened(0.28))
-	rarity_line.color = Color(rarity_color, 0.72)
-	rarity_glow.color = Color(rarity_color, 0.035)
+	rarity_badge.add_theme_color_override("font_color", rarity_color.lightened(0.18))
+	rarity_line.color = Color(rarity_color, 0.82)
+	rarity_glow.color = Color(rarity_color, 0.055)
 	_configure_glow(rarity_text)
 
 func reveal(delay: float = 0.0) -> void:
