@@ -310,7 +310,12 @@ def validate_biomes(
         visual = data["visual_profile"]
         require(isinstance(visual, dict), f"{label}.visual_profile must be an object")
         primary_asset = visual.get("primary_asset")
-        require(isinstance(primary_asset, str) and primary_asset.endswith(".svg"), f"{label}: primary asset must be an SVG")
+        require(isinstance(primary_asset, str), f"{label}: primary asset must be a resource path")
+        primary_suffix = Path(primary_asset).suffix.lower()
+        require(
+            primary_suffix in {".svg", ".png", ".webp"},
+            f"{label}: primary asset must be an SVG, PNG, or WebP",
+        )
         require((ROOT / primary_asset.removeprefix("res://")).exists(), f"{label}: Missing primary asset: {primary_asset}")
         anchor = visual.get("primary_anchor")
         require(isinstance(anchor, list) and len(anchor) == 2, f"{label}.visual_profile.primary_anchor must contain two values")
