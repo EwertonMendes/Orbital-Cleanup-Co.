@@ -33,6 +33,14 @@ The launch set includes:
 
 These silhouettes are deliberately larger and more structurally distinct than recoverable salvage. Runtime collision and navigation clearance are authored in landmark JSON rather than baked into the artwork.
 
+The Cargo Waystation now has an HD raster test at `landmarks/cargo_waystation_hd.webp`. Its original SVG remains beside it for rollback while the new circular station silhouette is validated; collision is authored separately to match the HD structure rather than inherited from the previous horizontal shape.
+
+## Cargo depots
+
+`depots/cargo_depot_hd.webp` is the project-owned HD unload/depot structure used in live flight. The artwork supplies the physical station silhouette, while `UnloadZone` continues to own the gameplay radius, animated rings, cargo-full feedback and unload flash. This keeps interaction feedback procedural and reusable instead of baking it into the texture.
+
+The previous Kenney station asset remains under `assets/third_party/` as a fallback/reference during the art transition.
+
 ## Destination primary artwork
 
 The `destinations/` folder contains 46 additional project-owned SVG primary visuals authored specifically for Orbital Cleanup Co. They cover Solar System worlds and moons, the Solar corona, dwarf planets, abandoned infrastructure, stellar objects, black holes, exoplanets, nebulae and a supernova remnant.
