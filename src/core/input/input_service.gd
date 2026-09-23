@@ -72,6 +72,16 @@ func clear_touch_navigation() -> void:
 func request_boost() -> void:
 	boost_requested.emit()
 
+func is_pointer_boost_event(event: InputEvent) -> bool:
+	return (
+		event is InputEventMouseButton
+		and event.button_index == MOUSE_BUTTON_LEFT
+		and event.pressed
+		and not event.double_click
+		and current_mode == InputMode.POINTER_KEYBOARD
+		and Time.get_ticks_msec() >= _suppress_mouse_until_msec
+	)
+
 func get_primary_pointer_position() -> Vector2:
 	if current_mode == InputMode.TOUCH:
 		return _touch_position
