@@ -12,8 +12,8 @@
     "shimmer_strength": 0.09,
     "traffic_count": 9,
     "dust_density": 0.55,
-    "primary_asset": "res://assets/original/planets/earth_orbit.svg",
-    "primary_scale": 2.15,
+    "primary_asset": "res://assets/original/planets/earth_orbit_hd.webp",
+    "primary_scale": 0.98,
     "primary_anchor": [
       0.82,
       0.78
