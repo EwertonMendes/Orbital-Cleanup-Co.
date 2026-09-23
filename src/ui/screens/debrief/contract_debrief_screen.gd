@@ -193,7 +193,7 @@ func _refresh_unlocks() -> void:
 		var row := Label.new()
 		row.text = "> %s" % tr(String(unlock.get("display_name_key", "")))
 		row.theme_type_variation = &"UiBody"
-		row.add_theme_color_override("font_color", Color("#6f5200"))
+		row.add_theme_color_override("font_color", OccPalette.AMBER)
 		row.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		unlocks_list.add_child(row)
 
@@ -221,13 +221,13 @@ func _refresh_discoveries() -> void:
 func _discovery_text_color(rarity: String) -> Color:
 	match rarity:
 		"epic":
-			return Color("#60328a")
+			return OccPalette.EPIC
 		"rare":
-			return Color("#7a5700")
+			return OccPalette.RARE
 		"uncommon":
-			return Color("#1f6547")
+			return OccPalette.MINT
 		_:
-			return Color("#293640")
+			return OccPalette.CYAN_SOFT
 
 func _rarity_key(rarity: String) -> String:
 	match rarity:
