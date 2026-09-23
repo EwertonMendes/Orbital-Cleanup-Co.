@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=17 format=3]
+[gd_resource type="Theme" load_steps=21 format=3]
 
 [ext_resource type="FontFile" path="res://assets/third_party/neuropol/NEUROPOL.ttf" id="1"]
 [ext_resource type="FontFile" path="res://assets/third_party/inter/Inter[opsz,wght].ttf" id="2"]
@@ -12,6 +12,7 @@
 
 [sub_resource type="StyleBoxTexture" id="ButtonDark"]
 texture = ExtResource("4")
+modulate_color = Color(0.88, 0.92, 0.95, 1)
 texture_margin_left = 28.0
 texture_margin_top = 14.0
 texture_margin_right = 28.0
@@ -21,8 +22,69 @@ content_margin_top = 9.0
 content_margin_right = 16.0
 content_margin_bottom = 9.0
 
+[sub_resource type="StyleBoxTexture" id="ButtonDarkHover"]
+texture = ExtResource("4")
+modulate_color = Color(1, 1, 1, 1)
+texture_margin_left = 28.0
+texture_margin_top = 14.0
+texture_margin_right = 28.0
+texture_margin_bottom = 14.0
+content_margin_left = 16.0
+content_margin_top = 9.0
+content_margin_right = 16.0
+content_margin_bottom = 9.0
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonDarkPressed"]
+texture = ExtResource("4")
+modulate_color = Color(0.72, 0.78, 0.82, 1)
+texture_margin_left = 28.0
+texture_margin_top = 14.0
+texture_margin_right = 28.0
+texture_margin_bottom = 14.0
+content_margin_left = 16.0
+content_margin_top = 9.0
+content_margin_right = 16.0
+content_margin_bottom = 9.0
+expand_margin_left = 1.0
+expand_margin_top = 1.0
+expand_margin_right = 1.0
+expand_margin_bottom = 1.0
+
 [sub_resource type="StyleBoxTexture" id="ButtonYellow"]
 texture = ExtResource("5")
+modulate_color = Color(0.94, 0.94, 0.94, 1)
+texture_margin_left = 28.0
+texture_margin_top = 14.0
+texture_margin_right = 28.0
+texture_margin_bottom = 14.0
+content_margin_left = 16.0
+content_margin_top = 9.0
+content_margin_right = 16.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonYellowHover"]
+texture = ExtResource("5")
+modulate_color = Color(1, 1, 1, 1)
+texture_margin_left = 28.0
+texture_margin_top = 14.0
+texture_margin_right = 28.0
+texture_margin_bottom = 14.0
+content_margin_left = 16.0
+content_margin_top = 9.0
+content_margin_right = 16.0
+content_margin_bottom = 9.0
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxTexture" id="ButtonYellowPressed"]
+texture = ExtResource("5")
+modulate_color = Color(0.82, 0.82, 0.82, 1)
 texture_margin_left = 28.0
 texture_margin_top = 14.0
 texture_margin_right = 28.0
@@ -81,14 +143,15 @@ Label/colors/font_color = Color(0.92, 0.96, 0.98, 1)
 Button/fonts/font = ExtResource("1")
 Button/font_sizes/font_size = 12
 Button/colors/font_color = Color(0.88, 0.91, 0.94, 1)
-Button/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+Button/colors/font_hover_color = Color(0.88, 0.91, 0.94, 1)
 Button/colors/font_pressed_color = Color(0.88, 0.91, 0.94, 1)
+Button/colors/font_focus_color = Color(0.88, 0.91, 0.94, 1)
 Button/colors/font_hover_pressed_color = Color(0.88, 0.91, 0.94, 1)
 Button/colors/font_disabled_color = Color(0.55, 0.58, 0.62, 0.75)
 Button/styles/normal = SubResource("ButtonDark")
-Button/styles/hover = SubResource("ButtonDark")
-Button/styles/pressed = SubResource("ButtonDark")
-Button/styles/hover_pressed = SubResource("ButtonDark")
+Button/styles/hover = SubResource("ButtonDarkHover")
+Button/styles/pressed = SubResource("ButtonDarkPressed")
+Button/styles/hover_pressed = SubResource("ButtonDarkPressed")
 Button/styles/disabled = SubResource("ButtonDark")
 Button/styles/focus = SubResource("EmptyFocus")
 
@@ -140,13 +203,14 @@ PrimaryButton/base_type = &"Button"
 PrimaryButton/fonts/font = ExtResource("1")
 PrimaryButton/font_sizes/font_size = 12
 PrimaryButton/colors/font_color = Color(0.08, 0.09, 0.11, 1)
-PrimaryButton/colors/font_hover_color = Color(0.04, 0.05, 0.07, 1)
+PrimaryButton/colors/font_hover_color = Color(0.08, 0.09, 0.11, 1)
 PrimaryButton/colors/font_pressed_color = Color(0.08, 0.09, 0.11, 1)
+PrimaryButton/colors/font_focus_color = Color(0.08, 0.09, 0.11, 1)
 PrimaryButton/colors/font_hover_pressed_color = Color(0.08, 0.09, 0.11, 1)
 PrimaryButton/styles/normal = SubResource("ButtonYellow")
-PrimaryButton/styles/hover = SubResource("ButtonYellow")
-PrimaryButton/styles/pressed = SubResource("ButtonYellow")
-PrimaryButton/styles/hover_pressed = SubResource("ButtonYellow")
+PrimaryButton/styles/hover = SubResource("ButtonYellowHover")
+PrimaryButton/styles/pressed = SubResource("ButtonYellowPressed")
+PrimaryButton/styles/hover_pressed = SubResource("ButtonYellowPressed")
 PrimaryButton/styles/disabled = SubResource("ButtonDark")
 PrimaryButton/styles/focus = SubResource("EmptyFocus")
 
@@ -154,13 +218,14 @@ SecondaryButton/base_type = &"Button"
 SecondaryButton/fonts/font = ExtResource("1")
 SecondaryButton/font_sizes/font_size = 12
 SecondaryButton/colors/font_color = Color(0.88, 0.91, 0.94, 1)
-SecondaryButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+SecondaryButton/colors/font_hover_color = Color(0.88, 0.91, 0.94, 1)
 SecondaryButton/colors/font_pressed_color = Color(0.88, 0.91, 0.94, 1)
+SecondaryButton/colors/font_focus_color = Color(0.88, 0.91, 0.94, 1)
 SecondaryButton/colors/font_hover_pressed_color = Color(0.88, 0.91, 0.94, 1)
 SecondaryButton/styles/normal = SubResource("ButtonDark")
-SecondaryButton/styles/hover = SubResource("ButtonDark")
-SecondaryButton/styles/pressed = SubResource("ButtonDark")
-SecondaryButton/styles/hover_pressed = SubResource("ButtonDark")
+SecondaryButton/styles/hover = SubResource("ButtonDarkHover")
+SecondaryButton/styles/pressed = SubResource("ButtonDarkPressed")
+SecondaryButton/styles/hover_pressed = SubResource("ButtonDarkPressed")
 SecondaryButton/styles/disabled = SubResource("ButtonDark")
 SecondaryButton/styles/focus = SubResource("EmptyFocus")
 
@@ -168,13 +233,14 @@ TabButton/base_type = &"Button"
 TabButton/fonts/font = ExtResource("1")
 TabButton/font_sizes/font_size = 12
 TabButton/colors/font_color = Color(0.86, 0.90, 0.93, 1)
-TabButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+TabButton/colors/font_hover_color = Color(0.86, 0.90, 0.93, 1)
 TabButton/colors/font_pressed_color = Color(0.06, 0.07, 0.09, 1)
+TabButton/colors/font_focus_color = Color(0.86, 0.90, 0.93, 1)
 TabButton/colors/font_hover_pressed_color = Color(0.06, 0.07, 0.09, 1)
 TabButton/styles/normal = SubResource("ButtonDark")
-TabButton/styles/hover = SubResource("ButtonDark")
+TabButton/styles/hover = SubResource("ButtonDarkHover")
 TabButton/styles/pressed = SubResource("ButtonYellow")
-TabButton/styles/hover_pressed = SubResource("ButtonYellow")
+TabButton/styles/hover_pressed = SubResource("ButtonYellowHover")
 TabButton/styles/disabled = SubResource("ButtonDark")
 TabButton/styles/focus = SubResource("EmptyFocus")
 
@@ -182,13 +248,14 @@ UtilityButton/base_type = &"Button"
 UtilityButton/fonts/font = ExtResource("1")
 UtilityButton/font_sizes/font_size = 11
 UtilityButton/colors/font_color = Color(0.86, 0.90, 0.93, 1)
-UtilityButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+UtilityButton/colors/font_hover_color = Color(0.86, 0.90, 0.93, 1)
 UtilityButton/colors/font_pressed_color = Color(0.86, 0.90, 0.93, 1)
+UtilityButton/colors/font_focus_color = Color(0.86, 0.90, 0.93, 1)
 UtilityButton/colors/font_hover_pressed_color = Color(0.86, 0.90, 0.93, 1)
 UtilityButton/styles/normal = SubResource("ButtonDark")
-UtilityButton/styles/hover = SubResource("ButtonDark")
-UtilityButton/styles/pressed = SubResource("ButtonDark")
-UtilityButton/styles/hover_pressed = SubResource("ButtonDark")
+UtilityButton/styles/hover = SubResource("ButtonDarkHover")
+UtilityButton/styles/pressed = SubResource("ButtonDarkPressed")
+UtilityButton/styles/hover_pressed = SubResource("ButtonDarkPressed")
 UtilityButton/styles/disabled = SubResource("ButtonDark")
 UtilityButton/styles/focus = SubResource("EmptyFocus")
 
@@ -196,13 +263,14 @@ DangerButton/base_type = &"Button"
 DangerButton/fonts/font = ExtResource("1")
 DangerButton/font_sizes/font_size = 11
 DangerButton/colors/font_color = Color(1, 0.58, 0.62, 1)
-DangerButton/colors/font_hover_color = Color(1, 0.78, 0.80, 1)
+DangerButton/colors/font_hover_color = Color(1, 0.58, 0.62, 1)
 DangerButton/colors/font_pressed_color = Color(1, 0.58, 0.62, 1)
+DangerButton/colors/font_focus_color = Color(1, 0.58, 0.62, 1)
 DangerButton/colors/font_hover_pressed_color = Color(1, 0.58, 0.62, 1)
 DangerButton/styles/normal = SubResource("ButtonDark")
-DangerButton/styles/hover = SubResource("ButtonDark")
-DangerButton/styles/pressed = SubResource("ButtonDark")
-DangerButton/styles/hover_pressed = SubResource("ButtonDark")
+DangerButton/styles/hover = SubResource("ButtonDarkHover")
+DangerButton/styles/pressed = SubResource("ButtonDarkPressed")
+DangerButton/styles/hover_pressed = SubResource("ButtonDarkPressed")
 DangerButton/styles/disabled = SubResource("ButtonDark")
 DangerButton/styles/focus = SubResource("EmptyFocus")
 
@@ -210,13 +278,14 @@ SettingsButton/base_type = &"Button"
 SettingsButton/fonts/font = ExtResource("1")
 SettingsButton/font_sizes/font_size = 11
 SettingsButton/colors/font_color = Color(0.86, 0.90, 0.93, 1)
-SettingsButton/colors/font_hover_color = Color(1, 0.89, 0.48, 1)
+SettingsButton/colors/font_hover_color = Color(0.86, 0.90, 0.93, 1)
 SettingsButton/colors/font_pressed_color = Color(0.86, 0.90, 0.93, 1)
+SettingsButton/colors/font_focus_color = Color(0.86, 0.90, 0.93, 1)
 SettingsButton/colors/font_hover_pressed_color = Color(0.86, 0.90, 0.93, 1)
 SettingsButton/styles/normal = SubResource("ButtonDark")
-SettingsButton/styles/hover = SubResource("ButtonDark")
-SettingsButton/styles/pressed = SubResource("ButtonDark")
-SettingsButton/styles/hover_pressed = SubResource("ButtonDark")
+SettingsButton/styles/hover = SubResource("ButtonDarkHover")
+SettingsButton/styles/pressed = SubResource("ButtonDarkPressed")
+SettingsButton/styles/hover_pressed = SubResource("ButtonDarkPressed")
 SettingsButton/styles/disabled = SubResource("ButtonDark")
 SettingsButton/styles/focus = SubResource("EmptyFocus")
 
