@@ -68,6 +68,7 @@ func _resolve_startup_route() -> Dictionary:
 	var depot_nav_preview := platform_service.get_query_parameter("depot_nav").to_lower()
 	var operations_preview := platform_service.get_query_parameter("operations").to_lower()
 	var arrival_preview := platform_service.get_query_parameter("arrival_warp").to_lower()
+	var boost_click_qa := platform_service.get_query_parameter("boost_click_qa").to_lower()
 	var endless_text := platform_service.get_query_parameter("endless")
 	var seed_text := platform_service.get_query_parameter("seed")
 
@@ -156,6 +157,8 @@ func _resolve_startup_route() -> Dictionary:
 				context["debug_ship_offset"] = Vector2(1850.0, 980.0)
 			if arrival_preview in ["1", "true", "yes"]:
 				context["arrival_warp"] = true
+			if boost_click_qa in ["1", "true", "yes"]:
+				context["debug_boost_click_qa"] = true
 			print("[QA] DEEP_LINK sector=%s" % requested_sector)
 			return {"screen_path": FLIGHT_SCREEN_PATH, "context": context}
 		push_warning("Unknown ?sector= deep link: %s" % requested_sector)
