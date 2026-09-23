@@ -603,6 +603,31 @@ func _validate_environment_fields() -> void:
 			"%s original SVG must remain available while HD art is under evaluation." % biome_id
 		)
 
+	var waystation_variant = JSON.parse_string(
+		FileAccess.get_file_as_string("res://content/landmarks/cargo_waystation.json")
+	)
+	_expect(waystation_variant is Dictionary, "Cargo Waystation definition must remain valid JSON.")
+	if waystation_variant is Dictionary:
+		var waystation := waystation_variant as Dictionary
+		_expect(
+			String(waystation["sprite"]) == "res://assets/original/landmarks/cargo_waystation_hd.webp",
+			"Cargo Waystation must use the staged HD runtime artwork."
+		)
+		_expect(
+			is_equal_approx(float(waystation["scale"]), 0.58),
+			"Cargo Waystation HD scale must preserve large-landmark readability."
+		)
+		var waystation_collision := waystation["collision"] as Dictionary
+		_expect(
+			String(waystation_collision["shape"]) == "circle"
+			and is_equal_approx(float(waystation_collision["radius"]), 280.0),
+			"Cargo Waystation collision must match the new circular HD silhouette."
+		)
+	_expect(
+		FileAccess.file_exists("res://assets/original/landmarks/cargo_waystation.svg"),
+		"Original Cargo Waystation SVG must remain available while HD art is under evaluation."
+	)
+
 func _environment_kind_set(plan: Dictionary) -> Dictionary:
 	var output := {}
 	for value in plan["environment_fields"] as Array:
@@ -974,6 +999,29 @@ func _validate_flight_screen() -> void:
 	_expect("OS.has_feature(\"web\")" in quality_source, "Runtime quality profile must explicitly protect Web builds.")
 	_expect("use_screen_texture_post_process" in quality_source, "Runtime quality profile must own post-process policy.")
 	_expect(screen.find_child("UnloadDepot", true, false) is UnloadZone, "Flight screen requires cargo unload zone.")
+	var depot_station := screen.find_child("Station", true, false) as Sprite2D
+	_expect(depot_station != null, "Cargo unload zone requires a physical depot station sprite.")
+	if depot_station != null:
+		_expect(
+			depot_station.texture != null
+			and depot_station.texture.resource_path == "res://assets/original/depots/cargo_depot_hd.webp",
+			"Cargo unload zone must use the staged HD depot artwork."
+		)
+		_expect(
+			depot_station.scale.is_equal_approx(Vector2(0.3, 0.3)),
+			"HD depot must stay normalized inside the 145 px unload radius."
+		)
+		if depot_station.texture != null:
+			var depot_rendered_size := depot_station.texture.get_size() * depot_station.scale
+			_expect(
+				depot_rendered_size.x >= 180.0 and depot_rendered_size.x <= 205.0
+				and depot_rendered_size.y >= 180.0 and depot_rendered_size.y <= 205.0,
+				"HD depot artwork must remain readable without covering the gameplay ring."
+			)
+	_expect(
+		FileAccess.file_exists("res://assets/third_party/kenney_simple_space/scenery/station_a.png"),
+		"Previous Kenney depot station must remain available while HD art is under evaluation."
+	)
 	_expect(screen.find_child("ReturnButton", true, false) is Button, "Flight screen requires return action.")
 	_expect(screen.find_child("OperationsButton", true, false) is Button, "Free flight requires compact Operations access.")
 	_expect(screen.find_child("OperationsOverlayHost", true, false) is Control, "Flight requires an overlay host instead of routing to a full-screen menu.")
@@ -1045,6 +1093,7 @@ func _validate_flight_screen() -> void:
 	var depot_source := FileAccess.get_file_as_string("res://src/game/salvage/unload_zone.gd")
 	_expect("set_cargo_state" in depot_source, "Depot world beacon must react to full cargo.")
 	_expect("1.0 / 20.0" in depot_source, "Animated depot beacon must throttle redraws for Web performance.")
+	_expect("mast_top" not in depot_source, "HD depot artwork must own its antenna silhouette instead of duplicating a procedural mast.")
 
 	var authored_salvage := 0
 	for node in screen.find_children("*", "Area2D", true, false):

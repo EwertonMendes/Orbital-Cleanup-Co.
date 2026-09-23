@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
 [ext_resource type="PackedScene" path="res://src/game/ship/player_ship.tscn" id="3"]
 [ext_resource type="Theme" path="res://src/ui/themes/occ_flight_hud_theme.tres" id="4"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/station_a.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/original/depots/cargo_depot_hd.webp" id="5"]
 [ext_resource type="Script" path="res://src/game/salvage/unload_zone.gd" id="8"]
 [ext_resource type="PackedScene" path="res://src/game/sector/sector_runtime.tscn" id="9"]
 [ext_resource type="Script" path="res://src/game/visual/ambient_orbit_layer.gd" id="10"]
@@ -68,9 +68,10 @@ script = ExtResource("8")
 radius = 145.0
 
 [node name="Station" type="Sprite2D" parent="World/UnloadDepot"]
+unique_name_in_owner = true
 z_index = -1
-modulate = Color(0.72, 0.91, 1, 0.82)
-scale = Vector2(1.65, 1.65)
+modulate = Color(1, 1, 1, 0.96)
+scale = Vector2(0.3, 0.3)
 texture_filter = 2
 texture = ExtResource("5")
 
@@ -80,9 +81,9 @@ shape = SubResource("UnloadShape")
 [node name="DepotLabel" type="Label" parent="World/UnloadDepot"]
 unique_name_in_owner = true
 offset_left = -88.0
-offset_top = 92.0
+offset_top = 158.0
 offset_right = 88.0
-offset_bottom = 120.0
+offset_bottom = 186.0
 theme_override_colors/font_color = Color(0.68, 1, 0.84, 0.98)
 theme_override_colors/font_outline_color = Color(0.01, 0.03, 0.04, 0.92)
 theme_override_constants/outline_size = 4
