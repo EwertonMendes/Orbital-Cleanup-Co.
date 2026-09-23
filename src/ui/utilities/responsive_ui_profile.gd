@@ -48,16 +48,19 @@ const FONT_MINIMUMS := {
 }
 
 static func current() -> Profile:
-	return classify(viewport_size())
+	return classify(viewport_size(), ResponsiveCanvas.prefers_touch_layout())
 
 static func viewport_size() -> Vector2i:
 	return ResponsiveCanvas.viewport_size()
 
-static func classify(window_size: Vector2i) -> Profile:
+static func classify(window_size: Vector2i, touch_layout: bool = false) -> Profile:
 	if window_size.x <= 0 or window_size.y <= 0:
 		return Profile.DESKTOP
 
 	var portrait := window_size.y > window_size.x
+	if touch_layout:
+		return Profile.PHONE_PORTRAIT if portrait else Profile.PHONE_LANDSCAPE
+
 	var short_side := mini(window_size.x, window_size.y)
 	if short_side <= PHONE_SHORT_SIDE_MAX:
 		return Profile.PHONE_PORTRAIT if portrait else Profile.PHONE_LANDSCAPE
