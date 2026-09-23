@@ -12,8 +12,8 @@
     "shimmer_strength": 0.08,
     "traffic_count": 8,
     "dust_density": 1.15,
-    "primary_asset": "res://assets/original/planets/mars_freight.svg",
-    "primary_scale": 2.2,
+    "primary_asset": "res://assets/original/planets/mars_freight_hd.webp",
+    "primary_scale": 1.01,
     "primary_anchor": [
       0.81,
       0.74

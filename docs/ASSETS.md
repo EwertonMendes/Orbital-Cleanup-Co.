@@ -72,9 +72,9 @@ All three families are applied through shared Godot Theme type variations. Oxani
 
 ## Project-owned HD runtime artwork
 
-The HD Pioneer-01 and Earth test assets are stored under `assets/original/` and are project-owned runtime artwork supplied for Orbital Cleanup Co. The current runtime copies are resolution-normalized WebP files so Web/mobile builds do not ship or decode unnecessarily large source textures.
+The HD Pioneer-01 plus the Earth, Moon, Mars and Blue Giant test assets are stored under `assets/original/` and are project-owned runtime artwork supplied for Orbital Cleanup Co. The current runtime copies are resolution-normalized WebP files so Web/mobile builds do not ship or decode unnecessarily large source textures.
 
-The previous Kenney ship and original Earth SVG are intentionally retained in Git for rollback while this art direction is validated.
+The previous Kenney ship and all original launch-biome SVGs are intentionally retained in Git for rollback while this art direction is validated.
 
 ## Project-owned planet artwork
 
@@ -85,7 +85,7 @@ The launch-biome planets under `assets/original/planets/` are original Orbital C
 - Mars Freight Route;
 - Blue Nebula giant.
 
-They are not derived from the approved-but-unimported external planet packs listed above and therefore do not add a third-party runtime dependency. Editable SVG source remains in Git for the original launch set. The Earth HD test uses a transparent optimized raster beside its SVG predecessor. Godot imports either format as texture data at build time, while runtime parallax/rotation stays data-driven rather than baked into duplicate scenes.
+They are not derived from the approved-but-unimported external planet packs listed above and therefore do not add a third-party runtime dependency. Editable SVG source remains in Git for the original launch set. The HD launch-biome tests use transparent optimized rasters beside their SVG predecessors. Godot imports either format as texture data at build time, while runtime parallax/rotation stays data-driven rather than baked into duplicate scenes.
 
 
 ## Project-owned orbital landmark artwork
