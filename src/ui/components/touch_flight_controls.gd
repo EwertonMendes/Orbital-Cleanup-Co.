@@ -41,12 +41,18 @@ func _process(_delta: float) -> void:
 	if _ship == null:
 		return
 	boost_button.disabled = not _ship.can_boost()
+	var charges := _ship.get_boost_charges()
+	var capacity := _ship.get_boost_capacity()
 	boost_status.text = tr("FLIGHT_BOOST_CHARGES_FMT") % [
-		_ship.get_boost_charges(),
-		_ship.get_boost_capacity(),
+		charges,
+		capacity,
 	]
-	recharge_bar.value = _ship.get_boost_recharge_progress() * 100.0
-	recharge_bar.visible = _ship.get_boost_charges() < _ship.get_boost_capacity()
+	recharge_bar.value = (
+		100.0
+		if charges >= capacity
+		else _ship.get_boost_recharge_progress() * 100.0
+	)
+	recharge_bar.visible = true
 
 func set_controls_enabled(enabled: bool) -> void:
 	_controls_enabled = enabled
@@ -59,13 +65,28 @@ func _on_input_mode_changed(_mode: InputService.InputMode) -> void:
 	_refresh_copy()
 
 func _refresh_visibility() -> void:
-	visible = _controls_enabled and (
-		_input_service.prefers_touch()
-		or DisplayServer.is_touchscreen_available()
+	visible = _controls_enabled
+	if not _controls_enabled:
+		steering_area.visible = false
+		steering_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		return
+
+	var touch_steering := _uses_touch_steering()
+	steering_area.visible = touch_steering
+	steering_area.mouse_filter = (
+		Control.MOUSE_FILTER_STOP
+		if touch_steering
+		else Control.MOUSE_FILTER_IGNORE
 	)
 
 func _refresh_copy() -> void:
 	boost_button.text = tr("FLIGHT_BOOST")
+
+func _uses_touch_steering() -> bool:
+	return (
+		_input_service.prefers_touch()
+		or ResponsiveCanvas.prefers_touch_layout()
+	)
 
 func _apply_responsive_layout() -> void:
 	var profile := ResponsiveUiProfile.current()
@@ -79,7 +100,7 @@ func _apply_responsive_layout() -> void:
 		56.0,
 		ResponsiveUiProfile.touch_target_height(profile)
 	)
-	var button_width := maxf(156.0, button_height * 1.72) if phone else 104.0
+	var button_width := maxf(156.0, button_height * 1.72) if phone else 132.0
 	var right_margin := 24.0
 	var bottom_margin := 30.0
 	var status_height := maxf(28.0, button_height * 0.34) if phone else 22.0
