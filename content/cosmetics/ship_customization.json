@@ -12,7 +12,7 @@
         "id": "pioneer_01",
         "display_name_key": "COSMETIC_HULL_PIONEER_01",
         "unlock_rank": "trainee",
-        "texture": "res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png"
+        "texture": "res://assets/original/ships/pioneer_01_hd.webp"
       }
     ],
     "paint": [

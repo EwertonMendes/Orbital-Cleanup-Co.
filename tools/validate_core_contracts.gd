@@ -554,6 +554,20 @@ func _validate_environment_fields() -> void:
 		_expect(not primary_assets.has(asset_path), "Every biome requires its own primary visual asset: %s" % biome_id)
 		primary_assets[asset_path] = true
 	_expect(primary_assets.size() == biome_ids.size(), "Destination primary assets must remain one-to-one with biomes.")
+	var earth_biome := registry.get_biome("earth_orbit")
+	var earth_visual := earth_biome["visual_profile"] as Dictionary
+	_expect(
+		String(earth_visual["primary_asset"]) == "res://assets/original/planets/earth_orbit_hd.webp",
+		"Earth Orbit must use the staged HD runtime artwork."
+	)
+	_expect(
+		is_equal_approx(float(earth_visual["primary_scale"]), 0.98),
+		"HD Earth scale must preserve the authored on-screen diameter."
+	)
+	_expect(
+		FileAccess.file_exists("res://assets/original/planets/earth_orbit.svg"),
+		"Original Earth SVG must remain available while HD art is under evaluation."
+	)
 
 func _environment_kind_set(plan: Dictionary) -> Dictionary:
 	var output := {}
@@ -754,6 +768,24 @@ func _validate_progression_service() -> void:
 	_expect(int(round(float(base_ship["boost_charge_capacity"]))) == 1, "Base ship must start with one boost charge.")
 	var default_cosmetics := progression.get_equipped_cosmetic_ids()
 	_expect(String(default_cosmetics["hull"]) == "pioneer_01", "Default hull must come from cosmetic content.")
+	var cosmetics_source := FileAccess.get_file_as_string("res://content/cosmetics/ship_customization.json")
+	_expect(
+		"res://assets/original/ships/pioneer_01_hd.webp" in cosmetics_source,
+		"Pioneer-01 cosmetic content must use the staged HD runtime artwork."
+	)
+	var ship_scene_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.tscn")
+	_expect(
+		"res://assets/original/ships/pioneer_01_hd.webp" in ship_scene_source,
+		"PlayerShip scene must render the staged HD Pioneer-01."
+	)
+	_expect(
+		"scale = Vector2(0.14, 0.14)" in ship_scene_source,
+		"HD Pioneer-01 normalization must preserve gameplay footprint and engine alignment."
+	)
+	_expect(
+		FileAccess.file_exists("res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png"),
+		"Previous Kenney ship must remain available while HD art is under evaluation."
+	)
 	_expect(String(default_cosmetics["paint"]) == "company_blue", "Default paint must come from cosmetic content.")
 	_expect(progression.is_cosmetic_unlocked("paint", "mint_service"), "Starting-rank cosmetic must be unlocked.")
 	_expect(not progression.is_cosmetic_unlocked("paint", "safety_amber"), "Junior cosmetic must stay locked for Trainee.")
@@ -841,8 +873,21 @@ func _validate_player_ship() -> void:
 	var sprite := ship.find_child("ShipSprite", true, false) as Sprite2D
 	_expect(sprite != null, "PlayerShip requires ShipSprite.")
 	if sprite != null:
-		_expect(sprite.scale == Vector2.ONE, "Gameplay ship sprite must stay at native raster scale.")
+		_expect(sprite.texture != null, "Gameplay ship sprite requires a texture.")
+		if sprite.texture != null:
+			var native_size := sprite.texture.get_size()
+			var rendered_size := native_size * sprite.scale
+			_expect(native_size.x >= 512.0 and native_size.y >= 512.0, "HD gameplay ship source must retain enough raster detail.")
+			_expect(
+				rendered_size.x >= 70.0 and rendered_size.x <= 110.0
+				and rendered_size.y >= 70.0 and rendered_size.y <= 110.0,
+				"Gameplay ship HD artwork must be normalized to the established on-screen footprint."
+			)
 		_expect(sprite.material is ShaderMaterial, "Gameplay ship requires paint ShaderMaterial.")
+	var engine_anchor := ship.find_child("EngineAnchor", true, false) as Marker2D
+	_expect(engine_anchor != null, "PlayerShip requires an engine trail anchor.")
+	if engine_anchor != null:
+		_expect(absf(engine_anchor.position.y - 41.0) <= 1.0, "Pioneer-01 engine anchor must remain aligned with the normalized rear engine.")
 	var trail := ship.find_child("EngineTrail", true, false) as EngineTrail
 	_expect(trail != null, "PlayerShip requires engine trail.")
 	if trail != null:

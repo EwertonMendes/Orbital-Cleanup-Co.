@@ -114,6 +114,8 @@ REQUIRED = [
     "src/game/environment/environmental_field.gd",
     "src/game/environment/environment_runtime.gd",
     "assets/original/planets/earth_orbit.svg",
+    "assets/original/planets/earth_orbit_hd.webp",
+    "assets/original/ships/pioneer_01_hd.webp",
     "assets/original/planets/lunar_belt.svg",
     "assets/original/planets/mars_freight.svg",
     "assets/original/planets/blue_giant.svg",

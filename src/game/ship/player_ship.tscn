@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/game/ship/player_ship.gd" id="1"]
 [ext_resource type="Resource" path="res://src/game/ship/ship_movement_tuning.tres" id="2"]
-[ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/original/ships/pioneer_01_hd.webp" id="3"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/effects/engine_speed.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/star_small.png" id="5"]
 [ext_resource type="Script" path="res://src/game/ship/ship_visuals.gd" id="6"]
@@ -129,6 +129,7 @@ unique_name_in_owner = true
 z_index = 2
 material = SubResource("ShipPaintMaterial")
 texture_filter = 2
+scale = Vector2(0.14, 0.14)
 texture = ExtResource("3")
 
 [node name="EngineAnchor" type="Marker2D" parent="FeedbackRoot/SteeringVisual"]

@@ -8,6 +8,14 @@ The SVG planet illustrations are deliberately stylized for the game's clean cozy
 
 Runtime animation, atmosphere glow and subtle surface movement are applied by `src/game/visual/planet_surface.gdshader`.
 
+The original launch SVGs remain in the repository as editable/fallback artwork. Higher-detail runtime tests may live beside them as optimized raster assets. `earth_orbit_hd.webp` is the first such test: it preserves transparency and high-detail rendering while avoiding the memory/download cost of using the full uploaded source image directly.
+
+## Player ships
+
+`assets/original/ships/pioneer_01_hd.webp` is the first project-owned HD ship test. The previous Kenney player ship remains in `assets/third_party/` for rollback/reference while the runtime points to the new Pioneer-01 artwork.
+
+Ship source art is normalized through scene scale rather than destructively stretched. The runtime sprite remains centered and the existing engine/trail anchor stays aligned with the rendered main engine.
+
 ## Orbital landmarks
 
 The SVG artwork under `assets/original/landmarks/` is authored specifically for OCC's top-down navigation language.
