@@ -25,6 +25,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var environment_runtime: EnvironmentRuntime = %EnvironmentRuntime
 @onready var environment_status: Label = %EnvironmentStatus
 @onready var depot_navigation: DepotNavigationGuide = %DepotNavigationGuide
+@onready var depot_nav_label: Label = %DepotNavLabel
 @onready var mission_card: PanelContainer = %MissionCard
 @onready var biome_thumbnail: TextureRect = %BiomeThumbnail
 @onready var cargo_card: PanelContainer = %CargoCard
@@ -254,6 +255,26 @@ func _apply_debug_landmark_focus() -> void:
 		target.global_position.y,
 	])
 
+func _input(event: InputEvent) -> void:
+	if not _input_service.is_pointer_boost_event(event):
+		return
+	if _travel_in_progress:
+		return
+	if _operations_overlay != null and is_instance_valid(_operations_overlay):
+		return
+
+	var mouse_event := event as InputEventMouseButton
+	if _is_pointer_over_flight_ui(mouse_event.position):
+		return
+
+	_input_service.request_boost()
+	get_viewport().set_input_as_handled()
+	if bool(_context.get("debug_boost_click_qa", false)):
+		if player_ship.is_boosting():
+			print("[QA] WORLD_CLICK_BOOST_STARTED position=%s" % str(mouse_event.position))
+		else:
+			print("[QA] WORLD_CLICK_BOOST_REJECTED position=%s" % str(mouse_event.position))
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
 		return
@@ -263,6 +284,26 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	_open_operations()
 	get_viewport().set_input_as_handled()
+
+func _is_pointer_over_flight_ui(pointer_position: Vector2) -> bool:
+	if _control_contains_pointer(top_bar, pointer_position):
+		return true
+	if _control_contains_pointer(hint_panel, pointer_position):
+		return true
+	if _control_contains_pointer(toast_panel, pointer_position):
+		return true
+	if _control_contains_pointer(depot_nav_label, pointer_position):
+		return true
+	if touch_controls.is_pointer_over_boost_hud(pointer_position):
+		return true
+	return false
+
+func _control_contains_pointer(control: Control, pointer_position: Vector2) -> bool:
+	if control == null or not control.is_visible_in_tree():
+		return false
+	if control.modulate.a * control.self_modulate.a <= 0.05:
+		return false
+	return control.get_global_rect().has_point(pointer_position)
 
 func _exit_tree() -> void:
 	_stop_gameplay()
@@ -280,7 +321,7 @@ func _validate_contracts() -> void:
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
 	assert(flight_feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(environment_runtime != null and environment_status != null, "FlightScreen requires biome environment feedback.")
-	assert(depot_navigation != null, "FlightScreen requires contextual depot navigation.")
+	assert(depot_navigation != null and depot_nav_label != null, "FlightScreen requires contextual depot navigation.")
 	assert(mission_card != null and cargo_card != null and biome_thumbnail != null, "FlightScreen requires compact flight cards and biome thumbnail.")
 	assert(operations_button != null and operations_overlay_host != null, "FlightScreen requires floating operations access.")
 	assert(warp_transition != null, "FlightScreen requires reusable warp travel transition.")

@@ -854,6 +854,11 @@ func _validate_player_ship() -> void:
 	var input_source := FileAccess.get_file_as_string("res://src/core/input/input_service.gd")
 	_expect("set_touch_navigation_vector" in input_source, "Touch steering must use a dedicated analog navigation vector.")
 	_expect("signal boost_requested" in input_source, "InputService must expose one device-agnostic boost request.")
+	_expect("is_pointer_boost_event" in input_source, "InputService must expose a stable desktop pointer-boost event contract.")
+	_expect(
+		"InputEventMouseButton" not in input_source.split("func _unhandled_input", false, 1)[1].split("func get_navigation_vector", false, 1)[0],
+		"Desktop world-click boost must not depend on _unhandled_input after GUI dispatch."
+	)
 	ship.free()
 
 func _validate_flight_screen() -> void:
@@ -867,6 +872,11 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("SectorRuntime", true, false) is SectorRuntime, "Flight screen requires generic SectorRuntime.")
 	_expect(screen.find_child("EnvironmentRuntime", true, false) is EnvironmentRuntime, "Flight screen requires reusable biome EnvironmentRuntime.")
 	_expect(screen.find_child("TouchFlightControls", true, false) is TouchFlightControls, "Flight screen requires dedicated floating touch steering and boost controls.")
+	var flight_input_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
+	_expect("_input_service.is_pointer_boost_event(event)" in flight_input_source, "Flight must route desktop world clicks before GUI can consume them.")
+	_expect("_is_pointer_over_flight_ui" in flight_input_source, "Flight must explicitly guard HUD regions from world-click boost.")
+	_expect("touch_controls.is_pointer_over_boost_hud" in flight_input_source, "Boost HUD clicks must never fall through into world-click boost.")
+	_expect("_operations_overlay != null" in flight_input_source and "_travel_in_progress" in flight_input_source, "World-click boost must be disabled while menus or travel own input.")
 	_expect(screen.find_child("AmbientSpace", true, false) is SectorBackdrop, "Flight screen requires data-configurable SectorBackdrop.")
 	var flight_backdrop_source := FileAccess.get_file_as_string("res://src/game/sector/sector_backdrop.gd")
 	_expect("MultiMeshInstance2D" in flight_backdrop_source, "SectorBackdrop must batch the starfield through MultiMeshInstance2D.")

@@ -56,16 +56,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(BOOST):
 		request_boost()
 		get_viewport().set_input_as_handled()
-		return
-
-	if (
-		event is InputEventMouseButton
-		and event.button_index == MOUSE_BUTTON_LEFT
-		and event.pressed
-		and current_mode == InputMode.POINTER_KEYBOARD
-	):
-		request_boost()
-		get_viewport().set_input_as_handled()
 
 func get_navigation_vector() -> Vector2:
 	var action_vector := Input.get_vector(MOVE_LEFT, MOVE_RIGHT, MOVE_UP, MOVE_DOWN)
@@ -81,6 +71,16 @@ func clear_touch_navigation() -> void:
 
 func request_boost() -> void:
 	boost_requested.emit()
+
+func is_pointer_boost_event(event: InputEvent) -> bool:
+	return (
+		event is InputEventMouseButton
+		and event.button_index == MOUSE_BUTTON_LEFT
+		and event.pressed
+		and not event.double_click
+		and current_mode == InputMode.POINTER_KEYBOARD
+		and Time.get_ticks_msec() >= _suppress_mouse_until_msec
+	)
 
 func get_primary_pointer_position() -> Vector2:
 	if current_mode == InputMode.TOUCH:

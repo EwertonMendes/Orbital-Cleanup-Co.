@@ -123,6 +123,14 @@ func _apply_responsive_layout() -> void:
 	recharge_bar.offset_bottom = -14.0
 	recharge_bar.offset_top = recharge_bar.offset_bottom - recharge_height
 
+func is_pointer_over_boost_hud(pointer_position: Vector2) -> bool:
+	for control in [boost_status, boost_button, recharge_bar]:
+		if control == null or not control.is_visible_in_tree():
+			continue
+		if control.get_global_rect().has_point(pointer_position):
+			return true
+	return false
+
 func _on_boost_pressed() -> void:
 	if _input_service != null:
 		_input_service.request_boost()

@@ -154,7 +154,10 @@ async function openBuild(viewport, label, touch = false) {
   const contractStarted = waitForConsole(page, '[Contract] START sector=earth_training_01', 30000);
   const deploymentReady = waitForConsole(page, '[Flight] DEPLOYMENT', 30000);
   const flightReady = waitForConsole(page, '[Flight] READY mode=contract', 30000);
-  await page.goto(`${url}?sector=earth_training_01`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  const contractUrl = touch
+    ? `${url}?sector=earth_training_01`
+    : `${url}?sector=earth_training_01&boost_click_qa=1`;
+  await page.goto(contractUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await sectorReady;
   await contractStarted;
   const deploymentMessage = (await deploymentReady).text();
@@ -168,6 +171,13 @@ async function openBuild(viewport, label, touch = false) {
   if (touch) {
     await dragTouch(page, viewport);
   } else {
+    const worldClickBoost = waitForConsole(page, '[QA] WORLD_CLICK_BOOST_STARTED', 10000);
+    await page.mouse.click(
+      Math.round(viewport.width * 0.42),
+      Math.round(viewport.height * 0.55),
+    );
+    await worldClickBoost;
+
     await page.mouse.move(Math.round(viewport.width * 0.80), Math.round(viewport.height * 0.50));
     await page.keyboard.down('d');
     await page.waitForTimeout(260);
