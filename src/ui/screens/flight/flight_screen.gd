@@ -269,8 +269,11 @@ func _input(event: InputEvent) -> void:
 
 	_input_service.request_boost()
 	get_viewport().set_input_as_handled()
-	if OS.is_debug_build():
-		print("[Input] WORLD_CLICK_BOOST position=%s" % str(mouse_event.position))
+	if bool(_context.get("debug_boost_click_qa", false)):
+		if player_ship.is_boosting():
+			print("[QA] WORLD_CLICK_BOOST_STARTED position=%s" % str(mouse_event.position))
+		else:
+			print("[QA] WORLD_CLICK_BOOST_REJECTED position=%s" % str(mouse_event.position))
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
