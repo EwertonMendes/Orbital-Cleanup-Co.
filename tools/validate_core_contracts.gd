@@ -873,8 +873,21 @@ func _validate_player_ship() -> void:
 	var sprite := ship.find_child("ShipSprite", true, false) as Sprite2D
 	_expect(sprite != null, "PlayerShip requires ShipSprite.")
 	if sprite != null:
-		_expect(sprite.scale == Vector2.ONE, "Gameplay ship sprite must stay at native raster scale.")
+		_expect(sprite.texture != null, "Gameplay ship sprite requires a texture.")
+		if sprite.texture != null:
+			var native_size := sprite.texture.get_size()
+			var rendered_size := native_size * sprite.scale
+			_expect(native_size.x >= 512.0 and native_size.y >= 512.0, "HD gameplay ship source must retain enough raster detail.")
+			_expect(
+				rendered_size.x >= 70.0 and rendered_size.x <= 110.0
+				and rendered_size.y >= 70.0 and rendered_size.y <= 110.0,
+				"Gameplay ship HD artwork must be normalized to the established on-screen footprint."
+			)
 		_expect(sprite.material is ShaderMaterial, "Gameplay ship requires paint ShaderMaterial.")
+	var engine_anchor := ship.find_child("EngineAnchor", true, false) as Marker2D
+	_expect(engine_anchor != null, "PlayerShip requires an engine trail anchor.")
+	if engine_anchor != null:
+		_expect(absf(engine_anchor.position.y - 41.0) <= 1.0, "Pioneer-01 engine anchor must remain aligned with the normalized rear engine.")
 	var trail := ship.find_child("EngineTrail", true, false) as EngineTrail
 	_expect(trail != null, "PlayerShip requires engine trail.")
 	if trail != null:
