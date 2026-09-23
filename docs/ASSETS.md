@@ -72,7 +72,7 @@ All three families are applied through shared Godot Theme type variations. Oxani
 
 ## Project-owned HD runtime artwork
 
-The HD Pioneer-01 plus the Earth, Moon, Mars and Blue Giant test assets are stored under `assets/original/` and are project-owned runtime artwork supplied for Orbital Cleanup Co. The current runtime copies are resolution-normalized WebP files so Web/mobile builds do not ship or decode unnecessarily large source textures.
+The HD Pioneer-01, Earth, Moon, Mars, Blue Giant, Cargo Waystation and cargo depot test assets are stored under `assets/original/` and are project-owned runtime artwork supplied for Orbital Cleanup Co. The current runtime copies are resolution-normalized WebP files so Web/mobile builds do not ship or decode unnecessarily large source textures.
 
 The previous Kenney ship and all original launch-biome SVGs are intentionally retained in Git for rollback while this art direction is validated.
 
@@ -93,6 +93,8 @@ They are not derived from the approved-but-unimported external planet packs list
 Large sector landmarks now use original Orbital Cleanup Co. SVG artwork under `assets/original/landmarks/` instead of scaling small source-pack props into major structures.
 
 The current set contains eight editable source assets: service satellite, cargo waystation, relay satellite, mining rig, fractured moonlet, communications array, research outpost and derelict explorer wreck.
+
+The Cargo Waystation additionally uses a project-owned 1024 px HD WebP runtime test while its SVG predecessor remains in Git. The live unload depot uses a separate project-owned 640 px HD WebP; gameplay rings and state feedback remain procedural.
 
 These files are authored for the OCC palette and top-down readability requirements. They add no third-party licensing or runtime dependency. Kenney remains useful for smaller source props, hazards and salvage, while major authored structures are now part of the project's own visual identity.
 
