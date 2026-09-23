@@ -240,6 +240,7 @@ async function openQaDeepLinks() {
   }
 
   const landmarkSamples = [
+    { sector: 'earth_orbit_03', landmark: 'cargo_waystation', label: 'earth-cargo-waystation' },
     { sector: 'earth_orbit_04', landmark: 'relay_satellite', label: 'earth-relay' },
     { sector: 'lunar_belt_02', landmark: 'fractured_moonlet', label: 'lunar-moonlet' },
     { sector: 'mars_freight_02', landmark: 'comms_array', label: 'mars-comms' },
