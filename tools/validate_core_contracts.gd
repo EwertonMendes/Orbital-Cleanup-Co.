@@ -569,6 +569,40 @@ func _validate_environment_fields() -> void:
 		"Original Earth SVG must remain available while HD art is under evaluation."
 	)
 
+	var staged_planets := {
+		"lunar_belt": {
+			"asset": "res://assets/original/planets/lunar_belt_hd.webp",
+			"scale": 0.9,
+			"fallback": "res://assets/original/planets/lunar_belt.svg",
+		},
+		"mars_freight": {
+			"asset": "res://assets/original/planets/mars_freight_hd.webp",
+			"scale": 1.01,
+			"fallback": "res://assets/original/planets/mars_freight.svg",
+		},
+		"blue_nebula": {
+			"asset": "res://assets/original/planets/blue_giant_hd.webp",
+			"scale": 0.87,
+			"fallback": "res://assets/original/planets/blue_giant.svg",
+		},
+	}
+	for biome_id in staged_planets:
+		var expected := staged_planets[biome_id] as Dictionary
+		var biome := registry.get_biome(biome_id)
+		var visual := biome["visual_profile"] as Dictionary
+		_expect(
+			String(visual["primary_asset"]) == String(expected["asset"]),
+			"%s must use its staged HD runtime artwork." % biome_id
+		)
+		_expect(
+			is_equal_approx(float(visual["primary_scale"]), float(expected["scale"])),
+			"%s HD scale must preserve the authored on-screen composition." % biome_id
+		)
+		_expect(
+			FileAccess.file_exists(String(expected["fallback"])),
+			"%s original SVG must remain available while HD art is under evaluation." % biome_id
+		)
+
 func _environment_kind_set(plan: Dictionary) -> Dictionary:
 	var output := {}
 	for value in plan["environment_fields"] as Array:
