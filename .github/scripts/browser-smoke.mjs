@@ -168,6 +168,13 @@ async function openBuild(viewport, label, touch = false) {
   if (touch) {
     await dragTouch(page, viewport);
   } else {
+    const worldClickBoost = waitForConsole(page, '[Input] WORLD_CLICK_BOOST', 10000);
+    await page.mouse.click(
+      Math.round(viewport.width * 0.42),
+      Math.round(viewport.height * 0.55),
+    );
+    await worldClickBoost;
+
     await page.mouse.move(Math.round(viewport.width * 0.80), Math.round(viewport.height * 0.50));
     await page.keyboard.down('d');
     await page.waitForTimeout(260);
