@@ -397,6 +397,11 @@ try {
     true,
   );
   await openBuild(
+    { width: 1536, height: 691 },
+    'mobile-landscape-wide-1536x691',
+    true,
+  );
+  await openBuild(
     { width: 390, height: 844 },
     'mobile-portrait-390x844',
     true,
