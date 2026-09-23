@@ -72,13 +72,6 @@ func _draw() -> void:
 		var beacon := Vector2.from_angle(angle) * (radius - 28.0)
 		draw_circle(beacon, 2.5 + _unload_flash * 2.0, Color(beacon_color, 0.68))
 
-	var mast_top := Vector2(0.0, -radius - 62.0)
-	var mast_base := Vector2(0.0, -radius - 12.0)
-	draw_line(mast_base, mast_top, Color(beacon_color, 0.24), 1.4, true)
-	draw_circle(mast_top, 4.0 + sin(_pulse) * 0.7, Color(beacon_color, 0.88))
-	draw_arc(mast_top, 11.0, -PI * 0.82, -PI * 0.18, 12, Color(beacon_color, 0.34), 1.4, true)
-	draw_arc(mast_top, 19.0, -PI * 0.78, -PI * 0.22, 14, Color(beacon_color, 0.16), 1.2, true)
-
 	if _cargo_full:
 		draw_arc(Vector2.ZERO, radius + 22.0, 0.0, TAU, 36, Color(beacon_color, 0.20), 2.0, true)
 
