@@ -13,7 +13,7 @@ The repository validator enforces this contract.
 
 | Asset | Creator | Official URL | License | Use | Status |
 | --- | --- | --- | --- | --- | --- |
-| Space Shooter Remastered | Kenney | https://kenney.nl/assets/space-shooter-remastered | CC0 | primary ship, meteors/debris, beam/engine feedback | **curated subset imported** |
+| Space Shooter Remastered | Kenney | https://kenney.nl/assets/space-shooter-remastered | CC0 | fallback/reference ship, meteors/debris, beam/engine feedback | **curated subset imported** |
 | Simple Space | Kenney | https://kenney.nl/assets/simple-space | CC0 | station, satellites and environmental silhouettes | **curated subset imported** |
 | UI Pack - Sci-Fi | Kenney | https://kenney.nl/assets/ui-pack-sci-fi | CC0 | original physical console chrome, cursor states and semantic color variants | **curated subset imported** |
 | Space Shooter Extension | Kenney | https://kenney.nl/assets/space-shooter-extension | CC0 | possible future space props | approved source; not imported |
@@ -41,7 +41,7 @@ The Operations redesign imports the original UI Pack - Sci-Fi files with their u
 
 No runtime recolor is baked into these UI textures. Resizable chrome uses 9-slice geometry with symmetric margins so button height stays stable, text remains centered and decorative details are never duplicated.
 
-The Interface Sounds import contains only three CC0 cues: hover/select, click/activate and back/close. One blue player ship, engine feedback, selected space props and hazards from the other Kenney packs remain as before.
+The Interface Sounds import contains only three CC0 cues: hover/select, click/activate and back/close. The original blue Kenney player ship is retained as a fallback/reference asset while the current runtime test uses the project-owned HD Pioneer-01. Engine feedback, selected space props and hazards from the other Kenney packs remain as before.
 
 Enemies, guns and lasers are intentionally excluded because Orbital Cleanup Co. has no combat. Each source directory records the official Kenney page, CC0 license and transfer provenance.
 
@@ -70,16 +70,22 @@ Orbital Cleanup Co. uses a three-family semantic typography system:
 
 All three families are applied through shared Godot Theme type variations. Oxanium has been removed from the repository.
 
+## Project-owned HD runtime artwork
+
+The HD Pioneer-01 and Earth test assets are stored under `assets/original/` and are project-owned runtime artwork supplied for Orbital Cleanup Co. The current runtime copies are resolution-normalized WebP files so Web/mobile builds do not ship or decode unnecessarily large source textures.
+
+The previous Kenney ship and original Earth SVG are intentionally retained in Git for rollback while this art direction is validated.
+
 ## Project-owned planet artwork
 
-The launch-biome planets under `assets/original/planets/` are original Orbital Cleanup Co. vector artwork authored directly for this project:
+The launch-biome planets under `assets/original/planets/` are original Orbital Cleanup Co. artwork authored directly for this project:
 
 - Earth Orbit;
 - Lunar Belt;
 - Mars Freight Route;
 - Blue Nebula giant.
 
-They are not derived from the approved-but-unimported external planet packs listed above and therefore do not add a third-party runtime dependency. Editable SVG source remains in Git, while Godot imports it as texture data at build time. A shared project shader supplies subtle rotation, atmosphere glow and shimmer instead of baking animation into duplicate image files.
+They are not derived from the approved-but-unimported external planet packs listed above and therefore do not add a third-party runtime dependency. Editable SVG source remains in Git for the original launch set. The Earth HD test uses a transparent optimized raster beside its SVG predecessor. Godot imports either format as texture data at build time, while runtime parallax/rotation stays data-driven rather than baked into duplicate scenes.
 
 
 ## Project-owned orbital landmark artwork
