@@ -34,6 +34,7 @@ content_margin_bottom = 9.0
 
 [sub_resource type="StyleBoxTexture" id="ConsolePanel"]
 texture = ExtResource("6")
+modulate_color = Color(0.16, 0.20, 0.24, 1)
 texture_margin_left = 28.0
 texture_margin_top = 28.0
 texture_margin_right = 28.0
@@ -45,6 +46,7 @@ content_margin_bottom = 22.0
 
 [sub_resource type="StyleBoxTexture" id="GlassPanel"]
 texture = ExtResource("7")
+modulate_color = Color(0.18, 0.24, 0.28, 0.98)
 texture_margin_left = 24.0
 texture_margin_top = 24.0
 texture_margin_right = 24.0
@@ -74,7 +76,7 @@ texture_margin_bottom = 14.0
 default_font = ExtResource("2")
 default_font_size = 15
 Label/fonts/font = ExtResource("2")
-Label/colors/font_color = Color(0.17, 0.19, 0.23, 1)
+Label/colors/font_color = Color(0.92, 0.96, 0.98, 1)
 
 Button/fonts/font = ExtResource("1")
 Button/font_sizes/font_size = 12
@@ -97,42 +99,42 @@ ProgressBar/styles/fill = SubResource("ProgressFill")
 DisplayLabel/base_type = &"Label"
 DisplayLabel/fonts/font = ExtResource("1")
 DisplayLabel/font_sizes/font_size = 26
-DisplayLabel/colors/font_color = Color(0.12, 0.15, 0.20, 1)
+DisplayLabel/colors/font_color = Color(0.94, 0.98, 1, 1)
 
 ScreenTitle/base_type = &"Label"
 ScreenTitle/fonts/font = ExtResource("1")
 ScreenTitle/font_sizes/font_size = 20
-ScreenTitle/colors/font_color = Color(0.12, 0.15, 0.20, 1)
+ScreenTitle/colors/font_color = Color(0.82, 0.93, 0.98, 1)
 
 SectionTitle/base_type = &"Label"
 SectionTitle/fonts/font = ExtResource("2")
 SectionTitle/font_sizes/font_size = 17
-SectionTitle/colors/font_color = Color(0.17, 0.19, 0.23, 1)
+SectionTitle/colors/font_color = Color(0.88, 0.94, 0.97, 1)
 
 UiBody/base_type = &"Label"
 UiBody/fonts/font = ExtResource("2")
 UiBody/font_sizes/font_size = 13
-UiBody/colors/font_color = Color(0.20, 0.22, 0.26, 1)
+UiBody/colors/font_color = Color(0.82, 0.89, 0.93, 1)
 
 UiBodyMuted/base_type = &"Label"
 UiBodyMuted/fonts/font = ExtResource("2")
 UiBodyMuted/font_sizes/font_size = 12
-UiBodyMuted/colors/font_color = Color(0.29, 0.32, 0.37, 1)
+UiBodyMuted/colors/font_color = Color(0.60, 0.70, 0.76, 1)
 
 TelemetryLabel/base_type = &"Label"
 TelemetryLabel/fonts/font = ExtResource("3")
 TelemetryLabel/font_sizes/font_size = 10
-TelemetryLabel/colors/font_color = Color(0.27, 0.30, 0.35, 1)
+TelemetryLabel/colors/font_color = Color(0.56, 0.72, 0.80, 1)
 
 ValueLabel/base_type = &"Label"
 ValueLabel/fonts/font = ExtResource("3")
 ValueLabel/font_sizes/font_size = 12
-ValueLabel/colors/font_color = Color(0.16, 0.19, 0.23, 1)
+ValueLabel/colors/font_color = Color(0.91, 0.96, 0.98, 1)
 
 RarityLabel/base_type = &"Label"
 RarityLabel/fonts/font = ExtResource("2")
 RarityLabel/font_sizes/font_size = 10
-RarityLabel/colors/font_color = Color(0.20, 0.22, 0.26, 1)
+RarityLabel/colors/font_color = Color(0.78, 0.88, 0.92, 1)
 
 PrimaryButton/base_type = &"Button"
 PrimaryButton/fonts/font = ExtResource("1")
@@ -228,14 +230,14 @@ ElevatedPanel/styles/panel = SubResource("GlassPanel")
 SuccessValue/base_type = &"Label"
 SuccessValue/fonts/font = ExtResource("2")
 SuccessValue/font_sizes/font_size = 16
-SuccessValue/colors/font_color = Color(0.08, 0.42, 0.24, 1)
+SuccessValue/colors/font_color = Color(0.56, 0.95, 0.81, 1)
 
 RewardValue/base_type = &"Label"
 RewardValue/fonts/font = ExtResource("3")
 RewardValue/font_sizes/font_size = 16
-RewardValue/colors/font_color = Color(0.47, 0.33, 0.02, 1)
+RewardValue/colors/font_color = Color(1, 0.82, 0.40, 1)
 
 AccentValue/base_type = &"Label"
 AccentValue/fonts/font = ExtResource("2")
 AccentValue/font_sizes/font_size = 12
-AccentValue/colors/font_color = Color(0.12, 0.32, 0.48, 1)
+AccentValue/colors/font_color = Color(0.53, 0.87, 0.98, 1)
