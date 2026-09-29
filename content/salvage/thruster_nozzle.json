@@ -1,7 +1,7 @@
 {
   "id": "thruster_nozzle",
   "display_name_key": "SALVAGE_THRUSTER_NOZZLE",
-  "sprite": "res://assets/original/salvage/thruster_nozzle.svg",
+  "sprite": "res://assets/original/salvage/thruster_nozzle_hd.webp",
   "category": "propulsion",
   "rarity": "uncommon",
   "base_value": 70,

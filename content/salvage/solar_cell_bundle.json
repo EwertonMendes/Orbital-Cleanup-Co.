@@ -1,7 +1,7 @@
 {
   "id": "solar_cell_bundle",
   "display_name_key": "SALVAGE_SOLAR_CELL_BUNDLE",
-  "sprite": "res://assets/original/salvage/solar_cell_bundle.svg",
+  "sprite": "res://assets/original/salvage/solar_cell_bundle_hd.webp",
   "category": "power",
   "rarity": "uncommon",
   "base_value": 64,

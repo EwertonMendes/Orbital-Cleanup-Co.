@@ -1,7 +1,7 @@
 {
   "id": "coolant_cell",
   "display_name_key": "SALVAGE_COOLANT_CELL",
-  "sprite": "res://assets/original/salvage/coolant_cell.svg",
+  "sprite": "res://assets/original/salvage/coolant_cell_hd.webp",
   "category": "cargo",
   "rarity": "common",
   "base_value": 30,

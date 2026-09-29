@@ -1,7 +1,7 @@
 {
   "id": "thermal_tile",
   "display_name_key": "SALVAGE_THERMAL_TILE",
-  "sprite": "res://assets/original/salvage/thermal_tile.svg",
+  "sprite": "res://assets/original/salvage/thermal_tile_hd.webp",
   "category": "scrap",
   "rarity": "common",
   "base_value": 22,

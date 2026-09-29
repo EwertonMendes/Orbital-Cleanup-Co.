@@ -1,7 +1,7 @@
 {
   "id": "sensor_pod",
   "display_name_key": "SALVAGE_SENSOR_POD",
-  "sprite": "res://assets/original/salvage/sensor_pod.svg",
+  "sprite": "res://assets/original/salvage/sensor_pod_hd.webp",
   "category": "electronics",
   "rarity": "common",
   "base_value": 32,

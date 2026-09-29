@@ -1,7 +1,7 @@
 {
   "id": "service_scrap",
   "display_name_key": "SALVAGE_SERVICE_SCRAP",
-  "sprite": "res://assets/original/salvage/service_scrap.svg",
+  "sprite": "res://assets/original/salvage/service_scrap_hd.webp",
   "category": "scrap",
   "rarity": "common",
   "base_value": 18,

@@ -1,7 +1,7 @@
 {
   "id": "telemetry_unit",
   "display_name_key": "SALVAGE_TELEMETRY_UNIT",
-  "sprite": "res://assets/original/salvage/telemetry_unit.svg",
+  "sprite": "res://assets/original/salvage/telemetry_unit_hd.webp",
   "category": "electronics",
   "rarity": "uncommon",
   "base_value": 58,

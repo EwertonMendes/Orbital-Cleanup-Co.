@@ -1,7 +1,7 @@
 {
   "id": "lunar_regolith_canister",
   "display_name_key": "SALVAGE_LUNAR_REGOLITH_CANISTER",
-  "sprite": "res://assets/original/salvage/lunar_regolith_canister.svg",
+  "sprite": "res://assets/original/salvage/lunar_regolith_canister_hd.webp",
   "category": "mining",
   "rarity": "uncommon",
   "base_value": 62,

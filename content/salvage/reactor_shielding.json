@@ -1,7 +1,7 @@
 {
   "id": "reactor_shielding",
   "display_name_key": "SALVAGE_REACTOR_SHIELDING",
-  "sprite": "res://assets/original/salvage/reactor_shielding.svg",
+  "sprite": "res://assets/original/salvage/reactor_shielding_hd.webp",
   "category": "power",
   "rarity": "uncommon",
   "base_value": 78,
