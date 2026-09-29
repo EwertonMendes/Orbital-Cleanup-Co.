@@ -73,26 +73,52 @@
   },
   "obstacles": [
     {
-      "id": "mars_rock_large",
-      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
-      "weight": 26,
+      "id": "mars_rock_01",
+      "sprite": "res://assets/original/obstacles/mars_freight/mars_rock_01_hd.webp",
+      "weight": 13,
       "collision_radius": 54,
+      "visual_diameter": 132,
+      "authored_color": true,
       "scale_min": 0.92,
       "scale_max": 1.18
     },
     {
-      "id": "mars_rock_medium",
-      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
-      "weight": 49,
+      "id": "mars_rock_02",
+      "sprite": "res://assets/original/obstacles/mars_freight/mars_rock_02_hd.webp",
+      "weight": 13,
+      "collision_radius": 54,
+      "visual_diameter": 132,
+      "authored_color": true,
+      "scale_min": 0.92,
+      "scale_max": 1.18
+    },
+    {
+      "id": "mars_rock_03",
+      "sprite": "res://assets/original/obstacles/mars_freight/mars_rock_03_hd.webp",
+      "weight": 24,
       "collision_radius": 38,
+      "visual_diameter": 98,
+      "authored_color": true,
       "scale_min": 0.9,
       "scale_max": 1.16
     },
     {
-      "id": "mars_dust_fragment",
-      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
+      "id": "mars_rock_04",
+      "sprite": "res://assets/original/obstacles/mars_freight/mars_rock_04_hd.webp",
+      "weight": 25,
+      "collision_radius": 38,
+      "visual_diameter": 98,
+      "authored_color": true,
+      "scale_min": 0.9,
+      "scale_max": 1.16
+    },
+    {
+      "id": "mars_rock_05",
+      "sprite": "res://assets/original/obstacles/mars_freight/mars_rock_05_hd.webp",
       "weight": 25,
       "collision_radius": 26,
+      "visual_diameter": 70,
+      "authored_color": true,
       "scale_min": 0.95,
       "scale_max": 1.3
     }
