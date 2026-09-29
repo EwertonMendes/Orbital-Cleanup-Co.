@@ -20,15 +20,15 @@ jobs:
           fetch-depth: 0
 
       - name: Stop until bundle exists
-        if: hashFiles('tools/salvage_assets_bundle.ready') == ''
+        if: hashFiles('tools/salvage_assets_bundle.zip') == ''
         run: echo "Bundle not uploaded yet."
 
       - name: Install HD salvage assets and update content
-        if: hashFiles('tools/salvage_assets_bundle.ready') != ''
+        if: hashFiles('tools/salvage_assets_bundle.zip') != ''
         shell: bash
         run: |
           set -euo pipefail
-          cat tools/salvage_assets_bundle.part-* | base64 --decode > /tmp/salvage-assets.zip
+          cp tools/salvage_assets_bundle.zip /tmp/salvage-assets.zip
           mkdir -p assets/original/salvage
           unzip -o /tmp/salvage-assets.zip -d assets/original/salvage
 
@@ -59,7 +59,7 @@ jobs:
           gd.write_text(text, encoding='utf-8')
           PY
 
-          rm -f tools/salvage_assets_bundle.part-* tools/salvage_assets_bundle.ready
+          rm -f tools/salvage_assets_bundle.zip
           rm -f .github/workflows/bootstrap-hd-salvage.yml
 
           git config user.name "github-actions[bot]"
