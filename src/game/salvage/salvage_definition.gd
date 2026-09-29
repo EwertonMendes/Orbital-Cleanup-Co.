@@ -14,7 +14,7 @@ const EFFECT_PROFILES := [&"none", &"spark", &"scan", &"pulse", &"orbit"]
 @export_range(0.1, 10.0, 0.05) var collect_duration := 0.8
 @export_range(0.0, 100.0, 0.1) var cleanliness_value := 1.0
 @export_range(1, 12, 1) var cargo_units := 1
-@export_range(0.2, 4.0, 0.05) var visual_scale := 1.0
+@export_range(0.05, 4.0, 0.01) var visual_scale := 1.0
 @export_range(6.0, 120.0, 1.0) var collision_radius := 22.0
 @export var motion_profile: StringName = &"tumble"
 @export var effect_profile: StringName = &"none"
@@ -29,7 +29,7 @@ func validate() -> void:
 	assert(base_value >= 0, "SalvageDefinition.base_value cannot be negative.")
 	assert(mass > 0.0, "SalvageDefinition.mass must be positive.")
 	assert(collect_duration > 0.0, "SalvageDefinition.collect_duration must be positive.")
-	assert(cargo_units > 0, "SalvageDefinition.cargo_units must be positive.")
+	assert(cargo_units > 0, "SalvageDefinition.cargo_units must be positive.")\n\tassert(visual_scale >= 0.05 and visual_scale <= 4.0, "SalvageDefinition.visual_scale is out of range.")
 	assert(collision_radius > 0.0, "SalvageDefinition.collision_radius must be positive.")
 	assert(motion_profile in MOTION_PROFILES, "SalvageDefinition.motion_profile is invalid.")
 	assert(effect_profile in EFFECT_PROFILES, "SalvageDefinition.effect_profile is invalid.")
