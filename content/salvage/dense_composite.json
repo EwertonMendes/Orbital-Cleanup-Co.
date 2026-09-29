@@ -1,7 +1,7 @@
 {
   "id": "dense_composite",
   "display_name_key": "SALVAGE_DENSE_COMPOSITE",
-  "sprite": "res://assets/original/salvage/dense_composite.svg",
+  "sprite": "res://assets/original/salvage/dense_composite_hd.webp",
   "category": "scrap",
   "rarity": "uncommon",
   "base_value": 55,

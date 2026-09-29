@@ -1,7 +1,7 @@
 {
   "id": "cargo_canister",
   "display_name_key": "SALVAGE_CARGO_CANISTER",
-  "sprite": "res://assets/original/salvage/cargo_canister.svg",
+  "sprite": "res://assets/original/salvage/cargo_canister_hd.webp",
   "category": "cargo",
   "rarity": "common",
   "base_value": 34,

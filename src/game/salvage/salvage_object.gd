@@ -2,6 +2,7 @@ extends Area2D
 class_name SalvageObject
 
 const ENERGY_SHADER := preload("res://src/game/visual/salvage_energy.gdshader")
+const SALVAGE_REFERENCE_TEXTURE_SIZE := 128.0
 
 @export var definition: SalvageDefinition
 @export var priority_target := false
@@ -133,7 +134,9 @@ func get_tractor_progress() -> float:
 
 func _apply_definition() -> void:
 	sprite.texture = definition.sprite
-	_base_scale = Vector2.ONE * definition.visual_scale
+	var texture_size := maxf(float(definition.sprite.get_width()), float(definition.sprite.get_height()))
+	var hd_scale := SALVAGE_REFERENCE_TEXTURE_SIZE / maxf(texture_size, 1.0)
+	_base_scale = Vector2.ONE * definition.visual_scale * hd_scale
 	sprite.scale = _base_scale
 	var category_tint := WorldVisualLanguage.salvage_category_color(definition.category)
 	var rarity_tint := WorldVisualLanguage.salvage_rarity_color(definition.rarity)

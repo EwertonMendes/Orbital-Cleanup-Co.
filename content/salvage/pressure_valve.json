@@ -1,7 +1,7 @@
 {
   "id": "pressure_valve",
   "display_name_key": "SALVAGE_PRESSURE_VALVE",
-  "sprite": "res://assets/original/salvage/pressure_valve.svg",
+  "sprite": "res://assets/original/salvage/pressure_valve_hd.webp",
   "category": "industrial",
   "rarity": "common",
   "base_value": 26,

@@ -1,7 +1,7 @@
 {
   "id": "survey_beacon",
   "display_name_key": "SALVAGE_SURVEY_BEACON",
-  "sprite": "res://assets/original/salvage/survey_beacon.svg",
+  "sprite": "res://assets/original/salvage/survey_beacon_hd.webp",
   "category": "research",
   "rarity": "rare",
   "base_value": 135,

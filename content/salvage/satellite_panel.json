@@ -1,7 +1,7 @@
 {
   "id": "satellite_panel",
   "display_name_key": "SALVAGE_SATELLITE_PANEL",
-  "sprite": "res://assets/original/salvage/satellite_panel.svg",
+  "sprite": "res://assets/original/salvage/satellite_panel_hd.webp",
   "category": "electronics",
   "rarity": "uncommon",
   "base_value": 44,

@@ -1,7 +1,7 @@
 {
   "id": "navigation_core",
   "display_name_key": "SALVAGE_NAVIGATION_CORE",
-  "sprite": "res://assets/original/salvage/navigation_core.svg",
+  "sprite": "res://assets/original/salvage/navigation_core_hd.webp",
   "category": "electronics",
   "rarity": "rare",
   "base_value": 120,

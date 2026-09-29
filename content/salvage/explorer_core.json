@@ -1,7 +1,7 @@
 {
   "id": "explorer_core",
   "display_name_key": "SALVAGE_EXPLORER_CORE",
-  "sprite": "res://assets/original/salvage/explorer_core.svg",
+  "sprite": "res://assets/original/salvage/explorer_core_hd.webp",
   "category": "research",
   "rarity": "epic",
   "base_value": 260,

@@ -1,7 +1,7 @@
 {
   "id": "mining_coupler",
   "display_name_key": "SALVAGE_MINING_COUPLER",
-  "sprite": "res://assets/original/salvage/mining_coupler.svg",
+  "sprite": "res://assets/original/salvage/mining_coupler_hd.webp",
   "category": "mining",
   "rarity": "common",
   "base_value": 28,
