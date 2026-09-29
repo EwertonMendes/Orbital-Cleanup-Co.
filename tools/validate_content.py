@@ -158,7 +158,7 @@ def validate_salvage(items: dict[str, dict[str, Any]], catalogs: dict[str, set[s
         require_number(data["collect_duration"], f"{label}.collect_duration", 0.01)
         require_number(data["cleanliness_value"], f"{label}.cleanliness_value", 0)
         require_number(data["cargo_units"], f"{label}.cargo_units", 1, 12)
-        require_number(data["visual_scale"], f"{label}.visual_scale", 0.2, 4)
+        require_number(data["visual_scale"], f"{label}.visual_scale", 0.05, 4)
         require_number(data["collision_radius"], f"{label}.collision_radius", 6, 120)
 
         profile = data["visual_profile"]
