@@ -1,0 +1,132 @@
+name: Bootstrap HD biome obstacles
+
+on:
+  push:
+    branches:
+      - feat/hd-biome-obstacles
+
+permissions:
+  contents: write
+
+jobs:
+  install-assets:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/hd-biome-obstacles
+          fetch-depth: 0
+
+      - name: Install HD obstacle assets
+        if: hashFiles('tools/occ_obstacles_hd_bundle.zip') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/occ-obstacles
+          mkdir -p /tmp/occ-obstacles
+          unzip -o tools/occ_obstacles_hd_bundle.zip -d /tmp/occ-obstacles >/dev/null
+
+          mkdir -p assets/original/obstacles/{earth_orbit,lunar_belt,mars_freight,blue_nebula}
+          cp /tmp/occ-obstacles/earth_meteorite_*_hd.webp assets/original/obstacles/earth_orbit/
+          cp /tmp/occ-obstacles/lunar_boulder_*_hd.webp assets/original/obstacles/lunar_belt/
+          cp /tmp/occ-obstacles/mars_rock_*_hd.webp assets/original/obstacles/mars_freight/
+          cp /tmp/occ-obstacles/nebula_fragment_*_hd.webp assets/original/obstacles/blue_nebula/
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          specs = {
+              'earth_orbit': [
+                  ('earth_meteorite_01', 20, 52, 128, 0.88, 1.10),
+                  ('earth_meteorite_02', 23, 37, 96, 0.90, 1.12),
+                  ('earth_meteorite_03', 22, 37, 96, 0.90, 1.12),
+                  ('earth_meteorite_04', 18, 27, 72, 1.00, 1.35),
+                  ('earth_meteorite_05', 17, 27, 72, 1.00, 1.35),
+              ],
+              'lunar_belt': [
+                  ('lunar_boulder_01', 19, 55, 134, 0.95, 1.22),
+                  ('lunar_boulder_02', 19, 55, 134, 0.95, 1.22),
+                  ('lunar_boulder_03', 21, 39, 100, 0.95, 1.20),
+                  ('lunar_boulder_04', 21, 39, 100, 0.95, 1.20),
+                  ('lunar_boulder_05', 20, 25, 68, 0.90, 1.25),
+              ],
+              'mars_freight': [
+                  ('mars_rock_01', 13, 54, 132, 0.92, 1.18),
+                  ('mars_rock_02', 13, 54, 132, 0.92, 1.18),
+                  ('mars_rock_03', 24, 38, 98, 0.90, 1.16),
+                  ('mars_rock_04', 25, 38, 98, 0.90, 1.16),
+                  ('mars_rock_05', 25, 26, 70, 0.95, 1.30),
+              ],
+              'blue_nebula': [
+                  ('nebula_fragment_01', 18, 52, 128, 0.82, 1.08),
+                  ('nebula_fragment_02', 18, 36, 94, 0.82, 1.08),
+                  ('nebula_fragment_03', 18, 36, 94, 0.82, 1.08),
+                  ('nebula_fragment_04', 23, 22, 62, 0.72, 1.05),
+                  ('nebula_fragment_05', 23, 22, 62, 0.72, 1.05),
+              ],
+          }
+
+          for biome_id, rows in specs.items():
+              path = Path('content/biomes') / f'{biome_id}.json'
+              data = json.loads(path.read_text(encoding='utf-8'))
+              obstacles = []
+              for obstacle_id, weight, radius, diameter, scale_min, scale_max in rows:
+                  obstacles.append({
+                      'id': obstacle_id,
+                      'sprite': f'res://assets/original/obstacles/{biome_id}/{obstacle_id}_hd.webp',
+                      'weight': weight,
+                      'collision_radius': radius,
+                      'visual_diameter': diameter,
+                      'authored_color': True,
+                      'scale_min': scale_min,
+                      'scale_max': scale_max,
+                  })
+              data['obstacles'] = obstacles
+              path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          runtime = Path('src/game/sector/sector_obstacle.gd')
+          text = runtime.read_text(encoding='utf-8')
+          old = '''\tsprite.scale = Vector2.ONE * _visual_scale
+\tsprite.modulate = Color(0.58, 0.62, 0.66, 0.96)
+'''
+          new = '''\tvar texture_span := maxf(float(sprite.texture.get_width()), float(sprite.texture.get_height()))
+\tvar authored_diameter := float(_definition.get("visual_diameter", texture_span))
+\tvar normalized_scale := authored_diameter / maxf(texture_span, 1.0)
+\tsprite.scale = Vector2.ONE * _visual_scale * normalized_scale
+\tsprite.modulate = Color.WHITE if bool(_definition.get("authored_color", false)) else Color(0.58, 0.62, 0.66, 0.96)
+'''
+          if old not in text:
+              raise SystemExit('Expected obstacle sprite scale/tint block was not found.')
+          runtime.write_text(text.replace(old, new), encoding='utf-8')
+
+          schema_path = Path('schemas/biome.schema.json')
+          schema = json.loads(schema_path.read_text(encoding='utf-8'))
+          obstacle_props = schema['properties']['obstacles']['items']['properties']
+          obstacle_props['visual_diameter'] = {'type': 'number', 'exclusiveMinimum': 0}
+          obstacle_props['authored_color'] = {'type': 'boolean'}
+          schema_path.write_text(json.dumps(schema, indent=2) + '\n', encoding='utf-8')
+
+          readme = Path('assets/original/README.md')
+          readme_text = readme.read_text(encoding='utf-8')
+          section = '''
+## Biome obstacle artwork
+
+`obstacles/` contains project-owned HD obstacle artwork for the four launch/endless biome families. Each family has five transparent variants so Lunar Belt, Mars Freight, Earth Orbit and Blue Nebula no longer share the same generic meteor silhouette.
+
+Obstacle collision remains authored in biome data. `visual_diameter` normalizes high-resolution artwork independently from collision size, while `authored_color` preserves the source palette instead of applying the legacy gray runtime tint. This keeps gameplay tuning and visual resolution decoupled.
+'''
+          if '## Biome obstacle artwork' not in readme_text:
+              readme.write_text(readme_text.rstrip() + '\n\n' + section.strip() + '\n', encoding='utf-8')
+          PY
+
+          rm -f tools/occ_obstacles_hd_bundle.zip
+          rm -f .github/workflows/bootstrap-hd-biome-obstacles.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: integrate HD biome obstacle artwork"
+          git push origin HEAD:feat/hd-biome-obstacles
