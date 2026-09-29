@@ -1,7 +1,7 @@
 {
   "id": "pressure_valve",
   "display_name_key": "SALVAGE_PRESSURE_VALVE",
-  "sprite": "res://assets/original/salvage/pressure_valve.svg",
+  "sprite": "res://assets/original/salvage/pressure_valve_hd.webp",
   "category": "industrial",
   "rarity": "common",
   "base_value": 26,
@@ -9,7 +9,7 @@
   "collect_duration": 0.82,
   "cleanliness_value": 1.35,
   "cargo_units": 1,
-  "visual_scale": 0.82,
+  "visual_scale": 0.1166,
   "collision_radius": 19,
   "visual_profile": {
     "motion": "tumble",

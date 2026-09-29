@@ -1,7 +1,7 @@
 {
   "id": "reactor_shielding",
   "display_name_key": "SALVAGE_REACTOR_SHIELDING",
-  "sprite": "res://assets/original/salvage/reactor_shielding.svg",
+  "sprite": "res://assets/original/salvage/reactor_shielding_hd.webp",
   "category": "power",
   "rarity": "uncommon",
   "base_value": 78,
@@ -9,7 +9,7 @@
   "collect_duration": 2.15,
   "cleanliness_value": 3.5,
   "cargo_units": 4,
-  "visual_scale": 0.52,
+  "visual_scale": 0.074,
   "collision_radius": 36,
   "visual_profile": {
     "motion": "heavy",

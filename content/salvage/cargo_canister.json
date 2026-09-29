@@ -1,7 +1,7 @@
 {
   "id": "cargo_canister",
   "display_name_key": "SALVAGE_CARGO_CANISTER",
-  "sprite": "res://assets/original/salvage/cargo_canister.svg",
+  "sprite": "res://assets/original/salvage/cargo_canister_hd.webp",
   "category": "cargo",
   "rarity": "common",
   "base_value": 34,
@@ -9,7 +9,7 @@
   "collect_duration": 1.1,
   "cleanliness_value": 1.8,
   "cargo_units": 2,
-  "visual_scale": 0.58,
+  "visual_scale": 0.0825,
   "collision_radius": 26,
   "visual_profile": {
     "motion": "heavy",

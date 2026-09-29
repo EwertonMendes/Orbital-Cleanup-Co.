@@ -1,7 +1,7 @@
 {
   "id": "nebula_sensor",
   "display_name_key": "SALVAGE_NEBULA_SENSOR",
-  "sprite": "res://assets/original/salvage/nebula_sensor.svg",
+  "sprite": "res://assets/original/salvage/nebula_sensor_hd.webp",
   "category": "research",
   "rarity": "uncommon",
   "base_value": 82,
@@ -9,7 +9,7 @@
   "collect_duration": 1.3,
   "cleanliness_value": 2.3,
   "cargo_units": 2,
-  "visual_scale": 0.64,
+  "visual_scale": 0.091,
   "collision_radius": 24,
   "visual_profile": {
     "motion": "drift",

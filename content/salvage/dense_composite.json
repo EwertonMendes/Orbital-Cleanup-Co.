@@ -1,7 +1,7 @@
 {
   "id": "dense_composite",
   "display_name_key": "SALVAGE_DENSE_COMPOSITE",
-  "sprite": "res://assets/original/salvage/dense_composite.svg",
+  "sprite": "res://assets/original/salvage/dense_composite_hd.webp",
   "category": "scrap",
   "rarity": "uncommon",
   "base_value": 55,
@@ -9,7 +9,7 @@
   "collect_duration": 1.7,
   "cleanliness_value": 2.8,
   "cargo_units": 3,
-  "visual_scale": 0.7,
+  "visual_scale": 0.0996,
   "collision_radius": 30,
   "visual_profile": {
     "motion": "tumble",

@@ -1,7 +1,7 @@
 {
   "id": "coolant_cell",
   "display_name_key": "SALVAGE_COOLANT_CELL",
-  "sprite": "res://assets/original/salvage/coolant_cell.svg",
+  "sprite": "res://assets/original/salvage/coolant_cell_hd.webp",
   "category": "cargo",
   "rarity": "common",
   "base_value": 30,
@@ -9,7 +9,7 @@
   "collect_duration": 0.95,
   "cleanliness_value": 1.5,
   "cargo_units": 1,
-  "visual_scale": 0.5,
+  "visual_scale": 0.0711,
   "collision_radius": 20,
   "visual_profile": {
     "motion": "drift",

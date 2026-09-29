@@ -1,7 +1,7 @@
 {
   "id": "telemetry_unit",
   "display_name_key": "SALVAGE_TELEMETRY_UNIT",
-  "sprite": "res://assets/original/salvage/telemetry_unit.svg",
+  "sprite": "res://assets/original/salvage/telemetry_unit_hd.webp",
   "category": "electronics",
   "rarity": "uncommon",
   "base_value": 58,
@@ -9,7 +9,7 @@
   "collect_duration": 1.2,
   "cleanliness_value": 2,
   "cargo_units": 2,
-  "visual_scale": 0.58,
+  "visual_scale": 0.0825,
   "collision_radius": 23,
   "visual_profile": {
     "motion": "drift",

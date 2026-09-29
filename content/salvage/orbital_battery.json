@@ -1,7 +1,7 @@
 {
   "id": "orbital_battery",
   "display_name_key": "SALVAGE_ORBITAL_BATTERY",
-  "sprite": "res://assets/original/salvage/orbital_battery.svg",
+  "sprite": "res://assets/original/salvage/orbital_battery_hd.webp",
   "category": "power",
   "rarity": "rare",
   "base_value": 148,
@@ -9,7 +9,7 @@
   "collect_duration": 1.95,
   "cleanliness_value": 3.2,
   "cargo_units": 3,
-  "visual_scale": 0.7,
+  "visual_scale": 0.0996,
   "collision_radius": 28,
   "visual_profile": {
     "motion": "pulse",

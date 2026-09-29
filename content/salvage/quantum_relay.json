@@ -1,7 +1,7 @@
 {
   "id": "quantum_relay",
   "display_name_key": "SALVAGE_QUANTUM_RELAY",
-  "sprite": "res://assets/original/salvage/quantum_relay.svg",
+  "sprite": "res://assets/original/salvage/quantum_relay_hd.webp",
   "category": "electronics",
   "rarity": "epic",
   "base_value": 240,
@@ -9,7 +9,7 @@
   "collect_duration": 2.5,
   "cleanliness_value": 4.4,
   "cargo_units": 4,
-  "visual_scale": 0.55,
+  "visual_scale": 0.0782,
   "collision_radius": 34,
   "visual_profile": {
     "motion": "stable",

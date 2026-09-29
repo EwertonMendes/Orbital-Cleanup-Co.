@@ -1,7 +1,7 @@
 {
   "id": "thruster_nozzle",
   "display_name_key": "SALVAGE_THRUSTER_NOZZLE",
-  "sprite": "res://assets/original/salvage/thruster_nozzle.svg",
+  "sprite": "res://assets/original/salvage/thruster_nozzle_hd.webp",
   "category": "propulsion",
   "rarity": "uncommon",
   "base_value": 70,
@@ -9,7 +9,7 @@
   "collect_duration": 1.65,
   "cleanliness_value": 2.7,
   "cargo_units": 3,
-  "visual_scale": 0.62,
+  "visual_scale": 0.0882,
   "collision_radius": 29,
   "visual_profile": {
     "motion": "spin",
