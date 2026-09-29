@@ -47,3 +47,8 @@ The `destinations/` folder contains 46 additional project-owned SVG primary visu
 
 Together with the four original launch visuals under `planets/`, the runtime has one unique primary asset for each of 50 destination biomes.
 
+## Biome obstacle artwork
+
+`obstacles/` contains project-owned HD obstacle artwork for the four launch/endless biome families. Each family has five transparent variants so Lunar Belt, Mars Freight, Earth Orbit and Blue Nebula no longer share the same generic meteor silhouette.
+
+Obstacle collision remains authored in biome data. `visual_diameter` normalizes high-resolution artwork independently from collision size, while `authored_color` preserves the source palette instead of applying the legacy gray runtime tint. This keeps gameplay tuning and visual resolution decoupled.

@@ -50,26 +50,52 @@
   },
   "obstacles": [
     {
-      "id": "meteor_large",
-      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "id": "earth_meteorite_01",
+      "sprite": "res://assets/original/obstacles/earth_orbit/earth_meteorite_01_hd.webp",
       "weight": 20,
       "collision_radius": 52,
+      "visual_diameter": 128,
+      "authored_color": true,
       "scale_min": 0.88,
       "scale_max": 1.1
     },
     {
-      "id": "meteor_medium",
-      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
-      "weight": 45,
+      "id": "earth_meteorite_02",
+      "sprite": "res://assets/original/obstacles/earth_orbit/earth_meteorite_02_hd.webp",
+      "weight": 23,
       "collision_radius": 37,
+      "visual_diameter": 96,
+      "authored_color": true,
       "scale_min": 0.9,
       "scale_max": 1.12
     },
     {
-      "id": "meteor_small",
-      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
-      "weight": 35,
+      "id": "earth_meteorite_03",
+      "sprite": "res://assets/original/obstacles/earth_orbit/earth_meteorite_03_hd.webp",
+      "weight": 22,
+      "collision_radius": 37,
+      "visual_diameter": 96,
+      "authored_color": true,
+      "scale_min": 0.9,
+      "scale_max": 1.12
+    },
+    {
+      "id": "earth_meteorite_04",
+      "sprite": "res://assets/original/obstacles/earth_orbit/earth_meteorite_04_hd.webp",
+      "weight": 18,
       "collision_radius": 27,
+      "visual_diameter": 72,
+      "authored_color": true,
+      "scale_min": 1,
+      "scale_max": 1.35
+    },
+    {
+      "id": "earth_meteorite_05",
+      "sprite": "res://assets/original/obstacles/earth_orbit/earth_meteorite_05_hd.webp",
+      "weight": 17,
+      "collision_radius": 27,
+      "visual_diameter": 72,
+      "authored_color": true,
       "scale_min": 1,
       "scale_max": 1.35
     }

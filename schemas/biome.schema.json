@@ -127,6 +127,13 @@
           "scale_max": {
             "type": "number",
             "exclusiveMinimum": 0
+          },
+          "visual_diameter": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "authored_color": {
+            "type": "boolean"
           }
         }
       }
