@@ -1,7 +1,7 @@
 {
   "id": "navigation_core",
   "display_name_key": "SALVAGE_NAVIGATION_CORE",
-  "sprite": "res://assets/original/salvage/navigation_core.svg",
+  "sprite": "res://assets/original/salvage/navigation_core_hd.webp",
   "category": "electronics",
   "rarity": "rare",
   "base_value": 120,
@@ -9,7 +9,7 @@
   "collect_duration": 1.8,
   "cleanliness_value": 2.8,
   "cargo_units": 3,
-  "visual_scale": 0.62,
+  "visual_scale": 0.0882,
   "collision_radius": 26,
   "visual_profile": {
     "motion": "stable",

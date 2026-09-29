@@ -1,7 +1,7 @@
 {
   "id": "station_bracket",
   "display_name_key": "SALVAGE_STATION_BRACKET",
-  "sprite": "res://assets/original/salvage/station_bracket.svg",
+  "sprite": "res://assets/original/salvage/station_bracket_hd.webp",
   "category": "scrap",
   "rarity": "common",
   "base_value": 20,
@@ -9,7 +9,7 @@
   "collect_duration": 0.7,
   "cleanliness_value": 1.2,
   "cargo_units": 1,
-  "visual_scale": 0.88,
+  "visual_scale": 0.1252,
   "collision_radius": 20,
   "visual_profile": {
     "motion": "tumble",

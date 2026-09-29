@@ -1,7 +1,7 @@
 {
   "id": "survey_beacon",
   "display_name_key": "SALVAGE_SURVEY_BEACON",
-  "sprite": "res://assets/original/salvage/survey_beacon.svg",
+  "sprite": "res://assets/original/salvage/survey_beacon_hd.webp",
   "category": "research",
   "rarity": "rare",
   "base_value": 135,
@@ -9,7 +9,7 @@
   "collect_duration": 1.6,
   "cleanliness_value": 3,
   "cargo_units": 2,
-  "visual_scale": 0.72,
+  "visual_scale": 0.1024,
   "collision_radius": 27,
   "visual_profile": {
     "motion": "stable",

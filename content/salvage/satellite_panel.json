@@ -1,7 +1,7 @@
 {
   "id": "satellite_panel",
   "display_name_key": "SALVAGE_SATELLITE_PANEL",
-  "sprite": "res://assets/original/salvage/satellite_panel.svg",
+  "sprite": "res://assets/original/salvage/satellite_panel_hd.webp",
   "category": "electronics",
   "rarity": "uncommon",
   "base_value": 44,
@@ -9,7 +9,7 @@
   "collect_duration": 1.35,
   "cleanliness_value": 2.2,
   "cargo_units": 2,
-  "visual_scale": 0.72,
+  "visual_scale": 0.1024,
   "collision_radius": 28,
   "visual_profile": {
     "motion": "drift",

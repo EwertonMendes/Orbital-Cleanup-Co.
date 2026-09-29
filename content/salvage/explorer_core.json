@@ -1,7 +1,7 @@
 {
   "id": "explorer_core",
   "display_name_key": "SALVAGE_EXPLORER_CORE",
-  "sprite": "res://assets/original/salvage/explorer_core.svg",
+  "sprite": "res://assets/original/salvage/explorer_core_hd.webp",
   "category": "research",
   "rarity": "epic",
   "base_value": 260,
@@ -9,7 +9,7 @@
   "collect_duration": 2.8,
   "cleanliness_value": 4.8,
   "cargo_units": 5,
-  "visual_scale": 0.46,
+  "visual_scale": 0.0654,
   "collision_radius": 38,
   "visual_profile": {
     "motion": "drift",

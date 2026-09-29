@@ -1,7 +1,7 @@
 {
   "id": "alloy_plate",
   "display_name_key": "SALVAGE_ALLOY_PLATE",
-  "sprite": "res://assets/original/salvage/alloy_plate.svg",
+  "sprite": "res://assets/original/salvage/alloy_plate_hd.webp",
   "category": "scrap",
   "rarity": "common",
   "base_value": 24,
@@ -9,7 +9,7 @@
   "collect_duration": 0.85,
   "cleanliness_value": 1.4,
   "cargo_units": 1,
-  "visual_scale": 0.52,
+  "visual_scale": 0.074,
   "collision_radius": 20,
   "visual_profile": {
     "motion": "tumble",

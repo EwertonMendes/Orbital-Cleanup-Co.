@@ -1,7 +1,7 @@
 {
   "id": "antenna_array",
   "display_name_key": "SALVAGE_ANTENNA_ARRAY",
-  "sprite": "res://assets/original/salvage/antenna_array.svg",
+  "sprite": "res://assets/original/salvage/antenna_array_hd.webp",
   "category": "electronics",
   "rarity": "uncommon",
   "base_value": 52,
@@ -9,7 +9,7 @@
   "collect_duration": 1.2,
   "cleanliness_value": 2.1,
   "cargo_units": 2,
-  "visual_scale": 0.8,
+  "visual_scale": 0.1138,
   "collision_radius": 30,
   "visual_profile": {
     "motion": "stable",
