@@ -1,0 +1,115 @@
+name: Bootstrap HD celestial batch 01
+
+on:
+  push:
+    branches:
+      - content/hd-celestial-batch-01
+
+permissions:
+  contents: write
+
+jobs:
+  install-assets:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: content/hd-celestial-batch-01
+          fetch-depth: 0
+
+      - name: Wait for celestial bundle
+        if: hashFiles('tools/celestial_hd_batch_01.zip') == ''
+        run: echo "Celestial bundle not staged yet."
+
+      - name: Install HD celestial assets
+        if: hashFiles('tools/celestial_hd_batch_01.zip') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/celestial-hd-01
+          mkdir -p /tmp/celestial-hd-01
+          unzip -o tools/celestial_hd_batch_01.zip -d /tmp/celestial-hd-01
+          mkdir -p assets/original/destinations
+          cp /tmp/celestial-hd-01/*_hd.webp assets/original/destinations/
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          targets = [
+              'jupiter_clouds',
+              'saturn_rings',
+              'neptune_orbit',
+              'uranus_orbit',
+              'venus_clouds',
+              'mercury_terminator',
+              'europa_orbit',
+              'io_orbit',
+              'titan_orbit',
+              'black_hole',
+          ]
+
+          for biome_id in targets:
+              path = Path(f'content/biomes/{biome_id}.json')
+              data = json.loads(path.read_text(encoding='utf-8'))
+              profile = data['visual_profile']
+              profile['primary_asset'] = f'res://assets/original/destinations/{biome_id}_hd.webp'
+              profile['primary_reference_size'] = 512
+              path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          schema_path = Path('schemas/biome.schema.json')
+          schema = json.loads(schema_path.read_text(encoding='utf-8'))
+          visual_props = schema['properties']['visual_profile']['properties']
+          visual_props['primary_asset']['pattern'] = r'^res://assets/original/(planets|destinations)/.+\.(svg|webp)$'
+          visual_props['primary_reference_size'] = {
+              'type': 'number',
+              'exclusiveMinimum': 0
+          }
+          schema_path.write_text(json.dumps(schema, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          backdrop_path = Path('src/game/sector/sector_backdrop.gd')
+          backdrop = backdrop_path.read_text(encoding='utf-8')
+          old = '''\tvar base_scale := float(_visual_profile.get("primary_scale", 2.0))
+          \tvar compact_scale := 0.72 if viewport_size.x < 700.0 else 1.0
+          \t_primary_visual.scale = Vector2.ONE * base_scale * compact_scale
+          '''
+          new = '''\tvar base_scale := float(_visual_profile.get("primary_scale", 2.0))
+          \tvar compact_scale := 0.72 if viewport_size.x < 700.0 else 1.0
+          \tvar texture_scale := 1.0
+          \tvar reference_size := float(_visual_profile.get("primary_reference_size", 0.0))
+          \tif reference_size > 0.0 and _primary_visual.texture != null:
+          \t\tvar texture_size := maxf(
+          \t\t\tfloat(_primary_visual.texture.get_width()),
+          \t\t\tfloat(_primary_visual.texture.get_height())
+          \t\t)
+          \t\ttexture_scale = reference_size / maxf(texture_size, 1.0)
+          \t_primary_visual.scale = Vector2.ONE * base_scale * compact_scale * texture_scale
+          '''
+          if old not in backdrop:
+              raise RuntimeError('Expected primary visual scale block was not found.')
+          backdrop_path.write_text(backdrop.replace(old, new), encoding='utf-8')
+
+          readme_path = Path('assets/original/README.md')
+          readme = readme_path.read_text(encoding='utf-8')
+          section = '''
+
+          ## HD celestial destination artwork
+
+          Destination primary visuals may use transparent HD WebP artwork. `primary_reference_size` preserves the authored visual footprint of the former 512px SVG while allowing higher-resolution raster sources.
+
+          Batch 01 upgrades Jupiter, Saturn, Neptune, Uranus, Venus, Mercury, Europa, Io, Titan, and the Black Hole destination to project-owned HD 2D artwork.
+          '''
+          if '## HD celestial destination artwork' not in readme:
+              readme_path.write_text(readme.rstrip() + section + '\n', encoding='utf-8')
+          PY
+
+          rm -f tools/celestial_hd_batch_01.zip
+          rm -f .github/workflows/bootstrap-hd-celestial-batch-01.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: add HD celestial artwork batch 01"
+          git push origin HEAD:content/hd-celestial-batch-01
