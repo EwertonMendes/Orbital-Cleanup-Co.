@@ -1,0 +1,100 @@
+name: Install HD landmark artwork
+
+on:
+  push:
+    branches:
+      - content/hd-landmarks
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: content/hd-landmarks
+          fetch-depth: 0
+
+      - name: Install landmark artwork and migrate definitions
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f tools/landmarks_hd_final.zip
+          rm -rf /tmp/occ-landmarks
+          mkdir -p /tmp/occ-landmarks
+          unzip -o tools/landmarks_hd_final.zip -d /tmp/occ-landmarks
+
+          mkdir -p assets/original/landmarks
+          cp /tmp/occ-landmarks/comms_array_hd.webp assets/original/landmarks/
+          cp /tmp/occ-landmarks/derelict_explorer_hd.webp assets/original/landmarks/
+          cp /tmp/occ-landmarks/mining_rig_hd.webp assets/original/landmarks/
+          cp /tmp/occ-landmarks/relay_satellite_hd.webp assets/original/landmarks/
+          cp /tmp/occ-landmarks/research_outpost_hd.webp assets/original/landmarks/
+          cp /tmp/occ-landmarks/service_satellite_hd.webp assets/original/landmarks/
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          references = {
+              'comms_array': 864,
+              'derelict_explorer': 1024,
+              'mining_rig': 832,
+              'relay_satellite': 704,
+              'research_outpost': 720,
+              'service_satellite': 768,
+          }
+
+          for landmark_id, reference_size in references.items():
+              path = Path(f'content/landmarks/{landmark_id}.json')
+              data = json.loads(path.read_text(encoding='utf-8'))
+              data['sprite'] = f'res://assets/original/landmarks/{landmark_id}_hd.webp'
+              data['texture_reference_size'] = reference_size
+              path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          landmark_paths = sorted(Path('content/landmarks').glob('*.json'))
+          if len(landmark_paths) != 8:
+              raise RuntimeError(f'Expected 8 authored landmarks, found {len(landmark_paths)}')
+
+          svg_refs = []
+          missing_assets = []
+          for path in landmark_paths:
+              data = json.loads(path.read_text(encoding='utf-8'))
+              sprite = str(data.get('sprite', ''))
+              if sprite.endswith('.svg'):
+                  svg_refs.append((data.get('id'), sprite))
+              asset_path = Path(sprite.removeprefix('res://'))
+              if not sprite or not asset_path.exists():
+                  missing_assets.append((data.get('id'), sprite))
+
+          if svg_refs:
+              raise RuntimeError(f'Landmark SVG runtime references remain: {svg_refs}')
+          if missing_assets:
+              raise RuntimeError(f'Landmark sprite assets missing: {missing_assets}')
+
+          readme_path = Path('assets/original/README.md')
+          readme = readme_path.read_text(encoding='utf-8')
+          section = '''
+
+          ## HD landmark artwork
+
+          All eight authored gameplay landmarks now use project-owned raster artwork at runtime. The six remaining SVG landmarks were migrated to transparent HD WebP while preserving their existing collision, placement, reserved radius, drift and spin behavior.
+
+          `texture_reference_size` keeps each new 768px raster asset at the visual footprint of its previous authored SVG dimensions, so artwork resolution remains independent from gameplay geometry.
+          '''
+          if '## HD landmark artwork' not in readme:
+              readme_path.write_text(readme.rstrip() + section + '\n', encoding='utf-8')
+          PY
+
+          rm -f tools/landmarks_hd_final.zip
+          rm -f .github/workflows/install-hd-landmarks.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: migrate remaining landmarks to HD artwork"
+          git push origin HEAD:content/hd-landmarks
