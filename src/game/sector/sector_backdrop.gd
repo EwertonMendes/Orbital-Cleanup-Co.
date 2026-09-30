@@ -3,6 +3,7 @@ class_name SectorBackdrop
 
 const BACKGROUND_EXTENT := 18000.0
 const STAR_EXTENT := 11500.0
+const CELESTIAL_BODY_SHADER := preload("res://src/game/visual/celestial_body.gdshader")
 
 var _play_bounds := Rect2(-4800.0, -3000.0, 9600.0, 6000.0)
 var _background_color := Color("#040b13")
@@ -200,7 +201,33 @@ func _rebuild_primary_visual() -> void:
 	_primary_visual.centered = true
 	_primary_visual.z_index = 1
 	_primary_rotation_speed = float(_visual_profile.get("primary_rotation_speed", 0.006))
-	_primary_visual.material = null
+	_primary_material = ShaderMaterial.new()
+	_primary_material.shader = CELESTIAL_BODY_SHADER
+	_primary_material.set_shader_parameter(
+		"atmosphere_color",
+		Color.from_string(
+			String(_visual_profile.get("atmosphere_color", _accent_color.to_html(false))),
+			_accent_color
+		)
+	)
+	_primary_material.set_shader_parameter(
+		"atmosphere_strength",
+		clampf(float(_visual_profile.get("atmosphere_strength", 0.25)), 0.0, 1.0)
+	)
+	_primary_material.set_shader_parameter(
+		"shimmer_strength",
+		clampf(float(_visual_profile.get("shimmer_strength", 0.0)), 0.0, 0.5)
+	)
+	_primary_material.set_shader_parameter(
+		"effect_strength",
+		WorldVisualLanguage.environment_effect_intensity(_visual_profile)
+	)
+	_primary_material.set_shader_parameter(
+		"profile_mode",
+		WorldVisualLanguage.environment_effect_mode(_visual_profile)
+	)
+	_primary_material.set_shader_parameter("quality_factor", RuntimeQuality.visual_effects_factor())
+	_primary_visual.material = _primary_material
 	add_child(_primary_visual)
 	_update_primary_parallax()
 
