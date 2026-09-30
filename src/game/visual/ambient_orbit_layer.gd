@@ -116,23 +116,23 @@ func _draw() -> void:
 func _draw_profile_motion(center: Vector2) -> void:
 	var strength := _effect_intensity * RuntimeQuality.visual_effects_factor()
 	match _effect_profile:
-		"dust":
+		"dust", "debris", "industrial", "graveyard":
 			for index in range(12):
 				var y := center.y - 1500.0 + index * 270.0
 				var x := center.x + fposmod(_phase * (14.0 + index) + index * 410.0, 3800.0) - 1900.0
 				draw_line(Vector2(x - 55.0, y), Vector2(x + 75.0, y + 20.0), Color(_accent, 0.05 * strength), 1.6, true)
-		"nebula":
+		"nebula", "cryo", "gas", "ocean", "crystal", "toxic", "remnant":
 			for index in range(7):
 				var angle := float(index) / 7.0 * TAU + _phase * 0.016
 				var p := center + Vector2.from_angle(angle) * (620.0 + index * 210.0)
 				var pulse := 0.5 + sin(_phase * 0.55 + index) * 0.35
 				draw_circle(p, 18.0 + index * 3.0, Color(_nebula, (0.008 + pulse * 0.008) * strength))
-		"solar":
+		"solar", "volcanic":
 			for index in range(8):
 				var y := center.y - 1300.0 + index * 360.0
 				var x := center.x + fposmod(_phase * (34.0 + index * 2.0) + index * 530.0, 4400.0) - 2200.0
 				draw_line(Vector2(x - 110.0, y + 18.0), Vector2(x + 130.0, y - 12.0), Color(_accent, 0.055 * strength), 2.0, true)
-		"anomaly":
+		"anomaly", "electromagnetic", "deep_space", "rings":
 			for index in range(5):
 				var radius := 520.0 + index * 330.0
 				var phase := _phase * (0.022 + index * 0.006)
