@@ -21,7 +21,9 @@
     "primary_parallax": 0.045,
     "primary_rotation_speed": -0.005,
     "horizon_style": "nebula",
-    "horizon_intensity": 0.82
+    "horizon_intensity": 0.82,
+    "effect_profile": "nebula",
+    "effect_intensity": 0.92
   },
   "environment": {
     "salvage_mass_multiplier": 0.94,
