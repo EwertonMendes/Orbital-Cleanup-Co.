@@ -115,7 +115,7 @@ func _apply_configuration() -> void:
 	var background := Color.from_string(String(_palette.get("background", "#040b13")), Color("#040b13"))
 	var nebula := Color.from_string(String(_palette.get("nebula", "#183b72")), Color("#183b72"))
 	var accent := Color.from_string(String(_palette.get("accent", "#55e6ff")), Color("#55e6ff"))
-	var profile_mode := WorldVisualLanguage.environment_effect_mode(_visual_profile)
+	var profile_mode := WorldVisualLanguage.environment_space_mode(_visual_profile)
 	var intensity := WorldVisualLanguage.environment_effect_intensity(_visual_profile)
 	var focal := Vector2(0.5, 0.5)
 	var anchor_value: Variant = _visual_profile.get("primary_anchor", [0.5, 0.5])
