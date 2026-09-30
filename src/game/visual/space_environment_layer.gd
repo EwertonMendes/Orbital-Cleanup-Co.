@@ -11,6 +11,9 @@ var _background_mesh: MeshInstance2D
 var _foreground_mesh: MeshInstance2D
 var _background_material: ShaderMaterial
 var _foreground_material: ShaderMaterial
+static var _shared_noise_a: ImageTexture
+static var _shared_noise_b: ImageTexture
+
 var _noise_a: ImageTexture
 var _noise_b: ImageTexture
 var _last_viewport_size := Vector2.ZERO
@@ -66,10 +69,12 @@ func _ensure_runtime_nodes() -> void:
 		_foreground_mesh.material = _foreground_material
 
 func _ensure_noise_textures() -> void:
-	if _noise_a == null:
-		_noise_a = _build_noise_texture(1487, 0.030)
-	if _noise_b == null:
-		_noise_b = _build_noise_texture(9743, 0.071)
+	if _shared_noise_a == null:
+		_shared_noise_a = _build_noise_texture(1487, 0.030)
+	if _shared_noise_b == null:
+		_shared_noise_b = _build_noise_texture(9743, 0.071)
+	_noise_a = _shared_noise_a
+	_noise_b = _shared_noise_b
 
 func _build_noise_texture(seed_value: int, frequency: float) -> ImageTexture:
 	var noise := FastNoiseLite.new()
@@ -79,8 +84,19 @@ func _build_noise_texture(seed_value: int, frequency: float) -> ImageTexture:
 	var bytes := PackedByteArray()
 	bytes.resize(NOISE_SIZE * NOISE_SIZE)
 	for y in range(NOISE_SIZE):
+		var v := float(y) / float(NOISE_SIZE)
 		for x in range(NOISE_SIZE):
-			var value := noise.get_noise_2d(float(x), float(y))
+			var u := float(x) / float(NOISE_SIZE)
+			var fx := float(x)
+			var fy := float(y)
+			var size := float(NOISE_SIZE)
+			var n00 := noise.get_noise_2d(fx, fy)
+			var n10 := noise.get_noise_2d(fx - size, fy)
+			var n01 := noise.get_noise_2d(fx, fy - size)
+			var n11 := noise.get_noise_2d(fx - size, fy - size)
+			var top := lerpf(n00, n10, u)
+			var bottom := lerpf(n01, n11, u)
+			var value := lerpf(top, bottom, v)
 			bytes[y * NOISE_SIZE + x] = int(clampf((value + 1.0) * 127.5, 0.0, 255.0))
 
 	var image := Image.create_from_data(
