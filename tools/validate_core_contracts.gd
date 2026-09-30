@@ -1175,11 +1175,29 @@ func _validate_polish_systems() -> void:
 	_expect("noise_a" in environment_shader_source and "noise_b" in environment_shader_source, "Space environment must use layered noise fields instead of flat procedural circles.")
 	_expect("hint_screen_texture" not in environment_shader_source, "Atmosphere shader must not add another screen copy.")
 	_expect("foreground_mix" in environment_shader_source and "focal_point" in environment_shader_source, "Space environment must support foreground depth and focal effects.")
+	_expect("profile_mode == 17" in environment_shader_source, "Space environment shader must retain the complete authored profile catalogue.")
+
+	var visual_language_source := FileAccess.get_file_as_string("res://src/game/visual/world_visual_language.gd")
+	_expect("environment_space_mode" in visual_language_source, "Visual language must keep a rich atmosphere mode separate from coarse post-process modes.")
+	var required_profiles := [
+		"clean", "dust", "nebula", "solar", "anomaly", "industrial", "debris",
+		"cryo", "gas", "ocean", "electromagnetic", "rings", "volcanic",
+		"deep_space", "crystal", "toxic", "graveyard", "remnant"
+	]
+	for profile in required_profiles:
+		_expect(('"%s"' % profile) in visual_language_source, "Visual language is missing required profile %s." % profile)
+
+	var biome_schema_source := FileAccess.get_file_as_string("res://schemas/biome.schema.json")
+	_expect('"effect_profile"' in biome_schema_source and '"effect_intensity"' in biome_schema_source, "Biome schema must require explicit environmental art direction.")
 
 	var vfx_source := FileAccess.get_file_as_string("res://src/game/visual/environmental_vfx_layer.gd")
 	_expect(vfx_source.count("CPUParticles2D.new()") == 3, "Environmental VFX must own three interpolated particle depth fields.")
 	_expect("z_as_relative = false" in vfx_source, "Foreground particles must be able to cross world gameplay elements.")
 	_expect("PARTICLE_STREAK" in vfx_source and "PARTICLE_SHARD" in vfx_source and "PARTICLE_GLOW" in vfx_source, "Environmental particles require distinct energy, dust and glow textures.")
+	for profile in required_profiles:
+		if profile == "clean":
+			continue
+		_expect(('"%s"' % profile) in vfx_source, "Environmental VFX is missing particle routing for profile %s." % profile)
 
 	var celestial_source := FileAccess.get_file_as_string("res://src/game/visual/celestial_body.gdshader")
 	_expect("atmosphere_strength" in celestial_source, "Celestial-body shader must consume authored atmosphere strength.")
