@@ -33,9 +33,9 @@ func configure(
 	_nebula = Color.from_string(String(palette.get("nebula", "#183b72")), Color("#183b72"))
 	_profile = WorldVisualLanguage.environment_effect_profile(visual_profile)
 	_profile_strength = WorldVisualLanguage.environment_effect_intensity(visual_profile)
-	var anchor_value := visual_profile.get("primary_anchor", [0.5, 0.5])
+	var anchor_value: Variant = visual_profile.get("primary_anchor", [0.5, 0.5])
 	if anchor_value is Array and (anchor_value as Array).size() >= 2:
-		var anchor := anchor_value as Array
+		var anchor: Array = anchor_value as Array
 		_focal_anchor = Vector2(float(anchor[0]), float(anchor[1]))
 	else:
 		_focal_anchor = Vector2(0.5, 0.5)
