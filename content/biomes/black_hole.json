@@ -22,7 +22,9 @@
     "dust_density": 1.37,
     "horizon_style": "anomaly",
     "horizon_intensity": 0.75,
-    "primary_reference_size": 512
+    "primary_reference_size": 512,
+    "effect_profile": "anomaly",
+    "effect_intensity": 1
   },
   "environment": {
     "salvage_mass_multiplier": 1.16,
