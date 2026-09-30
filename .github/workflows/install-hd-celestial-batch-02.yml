@@ -1,0 +1,95 @@
+name: Install HD celestial batch 02
+
+on:
+  push:
+    branches:
+      - content/hd-celestial-batch-01
+
+permissions:
+  contents: write
+
+jobs:
+  install-assets:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: content/hd-celestial-batch-01
+          fetch-depth: 0
+
+      - name: Install HD celestial assets
+        if: hashFiles('tools/celestial_hd_batch_02.zip') != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/occ-celestial-02
+          mkdir -p /tmp/occ-celestial-02
+          unzip -o tools/celestial_hd_batch_02.zip -d /tmp/occ-celestial-02
+          mkdir -p assets/original/destinations
+
+          for asset in \
+            ceres_orbit_hd.webp \
+            ganymede_orbit_hd.webp \
+            callisto_orbit_hd.webp \
+            enceladus_orbit_hd.webp \
+            pluto_orbit_hd.webp \
+            triton_orbit_hd.webp \
+            red_giant_hd.webp \
+            pulsar_hd.webp \
+            binary_star_hd.webp \
+            supernova_remnant_hd.webp; do
+            test -f "/tmp/occ-celestial-02/$asset"
+            cp "/tmp/occ-celestial-02/$asset" "assets/original/destinations/$asset"
+          done
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          ids = [
+              'ceres_orbit',
+              'ganymede_orbit',
+              'callisto_orbit',
+              'enceladus_orbit',
+              'pluto_orbit',
+              'triton_orbit',
+              'red_giant',
+              'pulsar',
+              'binary_star',
+              'supernova_remnant',
+          ]
+
+          for biome_id in ids:
+              path = Path(f'content/biomes/{biome_id}.json')
+              data = json.loads(path.read_text(encoding='utf-8'))
+              profile = data.setdefault('visual_profile', {})
+              profile['primary_asset'] = f'res://assets/original/destinations/{biome_id}_hd.webp'
+              profile['primary_reference_size'] = 512
+              path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          missing = [
+              biome_id for biome_id in ids
+              if not Path(f'assets/original/destinations/{biome_id}_hd.webp').exists()
+          ]
+          if missing:
+              raise RuntimeError(f'Missing HD celestial assets: {missing}')
+
+          legacy = []
+          for biome_id in ids:
+              data = json.loads(Path(f'content/biomes/{biome_id}.json').read_text(encoding='utf-8'))
+              asset = data['visual_profile']['primary_asset']
+              if asset.endswith('.svg'):
+                  legacy.append((biome_id, asset))
+          if legacy:
+              raise RuntimeError(f'Legacy SVG primary assets remain in batch 02: {legacy}')
+          PY
+
+          rm -f tools/celestial_hd_batch_02.zip
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: add HD celestial artwork batch 02"
+          git push origin HEAD:content/hd-celestial-batch-01
