@@ -137,6 +137,32 @@ func _apply_profile_particles() -> void:
 			_configure_solar_particles()
 		"anomaly":
 			_configure_anomaly_particles()
+		"industrial":
+			_configure_industrial_particles()
+		"debris":
+			_configure_debris_particles()
+		"cryo":
+			_configure_cryo_particles()
+		"gas":
+			_configure_gas_particles()
+		"ocean":
+			_configure_ocean_particles()
+		"electromagnetic":
+			_configure_electromagnetic_particles()
+		"rings":
+			_configure_rings_particles()
+		"volcanic":
+			_configure_volcanic_particles()
+		"deep_space":
+			_configure_deep_space_particles()
+		"crystal":
+			_configure_crystal_particles()
+		"toxic":
+			_configure_toxic_particles()
+		"graveyard":
+			_configure_graveyard_particles()
+		"remnant":
+			_configure_remnant_particles()
 		_:
 			_configure_clean_particles()
 
@@ -447,6 +473,217 @@ func _configure_anomaly_particles() -> void:
 	_energy_particles.orbit_velocity_max = 0.14
 	_energy_particles.particle_flag_align_y = true
 
+func _configure_industrial_particles() -> void:
+	_configure_dust_particles()
+	_field_particles.initial_velocity_min = 8.0
+	_field_particles.initial_velocity_max = 28.0
+	_foreground_particles.initial_velocity_min = 18.0
+	_foreground_particles.initial_velocity_max = 54.0
+	_energy_particles.texture = PARTICLE_STREAK
+	_energy_particles.lifetime = 1.6
+	_energy_particles.initial_velocity_min = 145.0
+	_energy_particles.initial_velocity_max = 260.0
+	_energy_particles.spread = 18.0
+	_energy_particles.scale_amount_min = 0.12
+	_energy_particles.scale_amount_max = 0.34
+	_energy_particles.particle_flag_align_y = true
+
+func _configure_debris_particles() -> void:
+	_configure_dust_particles()
+	_field_particles.scale_amount_max = 0.22
+	_field_particles.angular_velocity_min = -55.0
+	_field_particles.angular_velocity_max = 55.0
+	_foreground_particles.scale_amount_min = 0.16
+	_foreground_particles.scale_amount_max = 0.46
+	_foreground_particles.initial_velocity_min = 36.0
+	_foreground_particles.initial_velocity_max = 96.0
+	_foreground_particles.angular_velocity_min = -95.0
+	_foreground_particles.angular_velocity_max = 95.0
+	_energy_particles.initial_velocity_min = 120.0
+	_energy_particles.initial_velocity_max = 210.0
+
+func _configure_cryo_particles() -> void:
+	_configure_clean_particles()
+	_field_particles.texture = PARTICLE_SHARD
+	_field_particles.lifetime = 9.0
+	_field_particles.scale_amount_min = 0.035
+	_field_particles.scale_amount_max = 0.12
+	_field_particles.initial_velocity_min = 4.0
+	_field_particles.initial_velocity_max = 18.0
+	_field_particles.angular_velocity_min = -18.0
+	_field_particles.angular_velocity_max = 18.0
+	_foreground_particles.texture = PARTICLE_SHARD
+	_foreground_particles.lifetime = 6.5
+	_foreground_particles.scale_amount_min = 0.10
+	_foreground_particles.scale_amount_max = 0.30
+	_foreground_particles.initial_velocity_min = 8.0
+	_foreground_particles.initial_velocity_max = 28.0
+	_foreground_particles.angular_velocity_min = -32.0
+	_foreground_particles.angular_velocity_max = 32.0
+	_energy_particles.texture = PARTICLE_GLOW
+	_energy_particles.lifetime = 4.0
+	_energy_particles.initial_velocity_min = 18.0
+	_energy_particles.initial_velocity_max = 46.0
+	_energy_particles.particle_flag_align_y = false
+
+func _configure_gas_particles() -> void:
+	_configure_nebula_particles()
+	_field_particles.scale_amount_min = 0.11
+	_field_particles.scale_amount_max = 0.42
+	_field_particles.initial_velocity_min = 3.0
+	_field_particles.initial_velocity_max = 14.0
+	_foreground_particles.scale_amount_min = 0.22
+	_foreground_particles.scale_amount_max = 0.72
+	_foreground_particles.initial_velocity_min = 5.0
+	_foreground_particles.initial_velocity_max = 20.0
+	_energy_particles.texture = PARTICLE_GLOW
+	_energy_particles.lifetime = 5.0
+	_energy_particles.initial_velocity_min = 18.0
+	_energy_particles.initial_velocity_max = 52.0
+	_energy_particles.particle_flag_align_y = false
+
+func _configure_ocean_particles() -> void:
+	_configure_nebula_particles()
+	_field_particles.direction = Vector2(0.9, -0.12).normalized()
+	_field_particles.initial_velocity_min = 5.0
+	_field_particles.initial_velocity_max = 18.0
+	_foreground_particles.direction = Vector2(0.85, -0.18).normalized()
+	_foreground_particles.initial_velocity_min = 8.0
+	_foreground_particles.initial_velocity_max = 26.0
+	_energy_particles.direction = Vector2(1.0, -0.10).normalized()
+	_energy_particles.initial_velocity_min = 38.0
+	_energy_particles.initial_velocity_max = 76.0
+	_energy_particles.scale_amount_max = 0.25
+
+func _configure_electromagnetic_particles() -> void:
+	_configure_anomaly_particles()
+	_field_particles.orbit_velocity_min = 0.10
+	_field_particles.orbit_velocity_max = 0.18
+	_foreground_particles.orbit_velocity_min = -0.15
+	_foreground_particles.orbit_velocity_max = -0.08
+	_energy_particles.texture = PARTICLE_STREAK
+	_energy_particles.lifetime = 1.7
+	_energy_particles.initial_velocity_min = 170.0
+	_energy_particles.initial_velocity_max = 310.0
+	_energy_particles.orbit_velocity_min = 0.12
+	_energy_particles.orbit_velocity_max = 0.22
+	_energy_particles.scale_amount_min = 0.18
+	_energy_particles.scale_amount_max = 0.46
+	_energy_particles.particle_flag_align_y = true
+
+func _configure_rings_particles() -> void:
+	_configure_dust_particles()
+	for emitter in [_field_particles, _foreground_particles, _energy_particles]:
+		emitter.emission_shape = CPUParticles2D.EMISSION_SHAPE_RING
+	_field_particles.emission_ring_inner_radius = 260.0
+	_field_particles.emission_ring_radius = 760.0
+	_field_particles.orbit_velocity_min = 0.025
+	_field_particles.orbit_velocity_max = 0.065
+	_foreground_particles.emission_ring_inner_radius = 360.0
+	_foreground_particles.emission_ring_radius = 980.0
+	_foreground_particles.orbit_velocity_min = -0.055
+	_foreground_particles.orbit_velocity_max = -0.020
+	_energy_particles.emission_ring_inner_radius = 300.0
+	_energy_particles.emission_ring_radius = 860.0
+	_energy_particles.orbit_velocity_min = 0.045
+	_energy_particles.orbit_velocity_max = 0.085
+	_energy_particles.initial_velocity_min = 35.0
+	_energy_particles.initial_velocity_max = 85.0
+
+func _configure_volcanic_particles() -> void:
+	_configure_solar_particles()
+	_field_particles.texture = PARTICLE_SHARD
+	_field_particles.angular_velocity_min = -45.0
+	_field_particles.angular_velocity_max = 45.0
+	_field_particles.scale_amount_min = 0.055
+	_field_particles.scale_amount_max = 0.18
+	_foreground_particles.texture = PARTICLE_SHARD
+	_foreground_particles.angular_velocity_min = -75.0
+	_foreground_particles.angular_velocity_max = 75.0
+	_energy_particles.texture = PARTICLE_GLOW
+	_energy_particles.scale_amount_min = 0.10
+	_energy_particles.scale_amount_max = 0.32
+	_energy_particles.particle_flag_align_y = false
+
+func _configure_deep_space_particles() -> void:
+	_configure_clean_particles()
+	_field_particles.amount = maxi(1, int(_field_particles.amount * 0.48))
+	_foreground_particles.amount = maxi(1, int(_foreground_particles.amount * 0.34))
+	_energy_particles.amount = maxi(1, int(_energy_particles.amount * 0.25))
+	_field_particles.initial_velocity_min = 1.0
+	_field_particles.initial_velocity_max = 7.0
+	_foreground_particles.initial_velocity_min = 2.0
+	_foreground_particles.initial_velocity_max = 10.0
+	_energy_particles.initial_velocity_min = 18.0
+	_energy_particles.initial_velocity_max = 42.0
+
+func _configure_crystal_particles() -> void:
+	_configure_cryo_particles()
+	_field_particles.scale_amount_max = 0.18
+	_field_particles.angular_velocity_min = -28.0
+	_field_particles.angular_velocity_max = 28.0
+	_field_particles.orbit_velocity_min = -0.025
+	_field_particles.orbit_velocity_max = 0.025
+	_foreground_particles.scale_amount_min = 0.14
+	_foreground_particles.scale_amount_max = 0.40
+	_foreground_particles.angular_velocity_min = -52.0
+	_foreground_particles.angular_velocity_max = 52.0
+	_energy_particles.texture = PARTICLE_STREAK
+	_energy_particles.initial_velocity_min = 62.0
+	_energy_particles.initial_velocity_max = 125.0
+	_energy_particles.particle_flag_align_y = true
+
+func _configure_toxic_particles() -> void:
+	_configure_nebula_particles()
+	_field_particles.scale_amount_min = 0.13
+	_field_particles.scale_amount_max = 0.48
+	_field_particles.initial_velocity_min = 2.0
+	_field_particles.initial_velocity_max = 12.0
+	_foreground_particles.scale_amount_min = 0.24
+	_foreground_particles.scale_amount_max = 0.78
+	_foreground_particles.initial_velocity_min = 4.0
+	_foreground_particles.initial_velocity_max = 16.0
+	_energy_particles.texture = PARTICLE_GLOW
+	_energy_particles.lifetime = 4.5
+	_energy_particles.initial_velocity_min = 12.0
+	_energy_particles.initial_velocity_max = 38.0
+	_energy_particles.particle_flag_align_y = false
+
+func _configure_graveyard_particles() -> void:
+	_configure_industrial_particles()
+	_field_particles.texture = PARTICLE_SHARD
+	_field_particles.initial_velocity_min = 2.0
+	_field_particles.initial_velocity_max = 14.0
+	_field_particles.angular_velocity_min = -18.0
+	_field_particles.angular_velocity_max = 18.0
+	_foreground_particles.texture = PARTICLE_SHARD
+	_foreground_particles.initial_velocity_min = 5.0
+	_foreground_particles.initial_velocity_max = 24.0
+	_foreground_particles.angular_velocity_min = -34.0
+	_foreground_particles.angular_velocity_max = 34.0
+	_energy_particles.amount = maxi(1, int(_energy_particles.amount * 0.55))
+	_energy_particles.initial_velocity_min = 55.0
+	_energy_particles.initial_velocity_max = 120.0
+
+func _configure_remnant_particles() -> void:
+	_configure_nebula_particles()
+	for emitter in [_field_particles, _foreground_particles, _energy_particles]:
+		emitter.emission_shape = CPUParticles2D.EMISSION_SHAPE_RING
+	_field_particles.emission_ring_inner_radius = 180.0
+	_field_particles.emission_ring_radius = 640.0
+	_field_particles.radial_accel_min = 10.0
+	_field_particles.radial_accel_max = 32.0
+	_foreground_particles.emission_ring_inner_radius = 280.0
+	_foreground_particles.emission_ring_radius = 880.0
+	_foreground_particles.radial_accel_min = 18.0
+	_foreground_particles.radial_accel_max = 48.0
+	_energy_particles.emission_ring_inner_radius = 220.0
+	_energy_particles.emission_ring_radius = 760.0
+	_energy_particles.initial_velocity_min = 80.0
+	_energy_particles.initial_velocity_max = 155.0
+	_energy_particles.radial_accel_min = 24.0
+	_energy_particles.radial_accel_max = 66.0
+
 func _configure_emitter(
 	emitter: CPUParticles2D,
 	texture: Texture2D,
@@ -520,7 +757,7 @@ func _update_camera_state(force_geometry: bool) -> void:
 		_energy_particles.emission_rect_extents = extents
 
 	var focal_offset := (_focal_anchor - Vector2(0.5, 0.5)) * visible_world_size
-	if _profile in ["solar", "anomaly"]:
+	if _profile in ["solar", "anomaly", "electromagnetic", "rings", "volcanic", "remnant"]:
 		_field_particles.position = focal_offset
 		_foreground_particles.position = focal_offset
 		_energy_particles.position = focal_offset
