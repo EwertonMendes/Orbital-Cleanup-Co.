@@ -8,13 +8,35 @@ There is no combat, enemy, death or failure-by-destruction. Challenge comes from
 
 ## Core interaction
 
-Desktop movement is primarily pointer-directed: the cursor defines direction and distance from the ship influences desired acceleration, with a center deadzone and smooth deceleration. WASD and arrows are an alternative.
+Desktop movement is primarily pointer-directed: the cursor defines thrust direction and distance from the ship controls throttle, with a center deadzone that means **coast**. WASD and arrows are an alternative thrust input. Flight is inertial: releasing input does not create invisible braking, so the ship preserves velocity until counter-thrust, environmental drag, collision response or the explicit contract-boundary RCS changes it.
 
-Mobile uses a floating relative steering pad: the first steering touch becomes a temporary origin, short thumb drags produce an analog direction vector, and releasing returns the ship to smooth deceleration. The control only appears while touching and does not require chasing the ship across the screen. A dedicated right-side Boost action supports two-thumb play without placing a permanent joystick over the playfield. Landscape is preferred; portrait must remain functional.
+Mobile uses a floating relative steering pad: the first steering touch becomes a temporary origin, short thumb drags produce an analog thrust vector, and releasing the pad cuts thrust so the ship coasts. The control only appears while touching and does not require chasing the ship across the screen. A dedicated right-side Boost action supports two-thumb play without placing a permanent joystick over the playfield. Landscape is preferred; portrait must remain functional.
 
 Desktop keeps pointer-directed steering; an unhandled left click or Space triggers the same device-agnostic Pulse Boost action. UI clicks never trigger boost.
 
 The most important early feel target is simply moving the ship. Movement should be enjoyable before deeper systems exist.
+
+## Inertial flight physics
+
+The ship uses a deliberately simplified **Newtonian arcade** model. Player input expresses thrust, not desired velocity. With no thrust and no environmental effect, the velocity vector is conserved. Braking therefore requires counter-thrust, and changing facing direction does not rotate the existing momentum vector.
+
+The physics pipeline is:
+
+```text
+thrust intent
++ boost acceleration
++ mass-independent environmental acceleration
++ mass-sensitive environmental force
+→ velocity integration
+→ local environmental drag
+→ bounded safety speed
+→ collision resolution
+→ contract-boundary safety RCS
+```
+
+The ship has authored dry mass. Recovered salvage contributes carried physical mass through a bounded cargo-inertia factor, so a full ship is noticeably less agile without becoming frustrating. The nominal `max_speed` tuning value is a cruise reference used for camera/feedback and diminishing aligned thrust; it is not a normal hard speed clamp.
+
+The flight presentation must communicate the distinction between facing/thrust and actual motion. Engine trail/particles indicate active propulsion rather than raw speed, while a restrained drift chevron indicates the current inertial velocity direction.
 
 ## Automatic collection
 
@@ -32,7 +54,7 @@ Larger objects pull more slowly, create stronger feedback, may add light drag an
 
 ## Environmental gameplay
 
-Non-lethal environmental pressure includes asteroids, gravity regions, slowing nebulas, currents, large wrecks, low visibility and magnetic zones. Collisions may rotate the ship slightly, reduce speed briefly, spawn particles, play a soft impact and apply modest screen shake. The tone remains cozy.
+Non-lethal environmental pressure includes asteroids, gravity regions, dense-gas drag, turbulent flow, currents, large wrecks, low visibility and magnetic zones. Environmental physics is additive rather than a replacement target velocity: gravity contributes acceleration, currents/magnetism contribute external force, and dense gas contributes velocity-dependent drag. Collisions preserve tangential movement on glancing impacts while reflecting and damping the normal component, then spawn particles, play a soft impact and apply modest screen shake. The tone remains cozy.
 
 ## Contracts
 
@@ -194,12 +216,12 @@ Biome identity is now both mechanical and visual. Normal sector code must not br
 
 Current biome roles:
 
-- **Earth Orbit** — neutral baseline. Navigation, scanner and Tractor Beam operate normally so early contracts remain clear and onboarding-friendly.
-- **Lunar Belt** — gravity wells gently influence ship/salvage trajectories. A long safe corridor is generated through the depot and collision hazards are explicitly excluded from that lane.
-- **Mars Freight Route** — directional drift currents push the ship and loose salvage. The biome also applies a higher salvage-mass multiplier so freight recovery feels materially heavier.
-- **Blue Nebula** — low-visibility pockets alter world post-processing, scanner interference reduces effective detection range, Tractor Beam distortion reduces pull/collection efficiency, and magnetic zones influence loose salvage more strongly than the ship.
+- **Earth Orbit** — neutral inertial baseline. With no thrust and no environmental drag, velocity is preserved; early contracts teach acceleration, coasting and counter-thrust.
+- **Lunar Belt** — gravity wells apply mass-independent inward acceleration to ship and salvage trajectories. A long safe corridor is generated through the depot and collision hazards are explicitly excluded from that lane.
+- **Mars Freight Route** — directional drift currents apply external force to the ship and loose salvage. Carried cargo increases effective inertia, so a loaded ship resists currents slightly better but also takes more thrust to change velocity.
+- **Blue Nebula** — dense-gas pockets add real drag and slightly reduce thrust authority, turbulent volumes produce changing external forces, low-visibility pockets alter world post-processing, scanner interference reduces effective detection range, Tractor Beam distortion reduces pull/collection efficiency, and magnetic zones influence loose salvage more strongly than the ship.
 
-Environmental pressure is deliberately bounded. Fields use smooth falloff, never destroy the ship, never fully disable scanner/Tractor Beam and cannot overpower normal steering. Their job is route planning and feel, not punishment.
+Environmental pressure remains non-lethal and bounded, but it is allowed to change the correct way to pilot. Fields use smooth falloff, never fully disable scanner/Tractor Beam, and remain readable through matching world-space feedback. Their job is route planning, trajectory control and mastery rather than punishment.
 
 Visual identity uses project-owned editable SVG planets under `assets/original/planets/`, a shared animated surface/atmosphere shader, camera-relative parallax, biome-specific ambient motion and distant traffic. HUD text identifies the dominant local environmental effect while the world itself provides matching field visuals.
 
@@ -259,6 +281,6 @@ The scene swap that loads a new sector is deliberately hidden inside the warp in
 
 ## Pulse Boost
 
-Pulse Boost is a short mobility pulse, not a permanent sprint. The baseline pulse raises ship speed to roughly 1.38× normal for about 0.62 seconds with reduced-but-responsive steering, then returns smoothly to normal flight. Collisions cancel the active pulse, environmental speed modifiers still apply, and world boundaries retain their normal damping/containment behavior.
+Pulse Boost is a short additional acceleration pulse, not a target-speed override or permanent sprint. It adds force in the launch direction on top of the ship's current momentum for about 0.62 seconds, with reduced-but-responsive steering of the pulse vector. Boosting sideways therefore bends the trajectory instead of snapping velocity to a new direction, and boosting against current motion works as emergency counter-thrust. Collisions cancel the active pulse; environmental forces, drag and the contract-boundary RCS continue to participate in the same physical integration.
 
-Progression improves availability rather than raw top speed. Pulse Boost Tuning raises recharge rate and adds a small duration bonus; the Auxiliary Boost Capacitor adds a second stored charge. The boost speed multiplier itself does not scale through these upgrades, so later progression improves routing flexibility without invalidating hazards, biome forces or sector scale.
+Progression improves availability rather than introducing a hidden speed override. Pulse Boost Tuning raises recharge rate and adds a small duration bonus; the Auxiliary Boost Capacitor adds a second stored charge. Normal propulsion uses a nominal cruise reference with diminishing aligned thrust above that speed, while only a much higher safety cap prevents pathological simulation velocities.

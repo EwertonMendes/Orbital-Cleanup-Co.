@@ -9,6 +9,8 @@ class_name ShipVisuals
 @onready var bump_particles: CPUParticles2D = %BumpParticles
 
 var _impact_tween: Tween
+var _drift_direction := Vector2.ZERO
+var _drift_intensity := 0.0
 
 func apply_cosmetics(loadout: Dictionary) -> void:
 	assert(loadout.has("hull") and loadout.has("paint") and loadout.has("trail"), "ShipVisuals requires hull, paint and trail cosmetics.")
@@ -42,17 +44,18 @@ func update_motion(
 	facing_rotation: float,
 	_turn_amount: float,
 	_delta: float,
-	boost_ratio: float = 0.0
+	boost_ratio: float = 0.0,
+	motion_velocity: Vector2 = Vector2.ZERO
 ) -> void:
-	# Keep the ship silhouette rigid. Continuous skew/scale changes on a small
-	# raster sprite cause visible shimmer while steering in Web builds.
+	# The hull points where thrust is being commanded, while the drift cue shows
+	# the actual inertial trajectory. This is deliberately not the same thing.
 	steering_visual.rotation = facing_rotation
 	steering_visual.skew = 0.0
 	steering_visual.scale = Vector2.ONE
 
 	var boost := clampf(boost_ratio, 0.0, 1.0)
-	var engine_strength := clampf(maxf(maxf(thrust_ratio, speed_ratio * 0.52), boost), 0.0, 1.0)
-	engine_glow.modulate.a = clampf(lerpf(0.16, 0.76, engine_strength) + boost * 0.18, 0.0, 1.0)
+	var engine_strength := clampf(maxf(thrust_ratio, boost), 0.0, 1.0)
+	engine_glow.modulate.a = clampf(lerpf(0.08, 0.76, engine_strength) + boost * 0.18, 0.0, 1.0)
 	engine_glow.scale = Vector2(
 		0.84 + engine_strength * 0.18 + boost * 0.10,
 		0.78 + engine_strength * 0.42 + boost * 0.34
@@ -60,7 +63,15 @@ func update_motion(
 	engine_trail.set_intensity(maxf(engine_strength, boost))
 	engine_particles.emitting = engine_strength > 0.08
 	engine_particles.speed_scale = 0.72 + engine_strength * 0.85 + boost * 0.62
-	engine_particles.modulate.a = clampf(lerpf(0.24, 0.88, engine_strength) + boost * 0.10, 0.0, 1.0)
+	engine_particles.modulate.a = clampf(lerpf(0.20, 0.88, engine_strength) + boost * 0.10, 0.0, 1.0)
+
+	if motion_velocity.length_squared() > 64.0:
+		_drift_direction = motion_velocity.normalized()
+		_drift_intensity = clampf((speed_ratio - 0.12) / 0.88, 0.0, 1.0)
+	else:
+		_drift_direction = Vector2.ZERO
+		_drift_intensity = 0.0
+	queue_redraw()
 
 func play_boost() -> void:
 	engine_trail.set_intensity(1.0)
@@ -83,3 +94,16 @@ func play_bump(intensity: float, normal: Vector2) -> void:
 	bump_particles.global_rotation = normal.angle()
 	bump_particles.amount = 6 + int(round(strength * 6.0))
 	bump_particles.restart()
+
+func _draw() -> void:
+	if _drift_direction == Vector2.ZERO or _drift_intensity <= 0.01:
+		return
+
+	var alpha := 0.10 + _drift_intensity * 0.18
+	var start := _drift_direction * 43.0
+	var tip := _drift_direction * (50.0 + _drift_intensity * 7.0)
+	var perpendicular := _drift_direction.orthogonal()
+	var color := Color(0.45, 0.88, 1.0, alpha)
+	draw_line(start, tip, color, 1.35, true)
+	draw_line(tip, tip - _drift_direction * 5.0 + perpendicular * 3.2, color, 1.2, true)
+	draw_line(tip, tip - _drift_direction * 5.0 - perpendicular * 3.2, color, 1.2, true)

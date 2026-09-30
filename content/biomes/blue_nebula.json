@@ -103,6 +103,44 @@
         "placement": "random",
         "color": "#9effe6",
         "secondary_color": "#365e9f"
+      },
+      {
+        "kind": "gas_drag",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.34,
+          0.58
+        ],
+        "radius_range": [
+          620,
+          980
+        ],
+        "placement": "random",
+        "color": "#72d7ff",
+        "secondary_color": "#244e86"
+      },
+      {
+        "kind": "turbulence",
+        "count_range": [
+          1,
+          1
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.28,
+          0.5
+        ],
+        "radius_range": [
+          560,
+          880
+        ],
+        "placement": "random",
+        "color": "#9effe6",
+        "secondary_color": "#5849a5"
       }
     ]
   },

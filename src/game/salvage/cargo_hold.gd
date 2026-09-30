@@ -9,6 +9,7 @@ signal cargo_unloaded(units: int)
 
 var used_units := 0
 var _manifest: Dictionary = {}
+var _total_mass := 0.0
 
 func can_accept(definition: SalvageDefinition) -> bool:
 	return definition != null and used_units + definition.cargo_units <= capacity
@@ -18,6 +19,7 @@ func store(definition: SalvageDefinition) -> bool:
 		return false
 
 	used_units += definition.cargo_units
+	_total_mass += maxf(definition.mass, 0.0)
 	var key := String(definition.id)
 	_manifest[key] = int(_manifest.get(key, 0)) + 1
 	cargo_changed.emit(used_units, capacity)
@@ -32,6 +34,7 @@ func unload_all() -> int:
 
 	var unloaded := used_units
 	used_units = 0
+	_total_mass = 0.0
 	_manifest.clear()
 	cargo_changed.emit(used_units, capacity)
 	cargo_unloaded.emit(unloaded)
@@ -42,3 +45,6 @@ func get_manifest() -> Dictionary:
 
 func get_free_units() -> int:
 	return maxi(capacity - used_units, 0)
+
+func get_total_mass() -> float:
+	return maxf(_total_mass, 0.0)

@@ -306,7 +306,9 @@
                   "visibility_pocket",
                   "scanner_interference",
                   "tractor_distortion",
-                  "magnetic_zone"
+                  "magnetic_zone",
+                  "gas_drag",
+                  "turbulence"
                 ]
               },
               "count_range": {

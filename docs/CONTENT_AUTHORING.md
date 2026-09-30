@@ -438,6 +438,8 @@ Do not create a sector-specific scene just to change the primary destination vis
 gravity_well
 safe_corridor
 drift_current
+gas_drag
+turbulence
 visibility_pocket
 scanner_interference
 tractor_distortion
@@ -448,13 +450,17 @@ Each template supplies a deterministic count range, shape, strength range, place
 
 The Sector Generator uses a dedicated deterministic environment RNG derived from the sector seed. This keeps environmental layouts repeatable without perturbing existing salvage/obstacle selection. Generated fields are also included in the sector generation signature.
 
-The generic Environment Runtime samples overlapping fields and combines bounded effects for:
+The generic Environment Runtime samples overlapping fields and combines a typed `EnvironmentSample` for:
 
-- ship force and small speed modifiers;
+- mass-independent ship acceleration such as gravity;
+- mass-sensitive external force such as currents, magnetism and turbulence;
+- local linear drag and thrust-authority modifiers;
 - loose-salvage drift;
 - effective scanner range;
 - Tractor Beam pull/collection efficiency;
 - local visibility/post-processing.
+
+Ship physics is sampled every fixed physics tick. Loose salvage keeps a lower-frequency environmental sample because its motion is decorative/secondary and does not need control-grade responsiveness.
 
 Safe corridors are stronger than decoration: obstacle placement rejects collision hazards inside the generated corridor plus safety padding.
 

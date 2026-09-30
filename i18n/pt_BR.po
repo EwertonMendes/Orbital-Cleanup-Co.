@@ -892,6 +892,12 @@ msgstr "DISTORÇÃO DO TRATOR"
 msgid "ENV_MAGNETIC_ZONE"
 msgstr "CAMPO MAGNÉTICO"
 
+msgid "ENV_GAS_DRAG"
+msgstr "GÁS DENSO"
+
+msgid "ENV_TURBULENCE"
+msgstr "FLUXO TURBULENTO"
+
 msgid "FLIGHT_DEPOT_NAV_FMT"
 msgstr "DEPÓSITO · %s"
 
