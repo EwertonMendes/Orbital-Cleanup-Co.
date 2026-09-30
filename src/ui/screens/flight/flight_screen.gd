@@ -23,6 +23,8 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var player_ship: PlayerShip = %PlayerShip
 @onready var flight_feedback: FlightFeedback = %FlightFeedback
 @onready var environment_runtime: EnvironmentRuntime = %EnvironmentRuntime
+@onready var world_visual_runtime: WorldVisualRuntime = %WorldVisualRuntime
+@onready var environmental_vfx: EnvironmentalVfxLayer = %EnvironmentalVfx
 @onready var environment_status: Label = %EnvironmentStatus
 @onready var depot_navigation: DepotNavigationGuide = %DepotNavigationGuide
 @onready var depot_nav_label: Label = %DepotNavLabel
@@ -75,6 +77,8 @@ func configure(context: Dictionary) -> void:
 	var backdrop := get_node("World/AmbientSpace") as SectorBackdrop
 	var ambient_motion := get_node("World/AmbientMotion") as AmbientOrbitLayer
 	var environment := get_node("World/EnvironmentRuntime") as EnvironmentRuntime
+	var visual_runtime := get_node("WorldVisualRuntime") as WorldVisualRuntime
+	var environment_vfx := get_node("World/EnvironmentalVfx") as EnvironmentalVfxLayer
 	var post_process := get_node("WorldPost/WorldPostProcess") as WorldPostProcess
 	var feedback := get_node("FlightFeedback") as FlightFeedback
 	var depot := get_node("World/UnloadDepot") as UnloadZone
@@ -86,6 +90,8 @@ func configure(context: Dictionary) -> void:
 	assert(backdrop != null, "FlightScreen requires SectorBackdrop.")
 	assert(ambient_motion != null, "FlightScreen requires AmbientOrbitLayer.")
 	assert(environment != null, "FlightScreen requires EnvironmentRuntime.")
+	assert(visual_runtime != null, "FlightScreen requires WorldVisualRuntime.")
+	assert(environment_vfx != null, "FlightScreen requires EnvironmentalVfxLayer.")
 	assert(post_process != null, "FlightScreen requires WorldPostProcess.")
 	assert(feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(depot != null, "FlightScreen requires UnloadZone.")
@@ -119,6 +125,14 @@ func configure(context: Dictionary) -> void:
 		biome_palette,
 		runtime.get_biome_id()
 	)
+	visual_runtime.configure(
+		runtime.get_play_bounds(),
+		biome_palette,
+		visual_profile,
+		post_process,
+		environment_vfx
+	)
+	visual_runtime.bind(environment)
 	feedback.configure(biome_palette)
 
 	var deployment_position := runtime.get_depot_position()
@@ -142,7 +156,7 @@ func configure(context: Dictionary) -> void:
 		_progression.get_ship_cosmetics()
 	)
 	touch.configure(_input_service, ship)
-	environment.bind(ship, runtime, post_process)
+	environment.bind(ship, runtime)
 	navigation.configure(ship, depot)
 	print("[Flight] DEPLOYMENT position=(%.1f, %.1f) depot=(%.1f, %.1f)" % [
 		ship.position.x,
