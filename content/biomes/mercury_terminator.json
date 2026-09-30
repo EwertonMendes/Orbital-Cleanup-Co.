@@ -7,7 +7,7 @@
     "accent": "#f1d09b"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/mercury_terminator.svg",
+    "primary_asset": "res://assets/original/destinations/mercury_terminator_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.2,
@@ -21,7 +21,8 @@
     "traffic_count": 0,
     "dust_density": 0.45,
     "horizon_style": "dust",
-    "horizon_intensity": 0.55
+    "horizon_intensity": 0.55,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.88,

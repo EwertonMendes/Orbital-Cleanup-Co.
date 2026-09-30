@@ -7,7 +7,7 @@
     "accent": "#dfffff"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/europa_orbit.svg",
+    "primary_asset": "res://assets/original/destinations/europa_orbit_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.2,
@@ -21,7 +21,8 @@
     "traffic_count": 6,
     "dust_density": 0.68,
     "horizon_style": "ice",
-    "horizon_intensity": 0.75
+    "horizon_intensity": 0.75,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.88,

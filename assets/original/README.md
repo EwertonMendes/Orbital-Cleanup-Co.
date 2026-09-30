@@ -60,3 +60,9 @@ Obstacle collision remains authored in biome content. `texture_reference_size` n
 
 All 50 authored biome definitions are covered by an explicit `obstacle_art_family`; content validation rejects any fallback to the legacy Kenney meteor sprites.
 
+## HD celestial destination artwork
+
+Destination primary visuals may use transparent HD WebP artwork. `primary_reference_size` preserves the authored visual footprint of the former 512px SVG while allowing higher-resolution raster sources.
+
+Batch 01 upgrades Jupiter, Saturn, Neptune, Uranus, Venus, Mercury, Europa, Io, Titan, and the Black Hole destination to project-owned HD 2D artwork.
+

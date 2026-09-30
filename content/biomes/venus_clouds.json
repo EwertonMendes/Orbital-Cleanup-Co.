@@ -7,7 +7,7 @@
     "accent": "#ffe0a0"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/venus_clouds.svg",
+    "primary_asset": "res://assets/original/destinations/venus_clouds_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.5,
@@ -21,7 +21,8 @@
     "traffic_count": 1,
     "dust_density": 0.68,
     "horizon_style": "nebula",
-    "horizon_intensity": 0.65
+    "horizon_intensity": 0.65,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.95,
