@@ -46,13 +46,14 @@ static func ambient_mote_cap() -> int:
 	return 24 if is_constrained_render_target() else 38
 
 static func environmental_vfx_particle_cap() -> int:
+	# Total CPU particle budget shared by background, foreground and energy emitters.
 	match visual_effects_level():
 		EFFECTS_LOW:
-			return 24
+			return 90
 		EFFECTS_MEDIUM:
-			return 42
+			return 180
 		_:
-			return 64
+			return 280
 
 static func ambient_redraw_interval() -> float:
 	return 1.0 / 20.0 if is_constrained_render_target() else 1.0 / 30.0
