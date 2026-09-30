@@ -71,28 +71,55 @@
   },
   "obstacles": [
     {
-      "id": "callisto_orbit_large_fragment",
-      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "id": "lunar_boulder_01",
+      "sprite": "res://assets/original/obstacles/lunar_belt/lunar_boulder_01_hd.webp",
+      "weight": 24,
+      "collision_radius": 55,
+      "scale_min": 0.94,
+      "scale_max": 1.15,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
+    },
+    {
+      "id": "lunar_boulder_02",
+      "sprite": "res://assets/original/obstacles/lunar_belt/lunar_boulder_02_hd.webp",
+      "weight": 22,
+      "collision_radius": 48,
+      "scale_min": 0.92,
+      "scale_max": 1.14,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
+    },
+    {
+      "id": "lunar_boulder_03",
+      "sprite": "res://assets/original/obstacles/lunar_belt/lunar_boulder_03_hd.webp",
       "weight": 20,
-      "collision_radius": 52,
-      "scale_min": 0.84,
-      "scale_max": 1.08
-    },
-    {
-      "id": "callisto_orbit_medium_fragment",
-      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
-      "weight": 44,
-      "collision_radius": 36,
-      "scale_min": 0.84,
-      "scale_max": 1.1
-    },
-    {
-      "id": "callisto_orbit_small_fragment",
-      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
-      "weight": 36,
-      "collision_radius": 27,
+      "collision_radius": 40,
       "scale_min": 0.9,
-      "scale_max": 1.25
+      "scale_max": 1.12,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
+    },
+    {
+      "id": "lunar_boulder_04",
+      "sprite": "res://assets/original/obstacles/lunar_belt/lunar_boulder_04_hd.webp",
+      "weight": 18,
+      "collision_radius": 34,
+      "scale_min": 0.9,
+      "scale_max": 1.14,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
+    },
+    {
+      "id": "lunar_boulder_05",
+      "sprite": "res://assets/original/obstacles/lunar_belt/lunar_boulder_05_hd.webp",
+      "weight": 16,
+      "collision_radius": 27,
+      "scale_min": 0.88,
+      "scale_max": 1.18,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
     }
-  ]
+  ],
+  "obstacle_art_family": "lunar"
 }

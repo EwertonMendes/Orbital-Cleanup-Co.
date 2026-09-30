@@ -49,7 +49,7 @@ Together with the four original launch visuals under `planets/`, the runtime has
 
 ## Biome obstacle artwork
 
-The launch biomes use project-owned HD obstacle packs under `obstacles/`. Each biome has five transparent raster variants so obstacle silhouettes and materials reinforce biome identity instead of reusing the same grey meteor artwork.
+All authored biomes now use project-owned HD obstacle artwork under `obstacles/`. Every biome is assigned to the closest visual obstacle family so no gameplay scenario falls back to the legacy grey Kenney meteor sprites.
 
 - `earth_orbit/`: dark iron/nickel orbital meteorites;
 - `lunar_belt/`: pale cratered regolith boulders;

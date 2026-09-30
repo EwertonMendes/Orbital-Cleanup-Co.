@@ -414,6 +414,15 @@
           }
         }
       }
+    },
+    "obstacle_art_family": {
+      "type": "string",
+      "enum": [
+        "earth",
+        "lunar",
+        "mars",
+        "nebula"
+      ]
     }
   }
 }

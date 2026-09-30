@@ -176,5 +176,6 @@
       "texture_reference_size": 128,
       "sprite_modulate": "#ffffffff"
     }
-  ]
+  ],
+  "obstacle_art_family": "nebula"
 }
