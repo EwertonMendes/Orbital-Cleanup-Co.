@@ -114,6 +114,11 @@ func _apply_configuration() -> void:
 	)
 	var profile_strength := WorldVisualLanguage.environment_effect_intensity(_visual_profile)
 	var shimmer := clampf(float(_visual_profile.get("shimmer_strength", 0.0)), 0.0, 0.5)
+	var focal := Vector2(0.5, 0.5)
+	var anchor_value := _visual_profile.get("primary_anchor", [0.5, 0.5])
+	if anchor_value is Array and (anchor_value as Array).size() >= 2:
+		var anchor := anchor_value as Array
+		focal = Vector2(float(anchor[0]), float(anchor[1]))
 
 	if _lightweight_mode:
 		_profile_overlay = Color(
@@ -132,6 +137,7 @@ func _apply_configuration() -> void:
 		WorldVisualLanguage.environment_effect_mode(_visual_profile)
 	)
 	shader_material.set_shader_parameter("profile_strength", profile_strength)
+	shader_material.set_shader_parameter("profile_focal_point", focal)
 	shader_material.set_shader_parameter("shimmer_strength", shimmer)
 	shader_material.set_shader_parameter("quality_factor", RuntimeQuality.visual_effects_factor())
 
@@ -155,7 +161,7 @@ func _apply_quality() -> void:
 	var viewport_size := get_viewport_rect().size
 	var compact := viewport_size.x < 700.0 or viewport_size.y < 430.0
 	var quality := RuntimeQuality.visual_effects_factor()
-	shader_material.set_shader_parameter("effect_strength", (0.40 if compact else 0.62) * quality)
-	shader_material.set_shader_parameter("glow_strength", (0.025 if compact else 0.050) * quality)
+	shader_material.set_shader_parameter("effect_strength", (0.50 if compact else 0.74) * quality)
+	shader_material.set_shader_parameter("glow_strength", (0.040 if compact else 0.075) * quality)
 	shader_material.set_shader_parameter("grain_strength", 0.0)
 	shader_material.set_shader_parameter("quality_factor", quality)
