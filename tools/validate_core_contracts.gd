@@ -1171,6 +1171,11 @@ func _validate_polish_systems() -> void:
 	_expect("profile_mode" in post_source and "profile_strength" in post_source, "World post-process must consume the data-driven environmental profile.")
 	_expect("sin(" not in post_source and "cos(" not in post_source, "Full-screen compositor must avoid per-pixel trigonometry.")
 
+	var space_environment_source := FileAccess.get_file_as_string("res://src/game/visual/space_environment_layer.gd")
+	_expect("NoiseTexture2D.new()" in space_environment_source, "Space environment noise must use Godot's native threaded NoiseTexture2D generation.")
+	_expect("get_noise_2d(" not in space_environment_source, "Space environment must not generate noise pixels through GDScript sampling loops.")
+	_expect("seamless = true" in space_environment_source, "Environment noise textures must remain tileable for moving atmosphere layers.")
+
 	var environment_shader_source := FileAccess.get_file_as_string("res://src/game/visual/space_environment.gdshader")
 	_expect("noise_a" in environment_shader_source and "noise_b" in environment_shader_source, "Space environment must use layered noise fields instead of flat procedural circles.")
 	_expect("hint_screen_texture" not in environment_shader_source, "Atmosphere shader must not add another screen copy.")
