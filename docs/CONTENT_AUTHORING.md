@@ -490,3 +490,12 @@ Supported profiles are `clean`, `dust`, `nebula`, `solar` and `anomaly`. If a bi
 `effect_intensity` is a normalized 0–1 art-direction value. It drives ambient motion, bounded environmental VFX, the celestial-body shader and the single-pass world compositor. Hazard intensity still comes from `EnvironmentRuntime`, so visual danger and gameplay simulation share one source of truth.
 
 Desktop Web runs the medium visual tier with the single-fetch compositor. Mobile keeps the lightweight overlay fallback while retaining world-space and celestial effects.
+
+The presentation stack is intentionally layered:
+
+- `SpaceEnvironmentLayer` renders moving procedural atmosphere both behind gameplay and as a sparse foreground veil, using cached seamless noise textures and no screen copy;
+- `EnvironmentalVfxLayer` owns three real `CPUParticles2D` depth fields (far ambience, foreground matter and energy streaks) so particles can cross world objects and create depth;
+- `SectorBackdrop` owns the primary celestial art plus a separate additive aura pass;
+- `WorldPostProcess` remains the single screen-reading compositor and aligns focal distortion to `primary_anchor`.
+
+Do not replace these with biome-specific scenes or manual `_draw()` particle simulations. New art direction should be expressed through a reusable effect profile and authored intensity.
