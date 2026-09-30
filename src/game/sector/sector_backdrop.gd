@@ -4,6 +4,7 @@ class_name SectorBackdrop
 const BACKGROUND_EXTENT := 18000.0
 const STAR_EXTENT := 11500.0
 const CELESTIAL_BODY_SHADER := preload("res://src/game/visual/celestial_body.gdshader")
+const CELESTIAL_GLOW_SHADER := preload("res://src/game/visual/celestial_glow.gdshader")
 
 var _play_bounds := Rect2(-4800.0, -3000.0, 9600.0, 6000.0)
 var _background_color := Color("#040b13")
@@ -14,6 +15,8 @@ var _visual_profile: Dictionary = {}
 var _star_field: MultiMeshInstance2D
 var _primary_visual: Sprite2D
 var _primary_material: ShaderMaterial
+var _primary_glow: Sprite2D
+var _primary_glow_material: ShaderMaterial
 var _camera_origin := Vector2.ZERO
 var _camera_origin_set := false
 var _primary_rotation_speed := 0.0
@@ -49,6 +52,8 @@ func _process(delta: float) -> void:
 			-PI,
 			PI
 		)
+		if _primary_glow != null and is_instance_valid(_primary_glow):
+			_primary_glow.rotation = _primary_visual.rotation
 
 func _draw() -> void:
 	draw_rect(
@@ -186,8 +191,12 @@ func _draw_glint(position: Vector2, size: float, color: Color) -> void:
 func _rebuild_primary_visual() -> void:
 	if _primary_visual != null and is_instance_valid(_primary_visual):
 		_primary_visual.queue_free()
+	if _primary_glow != null and is_instance_valid(_primary_glow):
+		_primary_glow.queue_free()
 	_primary_visual = null
 	_primary_material = null
+	_primary_glow = null
+	_primary_glow_material = null
 	_camera_origin_set = false
 	if _visual_profile.is_empty():
 		return
@@ -196,6 +205,34 @@ func _rebuild_primary_visual() -> void:
 	var texture := load(asset_path) as Texture2D
 	assert(texture != null, "Biome primary asset must load: %s" % asset_path)
 
+	var atmosphere := Color.from_string(
+		String(_visual_profile.get("atmosphere_color", _accent_color.to_html(false))),
+		_accent_color
+	)
+	var profile_mode := WorldVisualLanguage.environment_effect_mode(_visual_profile)
+	var effect_strength := WorldVisualLanguage.environment_effect_intensity(_visual_profile)
+
+	_primary_glow = Sprite2D.new()
+	_primary_glow.texture = texture
+	_primary_glow.centered = true
+	_primary_glow.z_index = 0
+	_primary_glow_material = ShaderMaterial.new()
+	_primary_glow_material.shader = CELESTIAL_GLOW_SHADER
+	_primary_glow_material.set_shader_parameter("glow_color", atmosphere)
+	_primary_glow_material.set_shader_parameter(
+		"texel_size",
+		Vector2(1.0 / maxf(float(texture.get_width()), 1.0), 1.0 / maxf(float(texture.get_height()), 1.0))
+	)
+	_primary_glow_material.set_shader_parameter(
+		"glow_strength",
+		clampf(float(_visual_profile.get("atmosphere_strength", 0.25)) * 1.65, 0.25, 1.45)
+	)
+	_primary_glow_material.set_shader_parameter("effect_strength", effect_strength)
+	_primary_glow_material.set_shader_parameter("profile_mode", profile_mode)
+	_primary_glow_material.set_shader_parameter("quality_factor", RuntimeQuality.visual_effects_factor())
+	_primary_glow.material = _primary_glow_material
+	add_child(_primary_glow)
+
 	_primary_visual = Sprite2D.new()
 	_primary_visual.texture = texture
 	_primary_visual.centered = true
@@ -203,13 +240,7 @@ func _rebuild_primary_visual() -> void:
 	_primary_rotation_speed = float(_visual_profile.get("primary_rotation_speed", 0.006))
 	_primary_material = ShaderMaterial.new()
 	_primary_material.shader = CELESTIAL_BODY_SHADER
-	_primary_material.set_shader_parameter(
-		"atmosphere_color",
-		Color.from_string(
-			String(_visual_profile.get("atmosphere_color", _accent_color.to_html(false))),
-			_accent_color
-		)
-	)
+	_primary_material.set_shader_parameter("atmosphere_color", atmosphere)
 	_primary_material.set_shader_parameter(
 		"atmosphere_strength",
 		clampf(float(_visual_profile.get("atmosphere_strength", 0.25)), 0.0, 1.0)
@@ -218,14 +249,8 @@ func _rebuild_primary_visual() -> void:
 		"shimmer_strength",
 		clampf(float(_visual_profile.get("shimmer_strength", 0.0)), 0.0, 0.5)
 	)
-	_primary_material.set_shader_parameter(
-		"effect_strength",
-		WorldVisualLanguage.environment_effect_intensity(_visual_profile)
-	)
-	_primary_material.set_shader_parameter(
-		"profile_mode",
-		WorldVisualLanguage.environment_effect_mode(_visual_profile)
-	)
+	_primary_material.set_shader_parameter("effect_strength", effect_strength)
+	_primary_material.set_shader_parameter("profile_mode", profile_mode)
 	_primary_material.set_shader_parameter("quality_factor", RuntimeQuality.visual_effects_factor())
 	_primary_visual.material = _primary_material
 	add_child(_primary_visual)
@@ -248,6 +273,8 @@ func _update_primary_parallax() -> void:
 	var parallax := float(_visual_profile.get("primary_parallax", 0.06))
 	var camera_delta := camera.global_position - _camera_origin
 	_primary_visual.global_position = camera.global_position + screen_offset - camera_delta * parallax
+	if _primary_glow != null and is_instance_valid(_primary_glow):
+		_primary_glow.global_position = _primary_visual.global_position
 
 	var base_scale := float(_visual_profile.get("primary_scale", 2.0))
 	var compact_scale := 0.72 if viewport_size.x < 700.0 else 1.0
@@ -260,6 +287,9 @@ func _update_primary_parallax() -> void:
 		)
 		texture_scale = reference_size / maxf(texture_size, 1.0)
 	_primary_visual.scale = Vector2.ONE * base_scale * compact_scale * texture_scale
+	if _primary_glow != null and is_instance_valid(_primary_glow):
+		var glow_scale := 1.055 + WorldVisualLanguage.environment_effect_intensity(_visual_profile) * 0.045
+		_primary_glow.scale = _primary_visual.scale * glow_scale
 
 func _draw_perimeter() -> void:
 	var outer := _play_bounds
