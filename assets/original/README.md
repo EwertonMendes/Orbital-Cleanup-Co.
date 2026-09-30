@@ -69,3 +69,10 @@ Destination primary visuals use transparent HD WebP artwork. `primary_reference_
 The HD migration now covers all 46 destination definitions that previously used SVG primaries. This includes planets, moons, dwarf planets, belts, exoplanets, nebulae, stellar phenomena, abandoned orbital structures, factory ruins and ship graveyards.
 
 The final migration also upgrades the Fractured Moonlet landmark with HD artwork and adds landmark-side texture reference normalization so visual resolution remains independent from gameplay collision and reserved navigation radius.
+
+## HD landmark artwork
+
+All eight authored gameplay landmarks now use project-owned raster artwork at runtime. The six remaining SVG landmarks were migrated to transparent HD WebP while preserving their existing collision, placement, reserved radius, drift and spin behavior.
+
+`texture_reference_size` keeps each new 768px raster asset at the visual footprint of its previous authored SVG dimensions, so artwork resolution remains independent from gameplay geometry.
+

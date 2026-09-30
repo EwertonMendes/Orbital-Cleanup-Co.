@@ -1,7 +1,7 @@
 {
   "id": "relay_satellite",
   "display_name_key": "LANDMARK_RELAY_SATELLITE",
-  "sprite": "res://assets/original/landmarks/relay_satellite.svg",
+  "sprite": "res://assets/original/landmarks/relay_satellite_hd.webp",
   "scale": 0.62,
   "reserved_radius": 430,
   "placement_radius": [
@@ -20,5 +20,6 @@
     0.002
   ],
   "drift_amplitude": 1,
-  "ambient_effect": "none"
+  "ambient_effect": "none",
+  "texture_reference_size": 704
 }
