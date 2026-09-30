@@ -115,9 +115,9 @@ func _apply_configuration() -> void:
 	var profile_strength := WorldVisualLanguage.environment_effect_intensity(_visual_profile)
 	var shimmer := clampf(float(_visual_profile.get("shimmer_strength", 0.0)), 0.0, 0.5)
 	var focal := Vector2(0.5, 0.5)
-	var anchor_value := _visual_profile.get("primary_anchor", [0.5, 0.5])
+	var anchor_value: Variant = _visual_profile.get("primary_anchor", [0.5, 0.5])
 	if anchor_value is Array and (anchor_value as Array).size() >= 2:
-		var anchor := anchor_value as Array
+		var anchor: Array = anchor_value as Array
 		focal = Vector2(float(anchor[0]), float(anchor[1]))
 
 	if _lightweight_mode:
