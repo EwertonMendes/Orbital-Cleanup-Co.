@@ -8,10 +8,10 @@
   },
   "visual_profile": {
     "atmosphere_color": "#91dfff",
-    "atmosphere_strength": 0.58,
-    "shimmer_strength": 0.15,
+    "atmosphere_strength": 0.76,
+    "shimmer_strength": 0.22,
     "traffic_count": 3,
-    "dust_density": 1.45,
+    "dust_density": 1.65,
     "primary_asset": "res://assets/original/planets/blue_giant_hd.webp",
     "primary_scale": 0.87,
     "primary_anchor": [
@@ -21,9 +21,9 @@
     "primary_parallax": 0.045,
     "primary_rotation_speed": -0.005,
     "horizon_style": "nebula",
-    "horizon_intensity": 0.82,
+    "horizon_intensity": 0.96,
     "effect_profile": "nebula",
-    "effect_intensity": 0.92
+    "effect_intensity": 1
   },
   "environment": {
     "salvage_mass_multiplier": 0.94,
