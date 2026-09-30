@@ -13,6 +13,7 @@ uniform float profile_strength : hint_range(0.0, 1.0) = 0.0;
 uniform float shimmer_strength : hint_range(0.0, 0.5) = 0.0;
 uniform float quality_factor : hint_range(0.0, 1.0) = 1.0;
 uniform int profile_mode = 0;
+uniform vec2 profile_focal_point = vec2(0.5, 0.5);
 uniform vec4 environment_color : source_color = vec4(0.12, 0.35, 0.58, 1.0);
 uniform float environment_fog_strength : hint_range(0.0, 0.4) = 0.0;
 uniform float environment_distortion : hint_range(0.0, 0.3) = 0.0;
@@ -28,20 +29,22 @@ float tri_wave(float value) {
 void fragment() {
 	vec2 uv = SCREEN_UV;
 	vec2 from_center = uv - vec2(0.5);
+	vec2 from_profile = uv - profile_focal_point;
+	float profile_radius = length(from_profile);
 	float profile = profile_strength * quality_factor;
 
 	if (profile_mode == 2) {
-		float wave_x = tri_wave(uv.y * 4.2 + TIME * 0.035) - 0.5;
-		float wave_y = tri_wave(uv.x * 3.4 - TIME * 0.027) - 0.5;
-		uv += vec2(wave_x, wave_y) * 0.0028 * profile;
+		float wave_x = tri_wave(uv.y * 4.2 + TIME * 0.040) - 0.5;
+		float wave_y = tri_wave(uv.x * 3.4 - TIME * 0.032) - 0.5;
+		uv += vec2(wave_x, wave_y) * 0.0048 * profile;
 	} else if (profile_mode == 3) {
-		float heat = tri_wave(uv.y * 8.0 + TIME * 0.11) - 0.5;
-		uv.x += heat * 0.0042 * profile;
+		float heat = tri_wave(uv.y * 9.0 + TIME * 0.15) - 0.5;
+		float corona = 1.0 - smoothstep(0.12, 0.92, profile_radius);
+		uv.x += heat * 0.0065 * profile * (0.35 + corona * 0.65);
 	} else if (profile_mode == 4) {
-		float radius = length(from_center);
-		float anomaly = (1.0 - smoothstep(0.08, 0.78, radius)) * profile;
-		float ring = tri_wave(radius * 7.0 - TIME * 0.075) - 0.5;
-		uv += vec2(-from_center.y, from_center.x) * ring * 0.014 * anomaly;
+		float anomaly = (1.0 - smoothstep(0.06, 0.72, profile_radius)) * profile;
+		float ring = tri_wave(profile_radius * 9.0 - TIME * 0.10) - 0.5;
+		uv += vec2(-from_profile.y, from_profile.x) * ring * 0.024 * anomaly;
 	}
 
 	float hazard_wave = tri_wave(uv.y * 16.0 + TIME * 0.18) - 0.5;
@@ -57,16 +60,16 @@ void fragment() {
 	base += grade_tint.rgb * (0.008 + 0.010 * effect_strength);
 
 	float profile_pulse = 0.72 + tri_wave(TIME * 0.055 + uv.x * 0.7) * 0.28;
-	float profile_mix = profile * (0.010 + shimmer_strength * 0.045 * profile_pulse);
+	float profile_mix = profile * (0.018 + shimmer_strength * 0.070 * profile_pulse);
 	if (profile_mode == 1) {
 		profile_mix *= 0.55;
 	} else if (profile_mode == 3) {
 		profile_mix *= 1.25;
 	}
-	base = mix(base, profile_color.rgb, clamp(profile_mix, 0.0, 0.10));
+	base = mix(base, profile_color.rgb, clamp(profile_mix, 0.0, 0.16));
 
 	float vignette = smoothstep(0.44, 0.84, length(from_center * vec2(1.0, 0.88)));
-	float anomaly_vignette = profile_mode == 4 ? profile * 0.09 : 0.0;
+	float anomaly_vignette = profile_mode == 4 ? profile * 0.14 : 0.0;
 	base *= 1.0 - vignette * (0.18 * effect_strength + anomaly_vignette);
 
 	float scan = tri_wave(SCREEN_UV.y * 95.0 + TIME * 0.12);
