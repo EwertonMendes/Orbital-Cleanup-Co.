@@ -47,3 +47,14 @@ The `destinations/` folder contains 46 additional project-owned SVG primary visu
 
 Together with the four original launch visuals under `planets/`, the runtime has one unique primary asset for each of 50 destination biomes.
 
+## Biome obstacle artwork
+
+The launch biomes use project-owned HD obstacle packs under `obstacles/`. Each biome has five transparent raster variants so obstacle silhouettes and materials reinforce biome identity instead of reusing the same grey meteor artwork.
+
+- `earth_orbit/`: dark iron/nickel orbital meteorites;
+- `lunar_belt/`: pale cratered regolith boulders;
+- `mars_freight/`: rust-orange Martian rock with exposed dark basalt;
+- `blue_nebula/`: cold blue/violet mineral fragments.
+
+Obstacle collision remains authored in biome content. `texture_reference_size` normalizes HD raster resolution without changing gameplay footprint, while `sprite_modulate` allows full-color original artwork without changing legacy obstacle rendering in other biomes.
+
