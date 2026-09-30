@@ -472,3 +472,21 @@ Supported horizon styles are `clear`, `orbit`, `rings`, `dust`, `nebula`, `solar
 
 A new destination must remain JSON + SVG only. If adding a destination requires a new destination-ID branch in GDScript, the authoring model has regressed. The validator also requires one unique primary asset per biome.
 
+## Environmental visual profiles
+
+Biome atmosphere is authored through the existing `visual_profile`. Runtime code consumes reusable profiles instead of branching on biome IDs.
+
+Optional fields:
+
+```json
+{
+  "effect_profile": "nebula",
+  "effect_intensity": 0.92
+}
+```
+
+Supported profiles are `clean`, `dust`, `nebula`, `solar` and `anomaly`. If a biome omits `effect_profile`, the runtime derives a conservative profile from `horizon_style`, so older authored content stays compatible and ordinary sectors remain JSON-only.
+
+`effect_intensity` is a normalized 0–1 art-direction value. It drives ambient motion, bounded environmental VFX, the celestial-body shader and the single-pass world compositor. Hazard intensity still comes from `EnvironmentRuntime`, so visual danger and gameplay simulation share one source of truth.
+
+Desktop Web runs the medium visual tier with the single-fetch compositor. Mobile keeps the lightweight overlay fallback while retaining world-space and celestial effects.
