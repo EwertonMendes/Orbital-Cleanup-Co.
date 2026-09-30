@@ -7,7 +7,7 @@
     "accent": "#9bcfff"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/kuiper_belt.svg",
+    "primary_asset": "res://assets/original/destinations/kuiper_belt_hd.webp",
     "primary_scale": 1.35,
     "primary_anchor": [
       0.2,
@@ -21,7 +21,8 @@
     "traffic_count": 0,
     "dust_density": 0.68,
     "horizon_style": "rings",
-    "horizon_intensity": 0.65
+    "horizon_intensity": 0.65,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 1.09,
