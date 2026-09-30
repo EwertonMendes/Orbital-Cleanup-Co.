@@ -215,7 +215,7 @@ func _rebuild_primary_visual() -> void:
 	_primary_glow = Sprite2D.new()
 	_primary_glow.texture = texture
 	_primary_glow.centered = true
-	_primary_glow.z_index = 0
+	_primary_glow.z_index = 3
 	_primary_glow_material = ShaderMaterial.new()
 	_primary_glow_material.shader = CELESTIAL_GLOW_SHADER
 	_primary_glow_material.set_shader_parameter("glow_color", atmosphere)
@@ -236,7 +236,7 @@ func _rebuild_primary_visual() -> void:
 	_primary_visual = Sprite2D.new()
 	_primary_visual.texture = texture
 	_primary_visual.centered = true
-	_primary_visual.z_index = 1
+	_primary_visual.z_index = 4
 	_primary_rotation_speed = float(_visual_profile.get("primary_rotation_speed", 0.006))
 	_primary_material = ShaderMaterial.new()
 	_primary_material.shader = CELESTIAL_BODY_SHADER
