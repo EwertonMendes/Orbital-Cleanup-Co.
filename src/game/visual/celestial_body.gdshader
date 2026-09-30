@@ -21,21 +21,21 @@ void fragment() {
 
 	float luma = dot(source.rgb, vec3(0.2126, 0.7152, 0.0722));
 	float bright = smoothstep(0.34, 0.92, luma);
-	float body_energy = atmosphere_strength * (0.035 + bright * 0.075);
-	body_energy += shimmer * 0.035 * effect_strength;
+	float body_energy = atmosphere_strength * (0.055 + bright * 0.125);
+	body_energy += shimmer * 0.060 * effect_strength;
 
 	vec3 rgb = source.rgb + atmosphere_color.rgb * body_energy;
 	if (profile_mode == 2) {
-		rgb = mix(rgb, atmosphere_color.rgb, 0.025 * effect_strength * quality_factor);
+		rgb = mix(rgb, atmosphere_color.rgb, 0.055 * effect_strength * quality_factor);
 	} else if (profile_mode == 3) {
 		float solar_pulse = 0.75 + tri_wave(TIME * 0.12) * 0.25;
-		rgb += atmosphere_color.rgb * 0.10 * effect_strength * solar_pulse * quality_factor;
+		rgb += atmosphere_color.rgb * 0.22 * effect_strength * solar_pulse * quality_factor;
 	} else if (profile_mode == 4) {
-		rgb = mix(rgb, atmosphere_color.rgb, 0.045 * effect_strength * quality_factor);
+		rgb = mix(rgb, atmosphere_color.rgb, 0.085 * effect_strength * quality_factor);
 	}
 
 	float halo_shape = 1.0 - smoothstep(0.34, 0.52, radial);
-	float halo = halo_shape * (1.0 - source.a) * atmosphere_strength * 0.16 * quality_factor;
+	float halo = halo_shape * (1.0 - source.a) * atmosphere_strength * 0.28 * quality_factor;
 	float alpha = max(source.a, halo);
 	vec3 output_rgb = mix(rgb, atmosphere_color.rgb, halo * 0.72);
 
