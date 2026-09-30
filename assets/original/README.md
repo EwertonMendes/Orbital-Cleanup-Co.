@@ -58,3 +58,5 @@ All authored biomes now use project-owned HD obstacle artwork under `obstacles/`
 
 Obstacle collision remains authored in biome content. `texture_reference_size` normalizes HD raster resolution without changing gameplay footprint, while `sprite_modulate` allows full-color original artwork without changing legacy obstacle rendering in other biomes.
 
+All 50 authored biome definitions are covered by an explicit `obstacle_art_family`; content validation rejects any fallback to the legacy Kenney meteor sprites.
+
