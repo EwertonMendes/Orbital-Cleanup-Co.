@@ -2,6 +2,13 @@ extends Node2D
 class_name EnvironmentRuntime
 
 signal environment_state_changed(label_key: String, intensity: float)
+signal environment_visual_state_changed(
+	visibility: float,
+	environment_color: Color,
+	distortion: float,
+	label_key: String,
+	intensity: float
+)
 
 var _fields: Array[EnvironmentalField] = []
 var _play_bounds := Rect2()
@@ -9,7 +16,6 @@ var _palette: Dictionary = {}
 var _biome_id := ""
 var _ship: PlayerShip
 var _sector_runtime: SectorRuntime
-var _post_process: WorldPostProcess
 var _last_label := ""
 var _last_intensity := -1.0
 const SHIP_SAMPLE_INTERVAL := 1.0 / 30.0
@@ -43,15 +49,12 @@ func configure(
 
 func bind(
 	ship: PlayerShip,
-	sector_runtime: SectorRuntime,
-	post_process: WorldPostProcess
+	sector_runtime: SectorRuntime
 ) -> void:
 	assert(ship != null, "EnvironmentRuntime requires PlayerShip.")
 	assert(sector_runtime != null, "EnvironmentRuntime requires SectorRuntime.")
-	assert(post_process != null, "EnvironmentRuntime requires WorldPostProcess.")
 	_ship = ship
 	_sector_runtime = sector_runtime
-	_post_process = post_process
 	_salvage_nodes = sector_runtime.get_salvage_nodes()
 	_apply_ship_state(_neutral_state())
 	_update_salvage_forces()
@@ -139,15 +142,18 @@ func _apply_ship_state(state: Dictionary) -> void:
 			float(state["scanner_multiplier"]),
 			float(state["tractor_multiplier"])
 		)
-	if _post_process != null:
-		_post_process.set_environment_state(
-			float(state["visibility"]),
-			_fog_color,
-			maxf(
-				1.0 - float(state["scanner_multiplier"]),
-				1.0 - float(state["tractor_multiplier"])
-			)
-		)
+
+	var distortion := maxf(
+		1.0 - float(state["scanner_multiplier"]),
+		1.0 - float(state["tractor_multiplier"])
+	)
+	environment_visual_state_changed.emit(
+		float(state["visibility"]),
+		_fog_color,
+		distortion,
+		String(state["label_key"]),
+		float(state["dominant_intensity"])
+	)
 
 func _update_salvage_forces() -> void:
 	for salvage in _salvage_nodes:
