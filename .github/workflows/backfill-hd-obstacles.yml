@@ -1,0 +1,195 @@
+name: Backfill HD obstacles to all biomes
+
+on:
+  push:
+    branches:
+      - content/biome-hd-obstacles
+
+permissions:
+  contents: write
+
+jobs:
+  backfill:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: content/biome-hd-obstacles
+          fetch-depth: 0
+
+      - name: Replace legacy obstacle art across every biome
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          families = {
+              'earth': {
+                  'folder': 'earth_orbit',
+                  'entries': [
+                      ('earth_meteorite_01', 24, 54, 0.92, 1.12),
+                      ('earth_meteorite_02', 22, 47, 0.90, 1.12),
+                      ('earth_meteorite_03', 20, 40, 0.90, 1.14),
+                      ('earth_meteorite_04', 18, 33, 0.88, 1.16),
+                      ('earth_meteorite_05', 16, 27, 0.88, 1.20),
+                  ],
+              },
+              'lunar': {
+                  'folder': 'lunar_belt',
+                  'entries': [
+                      ('lunar_boulder_01', 24, 55, 0.94, 1.15),
+                      ('lunar_boulder_02', 22, 48, 0.92, 1.14),
+                      ('lunar_boulder_03', 20, 40, 0.90, 1.12),
+                      ('lunar_boulder_04', 18, 34, 0.90, 1.14),
+                      ('lunar_boulder_05', 16, 27, 0.88, 1.18),
+                  ],
+              },
+              'mars': {
+                  'folder': 'mars_freight',
+                  'entries': [
+                      ('mars_rock_01', 24, 55, 0.94, 1.16),
+                      ('mars_rock_02', 22, 48, 0.92, 1.14),
+                      ('mars_rock_03', 20, 40, 0.90, 1.14),
+                      ('mars_rock_04', 18, 34, 0.90, 1.16),
+                      ('mars_rock_05', 16, 27, 0.90, 1.20),
+                  ],
+              },
+              'nebula': {
+                  'folder': 'blue_nebula',
+                  'entries': [
+                      ('nebula_fragment_01', 20, 52, 0.84, 1.06),
+                      ('nebula_fragment_02', 21, 45, 0.82, 1.08),
+                      ('nebula_fragment_03', 20, 38, 0.82, 1.08),
+                      ('nebula_fragment_04', 19, 31, 0.80, 1.10),
+                      ('nebula_fragment_05', 20, 24, 0.78, 1.12),
+                  ],
+              },
+          }
+
+          assignments = {
+              # Neutral / orbital / industrial / gas-giant environments
+              'abandoned_station': 'earth',
+              'earth_orbit': 'earth',
+              'jupiter_clouds': 'earth',
+              'kepler_186f': 'earth',
+              'orbital_factory_ruins': 'earth',
+              'ringed_exoplanet': 'earth',
+              'saturn_rings': 'earth',
+              'ship_graveyard': 'earth',
+
+              # Pale rocky / icy moons, dwarf planets and belts
+              'asteroid_belt': 'lunar',
+              'callisto_orbit': 'lunar',
+              'ceres_orbit': 'lunar',
+              'charon_orbit': 'lunar',
+              'enceladus_orbit': 'lunar',
+              'eris_orbit': 'lunar',
+              'europa_orbit': 'lunar',
+              'ganymede_orbit': 'lunar',
+              'haumea_orbit': 'lunar',
+              'iapetus_orbit': 'lunar',
+              'kuiper_belt': 'lunar',
+              'lunar_belt': 'lunar',
+              'makemake_orbit': 'lunar',
+              'mercury_terminator': 'lunar',
+              'oberon_orbit': 'lunar',
+              'pluto_orbit': 'lunar',
+              'rhea_orbit': 'lunar',
+              'titania_orbit': 'lunar',
+              'triton_orbit': 'lunar',
+
+              # Warm / oxidized / volcanic / red-star environments
+              'io_orbit': 'mars',
+              'lava_world': 'mars',
+              'mars_freight': 'mars',
+              'proxima_centauri': 'mars',
+              'red_giant': 'mars',
+              'solar_corona': 'mars',
+              'titan_orbit': 'mars',
+              'trappist_1': 'mars',
+              'venus_clouds': 'mars',
+
+              # Cold / exotic / energetic deep-space environments
+              'binary_star': 'nebula',
+              'black_hole': 'nebula',
+              'blue_nebula': 'nebula',
+              'crystal_world': 'nebula',
+              'green_nebula': 'nebula',
+              'ice_giant_exoplanet': 'nebula',
+              'neptune_orbit': 'nebula',
+              'neutron_star': 'nebula',
+              'ocean_world': 'nebula',
+              'pulsar': 'nebula',
+              'rogue_planet': 'nebula',
+              'supernova_remnant': 'nebula',
+              'uranus_orbit': 'nebula',
+              'white_dwarf': 'nebula',
+          }
+
+          biome_paths = sorted(Path('content/biomes').glob('*.json'))
+          biome_ids = {p.stem for p in biome_paths}
+          assigned_ids = set(assignments)
+          missing = sorted(biome_ids - assigned_ids)
+          extra = sorted(assigned_ids - biome_ids)
+          if missing or extra:
+              raise RuntimeError(f'Biome obstacle coverage mismatch. Missing={missing}; extra={extra}')
+
+          for path in biome_paths:
+              biome_id = path.stem
+              family_name = assignments[biome_id]
+              family = families[family_name]
+              data = json.loads(path.read_text(encoding='utf-8'))
+              data['obstacles'] = [
+                  {
+                      'id': obstacle_id,
+                      'sprite': f"res://assets/original/obstacles/{family['folder']}/{obstacle_id}_hd.webp",
+                      'weight': weight,
+                      'collision_radius': radius,
+                      'scale_min': scale_min,
+                      'scale_max': scale_max,
+                      'texture_reference_size': 128,
+                      'sprite_modulate': '#ffffffff',
+                  }
+                  for obstacle_id, weight, radius, scale_min, scale_max in family['entries']
+              ]
+              data['obstacle_art_family'] = family_name
+              path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          legacy = []
+          for path in biome_paths:
+              data = json.loads(path.read_text(encoding='utf-8'))
+              for obstacle in data.get('obstacles', []):
+                  sprite = obstacle.get('sprite', '')
+                  if 'assets/third_party/' in sprite or 'meteor_grey_' in sprite or 'meteor_detailed_' in sprite:
+                      legacy.append((path.as_posix(), sprite))
+          if legacy:
+              raise RuntimeError(f'Legacy obstacle sprites remain: {legacy}')
+
+          schema_path = Path('schemas/biome.schema.json')
+          schema = json.loads(schema_path.read_text(encoding='utf-8'))
+          schema['properties']['obstacle_art_family'] = {
+              'type': 'string',
+              'enum': ['earth', 'lunar', 'mars', 'nebula'],
+          }
+          schema_path.write_text(json.dumps(schema, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+          readme_path = Path('assets/original/README.md')
+          readme = readme_path.read_text(encoding='utf-8')
+          old = 'The launch biomes use project-owned HD obstacle packs under `obstacles/`. Each biome has five transparent raster variants so obstacle silhouettes and materials reinforce biome identity instead of reusing the same grey meteor artwork.'
+          new = 'All authored biomes now use project-owned HD obstacle artwork under `obstacles/`. Every biome is assigned to the closest visual obstacle family so no gameplay scenario falls back to the legacy grey Kenney meteor sprites.'
+          if old in readme:
+              readme = readme.replace(old, new)
+          readme_path.write_text(readme, encoding='utf-8')
+          PY
+
+          rm -f .github/workflows/backfill-hd-obstacles.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: use HD obstacles across all biomes"
+          git push origin HEAD:content/biome-hd-obstacles
