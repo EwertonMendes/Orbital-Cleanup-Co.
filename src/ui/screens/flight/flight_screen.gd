@@ -9,8 +9,6 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var top_bar: BoxContainer = %TopBar
 @onready var return_button: Button = %ReturnButton
-@onready var hint_panel: Control = %HintPanel
-@onready var hint_label: Label = %HintLabel
 @onready var cargo_label: Label = %CargoLabel
 @onready var beam_status: Label = %BeamStatus
 @onready var beam_progress: ProgressBar = %BeamProgress
@@ -36,6 +34,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var operations_overlay_host: Control = %OperationsOverlayHost
 @onready var warp_transition: WarpTravelTransition = %WarpTravelTransition
 @onready var touch_controls: TouchFlightControls = %TouchFlightControls
+@onready var speedometer: ShipSpeedometer = %ShipSpeedometer
 
 var _context: Dictionary = {}
 var _router: SceneRouter
@@ -47,7 +46,6 @@ var _progression: ProgressionService
 var _registry := ContentRegistry.new()
 var _contract_session := ContractSession.new()
 var _gameplay_active := false
-var _hint_tween: Tween
 var _toast_tween: Tween
 var _active_salvage: SalvageDefinition
 var _new_discovery_ids: Array[String] = []
@@ -160,6 +158,7 @@ func configure(context: Dictionary) -> void:
 		_progression.get_ship_cosmetics()
 	)
 	touch.configure(_input_service, ship)
+	speedometer.configure(ship)
 	environment.bind(ship, runtime)
 	navigation.configure(ship, depot)
 	print("[Flight] DEPLOYMENT position=(%.1f, %.1f) depot=(%.1f, %.1f)" % [
@@ -177,7 +176,6 @@ func _ready() -> void:
 	operations_button.pressed.connect(_open_operations)
 	_wire_hud_button_feedback(return_button)
 	_wire_hud_button_feedback(operations_button)
-	player_ship.movement_started.connect(_schedule_hint_fade)
 	player_ship.cargo_changed.connect(_on_cargo_changed)
 	player_ship.tractor_target_changed.connect(_on_tractor_target_changed)
 	player_ship.tractor_progress_changed.connect(_on_tractor_progress_changed)
@@ -185,7 +183,6 @@ func _ready() -> void:
 	player_ship.cargo_collection_blocked.connect(_on_cargo_collection_blocked)
 	player_ship.bumped.connect(_on_ship_bumped)
 	unload_zone.cargo_unloaded.connect(_on_cargo_unloaded)
-	_input_service.input_mode_changed.connect(_on_input_mode_changed)
 	environment_runtime.environment_state_changed.connect(_on_environment_state_changed)
 
 	if _contract_active:
@@ -306,8 +303,6 @@ func _unhandled_input(event: InputEvent) -> void:
 func _is_pointer_over_flight_ui(pointer_position: Vector2) -> bool:
 	if _control_contains_pointer(top_bar, pointer_position):
 		return true
-	if _control_contains_pointer(hint_panel, pointer_position):
-		return true
 	if _control_contains_pointer(toast_panel, pointer_position):
 		return true
 	if _control_contains_pointer(depot_nav_label, pointer_position):
@@ -330,7 +325,6 @@ func _validate_contracts() -> void:
 	assert(safe_area != null, "FlightScreen requires SafeArea.")
 	assert(top_bar != null, "FlightScreen requires responsive TopBar.")
 	assert(return_button != null, "FlightScreen requires ReturnButton.")
-	assert(hint_panel != null and hint_label != null, "FlightScreen requires steering hint.")
 	assert(cargo_label != null and beam_status != null and beam_progress != null, "FlightScreen requires salvage HUD.")
 	assert(cleanup_status != null and cleanup_progress != null, "FlightScreen requires contract cleanliness HUD.")
 	assert(toast_panel != null and toast_label != null, "FlightScreen requires collection feedback.")
@@ -344,6 +338,7 @@ func _validate_contracts() -> void:
 	assert(operations_button != null and operations_overlay_host != null, "FlightScreen requires floating operations access.")
 	assert(warp_transition != null, "FlightScreen requires reusable warp travel transition.")
 	assert(touch_controls != null, "FlightScreen requires reusable touch flight controls.")
+	assert(speedometer != null, "FlightScreen requires reusable ship speedometer telemetry.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
 
 func _apply_responsive_layout() -> void:
@@ -378,7 +373,6 @@ func _apply_responsive_layout() -> void:
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
-	hint_panel.custom_minimum_size.x = 360.0 if phone else (300.0 if compact else 500.0)
 	toast_panel.custom_minimum_size.x = 320.0 if phone else (280.0 if compact else 390.0)
 
 func _refresh_biome_thumbnail() -> void:
@@ -553,10 +547,6 @@ func _stop_gameplay() -> void:
 		_platform.gameplay_stopped()
 	_gameplay_active = false
 
-func _on_input_mode_changed(_mode: InputService.InputMode) -> void:
-	_refresh_copy()
-	_show_hint_temporarily()
-
 func _refresh_copy() -> void:
 	if not is_node_ready():
 		return
@@ -574,8 +564,6 @@ func _refresh_copy() -> void:
 		cleanup_progress.visible = false
 		%DepotLabel.text = tr("FLIGHT_DEPOT")
 		environment_status.text = tr("FLIGHT_ENVIRONMENT_FMT") % tr("ENV_STABLE_ORBIT")
-		var steering_hint := tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
-		hint_label.text = "%s\n%s" % [steering_hint, tr("FLIGHT_VISUAL_LEGEND")]
 		return
 
 	cleanup_progress.visible = true
@@ -587,8 +575,6 @@ func _refresh_copy() -> void:
 		]
 	else:
 		%FlightTitle.text = tr(sector_runtime.get_sector_display_name_key())
-	var steering_hint := tr("FLIGHT_HINT_TOUCH") if _input_service.prefers_touch() else tr("FLIGHT_HINT_POINTER")
-	hint_label.text = "%s\n%s" % [steering_hint, tr("FLIGHT_VISUAL_LEGEND")]
 	%DepotLabel.text = tr("FLIGHT_DEPOT")
 	environment_status.text = tr("FLIGHT_ENVIRONMENT_FMT") % tr("ENV_STABLE_ORBIT")
 	_refresh_return_button()
@@ -749,15 +735,3 @@ func _show_toast(message: String) -> void:
 	_toast_tween.tween_interval(1.65)
 	_toast_tween.tween_property(toast_panel, "modulate:a", 0.0, 0.32)
 
-func _show_hint_temporarily() -> void:
-	if _hint_tween != null and _hint_tween.is_valid():
-		_hint_tween.kill()
-	hint_panel.modulate.a = 1.0
-	_schedule_hint_fade()
-
-func _schedule_hint_fade() -> void:
-	if _hint_tween != null and _hint_tween.is_valid():
-		_hint_tween.kill()
-	_hint_tween = create_tween()
-	_hint_tween.tween_interval(2.4)
-	_hint_tween.tween_property(hint_panel, "modulate:a", 0.10, 0.65)

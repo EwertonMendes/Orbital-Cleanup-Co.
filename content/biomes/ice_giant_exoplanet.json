@@ -70,6 +70,44 @@
           520,
           980
         ]
+      },
+      {
+        "kind": "gas_drag",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.22,
+          0.4
+        ],
+        "radius_range": [
+          700,
+          1080
+        ],
+        "placement": "random",
+        "color": "#baf5ff",
+        "secondary_color": "#2d557a"
+      },
+      {
+        "kind": "turbulence",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.22,
+          0.42
+        ],
+        "radius_range": [
+          600,
+          920
+        ],
+        "placement": "random",
+        "color": "#baf5ff",
+        "secondary_color": "#2d557a"
       }
     ]
   },

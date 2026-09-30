@@ -88,15 +88,23 @@ msgstr "Órbita de la Tierra · Ruta 01"
 msgid "FLIGHT_RETURN"
 msgstr "VOLVER A OPERACIONES"
 
-msgid "FLIGHT_HINT_POINTER"
-msgstr "Apunta para pilotar · clic / Espacio para boost · WASD / flechas también funcionan"
-
-msgid "FLIGHT_HINT_TOUCH"
-msgstr "Arrastra desde donde tocas para pilotar · BOOST a la derecha"
-
-
 msgid "FLIGHT_BOOST"
 msgstr "BOOST"
+
+msgid "FLIGHT_SPEED"
+msgstr "VELOCIDAD"
+
+msgid "FLIGHT_SPEED_UNIT"
+msgstr "m/s"
+
+msgid "FLIGHT_SPEED_IDLE"
+msgstr "DETENIDA"
+
+msgid "FLIGHT_SPEED_CRUISE"
+msgstr "CRUCERO"
+
+msgid "FLIGHT_SPEED_OVERSPEED"
+msgstr "ALTA VELOCIDAD"
 
 msgid "FLIGHT_BOOST_CHARGES_FMT"
 msgstr "BOOST %d / %d"
@@ -250,7 +258,6 @@ msgstr "Carga"
 msgid "UPGRADE_CARGO_CAPACITY_DESC"
 msgstr "Añade más espacio de carga antes de tener que descargar."
 
-
 msgid "UPGRADE_PULSE_BOOST"
 msgstr "Ajuste del Pulse Boost"
 
@@ -339,7 +346,6 @@ msgstr "Bono de recuperación instalado · +%d%%"
 
 msgid "HQ_UPGRADE_EFFECT_CARGO_FMT"
 msgstr "Bono de carga instalado · +%d"
-
 
 msgid "HQ_UPGRADE_EFFECT_BOOST_FMT"
 msgstr "Recarga del boost +%d%% · impulso +%d ms"
@@ -474,7 +480,6 @@ msgstr "Recuperación Menta"
 
 msgid "COSMETIC_BEAM_AMBER_PRECISION"
 msgstr "Precisión Ámbar"
-
 
 msgid "HQ_CONTRACT_AVAILABLE"
 msgstr "CONTRATO DISPONIBLE"
@@ -641,7 +646,6 @@ msgstr "Nebulosa Azul · Deriva del Explorador 02"
 msgid "SECTOR_BLUE_NEBULA_03"
 msgstr "Nebulosa Azul · Estudio Iónico 03"
 
-
 msgid "HQ_ENDLESS_CONTRACTS"
 msgstr "INFINITO"
 
@@ -659,10 +663,6 @@ msgstr "Contrato Infinito"
 
 msgid "SECTOR_ENDLESS_CONTRACT_FMT"
 msgstr "Infinito #%d · %s"
-
-
-msgid "FLIGHT_VISUAL_LEGEND"
-msgstr "MARCAS CIAN · objeto recuperable   •   ANILLO ÁMBAR · obstáculo de colisión"
 
 msgid "FLIGHT_NEW_DISCOVERY_FMT"
 msgstr "NUEVO DESCUBRIMIENTO · %s"

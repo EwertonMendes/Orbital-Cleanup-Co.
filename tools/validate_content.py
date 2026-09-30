@@ -342,6 +342,14 @@ def validate_biomes(
             "gravity_well", "safe_corridor", "drift_current", "gas_drag", "turbulence",
             "visibility_pocket", "scanner_interference", "tractor_distortion", "magnetic_zone",
         }
+        physical_motion_kinds = {
+            "gravity_well", "drift_current", "gas_drag", "turbulence", "magnetic_zone",
+        }
+        if item_id != "earth_orbit":
+            require(
+                any(volume.get("kind") in physical_motion_kinds for volume in volumes if isinstance(volume, dict)),
+                f"{label}: every non-baseline biome must include at least one physical ship-motion field",
+            )
         for volume_index, volume in enumerate(volumes):
             field_label = f"{label}.environment.volumes[{volume_index}]"
             require(isinstance(volume, dict), f"{field_label} must be an object")

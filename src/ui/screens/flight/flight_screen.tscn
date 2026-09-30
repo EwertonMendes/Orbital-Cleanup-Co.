@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://src/game/visual/environmental_vfx_layer.gd" id="19"]
 [ext_resource type="Script" path="res://src/game/visual/world_visual_runtime.gd" id="20"]
 [ext_resource type="Script" path="res://src/game/visual/space_environment_layer.gd" id="21"]
+[ext_resource type="PackedScene" path="res://src/ui/components/ship_speedometer.tscn" id="22"]
 
 [sub_resource type="CircleShape2D" id="UnloadShape"]
 radius = 145.0
@@ -400,31 +401,8 @@ text = "RECOVERED"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HintCenter" type="CenterContainer" parent="HUD/HudRoot/SafeArea/Layout"]
-layout_mode = 2
-
-[node name="HintPanel" type="PanelContainer" parent="HUD/HudRoot/SafeArea/Layout/HintCenter"]
+[node name="ShipSpeedometer" parent="HUD/HudRoot" instance=ExtResource("22")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(520, 60)
-layout_mode = 2
-mouse_filter = 2
-theme_type_variation = &"HudSoftPanel"
-
-[node name="HintMargin" type="MarginContainer" parent="HUD/HudRoot/SafeArea/Layout/HintCenter/HintPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 8
-
-[node name="HintLabel" type="Label" parent="HUD/HudRoot/SafeArea/Layout/HintCenter/HintPanel/HintMargin"]
-theme_type_variation = &"HudBody"
-unique_name_in_owner = true
-layout_mode = 2
-text = "Point to steer · WASD / arrows also work"
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 2
 
 [node name="TouchFlightControls" parent="HUD/HudRoot" instance=ExtResource("18")]
 unique_name_in_owner = true

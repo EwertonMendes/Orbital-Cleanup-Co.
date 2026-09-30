@@ -70,6 +70,25 @@
           450,
           760
         ]
+      },
+      {
+        "kind": "magnetic_zone",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.24,
+          0.44
+        ],
+        "radius_range": [
+          500,
+          780
+        ],
+        "placement": "random",
+        "color": "#ffbd68",
+        "secondary_color": "#28231f"
       }
     ]
   },

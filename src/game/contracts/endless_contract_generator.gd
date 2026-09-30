@@ -1,12 +1,6 @@
 extends RefCounted
 class_name EndlessContractGenerator
 
-const BIOME_IDS := [
-	"earth_orbit",
-	"lunar_belt",
-	"mars_freight",
-	"blue_nebula",
-]
 const CONTRACT_ROTATION := [
 	"standard_cleanup",
 	"recovery_run",
@@ -31,10 +25,12 @@ func create_sector_definition(contract_number: int, seed_override: int = -1, bio
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed
 
+	var biome_ids := _registry.list_biome_ids()
+	assert(not biome_ids.is_empty(), "Endless contracts require at least one authored biome.")
 	var biome_id := biome_override
 	if biome_id.is_empty():
-		biome_id = String(BIOME_IDS[(contract_number - 1) % BIOME_IDS.size()])
-	assert(BIOME_IDS.has(biome_id), "Unsupported endless biome override: %s" % biome_id)
+		biome_id = String(biome_ids[(contract_number - 1) % biome_ids.size()])
+	assert(biome_ids.has(biome_id), "Unsupported endless biome override: %s" % biome_id)
 	var biome := _registry.get_biome(biome_id)
 
 	var table_ids := biome.get("salvage_tables", []) as Array

@@ -711,6 +711,16 @@ func _validate_endless_contracts() -> void:
 		_validate_contract_plan_feasibility(varied_plan, registry)
 	_expect(endless_kinds.size() == 5, "First endless rotation must expose all five contract kinds.")
 
+	var biome_ids := registry.list_biome_ids()
+	var endless_biomes: Dictionary = {}
+	for contract_number in range(1, biome_ids.size() + 1):
+		var definition := endless.create_sector_definition(contract_number)
+		endless_biomes[String(definition["biome"])] = true
+	_expect(
+		endless_biomes.size() == biome_ids.size(),
+		"A complete endless rotation must cover every authored biome."
+	)
+
 func _validate_sector_preview() -> void:
 	var packed := load("res://src/debug/sector_preview/sector_preview.tscn") as PackedScene
 	_expect(packed != null, "Sector Preview scene must load.")
@@ -1031,6 +1041,11 @@ func _validate_player_ship() -> void:
 	_expect("set_touch_navigation_vector" in input_source, "Touch steering must use a dedicated analog navigation vector.")
 	_expect("signal boost_requested" in input_source, "InputService must expose one device-agnostic boost request.")
 	_expect("is_pointer_boost_event" in input_source, "InputService must expose a stable desktop pointer-boost event contract.")
+	_expect("POINTER_KEYBOARD" not in input_source, "Mouse and keyboard must not share one ambiguous active input mode.")
+	_expect("InputMode.POINTER" in input_source and "InputMode.KEYBOARD" in input_source and "InputMode.GAMEPAD" in input_source, "InputService must arbitrate pointer, keyboard and gamepad as distinct active sources.")
+	_expect("Input.mouse_mode" in input_source and "MOUSE_MODE_HIDDEN" in input_source, "Keyboard/gamepad control must hide the inactive mouse cursor.")
+	_expect("InputEventMouseMotion" in input_source and "MOUSE_REACTIVATION_DISTANCE" in input_source, "Real mouse movement must explicitly reactivate pointer steering.")
+	_expect("Input.get_joy_axis" in input_source, "Gamepad steering must read its own analog source instead of sharing keyboard action state.")
 	_expect(
 		"InputEventMouseButton" not in input_source.split("func _unhandled_input", false, 1)[1].split("func get_navigation_vector", false, 1)[0],
 		"Desktop world-click boost must not depend on _unhandled_input after GUI dispatch."
@@ -1048,6 +1063,11 @@ func _validate_flight_screen() -> void:
 	_expect(screen.find_child("SectorRuntime", true, false) is SectorRuntime, "Flight screen requires generic SectorRuntime.")
 	_expect(screen.find_child("EnvironmentRuntime", true, false) is EnvironmentRuntime, "Flight screen requires reusable biome EnvironmentRuntime.")
 	_expect(screen.find_child("TouchFlightControls", true, false) is TouchFlightControls, "Flight screen requires dedicated floating touch steering and boost controls.")
+	_expect(screen.find_child("ShipSpeedometer", true, false) is ShipSpeedometer, "Flight HUD requires reusable live speed telemetry.")
+	_expect(screen.find_child("HintPanel", true, false) == null, "Legacy flight steering hint must be removed from the HUD.")
+	var speedometer_source := FileAccess.get_file_as_string("res://src/ui/components/ship_speedometer.gd")
+	_expect("velocity.length()" in speedometer_source, "Speedometer must report the real physical velocity magnitude.")
+	_expect("absolute_speed_limit" in speedometer_source and "max_speed" in speedometer_source, "Speedometer must distinguish cruise speed from the higher physical safety range.")
 	var flight_input_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	_expect("_input_service.is_pointer_boost_event(event)" in flight_input_source, "Flight must route desktop world clicks before GUI can consume them.")
 	_expect("_is_pointer_over_flight_ui" in flight_input_source, "Flight must explicitly guard HUD regions from world-click boost.")
