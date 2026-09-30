@@ -42,3 +42,38 @@ static func hazard_color() -> Color:
 
 static func landmark_color() -> Color:
 	return Color("#78bde8")
+
+static func environment_effect_profile(visual_profile: Dictionary) -> String:
+	var authored := String(visual_profile.get("effect_profile", ""))
+	if not authored.is_empty():
+		return authored
+
+	match String(visual_profile.get("horizon_style", "clear")):
+		"dust", "rings", "industrial":
+			return "dust"
+		"nebula", "gas":
+			return "nebula"
+		"solar":
+			return "solar"
+		"anomaly":
+			return "anomaly"
+		_:
+			return "clean"
+
+static func environment_effect_mode(visual_profile: Dictionary) -> int:
+	match environment_effect_profile(visual_profile):
+		"dust":
+			return 1
+		"nebula":
+			return 2
+		"solar":
+			return 3
+		"anomaly":
+			return 4
+		_:
+			return 0
+
+static func environment_effect_intensity(visual_profile: Dictionary) -> float:
+	if visual_profile.has("effect_intensity"):
+		return clampf(float(visual_profile["effect_intensity"]), 0.0, 1.0)
+	return clampf(float(visual_profile.get("horizon_intensity", 0.6)) * 0.55, 0.0, 0.65)
