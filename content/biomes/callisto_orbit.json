@@ -7,7 +7,7 @@
     "accent": "#b2d2e5"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/callisto_orbit.svg",
+    "primary_asset": "res://assets/original/destinations/callisto_orbit_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.8,
@@ -21,7 +21,8 @@
     "traffic_count": 1,
     "dust_density": 1.1400000000000001,
     "horizon_style": "orbit",
-    "horizon_intensity": 0.55
+    "horizon_intensity": 0.55,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 1.02,
