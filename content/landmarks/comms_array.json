@@ -1,7 +1,7 @@
 {
   "id": "comms_array",
   "display_name_key": "LANDMARK_COMMS_ARRAY",
-  "sprite": "res://assets/original/landmarks/comms_array.svg",
+  "sprite": "res://assets/original/landmarks/comms_array_hd.webp",
   "scale": 0.64,
   "reserved_radius": 500,
   "placement_radius": [
@@ -20,5 +20,6 @@
     0
   ],
   "drift_amplitude": 0.5,
-  "ambient_effect": "none"
+  "ambient_effect": "none",
+  "texture_reference_size": 864
 }

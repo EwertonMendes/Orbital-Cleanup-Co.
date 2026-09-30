@@ -1,7 +1,7 @@
 {
   "id": "derelict_explorer",
   "display_name_key": "LANDMARK_DERELICT_EXPLORER",
-  "sprite": "res://assets/original/landmarks/derelict_explorer.svg",
+  "sprite": "res://assets/original/landmarks/derelict_explorer_hd.webp",
   "scale": 0.64,
   "reserved_radius": 590,
   "placement_radius": [
@@ -20,5 +20,6 @@
     0.0012
   ],
   "drift_amplitude": 0.5,
-  "ambient_effect": "ion_glow"
+  "ambient_effect": "ion_glow",
+  "texture_reference_size": 1024
 }

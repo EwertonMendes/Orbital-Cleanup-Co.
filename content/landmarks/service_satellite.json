@@ -1,7 +1,7 @@
 {
   "id": "service_satellite",
   "display_name_key": "LANDMARK_SERVICE_SATELLITE",
-  "sprite": "res://assets/original/landmarks/service_satellite.svg",
+  "sprite": "res://assets/original/landmarks/service_satellite_hd.webp",
   "scale": 0.62,
   "reserved_radius": 350,
   "placement_radius": [
@@ -17,5 +17,6 @@
     0.003
   ],
   "drift_amplitude": 1.5,
-  "ambient_effect": "none"
+  "ambient_effect": "none",
+  "texture_reference_size": 768
 }

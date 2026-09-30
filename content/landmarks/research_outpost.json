@@ -1,7 +1,7 @@
 {
   "id": "research_outpost",
   "display_name_key": "LANDMARK_RESEARCH_OUTPOST",
-  "sprite": "res://assets/original/landmarks/research_outpost.svg",
+  "sprite": "res://assets/original/landmarks/research_outpost_hd.webp",
   "scale": 0.66,
   "reserved_radius": 520,
   "placement_radius": [
@@ -17,5 +17,6 @@
     0.0015
   ],
   "drift_amplitude": 1,
-  "ambient_effect": "ion_glow"
+  "ambient_effect": "ion_glow",
+  "texture_reference_size": 720
 }

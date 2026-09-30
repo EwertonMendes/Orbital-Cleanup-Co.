@@ -1,7 +1,7 @@
 {
   "id": "mining_rig",
   "display_name_key": "LANDMARK_MINING_RIG",
-  "sprite": "res://assets/original/landmarks/mining_rig.svg",
+  "sprite": "res://assets/original/landmarks/mining_rig_hd.webp",
   "scale": 0.66,
   "reserved_radius": 520,
   "placement_radius": [
@@ -20,5 +20,6 @@
     0
   ],
   "drift_amplitude": 0,
-  "ambient_effect": "dust"
+  "ambient_effect": "dust",
+  "texture_reference_size": 832
 }
