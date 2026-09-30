@@ -25,6 +25,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var environment_runtime: EnvironmentRuntime = %EnvironmentRuntime
 @onready var world_visual_runtime: WorldVisualRuntime = %WorldVisualRuntime
 @onready var environmental_vfx: EnvironmentalVfxLayer = %EnvironmentalVfx
+@onready var space_environment: SpaceEnvironmentLayer = %SpaceEnvironment
 @onready var environment_status: Label = %EnvironmentStatus
 @onready var depot_navigation: DepotNavigationGuide = %DepotNavigationGuide
 @onready var depot_nav_label: Label = %DepotNavLabel
@@ -79,6 +80,7 @@ func configure(context: Dictionary) -> void:
 	var environment := get_node("World/EnvironmentRuntime") as EnvironmentRuntime
 	var visual_runtime := get_node("WorldVisualRuntime") as WorldVisualRuntime
 	var environment_vfx := get_node("World/EnvironmentalVfx") as EnvironmentalVfxLayer
+	var space_environment_layer := get_node("World/SpaceEnvironment") as SpaceEnvironmentLayer
 	var post_process := get_node("WorldPost/WorldPostProcess") as WorldPostProcess
 	var feedback := get_node("FlightFeedback") as FlightFeedback
 	var depot := get_node("World/UnloadDepot") as UnloadZone
@@ -92,6 +94,7 @@ func configure(context: Dictionary) -> void:
 	assert(environment != null, "FlightScreen requires EnvironmentRuntime.")
 	assert(visual_runtime != null, "FlightScreen requires WorldVisualRuntime.")
 	assert(environment_vfx != null, "FlightScreen requires EnvironmentalVfxLayer.")
+	assert(space_environment_layer != null, "FlightScreen requires SpaceEnvironmentLayer.")
 	assert(post_process != null, "FlightScreen requires WorldPostProcess.")
 	assert(feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(depot != null, "FlightScreen requires UnloadZone.")
@@ -130,7 +133,8 @@ func configure(context: Dictionary) -> void:
 		biome_palette,
 		visual_profile,
 		post_process,
-		environment_vfx
+		environment_vfx,
+		space_environment_layer
 	)
 	visual_runtime.bind(environment)
 	feedback.configure(biome_palette)
