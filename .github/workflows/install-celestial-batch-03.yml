@@ -1,0 +1,90 @@
+name: Install HD celestial artwork batch 03
+
+on:
+  push:
+    branches:
+      - content/hd-celestial-batch-01
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: content/hd-celestial-batch-01
+          fetch-depth: 0
+
+      - name: Install celestial artwork batch 03
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f tools/celestial_hd_batch_03.zip
+
+          rm -rf /tmp/celestial-batch-03
+          mkdir -p /tmp/celestial-batch-03
+          unzip -o tools/celestial_hd_batch_03.zip -d /tmp/celestial-batch-03
+
+          mkdir -p assets/original/destinations
+          cp /tmp/celestial-batch-03/charon_orbit_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/eris_orbit_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/haumea_orbit_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/iapetus_orbit_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/makemake_orbit_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/oberon_orbit_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/rhea_orbit_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/titania_orbit_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/asteroid_belt_hd.webp assets/original/destinations/
+          cp /tmp/celestial-batch-03/kuiper_belt_hd.webp assets/original/destinations/
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+
+          ids = [
+              "charon_orbit",
+              "eris_orbit",
+              "haumea_orbit",
+              "iapetus_orbit",
+              "makemake_orbit",
+              "oberon_orbit",
+              "rhea_orbit",
+              "titania_orbit",
+              "asteroid_belt",
+              "kuiper_belt",
+          ]
+
+          for biome_id in ids:
+              path = Path(f"content/biomes/{biome_id}.json")
+              data = json.loads(path.read_text(encoding="utf-8"))
+              profile = data.setdefault("visual_profile", {})
+              profile["primary_asset"] = f"res://assets/original/destinations/{biome_id}_hd.webp"
+              profile["primary_reference_size"] = 512
+              path.write_text(
+                  json.dumps(data, indent=2, ensure_ascii=False) + "\n",
+                  encoding="utf-8",
+              )
+
+          for biome_id in ids:
+              path = Path(f"content/biomes/{biome_id}.json")
+              data = json.loads(path.read_text(encoding="utf-8"))
+              asset = data["visual_profile"]["primary_asset"]
+              if not asset.endswith("_hd.webp"):
+                  raise RuntimeError(f"{biome_id} did not receive HD art: {asset}")
+              asset_path = Path(asset.replace("res://", ""))
+              if not asset_path.exists():
+                  raise RuntimeError(f"Missing destination asset: {asset_path}")
+          PY
+
+          rm -f tools/celestial_hd_batch_03.zip
+          rm -f .github/workflows/install-celestial-batch-03.yml
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: add HD celestial artwork batch 03"
+          git push origin HEAD:content/hd-celestial-batch-01
