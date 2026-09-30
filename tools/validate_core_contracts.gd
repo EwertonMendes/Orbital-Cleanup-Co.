@@ -1149,6 +1149,9 @@ func _validate_polish_systems() -> void:
 		var flight := flight_packed.instantiate()
 		_expect(flight.find_child("WorldPostProcess", true, false) is WorldPostProcess, "Flight requires world-only post-processing.")
 		_expect(flight.find_child("AmbientMotion", true, false) is AmbientOrbitLayer, "Flight requires lightweight animated ambient orbits.")
+		_expect(flight.find_child("EnvironmentalVfx", true, false) is EnvironmentalVfxLayer, "Flight requires bounded profile-driven environmental VFX.")
+		_expect(flight.find_child("SpaceEnvironment", true, false) is SpaceEnvironmentLayer, "Flight requires layered procedural atmosphere behind and in front of gameplay.")
+		_expect(flight.find_child("WorldVisualRuntime", true, false) is WorldVisualRuntime, "Flight requires one visual coordinator between environment simulation and rendering.")
 		_expect(flight.find_child("FlightFeedback", true, false) is FlightFeedback, "Flight requires centralized gameplay feedback.")
 		var engine_particles := flight.find_child("EngineParticles", true, false)
 		_expect(engine_particles is CPUParticles2D, "Ship polish requires engine particles.")
@@ -1165,13 +1168,62 @@ func _validate_polish_systems() -> void:
 	)
 	_expect("environment_fog_strength" in post_source, "World post-process must support localized biome visibility haze.")
 	_expect("environment_distortion" in post_source, "World post-process must support subtle biome interference distortion.")
+	_expect("profile_mode" in post_source and "profile_strength" in post_source, "World post-process must consume the data-driven environmental profile.")
+	_expect("sin(" not in post_source and "cos(" not in post_source, "Full-screen compositor must avoid per-pixel trigonometry.")
 
-	var planet_source := FileAccess.get_file_as_string("res://src/game/visual/planet_surface.gdshader")
-	_expect("rotation_speed" in planet_source, "Biome planet shader must animate surface rotation.")
-	_expect("atmosphere_strength" in planet_source, "Biome planet shader must expose atmosphere treatment.")
-	_expect("sin(" not in planet_source and "cos(" not in planet_source, "Planet shader must avoid per-pixel trigonometry.")
+	var space_environment_source := FileAccess.get_file_as_string("res://src/game/visual/space_environment_layer.gd")
+	_expect("NoiseTexture2D.new()" in space_environment_source, "Space environment noise must use Godot's native threaded NoiseTexture2D generation.")
+	_expect("get_noise_2d(" not in space_environment_source, "Space environment must not generate noise pixels through GDScript sampling loops.")
+	_expect("seamless = true" in space_environment_source, "Environment noise textures must remain tileable for moving atmosphere layers.")
+
+	var environment_shader_source := FileAccess.get_file_as_string("res://src/game/visual/space_environment.gdshader")
+	_expect("noise_a" in environment_shader_source and "noise_b" in environment_shader_source, "Space environment must use layered noise fields instead of flat procedural circles.")
+	_expect("hint_screen_texture" not in environment_shader_source, "Atmosphere shader must not add another screen copy.")
+	_expect("foreground_mix" in environment_shader_source and "focal_point" in environment_shader_source, "Space environment must support foreground depth and focal effects.")
+	_expect("profile_mode == 17" in environment_shader_source, "Space environment shader must retain the complete authored profile catalogue.")
+
+	var visual_language_source := FileAccess.get_file_as_string("res://src/game/visual/world_visual_language.gd")
+	_expect("environment_space_mode" in visual_language_source, "Visual language must keep a rich atmosphere mode separate from coarse post-process modes.")
+	var required_profiles := [
+		"clean", "dust", "nebula", "solar", "anomaly", "industrial", "debris",
+		"cryo", "gas", "ocean", "electromagnetic", "rings", "volcanic",
+		"deep_space", "crystal", "toxic", "graveyard", "remnant"
+	]
+	for profile in required_profiles:
+		_expect(('"%s"' % profile) in visual_language_source, "Visual language is missing required profile %s." % profile)
+
+	var biome_schema_source := FileAccess.get_file_as_string("res://schemas/biome.schema.json")
+	_expect('"effect_profile"' in biome_schema_source and '"effect_intensity"' in biome_schema_source, "Biome schema must require explicit environmental art direction.")
+
+	var vfx_source := FileAccess.get_file_as_string("res://src/game/visual/environmental_vfx_layer.gd")
+	_expect(vfx_source.count("CPUParticles2D.new()") == 3, "Environmental VFX must own three interpolated particle depth fields.")
+	_expect("z_as_relative = false" in vfx_source, "Foreground particles must be able to cross world gameplay elements.")
+	_expect("PARTICLE_STREAK" in vfx_source and "PARTICLE_SHARD" in vfx_source and "PARTICLE_GLOW" in vfx_source, "Environmental particles require distinct energy, dust and glow textures.")
+	for profile in required_profiles:
+		if profile == "clean":
+			continue
+		_expect(('"%s"' % profile) in vfx_source, "Environmental VFX is missing particle routing for profile %s." % profile)
+
+	var celestial_source := FileAccess.get_file_as_string("res://src/game/visual/celestial_body.gdshader")
+	_expect("atmosphere_strength" in celestial_source, "Celestial-body shader must consume authored atmosphere strength.")
+	_expect("shimmer_strength" in celestial_source, "Celestial-body shader must consume authored shimmer strength.")
+	_expect("sin(" not in celestial_source and "cos(" not in celestial_source, "Celestial-body shader must avoid per-pixel trigonometry.")
 	var backdrop_source := FileAccess.get_file_as_string("res://src/game/sector/sector_backdrop.gd")
-	_expect("PLANET_SHADER" not in backdrop_source, "Web-friendly planet rendering must not require a custom material.")
+	_expect("CELESTIAL_BODY_SHADER" in backdrop_source, "SectorBackdrop must use the shared bounded celestial-body shader.")
+	_expect("_primary_visual.material = _primary_material" in backdrop_source, "Primary biome artwork must receive the shared celestial material.")
+	_expect("CELESTIAL_GLOW_SHADER" in backdrop_source and "_primary_glow" in backdrop_source, "Primary celestial artwork must receive a separate additive aura pass.")
+
+	var ambient_source := FileAccess.get_file_as_string("res://src/game/visual/ambient_orbit_layer.gd")
+	_expect("match _biome_id" not in ambient_source, "Ambient visual behavior must never branch on authored biome IDs.")
+	_expect("environment_effect_profile" in ambient_source, "Ambient visual behavior must consume reusable effect profiles.")
+
+	var environment_source := FileAccess.get_file_as_string("res://src/game/environment/environment_runtime.gd")
+	_expect("environment_visual_state_changed" in environment_source, "EnvironmentRuntime must publish presentation state without owning a renderer.")
+	_expect("WorldPostProcess" not in environment_source, "EnvironmentRuntime must stay decoupled from the post-process implementation.")
+
+	var quality_source := FileAccess.get_file_as_string("res://src/core/performance/runtime_quality.gd")
+	_expect("EFFECTS_LOW" in quality_source and "EFFECTS_MEDIUM" in quality_source and "EFFECTS_HIGH" in quality_source, "RuntimeQuality must expose explicit environmental VFX tiers.")
+	_expect("return not is_mobile_render_target()" in quality_source, "Desktop Web must keep the single-pass compositor while mobile uses the lightweight fallback.")
 
 	var scanner := ProceduralSfx.scanner_ping()
 	var discovery := ProceduralSfx.discovery()

@@ -153,7 +153,9 @@
         "traffic_count",
         "dust_density",
         "horizon_style",
-        "horizon_intensity"
+        "horizon_intensity",
+        "effect_profile",
+        "effect_intensity"
       ],
       "properties": {
         "atmosphere_color": {
@@ -237,6 +239,33 @@
         "primary_reference_size": {
           "type": "number",
           "exclusiveMinimum": 0
+        },
+        "effect_profile": {
+          "enum": [
+            "clean",
+            "dust",
+            "nebula",
+            "solar",
+            "anomaly",
+            "industrial",
+            "debris",
+            "cryo",
+            "gas",
+            "ocean",
+            "electromagnetic",
+            "rings",
+            "volcanic",
+            "deep_space",
+            "crystal",
+            "toxic",
+            "graveyard",
+            "remnant"
+          ]
+        },
+        "effect_intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         }
       }
     },

@@ -16,13 +16,15 @@
     "primary_parallax": 0.064,
     "primary_rotation_speed": -0.004,
     "atmosphere_color": "#fff0b0",
-    "atmosphere_strength": 0.6,
-    "shimmer_strength": 0.14,
+    "atmosphere_strength": 0.82,
+    "shimmer_strength": 0.22,
     "traffic_count": 0,
-    "dust_density": 0.45,
+    "dust_density": 0.55,
     "horizon_style": "solar",
-    "horizon_intensity": 0.8500000000000001,
-    "primary_reference_size": 512
+    "horizon_intensity": 1,
+    "primary_reference_size": 512,
+    "effect_profile": "solar",
+    "effect_intensity": 1
   },
   "environment": {
     "salvage_mass_multiplier": 1.23,

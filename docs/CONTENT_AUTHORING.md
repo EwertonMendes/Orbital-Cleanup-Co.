@@ -472,3 +472,49 @@ Supported horizon styles are `clear`, `orbit`, `rings`, `dust`, `nebula`, `solar
 
 A new destination must remain JSON + SVG only. If adding a destination requires a new destination-ID branch in GDScript, the authoring model has regressed. The validator also requires one unique primary asset per biome.
 
+## Environmental visual profiles
+
+Every authored biome must explicitly define its environmental art direction inside `visual_profile`:
+
+```json
+{
+  "effect_profile": "nebula",
+  "effect_intensity": 0.92
+}
+```
+
+Both fields are required by the biome schema. `effect_intensity` is normalized 0–1 and controls ambient motion, atmosphere, particle energy, celestial treatment and the single-pass world compositor. Hazard intensity still comes from `EnvironmentRuntime`, so visual danger and gameplay simulation share one source of truth.
+
+Supported reusable profiles are:
+
+- `clean` — sparse orbital haze and quiet aurora ribbons;
+- `dust` — suspended dust sheets and directional grit;
+- `nebula` — dense moving gas, luminous filaments and ion haze;
+- `solar` — corona flow, heat shimmer and radial plasma;
+- `anomaly` — focal accretion, lensing and warped space;
+- `industrial` — smog, sparks, scan bands and machinery residue;
+- `debris` — mineral fragments, micrometeoroids and fast shards;
+- `cryo` — frost veils, slow ice shards and cold glints;
+- `gas` — turbulent atmospheric bands and storm eddies;
+- `ocean` — cyan swell layers and moving caustic lattices;
+- `electromagnetic` — field pulses, beams and fast charged particles;
+- `rings` — planar ring matter, orbiting shards and dust lanes;
+- `volcanic` — ash, embers, plumes and hot radial matter;
+- `deep_space` — isolated low-density haze and rare cold glints;
+- `crystal` — prismatic lattice, crystalline shards and sparkles;
+- `toxic` — dense layered clouds and corrosive particulate haze;
+- `graveyard` — dark wreck haze, dead beacons and drifting fragments;
+- `remnant` — expanding shock shells and supernova filaments.
+
+Profiles are families, not destination identities by themselves. Individual destinations still tune `atmosphere_strength`, `shimmer_strength`, `dust_density`, `horizon_intensity`, palette, anchor and traffic so two biomes using the same family do not need to look identical.
+
+Desktop Web runs the medium visual tier with the single-fetch compositor. Mobile keeps the lightweight overlay fallback while retaining world-space and celestial effects.
+
+The presentation stack is intentionally layered:
+
+- `SpaceEnvironmentLayer` renders moving procedural atmosphere both behind gameplay and as a sparse foreground veil, using cached seamless noise textures and no screen copy;
+- `EnvironmentalVfxLayer` owns three real `CPUParticles2D` depth fields (far ambience, foreground matter and energy streaks) so particles can cross world objects and create depth;
+- `SectorBackdrop` owns the primary celestial art plus a separate additive aura pass;
+- `WorldPostProcess` remains the single screen-reading compositor and aligns focal distortion to `primary_anchor`.
+
+Do not replace these with biome-specific scenes, destination-ID branches or manual `_draw()` particle simulations. New art direction should be expressed through a reusable effect profile plus authored per-biome tuning.

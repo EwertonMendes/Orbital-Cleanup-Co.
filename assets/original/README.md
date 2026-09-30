@@ -76,3 +76,12 @@ All eight authored gameplay landmarks now use project-owned raster artwork at ru
 
 `texture_reference_size` keeps each new 768px raster asset at the visual footprint of its previous authored SVG dimensions, so artwork resolution remains independent from gameplay geometry.
 
+## Environmental VFX primitives
+
+The three SVG files under `vfx/` are project-owned particle primitives used by the reusable environmental particle system:
+
+- `particle_glow.svg` — ions, plasma and soft luminous dust;
+- `particle_streak.svg` — solar wind and fast energy motion;
+- `particle_shard.svg` — mineral dust and near-field debris.
+
+They are intentionally neutral white assets. Runtime biome profiles provide color, lifetime, scale, velocity and depth behavior so these textures remain reusable across destinations.
