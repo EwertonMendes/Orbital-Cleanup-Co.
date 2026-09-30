@@ -149,6 +149,7 @@ func _reset_emitter(emitter: CPUParticles2D, amount: int, seed_value: int) -> vo
 	emitter.seed = seed_value
 	emitter.speed_scale = 1.0
 	emitter.emission_shape = CPUParticles2D.EMISSION_SHAPE_RECTANGLE
+	emitter.emission_sphere_radius = 0.0
 	emitter.emission_ring_inner_radius = 0.0
 	emitter.emission_ring_radius = 0.0
 	emitter.direction = Vector2.RIGHT
