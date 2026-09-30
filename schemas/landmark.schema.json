@@ -38,8 +38,14 @@
     "placement_radius": {
       "type": "array",
       "prefixItems": [
-        { "type": "number", "minimum": 0 },
-        { "type": "number", "minimum": 0 }
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        }
       ],
       "minItems": 2,
       "maxItems": 2
@@ -49,23 +55,42 @@
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["shape", "radius"],
+          "required": [
+            "shape",
+            "radius"
+          ],
           "properties": {
-            "shape": { "const": "circle" },
-            "radius": { "type": "number", "exclusiveMinimum": 0 }
+            "shape": {
+              "const": "circle"
+            },
+            "radius": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
           }
         },
         {
           "type": "object",
           "additionalProperties": false,
-          "required": ["shape", "size"],
+          "required": [
+            "shape",
+            "size"
+          ],
           "properties": {
-            "shape": { "const": "box" },
+            "shape": {
+              "const": "box"
+            },
             "size": {
               "type": "array",
               "prefixItems": [
-                { "type": "number", "exclusiveMinimum": 0 },
-                { "type": "number", "exclusiveMinimum": 0 }
+                {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                }
               ],
               "minItems": 2,
               "maxItems": 2
@@ -77,8 +102,12 @@
     "spin_speed_range": {
       "type": "array",
       "prefixItems": [
-        { "type": "number" },
-        { "type": "number" }
+        {
+          "type": "number"
+        },
+        {
+          "type": "number"
+        }
       ],
       "minItems": 2,
       "maxItems": 2
@@ -89,6 +118,10 @@
     },
     "ambient_effect": {
       "type": "string"
+    },
+    "texture_reference_size": {
+      "type": "number",
+      "exclusiveMinimum": 0
     }
   }
 }

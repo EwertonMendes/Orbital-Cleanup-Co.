@@ -7,7 +7,7 @@
     "accent": "#ffbd68"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/orbital_factory_ruins.svg",
+    "primary_asset": "res://assets/original/destinations/orbital_factory_ruins_hd.webp",
     "primary_scale": 1.35,
     "primary_anchor": [
       0.5,
@@ -21,7 +21,8 @@
     "traffic_count": 8,
     "dust_density": 1.1400000000000001,
     "horizon_style": "industrial",
-    "horizon_intensity": 0.55
+    "horizon_intensity": 0.55,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 1.16,

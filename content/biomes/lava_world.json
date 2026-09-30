@@ -7,7 +7,7 @@
     "accent": "#ffd05b"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/lava_world.svg",
+    "primary_asset": "res://assets/original/destinations/lava_world_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.5,
@@ -21,7 +21,8 @@
     "traffic_count": 5,
     "dust_density": 0.45,
     "horizon_style": "solar",
-    "horizon_intensity": 0.55
+    "horizon_intensity": 0.55,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 1.16,

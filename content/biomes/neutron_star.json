@@ -7,7 +7,7 @@
     "accent": "#f0f4ff"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/neutron_star.svg",
+    "primary_asset": "res://assets/original/destinations/neutron_star_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.2,
@@ -21,7 +21,8 @@
     "traffic_count": 5,
     "dust_density": 1.1400000000000001,
     "horizon_style": "anomaly",
-    "horizon_intensity": 0.65
+    "horizon_intensity": 0.65,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 1.09,

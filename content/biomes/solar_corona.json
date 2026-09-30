@@ -7,7 +7,7 @@
     "accent": "#fff0a4"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/solar_corona.svg",
+    "primary_asset": "res://assets/original/destinations/solar_corona_hd.webp",
     "primary_scale": 1.75,
     "primary_anchor": [
       0.5,
@@ -21,7 +21,8 @@
     "traffic_count": 4,
     "dust_density": 0.45,
     "horizon_style": "solar",
-    "horizon_intensity": 0.65
+    "horizon_intensity": 0.65,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.95,

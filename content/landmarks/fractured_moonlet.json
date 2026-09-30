@@ -1,7 +1,7 @@
 {
   "id": "fractured_moonlet",
   "display_name_key": "LANDMARK_FRACTURED_MOONLET",
-  "sprite": "res://assets/original/landmarks/fractured_moonlet.svg",
+  "sprite": "res://assets/original/landmarks/fractured_moonlet_hd.webp",
   "scale": 0.78,
   "reserved_radius": 570,
   "placement_radius": [
@@ -17,5 +17,6 @@
     0.0018
   ],
   "drift_amplitude": 0,
-  "ambient_effect": "dust"
+  "ambient_effect": "dust",
+  "texture_reference_size": 512
 }
