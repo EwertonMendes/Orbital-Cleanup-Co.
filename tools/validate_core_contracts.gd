@@ -1150,6 +1150,7 @@ func _validate_polish_systems() -> void:
 		_expect(flight.find_child("WorldPostProcess", true, false) is WorldPostProcess, "Flight requires world-only post-processing.")
 		_expect(flight.find_child("AmbientMotion", true, false) is AmbientOrbitLayer, "Flight requires lightweight animated ambient orbits.")
 		_expect(flight.find_child("EnvironmentalVfx", true, false) is EnvironmentalVfxLayer, "Flight requires bounded profile-driven environmental VFX.")
+		_expect(flight.find_child("SpaceEnvironment", true, false) is SpaceEnvironmentLayer, "Flight requires layered procedural atmosphere behind and in front of gameplay.")
 		_expect(flight.find_child("WorldVisualRuntime", true, false) is WorldVisualRuntime, "Flight requires one visual coordinator between environment simulation and rendering.")
 		_expect(flight.find_child("FlightFeedback", true, false) is FlightFeedback, "Flight requires centralized gameplay feedback.")
 		var engine_particles := flight.find_child("EngineParticles", true, false)
@@ -1170,6 +1171,16 @@ func _validate_polish_systems() -> void:
 	_expect("profile_mode" in post_source and "profile_strength" in post_source, "World post-process must consume the data-driven environmental profile.")
 	_expect("sin(" not in post_source and "cos(" not in post_source, "Full-screen compositor must avoid per-pixel trigonometry.")
 
+	var environment_shader_source := FileAccess.get_file_as_string("res://src/game/visual/space_environment.gdshader")
+	_expect("noise_a" in environment_shader_source and "noise_b" in environment_shader_source, "Space environment must use layered noise fields instead of flat procedural circles.")
+	_expect("hint_screen_texture" not in environment_shader_source, "Atmosphere shader must not add another screen copy.")
+	_expect("foreground_mix" in environment_shader_source and "focal_point" in environment_shader_source, "Space environment must support foreground depth and focal effects.")
+
+	var vfx_source := FileAccess.get_file_as_string("res://src/game/visual/environmental_vfx_layer.gd")
+	_expect(vfx_source.count("CPUParticles2D.new()") == 3, "Environmental VFX must own three interpolated particle depth fields.")
+	_expect("z_as_relative = false" in vfx_source, "Foreground particles must be able to cross world gameplay elements.")
+	_expect("PARTICLE_STREAK" in vfx_source and "PARTICLE_SHARD" in vfx_source and "PARTICLE_GLOW" in vfx_source, "Environmental particles require distinct energy, dust and glow textures.")
+
 	var celestial_source := FileAccess.get_file_as_string("res://src/game/visual/celestial_body.gdshader")
 	_expect("atmosphere_strength" in celestial_source, "Celestial-body shader must consume authored atmosphere strength.")
 	_expect("shimmer_strength" in celestial_source, "Celestial-body shader must consume authored shimmer strength.")
@@ -1177,6 +1188,7 @@ func _validate_polish_systems() -> void:
 	var backdrop_source := FileAccess.get_file_as_string("res://src/game/sector/sector_backdrop.gd")
 	_expect("CELESTIAL_BODY_SHADER" in backdrop_source, "SectorBackdrop must use the shared bounded celestial-body shader.")
 	_expect("_primary_visual.material = _primary_material" in backdrop_source, "Primary biome artwork must receive the shared celestial material.")
+	_expect("CELESTIAL_GLOW_SHADER" in backdrop_source and "_primary_glow" in backdrop_source, "Primary celestial artwork must receive a separate additive aura pass.")
 
 	var ambient_source := FileAccess.get_file_as_string("res://src/game/visual/ambient_orbit_layer.gd")
 	_expect("match _biome_id" not in ambient_source, "Ambient visual behavior must never branch on authored biome IDs.")
