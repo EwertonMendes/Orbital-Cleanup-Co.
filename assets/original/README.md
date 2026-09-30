@@ -8,17 +8,17 @@ The SVG planet illustrations are deliberately stylized for the game's clean cozy
 
 Runtime animation, atmosphere glow and subtle surface movement are applied by `src/game/visual/planet_surface.gdshader`.
 
-The original launch SVGs remain in the repository as editable/fallback artwork. Higher-detail runtime tests may live beside them as optimized raster assets. `earth_orbit_hd.webp` is the first such test: it preserves transparency and high-detail rendering while avoiding the memory/download cost of using the full uploaded source image directly.
+The original launch SVGs remain in the repository as editable/fallback artwork. Runtime destination definitions now point to project-owned HD raster artwork instead of the legacy SVG primaries.
 
 ## Player ships
 
-`assets/original/ships/pioneer_01_hd.webp` is the first project-owned HD ship test. The previous Kenney player ship remains in `assets/third_party/` for rollback/reference while the runtime points to the new Pioneer-01 artwork.
+`assets/original/ships/pioneer_01_hd.webp` is the project-owned HD player ship. The previous Kenney player ship remains in `assets/third_party/` for rollback/reference while the runtime points to the Pioneer-01 artwork.
 
 Ship source art is normalized through scene scale rather than destructively stretched. The runtime sprite remains centered and the existing engine/trail anchor stays aligned with the rendered main engine.
 
 ## Orbital landmarks
 
-The SVG artwork under `assets/original/landmarks/` is authored specifically for OCC's top-down navigation language.
+The original SVG artwork under `assets/original/landmarks/` is authored specifically for OCC's top-down navigation language.
 
 The launch set includes:
 
@@ -33,7 +33,7 @@ The launch set includes:
 
 These silhouettes are deliberately larger and more structurally distinct than recoverable salvage. Runtime collision and navigation clearance are authored in landmark JSON rather than baked into the artwork.
 
-The Cargo Waystation now has an HD raster test at `landmarks/cargo_waystation_hd.webp`. Its original SVG remains beside it for rollback while the new circular station silhouette is validated; collision is authored separately to match the HD structure rather than inherited from the previous horizontal shape.
+The Cargo Waystation and Fractured Moonlet now have HD raster runtime artwork. `texture_reference_size` allows high-resolution landmark textures to preserve their authored gameplay footprint while collision remains independently defined in landmark content.
 
 ## Cargo depots
 
@@ -43,20 +43,29 @@ The previous Kenney station asset remains under `assets/third_party/` as a fallb
 
 ## Destination primary artwork
 
-The `destinations/` folder contains 46 additional project-owned SVG primary visuals authored specifically for Orbital Cleanup Co. They cover Solar System worlds and moons, the Solar corona, dwarf planets, abandoned infrastructure, stellar objects, black holes, exoplanets, nebulae and a supernova remnant.
+Every authored destination biome now uses project-owned HD raster primary artwork at runtime.
 
-Together with the four original launch visuals under `planets/`, the runtime has one unique primary asset for each of 50 destination biomes.
+The `destinations/` folder covers Solar System worlds and moons, dwarf planets, orbital infrastructure, stellar objects, black holes, exoplanets, nebulae, asteroid regions and supernova remnants. Together with the four original launch HD visuals under `planets/`, all 50 authored biome definitions now resolve to non-SVG primary assets.
+
+The original SVG destination files remain beside the HD artwork only as editable/fallback source material; authored biome definitions no longer depend on them for the primary visual.
 
 ## Biome obstacle artwork
 
-All authored biomes now use project-owned HD obstacle artwork under `obstacles/`. Every biome is assigned to the closest visual obstacle family so no gameplay scenario falls back to the legacy grey Kenney meteor sprites.
+All authored biomes use project-owned HD obstacle artwork under `obstacles/`. Every biome is assigned to the closest visual obstacle family so no gameplay scenario falls back to the legacy grey Kenney meteor sprites.
 
-- `earth_orbit/`: dark iron/nickel orbital meteorites;
+- `earth_orbit/`: dark iron/nickel meteorites;
 - `lunar_belt/`: pale cratered regolith boulders;
 - `mars_freight/`: rust-orange Martian rock with exposed dark basalt;
 - `blue_nebula/`: cold blue/violet mineral fragments.
 
-Obstacle collision remains authored in biome content. `texture_reference_size` normalizes HD raster resolution without changing gameplay footprint, while `sprite_modulate` allows full-color original artwork without changing legacy obstacle rendering in other biomes.
+Obstacle collision remains authored in biome content. `texture_reference_size` normalizes HD raster resolution without changing gameplay footprint, while `sprite_modulate` allows full-color original artwork without changing unrelated rendering.
 
 All 50 authored biome definitions are covered by an explicit `obstacle_art_family`; content validation rejects any fallback to the legacy Kenney meteor sprites.
 
+## HD celestial destination artwork
+
+Destination primary visuals use transparent HD WebP artwork. `primary_reference_size` preserves the authored visual footprint of the former 512px SVG while allowing higher-resolution raster sources.
+
+The HD migration now covers all 46 destination definitions that previously used SVG primaries. This includes planets, moons, dwarf planets, belts, exoplanets, nebulae, stellar phenomena, abandoned orbital structures, factory ruins and ship graveyards.
+
+The final migration also upgrades the Fractured Moonlet landmark with HD artwork and adds landmark-side texture reference normalization so visual resolution remains independent from gameplay collision and reserved navigation radius.

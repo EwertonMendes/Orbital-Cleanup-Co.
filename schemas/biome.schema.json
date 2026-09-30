@@ -181,7 +181,7 @@
         },
         "primary_asset": {
           "type": "string",
-          "pattern": "^res://assets/original/(planets|destinations)/.+\\.svg$"
+          "pattern": "^res://assets/original/(planets|destinations)/.+\\.(svg|webp)$"
         },
         "primary_scale": {
           "type": "number",
@@ -233,6 +233,10 @@
           "type": "number",
           "minimum": 0,
           "maximum": 1
+        },
+        "primary_reference_size": {
+          "type": "number",
+          "exclusiveMinimum": 0
         }
       }
     },

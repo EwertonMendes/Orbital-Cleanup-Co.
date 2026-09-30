@@ -7,7 +7,7 @@
     "accent": "#e7ae8a"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/makemake_orbit.svg",
+    "primary_asset": "res://assets/original/destinations/makemake_orbit_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.2,
@@ -21,7 +21,8 @@
     "traffic_count": 3,
     "dust_density": 1.37,
     "horizon_style": "dust",
-    "horizon_intensity": 0.55
+    "horizon_intensity": 0.55,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.88,

@@ -7,7 +7,7 @@
     "accent": "#ffdca2"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/black_hole.svg",
+    "primary_asset": "res://assets/original/destinations/black_hole_hd.webp",
     "primary_scale": 1.75,
     "primary_anchor": [
       0.5,
@@ -21,7 +21,8 @@
     "traffic_count": 6,
     "dust_density": 1.37,
     "horizon_style": "anomaly",
-    "horizon_intensity": 0.75
+    "horizon_intensity": 0.75,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 1.16,

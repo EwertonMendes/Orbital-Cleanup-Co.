@@ -7,7 +7,7 @@
     "accent": "#78e2ad"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/kepler_186f.svg",
+    "primary_asset": "res://assets/original/destinations/kepler_186f_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.8,
@@ -21,7 +21,8 @@
     "traffic_count": 3,
     "dust_density": 1.1400000000000001,
     "horizon_style": "orbit",
-    "horizon_intensity": 0.75
+    "horizon_intensity": 0.75,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 1.02,

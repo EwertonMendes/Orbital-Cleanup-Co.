@@ -7,7 +7,7 @@
     "accent": "#ffc09c"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/proxima_centauri.svg",
+    "primary_asset": "res://assets/original/destinations/proxima_centauri_hd.webp",
     "primary_scale": 1.75,
     "primary_anchor": [
       0.2,
@@ -21,7 +21,8 @@
     "traffic_count": 1,
     "dust_density": 0.68,
     "horizon_style": "solar",
-    "horizon_intensity": 0.55
+    "horizon_intensity": 0.55,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.88,

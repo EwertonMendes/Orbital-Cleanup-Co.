@@ -24,10 +24,15 @@ func _ready() -> void:
 	sprite.texture = load(texture_path) as Texture2D
 	assert(sprite.texture != null, "SectorLandmark texture must load: %s" % texture_path)
 	var visual_scale := float(_definition.get("scale", 1.0))
-	sprite.scale = Vector2.ONE * visual_scale
+	var texture_scale := 1.0
+	var reference_size := float(_definition.get("texture_reference_size", 0.0))
+	if reference_size > 0.0:
+		var max_texture_size := maxf(float(sprite.texture.get_width()), float(sprite.texture.get_height()))
+		texture_scale = reference_size / maxf(max_texture_size, 1.0)
+	sprite.scale = Vector2.ONE * visual_scale * texture_scale
 	sprite.modulate = Color(1.0, 1.0, 1.0, 0.96)
 	_configure_collision()
-	var texture_size := sprite.texture.get_size() * visual_scale
+	var texture_size := sprite.texture.get_size() * visual_scale * texture_scale
 	var reserved_radius := float(_definition.get("reserved_radius", 0.0))
 	var visual_radius := maxf(texture_size.x, texture_size.y) * 0.34
 	marker.configure(minf(maxf(visual_radius, reserved_radius * 0.64), 420.0))

@@ -224,7 +224,15 @@ func _update_primary_parallax() -> void:
 
 	var base_scale := float(_visual_profile.get("primary_scale", 2.0))
 	var compact_scale := 0.72 if viewport_size.x < 700.0 else 1.0
-	_primary_visual.scale = Vector2.ONE * base_scale * compact_scale
+	var texture_scale := 1.0
+	var reference_size := float(_visual_profile.get("primary_reference_size", 0.0))
+	if reference_size > 0.0 and _primary_visual.texture != null:
+		var texture_size := maxf(
+			float(_primary_visual.texture.get_width()),
+			float(_primary_visual.texture.get_height())
+		)
+		texture_scale = reference_size / maxf(texture_size, 1.0)
+	_primary_visual.scale = Vector2.ONE * base_scale * compact_scale * texture_scale
 
 func _draw_perimeter() -> void:
 	var outer := _play_bounds

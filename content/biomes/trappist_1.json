@@ -7,7 +7,7 @@
     "accent": "#f5a07c"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/trappist_1.svg",
+    "primary_asset": "res://assets/original/destinations/trappist_1_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.5,
@@ -21,7 +21,8 @@
     "traffic_count": 2,
     "dust_density": 0.91,
     "horizon_style": "orbit",
-    "horizon_intensity": 0.65
+    "horizon_intensity": 0.65,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.95,

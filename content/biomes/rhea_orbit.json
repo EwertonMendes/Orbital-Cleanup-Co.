@@ -7,7 +7,7 @@
     "accent": "#d9d2ca"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/rhea_orbit.svg",
+    "primary_asset": "res://assets/original/destinations/rhea_orbit_hd.webp",
     "primary_scale": 1.95,
     "primary_anchor": [
       0.2,
@@ -21,7 +21,8 @@
     "traffic_count": 5,
     "dust_density": 0.91,
     "horizon_style": "orbit",
-    "horizon_intensity": 0.55
+    "horizon_intensity": 0.55,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.88,

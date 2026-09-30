@@ -7,7 +7,7 @@
     "accent": "#ffd091"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/red_giant.svg",
+    "primary_asset": "res://assets/original/destinations/red_giant_hd.webp",
     "primary_scale": 1.75,
     "primary_anchor": [
       0.2,
@@ -21,7 +21,8 @@
     "traffic_count": 2,
     "dust_density": 0.45,
     "horizon_style": "solar",
-    "horizon_intensity": 0.75
+    "horizon_intensity": 0.75,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 0.88,

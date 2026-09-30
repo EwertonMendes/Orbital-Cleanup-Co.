@@ -7,7 +7,7 @@
     "accent": "#d3c3a6"
   },
   "visual_profile": {
-    "primary_asset": "res://assets/original/destinations/asteroid_belt.svg",
+    "primary_asset": "res://assets/original/destinations/asteroid_belt_hd.webp",
     "primary_scale": 1.35,
     "primary_anchor": [
       0.8,
@@ -21,7 +21,8 @@
     "traffic_count": 2,
     "dust_density": 0.91,
     "horizon_style": "rings",
-    "horizon_intensity": 0.75
+    "horizon_intensity": 0.75,
+    "primary_reference_size": 512
   },
   "environment": {
     "salvage_mass_multiplier": 1.02,
