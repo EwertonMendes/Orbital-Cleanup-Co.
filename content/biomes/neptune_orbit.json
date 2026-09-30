@@ -94,28 +94,55 @@
   },
   "obstacles": [
     {
-      "id": "neptune_orbit_large_fragment",
-      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_large.png",
+      "id": "nebula_fragment_01",
+      "sprite": "res://assets/original/obstacles/blue_nebula/nebula_fragment_01_hd.webp",
       "weight": 20,
       "collision_radius": 52,
       "scale_min": 0.84,
-      "scale_max": 1.08
+      "scale_max": 1.06,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
     },
     {
-      "id": "neptune_orbit_medium_fragment",
-      "sprite": "res://assets/third_party/kenney_space_shooter/meteors/meteor_grey_medium.png",
-      "weight": 44,
-      "collision_radius": 36,
-      "scale_min": 0.84,
-      "scale_max": 1.1
+      "id": "nebula_fragment_02",
+      "sprite": "res://assets/original/obstacles/blue_nebula/nebula_fragment_02_hd.webp",
+      "weight": 21,
+      "collision_radius": 45,
+      "scale_min": 0.82,
+      "scale_max": 1.08,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
     },
     {
-      "id": "neptune_orbit_small_fragment",
-      "sprite": "res://assets/third_party/kenney_simple_space/scenery/meteor_detailed_small.png",
-      "weight": 36,
-      "collision_radius": 27,
-      "scale_min": 0.9,
-      "scale_max": 1.25
+      "id": "nebula_fragment_03",
+      "sprite": "res://assets/original/obstacles/blue_nebula/nebula_fragment_03_hd.webp",
+      "weight": 20,
+      "collision_radius": 38,
+      "scale_min": 0.82,
+      "scale_max": 1.08,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
+    },
+    {
+      "id": "nebula_fragment_04",
+      "sprite": "res://assets/original/obstacles/blue_nebula/nebula_fragment_04_hd.webp",
+      "weight": 19,
+      "collision_radius": 31,
+      "scale_min": 0.8,
+      "scale_max": 1.1,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
+    },
+    {
+      "id": "nebula_fragment_05",
+      "sprite": "res://assets/original/obstacles/blue_nebula/nebula_fragment_05_hd.webp",
+      "weight": 20,
+      "collision_radius": 24,
+      "scale_min": 0.78,
+      "scale_max": 1.12,
+      "texture_reference_size": 128,
+      "sprite_modulate": "#ffffffff"
     }
-  ]
+  ],
+  "obstacle_art_family": "nebula"
 }

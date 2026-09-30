@@ -47,3 +47,16 @@ The `destinations/` folder contains 46 additional project-owned SVG primary visu
 
 Together with the four original launch visuals under `planets/`, the runtime has one unique primary asset for each of 50 destination biomes.
 
+## Biome obstacle artwork
+
+All authored biomes now use project-owned HD obstacle artwork under `obstacles/`. Every biome is assigned to the closest visual obstacle family so no gameplay scenario falls back to the legacy grey Kenney meteor sprites.
+
+- `earth_orbit/`: dark iron/nickel orbital meteorites;
+- `lunar_belt/`: pale cratered regolith boulders;
+- `mars_freight/`: rust-orange Martian rock with exposed dark basalt;
+- `blue_nebula/`: cold blue/violet mineral fragments.
+
+Obstacle collision remains authored in biome content. `texture_reference_size` normalizes HD raster resolution without changing gameplay footprint, while `sprite_modulate` allows full-color original artwork without changing legacy obstacle rendering in other biomes.
+
+All 50 authored biome definitions are covered by an explicit `obstacle_art_family`; content validation rejects any fallback to the legacy Kenney meteor sprites.
+

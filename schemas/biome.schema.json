@@ -127,6 +127,13 @@
           "scale_max": {
             "type": "number",
             "exclusiveMinimum": 0
+          },
+          "texture_reference_size": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "sprite_modulate": {
+            "type": "string"
           }
         }
       }
@@ -407,6 +414,15 @@
           }
         }
       }
+    },
+    "obstacle_art_family": {
+      "type": "string",
+      "enum": [
+        "earth",
+        "lunar",
+        "mars",
+        "nebula"
+      ]
     }
   }
 }

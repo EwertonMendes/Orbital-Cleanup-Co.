@@ -23,8 +23,14 @@ func _ready() -> void:
 	var texture_path := String(_definition["sprite"])
 	sprite.texture = load(texture_path) as Texture2D
 	assert(sprite.texture != null, "SectorObstacle texture must load: %s" % texture_path)
-	sprite.scale = Vector2.ONE * _visual_scale
-	sprite.modulate = Color(0.58, 0.62, 0.66, 0.96)
+	var texture_scale := 1.0
+	var reference_size := float(_definition.get("texture_reference_size", 0.0))
+	if reference_size > 0.0:
+		var texture_size := maxf(float(sprite.texture.get_width()), float(sprite.texture.get_height()))
+		texture_scale = reference_size / maxf(texture_size, 1.0)
+	sprite.scale = Vector2.ONE * _visual_scale * texture_scale
+	var tint_text := String(_definition.get("sprite_modulate", "#949ea8f5"))
+	sprite.modulate = Color.from_string(tint_text, Color(0.58, 0.62, 0.66, 0.96))
 
 	var circle := collision_shape.shape as CircleShape2D
 	assert(circle != null, "SectorObstacle requires CircleShape2D.")
