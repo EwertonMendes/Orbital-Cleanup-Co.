@@ -237,6 +237,20 @@
         "primary_reference_size": {
           "type": "number",
           "exclusiveMinimum": 0
+        },
+        "effect_profile": {
+          "enum": [
+            "clean",
+            "dust",
+            "nebula",
+            "solar",
+            "anomaly"
+          ]
+        },
+        "effect_intensity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         }
       }
     },
