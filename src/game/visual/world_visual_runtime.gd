@@ -3,6 +3,7 @@ class_name WorldVisualRuntime
 
 var _post_process: WorldPostProcess
 var _environment_vfx: EnvironmentalVfxLayer
+var _space_environment: SpaceEnvironmentLayer
 var _environment_runtime: EnvironmentRuntime
 
 func configure(
@@ -10,15 +11,19 @@ func configure(
 	palette: Dictionary,
 	visual_profile: Dictionary,
 	post_process: WorldPostProcess,
-	environment_vfx: EnvironmentalVfxLayer
+	environment_vfx: EnvironmentalVfxLayer,
+	space_environment: SpaceEnvironmentLayer
 ) -> void:
 	assert(post_process != null, "WorldVisualRuntime requires WorldPostProcess.")
 	assert(environment_vfx != null, "WorldVisualRuntime requires EnvironmentalVfxLayer.")
+	assert(space_environment != null, "WorldVisualRuntime requires SpaceEnvironmentLayer.")
 	_post_process = post_process
 	_environment_vfx = environment_vfx
+	_space_environment = space_environment
 
 	_post_process.configure(palette, visual_profile)
 	_environment_vfx.configure(play_bounds, palette, visual_profile)
+	_space_environment.configure(play_bounds, palette, visual_profile)
 	print(
 		"[Visual] READY profile=%s intensity=%.2f quality=%s screen_post=%s"
 		% [
