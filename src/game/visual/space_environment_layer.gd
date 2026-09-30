@@ -11,11 +11,11 @@ var _background_mesh: MeshInstance2D
 var _foreground_mesh: MeshInstance2D
 var _background_material: ShaderMaterial
 var _foreground_material: ShaderMaterial
-static var _shared_noise_a: ImageTexture
-static var _shared_noise_b: ImageTexture
+static var _shared_noise_a: NoiseTexture2D
+static var _shared_noise_b: NoiseTexture2D
 
-var _noise_a: ImageTexture
-var _noise_b: ImageTexture
+var _noise_a: Texture2D
+var _noise_b: Texture2D
 var _last_viewport_size := Vector2.ZERO
 var _configured := false
 
@@ -76,37 +76,20 @@ func _ensure_noise_textures() -> void:
 	_noise_a = _shared_noise_a
 	_noise_b = _shared_noise_b
 
-func _build_noise_texture(seed_value: int, frequency: float) -> ImageTexture:
+func _build_noise_texture(seed_value: int, frequency: float) -> NoiseTexture2D:
 	var noise := FastNoiseLite.new()
 	noise.seed = seed_value
 	noise.frequency = frequency
 
-	var bytes := PackedByteArray()
-	bytes.resize(NOISE_SIZE * NOISE_SIZE)
-	for y in range(NOISE_SIZE):
-		var v := float(y) / float(NOISE_SIZE)
-		for x in range(NOISE_SIZE):
-			var u := float(x) / float(NOISE_SIZE)
-			var fx := float(x)
-			var fy := float(y)
-			var size := float(NOISE_SIZE)
-			var n00 := noise.get_noise_2d(fx, fy)
-			var n10 := noise.get_noise_2d(fx - size, fy)
-			var n01 := noise.get_noise_2d(fx, fy - size)
-			var n11 := noise.get_noise_2d(fx - size, fy - size)
-			var top := lerpf(n00, n10, u)
-			var bottom := lerpf(n01, n11, u)
-			var value := lerpf(top, bottom, v)
-			bytes[y * NOISE_SIZE + x] = int(clampf((value + 1.0) * 127.5, 0.0, 255.0))
-
-	var image := Image.create_from_data(
-		NOISE_SIZE,
-		NOISE_SIZE,
-		false,
-		Image.FORMAT_L8,
-		bytes
-	)
-	return ImageTexture.create_from_image(image)
+	var texture := NoiseTexture2D.new()
+	texture.width = NOISE_SIZE
+	texture.height = NOISE_SIZE
+	texture.noise = noise
+	texture.normalize = true
+	texture.seamless = true
+	texture.seamless_blend_skirt = 0.18
+	texture.generate_mipmaps = false
+	return texture
 
 func _apply_configuration() -> void:
 	if not _configured or _palette.is_empty() or _background_material == null:
