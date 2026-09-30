@@ -25,8 +25,10 @@ var _bump_feedback_cooldown := 0.0
 var _smoothed_intent := Vector2.ZERO
 var _facing_rotation := 0.0
 var _pending_cosmetics: Dictionary = {}
+var _environment_acceleration := Vector2.ZERO
 var _environment_force := Vector2.ZERO
-var _environment_speed_multiplier := 1.0
+var _environment_linear_drag := 0.0
+var _environment_thrust_multiplier := 1.0
 var _controls_enabled := true
 var _travel_mode := false
 var _travel_visual_intensity := 0.0
@@ -96,9 +98,16 @@ func _ready() -> void:
 	cargo_changed.emit(cargo_hold.used_units, cargo_hold.capacity)
 	print("[Ship] READY")
 
-func set_environment_motion(force: Vector2, speed_multiplier: float = 1.0) -> void:
-	_environment_force = force.limit_length(220.0)
-	_environment_speed_multiplier = clampf(speed_multiplier, 0.82, 1.08)
+func set_environment_physics(
+	linear_acceleration: Vector2,
+	external_force: Vector2,
+	linear_drag: float = 0.0,
+	thrust_multiplier: float = 1.0
+) -> void:
+	_environment_acceleration = linear_acceleration.limit_length(460.0)
+	_environment_force = external_force.limit_length(360.0)
+	_environment_linear_drag = clampf(linear_drag, 0.0, 1.8)
+	_environment_thrust_multiplier = clampf(thrust_multiplier, 0.65, 1.15)
 
 func unload_cargo() -> int:
 	return cargo_hold.unload_all()
@@ -108,6 +117,9 @@ func get_cargo_used() -> int:
 
 func get_cargo_capacity() -> int:
 	return cargo_hold.capacity
+
+func get_cargo_mass() -> float:
+	return cargo_hold.get_total_mass()
 
 func set_flight_controls_enabled(enabled: bool) -> void:
 	_controls_enabled = enabled
@@ -160,6 +172,7 @@ func _physics_process(delta: float) -> void:
 		visuals.update_motion(0.0, 0.0, _facing_rotation, 0.0, delta)
 		ship_camera.set_motion_velocity(Vector2.ZERO)
 		return
+
 	_bump_feedback_cooldown = maxf(_bump_feedback_cooldown - delta, 0.0)
 
 	var navigation_intent := _input_service.get_navigation_vector()
@@ -179,43 +192,59 @@ func _physics_process(delta: float) -> void:
 		var steering_weight := 1.0 - exp(-tuning.pointer_steering_response * delta)
 		_smoothed_intent = _smoothed_intent.lerp(raw_intent, steering_weight)
 
-	var intent := _attenuate_outward_intent(_smoothed_intent)
+	var intent := _smoothed_intent.limit_length(1.0)
 	if _boost_remaining > 0.0:
 		_boost_remaining = maxf(_boost_remaining - delta, 0.0)
 		if _boost_remaining <= 0.0:
 			boost_ended.emit()
 	var boosting := _boost_remaining > 0.0
-	var environment_max_speed := tuning.max_speed * _environment_speed_multiplier
-	var desired_velocity := ShipSteering.target_velocity(intent, environment_max_speed)
 
-	var response := tuning.deceleration
+	var effective_mass := ShipDynamics.effective_mass(
+		tuning.dry_mass,
+		cargo_hold.get_total_mass(),
+		tuning.cargo_inertia_factor
+	)
+	var total_acceleration := ShipDynamics.propulsion_acceleration(
+		intent,
+		velocity,
+		tuning,
+		effective_mass,
+		_environment_thrust_multiplier
+	)
+	total_acceleration += _environment_acceleration
+	total_acceleration += _environment_force * ShipDynamics.mass_response(tuning.dry_mass, effective_mass)
+
 	if boosting:
 		_update_boost_direction(intent, delta)
-		var boost_throttle := 1.0
-		if intent.length_squared() > 0.001:
-			boost_throttle = lerpf(0.55, 1.0, intent.length())
-		desired_velocity = _boost_direction * environment_max_speed * tuning.boost_speed_multiplier * boost_throttle
-		response = tuning.acceleration * tuning.boost_acceleration_multiplier
-	elif intent.length_squared() > 0.001:
-		response = tuning.acceleration * lerpf(0.46, 1.0, intent.length())
+		total_acceleration += ShipDynamics.boost_acceleration(
+			_boost_direction,
+			tuning,
+			effective_mass
+		)
 
-	velocity = velocity.move_toward(desired_velocity, response * delta)
-	velocity += _environment_force * delta
-	var velocity_cap := tuning.max_speed * 1.22
-	if boosting:
-		velocity_cap = tuning.max_speed * tuning.boost_speed_multiplier * _environment_speed_multiplier
-	velocity = velocity.limit_length(velocity_cap)
+	velocity = ShipDynamics.integrate_velocity(
+		velocity,
+		total_acceleration,
+		_environment_linear_drag,
+		tuning.absolute_speed_limit,
+		delta
+	)
 	_apply_soft_world_bounds(delta)
 
 	var turn_amount := _update_facing(intent, delta)
-	var collision := move_and_collide(velocity * delta)
-	if collision != null:
-		_apply_bump(collision)
-
+	_move_with_collisions(delta)
 	_enforce_hard_world_bounds()
 
 	var speed_ratio := clampf(velocity.length() / tuning.max_speed, 0.0, 1.0)
-	visuals.update_motion(speed_ratio, intent.length(), _facing_rotation, turn_amount, delta, 1.0 if boosting else 0.0)
+	visuals.update_motion(
+		speed_ratio,
+		intent.length(),
+		_facing_rotation,
+		turn_amount,
+		delta,
+		1.0 if boosting else 0.0,
+		velocity
+	)
 	ship_camera.set_motion_velocity(velocity)
 
 	if not _has_started_moving and speed_ratio > 0.08:
@@ -238,33 +267,6 @@ func _update_facing(intent: Vector2, delta: float) -> float:
 	_facing_rotation = lerp_angle(_facing_rotation, target_rotation, weight)
 	return clampf(difference / (PI * 0.5), -1.0, 1.0)
 
-func _attenuate_outward_intent(intent: Vector2) -> Vector2:
-	if _world_bounds.size == Vector2.ZERO:
-		return intent
-
-	var adjusted := intent
-	var margin := tuning.boundary_soft_margin
-	var left := _world_bounds.position.x + tuning.boundary_hard_padding
-	var right := _world_bounds.end.x - tuning.boundary_hard_padding
-	var top := _world_bounds.position.y + tuning.boundary_hard_padding
-	var bottom := _world_bounds.end.y - tuning.boundary_hard_padding
-
-	if adjusted.x < 0.0:
-		adjusted.x *= _edge_input_scale(global_position.x - left, margin)
-	elif adjusted.x > 0.0:
-		adjusted.x *= _edge_input_scale(right - global_position.x, margin)
-
-	if adjusted.y < 0.0:
-		adjusted.y *= _edge_input_scale(global_position.y - top, margin)
-	elif adjusted.y > 0.0:
-		adjusted.y *= _edge_input_scale(bottom - global_position.y, margin)
-
-	return adjusted
-
-func _edge_input_scale(distance_to_edge: float, margin: float) -> float:
-	var t := clampf(distance_to_edge / maxf(margin, 1.0), 0.0, 1.0)
-	return t * t * (3.0 - 2.0 * t)
-
 func _apply_soft_world_bounds(delta: float) -> void:
 	if _world_bounds.size == Vector2.ZERO:
 		return
@@ -281,6 +283,8 @@ func _apply_soft_world_bounds(delta: float) -> void:
 	correction.y += _edge_strength(global_position.y - top, margin)
 	correction.y -= _edge_strength(bottom - global_position.y, margin)
 
+	# The contract perimeter is an explicit automatic RCS safety system. Open-space
+	# flight never receives this damping; it exists only inside the soft boundary.
 	velocity += correction * tuning.boundary_push_acceleration * delta
 
 	var damp_step := tuning.max_speed * tuning.boundary_outward_damping * delta
@@ -297,6 +301,25 @@ func _apply_soft_world_bounds(delta: float) -> void:
 func _edge_strength(distance_to_edge: float, margin: float) -> float:
 	var t := clampf(1.0 - distance_to_edge / maxf(margin, 1.0), 0.0, 1.0)
 	return t * t * (3.0 - 2.0 * t)
+
+func _move_with_collisions(delta: float) -> void:
+	var time_remaining := delta
+	for _iteration in range(tuning.collision_iterations):
+		if time_remaining <= 0.0001 or velocity.length_squared() <= 0.001:
+			return
+
+		var requested_motion := velocity * time_remaining
+		var requested_distance := requested_motion.length()
+		var collision := move_and_collide(requested_motion)
+		if collision == null:
+			return
+
+		var remainder_distance := collision.get_remainder().length()
+		_apply_bump(collision)
+		if requested_distance <= 0.001:
+			return
+
+		time_remaining *= clampf(remainder_distance / requested_distance, 0.0, 1.0)
 
 func _enforce_hard_world_bounds() -> void:
 	if _world_bounds.size == Vector2.ZERO:
@@ -322,21 +345,23 @@ func _enforce_hard_world_bounds() -> void:
 func _apply_bump(collision: KinematicCollision2D) -> void:
 	_cancel_boost()
 	var normal := collision.get_normal()
-	var incoming_speed := velocity.length()
-	if incoming_speed <= 1.0:
+	var impact_speed := maxf(-velocity.dot(normal), 0.0)
+	if impact_speed <= 1.0:
 		return
 
-	velocity = velocity.bounce(normal) * tuning.bump_speed_retention
-	if incoming_speed >= 48.0 and velocity.length() < tuning.bump_minimum_speed:
-		velocity = normal * tuning.bump_minimum_speed
-
+	velocity = ShipDynamics.collision_response(
+		velocity,
+		normal,
+		tuning.collision_restitution,
+		tuning.collision_tangent_retention
+	)
 	global_position += normal * 2.0
 
 	if _bump_feedback_cooldown > 0.0:
 		return
 
 	_bump_feedback_cooldown = 0.14
-	var intensity := clampf(incoming_speed / tuning.max_speed, 0.18, 1.0)
+	var intensity := clampf(impact_speed / tuning.max_speed, 0.18, 1.0)
 	visuals.play_bump(intensity, normal)
 	ship_camera.add_bump_shake(intensity)
 	bumped.emit(intensity, normal)

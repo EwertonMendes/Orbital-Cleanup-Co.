@@ -18,11 +18,9 @@ var _ship: PlayerShip
 var _sector_runtime: SectorRuntime
 var _last_label := ""
 var _last_intensity := -1.0
-const SHIP_SAMPLE_INTERVAL := 1.0 / 30.0
 const SALVAGE_SAMPLE_INTERVAL := 0.10
 
 var _fog_color := Color("#183b72")
-var _ship_sample_accumulator := 0.0
 var _salvage_sample_accumulator := 0.0
 var _salvage_nodes: Array[SalvageObject] = []
 
@@ -74,85 +72,53 @@ func _physics_process(delta: float) -> void:
 	if _ship == null or not is_instance_valid(_ship):
 		return
 
-	_ship_sample_accumulator += delta
+	# Ship forces are sampled on every fixed physics tick. Inertial flight makes
+	# stale gravity/current samples visible immediately, so gameplay physics must
+	# not share the lower-frequency cadence used for loose salvage.
+	var ship_state := _sample(_ship.global_position)
+	_apply_ship_state(ship_state)
+	_report_state(ship_state)
+
 	_salvage_sample_accumulator += delta
-
-	if _ship_sample_accumulator >= SHIP_SAMPLE_INTERVAL:
-		_ship_sample_accumulator = fmod(_ship_sample_accumulator, SHIP_SAMPLE_INTERVAL)
-		var ship_state := _sample(_ship.global_position)
-		_apply_ship_state(ship_state)
-		_report_state(ship_state)
-
 	if _salvage_sample_accumulator >= SALVAGE_SAMPLE_INTERVAL:
 		_salvage_sample_accumulator = fmod(_salvage_sample_accumulator, SALVAGE_SAMPLE_INTERVAL)
 		_update_salvage_forces()
 
-func _sample(world_position: Vector2) -> Dictionary:
+func _sample(world_position: Vector2) -> EnvironmentSample:
 	var output := _neutral_state()
-	var dominant_intensity := 0.0
-	var dominant_label := "ENV_STABLE_ORBIT"
-
 	for field in _fields:
-		var sample := field.sample(world_position)
-		var intensity := float(sample["intensity"])
-		if intensity <= 0.0:
-			continue
-
-		output["ship_force"] = (output["ship_force"] as Vector2) + (sample["ship_force"] as Vector2)
-		output["salvage_force"] = (output["salvage_force"] as Vector2) + (sample["salvage_force"] as Vector2)
-		output["speed_multiplier"] = float(output["speed_multiplier"]) * float(sample["speed_multiplier"])
-		output["scanner_multiplier"] = float(output["scanner_multiplier"]) * float(sample["scanner_multiplier"])
-		output["tractor_multiplier"] = float(output["tractor_multiplier"]) * float(sample["tractor_multiplier"])
-		output["visibility"] = minf(float(output["visibility"]), float(sample["visibility"]))
-		if intensity > dominant_intensity:
-			dominant_intensity = intensity
-			dominant_label = String(sample["label_key"])
-
-	output["ship_force"] = (output["ship_force"] as Vector2).limit_length(210.0)
-	output["salvage_force"] = (output["salvage_force"] as Vector2).limit_length(150.0)
-	output["speed_multiplier"] = clampf(float(output["speed_multiplier"]), 0.82, 1.08)
-	output["scanner_multiplier"] = clampf(float(output["scanner_multiplier"]), 0.46, 1.0)
-	output["tractor_multiplier"] = clampf(float(output["tractor_multiplier"]), 0.52, 1.0)
-	output["visibility"] = clampf(float(output["visibility"]), 0.46, 1.0)
-	output["dominant_intensity"] = dominant_intensity
-	output["label_key"] = dominant_label
+		output.combine(field.sample(world_position))
+	output.finalize_limits()
 	return output
 
-func _neutral_state() -> Dictionary:
-	return {
-		"ship_force": Vector2.ZERO,
-		"salvage_force": Vector2.ZERO,
-		"speed_multiplier": 1.0,
-		"scanner_multiplier": 1.0,
-		"tractor_multiplier": 1.0,
-		"visibility": 1.0,
-		"dominant_intensity": 0.0,
-		"label_key": "ENV_STABLE_ORBIT",
-	}
+func _neutral_state() -> EnvironmentSample:
+	return EnvironmentSample.new()
 
-func _apply_ship_state(state: Dictionary) -> void:
+func _apply_ship_state(state: EnvironmentSample) -> void:
 	if _ship == null:
 		return
-	_ship.set_environment_motion(
-		state["ship_force"] as Vector2,
-		float(state["speed_multiplier"])
+	_ship.set_environment_physics(
+		state.linear_acceleration,
+		state.external_force,
+		state.linear_drag,
+		state.thrust_multiplier
 	)
 	if _ship.tractor_beam != null:
 		_ship.tractor_beam.set_environment_modifiers(
-			float(state["scanner_multiplier"]),
-			float(state["tractor_multiplier"])
+			state.scanner_multiplier,
+			state.tractor_multiplier
 		)
 
 	var distortion := maxf(
-		1.0 - float(state["scanner_multiplier"]),
-		1.0 - float(state["tractor_multiplier"])
+		1.0 - state.scanner_multiplier,
+		1.0 - state.tractor_multiplier
 	)
 	environment_visual_state_changed.emit(
-		float(state["visibility"]),
+		state.visibility,
 		_fog_color,
 		distortion,
-		String(state["label_key"]),
-		float(state["dominant_intensity"])
+		state.label_key,
+		state.dominant_intensity
 	)
 
 func _update_salvage_forces() -> void:
@@ -161,13 +127,13 @@ func _update_salvage_forces() -> void:
 			continue
 		var state := _sample(salvage.global_position)
 		salvage.set_environment_force(
-			state["salvage_force"] as Vector2,
+			state.salvage_force,
 			_play_bounds
 		)
 
-func _report_state(state: Dictionary) -> void:
-	var label := String(state["label_key"])
-	var intensity := float(state["dominant_intensity"])
+func _report_state(state: EnvironmentSample) -> void:
+	var label := state.label_key
+	var intensity := state.dominant_intensity
 	if label == _last_label and absf(intensity - _last_intensity) < 0.08:
 		return
 	_last_label = label

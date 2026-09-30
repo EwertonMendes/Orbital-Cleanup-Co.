@@ -21,6 +21,3 @@ static func combine_intent(keyboard: Vector2, pointer: Vector2) -> Vector2:
 	if keyboard.length_squared() > 0.001:
 		return keyboard.limit_length(1.0)
 	return pointer.limit_length(1.0)
-
-static func target_velocity(intent: Vector2, max_speed: float) -> Vector2:
-	return intent.limit_length(1.0) * maxf(max_speed, 0.0)

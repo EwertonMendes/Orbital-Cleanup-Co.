@@ -36,46 +36,49 @@ func configure(definition: Dictionary, palette: Dictionary) -> void:
 func get_kind() -> String:
 	return _kind
 
-func sample(world_position: Vector2) -> Dictionary:
+func sample(world_position: Vector2) -> EnvironmentSample:
 	var local := to_local(world_position)
 	var influence := _influence_at_local(local)
-	var output := {
-		"kind": _kind,
-		"intensity": influence * _strength,
-		"ship_force": Vector2.ZERO,
-		"salvage_force": Vector2.ZERO,
-		"speed_multiplier": 1.0,
-		"scanner_multiplier": 1.0,
-		"tractor_multiplier": 1.0,
-		"visibility": 1.0,
-		"label_key": _label_key(),
-	}
+	var output := EnvironmentSample.new()
+	output.label_key = _label_key()
+	output.dominant_intensity = influence * _strength
 	if influence <= 0.0:
 		return output
 
-	var intensity := float(output["intensity"])
+	var intensity := output.dominant_intensity
 	match _kind:
 		"gravity_well":
 			var toward_center := (global_position - world_position).normalized()
-			output["ship_force"] = toward_center * 190.0 * intensity
-			output["salvage_force"] = toward_center * 105.0 * intensity
+			var gravity_profile := intensity * lerpf(0.68, 1.18, influence)
+			output.linear_acceleration = toward_center * 320.0 * gravity_profile
+			output.salvage_force = toward_center * 118.0 * intensity
 		"safe_corridor":
-			output["speed_multiplier"] = lerpf(1.0, 1.06, intensity)
+			output.thrust_multiplier = lerpf(1.0, 1.05, intensity)
 		"drift_current":
 			var direction := Vector2.RIGHT.rotated(global_rotation)
-			output["ship_force"] = direction * 165.0 * intensity
-			output["salvage_force"] = direction * 92.0 * intensity
+			var pulse := 0.82 + sin(_phase * 0.72 + local.y * 0.004) * 0.18
+			output.external_force = direction * 235.0 * intensity * pulse
+			output.salvage_force = direction * 118.0 * intensity * pulse
+		"gas_drag":
+			output.linear_drag = lerpf(0.0, 0.72, intensity)
+			output.thrust_multiplier = lerpf(1.0, 0.88, intensity)
+		"turbulence":
+			var flow_angle := _phase * 0.94 + local.x * 0.0031 + local.y * 0.0023
+			var pulse := 0.66 + sin(_phase * 1.73 + local.length() * 0.009) * 0.34
+			var direction := Vector2.from_angle(flow_angle)
+			output.external_force = direction * 215.0 * intensity * pulse
+			output.salvage_force = direction * 145.0 * intensity * pulse
 		"visibility_pocket":
-			output["visibility"] = lerpf(1.0, 0.48, intensity)
+			output.visibility = lerpf(1.0, 0.48, intensity)
 		"scanner_interference":
-			output["scanner_multiplier"] = lerpf(1.0, 0.52, intensity)
+			output.scanner_multiplier = lerpf(1.0, 0.52, intensity)
 		"tractor_distortion":
-			output["tractor_multiplier"] = lerpf(1.0, 0.58, intensity)
+			output.tractor_multiplier = lerpf(1.0, 0.58, intensity)
 		"magnetic_zone":
 			var toward_center := (global_position - world_position).normalized()
-			output["ship_force"] = toward_center * 32.0 * intensity
-			output["salvage_force"] = toward_center * 135.0 * intensity
-			output["tractor_multiplier"] = lerpf(1.0, 0.78, intensity)
+			output.external_force = toward_center * 78.0 * intensity
+			output.salvage_force = toward_center * 155.0 * intensity
+			output.tractor_multiplier = lerpf(1.0, 0.78, intensity)
 	return output
 
 func contains_world_position(world_position: Vector2, padding: float = 0.0) -> bool:
@@ -85,8 +88,12 @@ func contains_world_position(world_position: Vector2, padding: float = 0.0) -> b
 		return absf(local.x) <= half.x and absf(local.y) <= half.y
 	return local.length() <= _radius + padding
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	# Physics-affecting phase advances on the fixed tick so turbulence/current
+	# behavior is deterministic with respect to the physics simulation.
 	_phase = fmod(_phase + delta, TAU * 100.0)
+
+func _process(delta: float) -> void:
 	_redraw_accumulator += delta
 	if _redraw_accumulator >= RuntimeQuality.environmental_field_redraw_interval():
 		_redraw_accumulator = 0.0
@@ -113,6 +120,10 @@ func _label_key() -> String:
 			return "ENV_SAFE_CORRIDOR"
 		"drift_current":
 			return "ENV_SOLAR_CURRENT"
+		"gas_drag":
+			return "ENV_GAS_DRAG"
+		"turbulence":
+			return "ENV_TURBULENCE"
 		"visibility_pocket":
 			return "ENV_LOW_VISIBILITY"
 		"scanner_interference":
@@ -131,6 +142,10 @@ func _draw() -> void:
 			_draw_corridor()
 		"drift_current":
 			_draw_current()
+		"gas_drag":
+			_draw_gas_drag()
+		"turbulence":
+			_draw_turbulence()
 		"visibility_pocket":
 			_draw_visibility_pocket()
 		"scanner_interference":
@@ -174,6 +189,28 @@ func _draw_current() -> void:
 			draw_line(Vector2(x + 22.0, y), Vector2(x + 8.0, y - 8.0), Color(_field_color, alpha), 1.4, true)
 			draw_line(Vector2(x + 22.0, y), Vector2(x + 8.0, y + 8.0), Color(_field_color, alpha), 1.4, true)
 	draw_rect(Rect2(-half, _size), Color(_secondary_color, 0.025), true)
+
+func _draw_gas_drag() -> void:
+	for index in range(4, 0, -1):
+		var ratio := float(index) / 4.0
+		var radius := _radius * ratio
+		var wobble := sin(_phase * 0.46 + index) * 8.0
+		draw_circle(Vector2(wobble, -wobble * 0.4), radius, Color(_secondary_color, 0.012 + (1.0 - ratio) * 0.020))
+	for index in range(7):
+		var angle := float(index) / 7.0 * TAU + _phase * 0.08
+		var inner := Vector2.from_angle(angle) * _radius * 0.28
+		var outer := Vector2.from_angle(angle + 0.12) * _radius * 0.72
+		draw_line(inner, outer, Color(_field_color, 0.055), 1.2, true)
+
+func _draw_turbulence() -> void:
+	for index in range(7):
+		var base_angle := float(index) / 7.0 * TAU + _phase * 0.19
+		var radius := _radius * (0.28 + 0.075 * float(index))
+		var start := Vector2.from_angle(base_angle) * radius
+		var tangent := Vector2.from_angle(base_angle + PI * 0.5)
+		var bend := tangent * (26.0 + sin(_phase * 1.3 + index) * 12.0)
+		draw_line(start - bend, start + bend, Color(_field_color, 0.075 + _strength * 0.05), 1.5, true)
+	draw_arc(Vector2.ZERO, _radius * 0.76, _phase * 0.21, _phase * 0.21 + 4.7, 42, Color(_secondary_color, 0.06), 1.2, true)
 
 func _draw_visibility_pocket() -> void:
 	for index in range(3, 0, -1):

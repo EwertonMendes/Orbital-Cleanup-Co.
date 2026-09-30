@@ -433,6 +433,8 @@ func _validate_environment_fields() -> void:
 		"scanner_interference",
 		"tractor_distortion",
 		"magnetic_zone",
+		"gas_drag",
+		"turbulence",
 	]:
 		_expect(
 			blue_kinds.has(required_kind),
@@ -469,8 +471,8 @@ func _validate_environment_fields() -> void:
 	}, palette)
 	var gravity_sample := gravity.sample(Vector2(180.0, 0.0))
 	_expect(
-		(gravity_sample["ship_force"] as Vector2).x < 0.0,
-		"Gravity well must pull the ship toward its center."
+		gravity_sample.linear_acceleration.x < 0.0,
+		"Gravity well must apply mass-independent acceleration toward its center."
 	)
 	gravity.free()
 
@@ -486,8 +488,8 @@ func _validate_environment_fields() -> void:
 		"secondary_color": "#a84a32",
 	}, palette)
 	_expect(
-		(current.sample(Vector2.ZERO)["ship_force"] as Vector2).x > 0.0,
-		"Drift current must apply directional ship force."
+		current.sample(Vector2.ZERO).external_force.x > 0.0,
+		"Drift current must apply directional external force."
 	)
 	current.free()
 
@@ -503,10 +505,43 @@ func _validate_environment_fields() -> void:
 		"secondary_color": "#5a73d6",
 	}, palette)
 	_expect(
-		float(scanner.sample(Vector2.ZERO)["scanner_multiplier"]) < 1.0,
+		scanner.sample(Vector2.ZERO).scanner_multiplier < 1.0,
 		"Scanner interference must reduce effective scan range."
 	)
 	scanner.free()
+
+	var gas_drag := EnvironmentalField.new()
+	gas_drag.configure({
+		"kind": "gas_drag",
+		"shape": "circle",
+		"position": Vector2.ZERO,
+		"rotation": 0.0,
+		"radius": 600.0,
+		"strength": 0.7,
+		"color": "#72d7ff",
+		"secondary_color": "#244e86",
+	}, palette)
+	var gas_sample := gas_drag.sample(Vector2.ZERO)
+	_expect(gas_sample.linear_drag > 0.0, "Dense gas must add real velocity-dependent drag.")
+	_expect(gas_sample.thrust_multiplier < 1.0, "Dense gas must reduce effective thrust authority slightly.")
+	gas_drag.free()
+
+	var turbulence := EnvironmentalField.new()
+	turbulence.configure({
+		"kind": "turbulence",
+		"shape": "circle",
+		"position": Vector2.ZERO,
+		"rotation": 0.0,
+		"radius": 600.0,
+		"strength": 0.6,
+		"color": "#9effe6",
+		"secondary_color": "#5849a5",
+	}, palette)
+	_expect(
+		turbulence.sample(Vector2(80.0, 20.0)).external_force.length() > 0.0,
+		"Turbulence must produce a physical external force."
+	)
+	turbulence.free()
 
 	var tractor := EnvironmentalField.new()
 	tractor.configure({
@@ -912,11 +947,15 @@ func _validate_cargo_hold() -> void:
 	var heavy := registry.get_salvage_definition("dense_composite")
 	_expect(cargo.store(small), "CargoHold must accept fitting salvage.")
 	_expect(cargo.used_units == 1, "CargoHold must track occupied units.")
+	_expect(cargo.get_total_mass() > 0.0, "CargoHold must track recovered physical mass.")
+	var mass_after_small := cargo.get_total_mass()
 	_expect(cargo.store(heavy), "CargoHold must accept salvage that exactly fills remaining space.")
 	_expect(cargo.used_units == 4, "CargoHold must reach configured capacity.")
+	_expect(cargo.get_total_mass() > mass_after_small, "Heavier recovered cargo must increase total carried mass.")
 	_expect(not cargo.can_accept(small), "CargoHold must reject salvage when full.")
 	_expect(cargo.unload_all() == 4, "CargoHold unload must return unloaded units.")
 	_expect(cargo.used_units == 0, "CargoHold unload must clear used units.")
+	_expect(is_zero_approx(cargo.get_total_mass()), "CargoHold unload must clear carried physical mass.")
 	cargo.free()
 
 func _validate_player_ship() -> void:
@@ -962,8 +1001,32 @@ func _validate_player_ship() -> void:
 		_expect(tuning.pointer_deadzone >= 70.0, "Pointer deadzone should prevent twitchy center steering.")
 		_expect(tuning.pointer_full_thrust_distance >= 360.0, "Pointer full-thrust distance should preserve fine control.")
 		_expect(tuning.boundary_soft_margin > tuning.boundary_hard_padding, "Soft boundary margin must precede hard containment.")
-		_expect(tuning.boost_speed_multiplier > 1.0 and tuning.boost_speed_multiplier < 1.5, "Pulse boost must be meaningful without trivializing sector traversal.")
+		_expect(tuning.absolute_speed_limit > tuning.max_speed * 2.0, "Nominal cruise speed must not behave as a tight hard clamp.")
+		_expect(tuning.boost_acceleration > 0.0, "Pulse boost must add physical acceleration instead of setting target velocity.")
 		_expect(tuning.boost_recharge_seconds > tuning.boost_duration, "Pulse boost must recharge slower than its active window.")
+		var coasting_velocity := Vector2(190.0, -70.0)
+		var coast_result := ShipDynamics.integrate_velocity(
+			coasting_velocity,
+			Vector2.ZERO,
+			0.0,
+			tuning.absolute_speed_limit,
+			1.0 / 60.0
+		)
+		_expect(coast_result.is_equal_approx(coasting_velocity), "Open-space coasting must preserve velocity with no thrust, drag or external force.")
+		var empty_mass := ShipDynamics.effective_mass(tuning.dry_mass, 0.0, tuning.cargo_inertia_factor)
+		var loaded_mass := ShipDynamics.effective_mass(tuning.dry_mass, 8.0, tuning.cargo_inertia_factor)
+		_expect(loaded_mass > empty_mass, "Recovered cargo must increase effective ship inertia.")
+		var collision_result := ShipDynamics.collision_response(
+			Vector2(120.0, 80.0),
+			Vector2.LEFT,
+			tuning.collision_restitution,
+			tuning.collision_tangent_retention
+		)
+		_expect(collision_result.x < 0.0 and collision_result.y > 0.0, "Collision response must reflect the normal component while retaining tangential motion.")
+	var ship_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.gd")
+	_expect("ShipDynamics.propulsion_acceleration" in ship_source, "PlayerShip must integrate thrust through ShipDynamics.")
+	_expect("ShipSteering.target_velocity" not in ship_source, "PlayerShip must not drive flight through a target-velocity controller.")
+	_expect("velocity.move_toward(desired_velocity" not in ship_source, "Open-space flight must not contain implicit auto-deceleration.")
 	var input_source := FileAccess.get_file_as_string("res://src/core/input/input_service.gd")
 	_expect("set_touch_navigation_vector" in input_source, "Touch steering must use a dedicated analog navigation vector.")
 	_expect("signal boost_requested" in input_source, "InputService must expose one device-agnostic boost request.")

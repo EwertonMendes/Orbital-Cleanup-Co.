@@ -339,8 +339,8 @@ def validate_biomes(
         volumes = environment.get("volumes")
         require(isinstance(volumes, list), f"{label}.environment.volumes must be an array")
         allowed_kinds = {
-            "gravity_well", "safe_corridor", "drift_current", "visibility_pocket",
-            "scanner_interference", "tractor_distortion", "magnetic_zone",
+            "gravity_well", "safe_corridor", "drift_current", "gas_drag", "turbulence",
+            "visibility_pocket", "scanner_interference", "tractor_distortion", "magnetic_zone",
         }
         for volume_index, volume in enumerate(volumes):
             field_label = f"{label}.environment.volumes[{volume_index}]"
