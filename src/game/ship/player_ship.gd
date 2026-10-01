@@ -10,6 +10,8 @@ signal salvage_collected(definition, used_units: int, capacity: int)
 signal cargo_collection_blocked
 signal boost_started
 signal boost_ended
+signal operational_boundary_changed(intensity: float, outward_direction: Vector2)
+signal operational_boundary_repelled(return_direction: Vector2)
 
 @export var tuning: ShipMovementTuning
 
@@ -40,6 +42,9 @@ var _boost_charges := 1
 var _boost_recharge_elapsed := 0.0
 var _boost_remaining := 0.0
 var _boost_direction := Vector2.UP
+var _boundary_warning_intensity := 0.0
+var _boundary_warning_direction := Vector2.ZERO
+var _boundary_repel_cooldown := 0.0
 
 func configure(
 	input_service: InputService,
@@ -174,6 +179,7 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_bump_feedback_cooldown = maxf(_bump_feedback_cooldown - delta, 0.0)
+	_boundary_repel_cooldown = maxf(_boundary_repel_cooldown - delta, 0.0)
 
 	var navigation_intent := _input_service.get_navigation_vector()
 	var raw_intent := navigation_intent
@@ -229,10 +235,9 @@ func _physics_process(delta: float) -> void:
 		tuning.absolute_speed_limit,
 		delta
 	)
-	_apply_soft_world_bounds(delta)
-
 	var turn_amount := _update_facing(intent, delta)
 	_move_with_collisions(delta)
+	_update_operational_boundary(delta)
 	_enforce_hard_world_bounds()
 
 	var speed_ratio := clampf(velocity.length() / tuning.max_speed, 0.0, 1.0)
@@ -267,40 +272,78 @@ func _update_facing(intent: Vector2, delta: float) -> float:
 	_facing_rotation = lerp_angle(_facing_rotation, target_rotation, weight)
 	return clampf(difference / (PI * 0.5), -1.0, 1.0)
 
-func _apply_soft_world_bounds(delta: float) -> void:
+func _update_operational_boundary(delta: float) -> void:
 	if _world_bounds.size == Vector2.ZERO:
+		_set_operational_boundary_state(0.0, Vector2.ZERO)
 		return
 
-	var margin := tuning.boundary_soft_margin
-	var left := _world_bounds.position.x + tuning.boundary_hard_padding
-	var right := _world_bounds.end.x - tuning.boundary_hard_padding
-	var top := _world_bounds.position.y + tuning.boundary_hard_padding
-	var bottom := _world_bounds.end.y - tuning.boundary_hard_padding
+	var left_distance := global_position.x - _world_bounds.position.x
+	var right_distance := _world_bounds.end.x - global_position.x
+	var top_distance := global_position.y - _world_bounds.position.y
+	var bottom_distance := _world_bounds.end.y - global_position.y
+	var distances := [left_distance, right_distance, top_distance, bottom_distance]
+	var outward_directions := [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]
 
-	var correction := Vector2.ZERO
-	correction.x += _edge_strength(global_position.x - left, margin)
-	correction.x -= _edge_strength(right - global_position.x, margin)
-	correction.y += _edge_strength(global_position.y - top, margin)
-	correction.y -= _edge_strength(bottom - global_position.y, margin)
+	var nearest_index := 0
+	var nearest_distance := float(distances[0])
+	for index in range(1, distances.size()):
+		var distance := float(distances[index])
+		if distance < nearest_distance:
+			nearest_distance = distance
+			nearest_index = index
 
-	# The contract perimeter is an explicit automatic RCS safety system. Open-space
-	# flight never receives this damping; it exists only inside the soft boundary.
-	velocity += correction * tuning.boundary_push_acceleration * delta
+	var outward_direction: Vector2 = outward_directions[nearest_index]
+	var outward_speed := maxf(velocity.dot(outward_direction), 0.0)
+	var warning_range := maxf(tuning.boundary_warning_margin - tuning.boundary_repel_padding, 1.0)
+	var warning_t := clampf((tuning.boundary_warning_margin - nearest_distance) / warning_range, 0.0, 1.0)
+	var movement_weight := clampf(outward_speed / maxf(tuning.max_speed * 0.18, 1.0), 0.0, 1.0)
+	var warning_intensity := 0.0
+	if outward_speed > 4.0 or nearest_distance <= tuning.boundary_repel_padding:
+		warning_intensity = smoothstep(0.0, 1.0, warning_t) * lerpf(0.45, 1.0, movement_weight)
+	_set_operational_boundary_state(warning_intensity, outward_direction if warning_intensity > 0.0 else Vector2.ZERO)
 
-	var damp_step := tuning.max_speed * tuning.boundary_outward_damping * delta
-	if correction.x > 0.0 and velocity.x < 0.0:
-		velocity.x = move_toward(velocity.x, 0.0, damp_step * absf(correction.x))
-	elif correction.x < 0.0 and velocity.x > 0.0:
-		velocity.x = move_toward(velocity.x, 0.0, damp_step * absf(correction.x))
+	var return_direction := Vector2.ZERO
+	if left_distance <= tuning.boundary_repel_padding and velocity.x < 0.0:
+		return_direction.x += 1.0
+	if right_distance <= tuning.boundary_repel_padding and velocity.x > 0.0:
+		return_direction.x -= 1.0
+	if top_distance <= tuning.boundary_repel_padding and velocity.y < 0.0:
+		return_direction.y += 1.0
+	if bottom_distance <= tuning.boundary_repel_padding and velocity.y > 0.0:
+		return_direction.y -= 1.0
+	if return_direction == Vector2.ZERO:
+		return
 
-	if correction.y > 0.0 and velocity.y < 0.0:
-		velocity.y = move_toward(velocity.y, 0.0, damp_step * absf(correction.y))
-	elif correction.y < 0.0 and velocity.y > 0.0:
-		velocity.y = move_toward(velocity.y, 0.0, damp_step * absf(correction.y))
+	return_direction = return_direction.normalized()
+	var penetration := clampf(
+		(tuning.boundary_repel_padding - nearest_distance)
+		/ maxf(tuning.boundary_repel_padding - tuning.boundary_hard_padding, 1.0),
+		0.0,
+		1.0
+	)
+	velocity += return_direction * tuning.boundary_repel_acceleration * lerpf(0.35, 1.0, penetration) * maxf(delta, 0.0)
+	if _boundary_repel_cooldown <= 0.0:
+		_apply_boundary_repel(return_direction)
 
-func _edge_strength(distance_to_edge: float, margin: float) -> float:
-	var t := clampf(1.0 - distance_to_edge / maxf(margin, 1.0), 0.0, 1.0)
-	return t * t * (3.0 - 2.0 * t)
+func _apply_boundary_repel(return_direction: Vector2) -> void:
+	var inward := return_direction.normalized()
+	var outward_speed := maxf(-velocity.dot(inward), 0.0)
+	var tangential_velocity := velocity + inward * outward_speed
+	var return_speed := maxf(tuning.boundary_return_speed, outward_speed * tuning.boundary_return_velocity_scale)
+	velocity = (tangential_velocity + inward * return_speed).limit_length(tuning.absolute_speed_limit)
+	_boundary_repel_cooldown = tuning.boundary_repel_cooldown
+	_cancel_boost()
+	ship_camera.add_bump_shake(0.14)
+	operational_boundary_repelled.emit(inward)
+
+func _set_operational_boundary_state(intensity: float, outward_direction: Vector2) -> void:
+	var safe_intensity := clampf(intensity, 0.0, 1.0)
+	var safe_direction := outward_direction.normalized() if outward_direction.length_squared() > 0.001 else Vector2.ZERO
+	if absf(_boundary_warning_intensity - safe_intensity) < 0.01 and _boundary_warning_direction.is_equal_approx(safe_direction):
+		return
+	_boundary_warning_intensity = safe_intensity
+	_boundary_warning_direction = safe_direction
+	operational_boundary_changed.emit(_boundary_warning_intensity, _boundary_warning_direction)
 
 func _move_with_collisions(delta: float) -> void:
 	var time_remaining := delta
@@ -324,23 +367,24 @@ func _move_with_collisions(delta: float) -> void:
 func _enforce_hard_world_bounds() -> void:
 	if _world_bounds.size == Vector2.ZERO:
 		return
-
 	var left := _world_bounds.position.x + tuning.boundary_hard_padding
 	var right := _world_bounds.end.x - tuning.boundary_hard_padding
 	var top := _world_bounds.position.y + tuning.boundary_hard_padding
 	var bottom := _world_bounds.end.y - tuning.boundary_hard_padding
 
-	var clamped := Vector2(
-		clampf(global_position.x, left, right),
-		clampf(global_position.y, top, bottom)
-	)
-
-	if not is_equal_approx(clamped.x, global_position.x):
-		global_position.x = clamped.x
-		velocity.x = 0.0
-	if not is_equal_approx(clamped.y, global_position.y):
-		global_position.y = clamped.y
-		velocity.y = 0.0
+	# Numerical fail-safe only. Normal gameplay is contained by the physical return force.
+	if global_position.x < left:
+		global_position.x = left
+		velocity.x = maxf(absf(velocity.x) * 0.35, tuning.boundary_return_speed)
+	elif global_position.x > right:
+		global_position.x = right
+		velocity.x = -maxf(absf(velocity.x) * 0.35, tuning.boundary_return_speed)
+	if global_position.y < top:
+		global_position.y = top
+		velocity.y = maxf(absf(velocity.y) * 0.35, tuning.boundary_return_speed)
+	elif global_position.y > bottom:
+		global_position.y = bottom
+		velocity.y = -maxf(absf(velocity.y) * 0.35, tuning.boundary_return_speed)
 
 func _apply_bump(collision: KinematicCollision2D) -> void:
 	_cancel_boost()
