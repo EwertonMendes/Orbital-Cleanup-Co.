@@ -1049,7 +1049,7 @@ func _validate_player_ship() -> void:
 	_expect("_boundary_warning_elapsed" in ship_source and "boundary_warning_seconds" in ship_source, "Operational return must wait through the configured readable warning grace.")
 	_expect("closest_inside_point" in ship_source and "outside_offset" in ship_source, "Boundary warning must be derived from the ship actually crossing the authored play bounds.")
 	_expect("time_to_edge" not in ship_source and "boundary_warning_margin" not in ship_source, "Operational warning must never shrink usable play space through predictive or pre-edge activation.")
-	_expect("tangential_velocity" in ship_source, "Boundary return must preserve tangential ship motion instead of zeroing full velocity.")
+	_expect("desired_velocity" in ship_source and "_update_boundary_return_velocity" in ship_source, "Emergency return must actively steer velocity toward the safe re-entry target.")
 	_expect("motion_intent = _boundary_return_direction" in ship_source, "Auto-return must steer propulsion inward instead of only changing velocity.")
 	_expect("_boundary_return_active" in ship_source and "_has_completed_boundary_return" in ship_source, "Auto-return must remain active until spatial re-entry is complete, not expire on a fixed timer.")
 	_expect("boundary_return_target_seconds" in ship_source and "boundary_return_max_speed" in ship_source, "Emergency return speed must adapt to distance so recovery completes in roughly two seconds.")
