@@ -98,7 +98,7 @@ func _ready() -> void:
 			String((_pending_cosmetics["beam"] as Dictionary).get("id", "")),
 		])
 
-	var hull_collision_radius := CollisionGeometry2D.build_from_sprite(self, visuals.ship_sprite)
+	var hull_collision_radius := CollisionGeometry2D.build_dynamic_solid(self, visuals.ship_sprite)
 	assert(hull_collision_radius > 0.0, "PlayerShip hull alpha must generate collision geometry.")
 	_sync_hull_collision_rotation()
 
