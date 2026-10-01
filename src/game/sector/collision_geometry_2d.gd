@@ -4,48 +4,76 @@ class_name CollisionGeometry2D
 const GENERATED_OWNER_META := &"occ_alpha_collision_owner"
 const DEFAULT_ALPHA_THRESHOLD := 0.10
 
+static var _source_mask_cache: Dictionary = {}
 static var _source_rect_cache: Dictionary = {}
+static var _source_boundary_cache: Dictionary = {}
 
-static func build_from_sprite(
-	body: CollisionObject2D,
+static func build_static_boundary(
+	body: StaticBody2D,
 	sprite: Sprite2D,
 	alpha_threshold: float = DEFAULT_ALPHA_THRESHOLD
 ) -> float:
-	assert(body != null, "Alpha collision requires a CollisionObject2D owner.")
-	assert(sprite != null and sprite.texture != null, "Alpha collision requires a rendered Sprite2D texture.")
-	assert(not sprite.region_enabled, "Alpha collision currently expects a full texture, not a Sprite2D region.")
+	assert(body != null, "Static alpha collision requires a StaticBody2D owner.")
+	assert(sprite != null and sprite.texture != null, "Static alpha collision requires a rendered Sprite2D texture.")
+	assert(not sprite.region_enabled, "Static alpha collision currently expects a full texture, not a Sprite2D region.")
 
 	_clear_generated_shapes(body)
-	var source_rects := _alpha_rectangles(sprite.texture, alpha_threshold)
-	assert(not source_rects.is_empty(), "Visible texture alpha must generate collision geometry.")
+	var source_segments := _alpha_boundary_segments(sprite.texture, alpha_threshold)
+	assert(source_segments.size() >= 6 and source_segments.size() % 2 == 0, "Visible texture alpha must generate boundary segments.")
 
 	var owner_id := body.create_shape_owner(body)
 	body.set_meta(GENERATED_OWNER_META, owner_id)
 
+	var mask := _alpha_mask(sprite.texture, alpha_threshold)
+	var source_size := Vector2(float(mask["width"]), float(mask["height"]))
 	var texture_size := sprite.texture.get_size()
-	var origin := texture_size * 0.5 if sprite.centered else Vector2.ZERO
+	var local_segments := PackedVector2Array()
+	var max_radius := 0.0
+
+	for source_point: Vector2 in source_segments:
+		var local := _sprite_local_point(source_point, source_size, texture_size, sprite)
+		local_segments.append(local)
+		max_radius = maxf(max_radius, local.length())
+
+	var shape := ConcavePolygonShape2D.new()
+	shape.segments = local_segments
+	body.shape_owner_add_shape(owner_id, shape)
+
+	assert(generated_part_count(body) == 1, "Static alpha collision should use one concave boundary shape.")
+	return max_radius
+
+static func build_dynamic_solid(
+	body: CollisionObject2D,
+	sprite: Sprite2D,
+	alpha_threshold: float = DEFAULT_ALPHA_THRESHOLD
+) -> float:
+	assert(body != null, "Dynamic alpha collision requires a CollisionObject2D owner.")
+	assert(sprite != null and sprite.texture != null, "Dynamic alpha collision requires a rendered Sprite2D texture.")
+	assert(not sprite.region_enabled, "Dynamic alpha collision currently expects a full texture, not a Sprite2D region.")
+
+	_clear_generated_shapes(body)
+	var source_rects := _alpha_rectangles(sprite.texture, alpha_threshold)
+	assert(not source_rects.is_empty(), "Visible texture alpha must generate solid collision geometry.")
+
+	var owner_id := body.create_shape_owner(body)
+	body.set_meta(GENERATED_OWNER_META, owner_id)
+
+	var mask := _alpha_mask(sprite.texture, alpha_threshold)
+	var source_size := Vector2(float(mask["width"]), float(mask["height"]))
+	var texture_size := sprite.texture.get_size()
 	var max_radius := 0.0
 
 	for rect_value in source_rects:
 		var rect := rect_value as Rect2i
-		var x0 := float(rect.position.x)
-		var y0 := float(rect.position.y)
-		var x1 := float(rect.end.x)
-		var y1 := float(rect.end.y)
 		var source_points := PackedVector2Array([
-			Vector2(x0, y0),
-			Vector2(x1, y0),
-			Vector2(x1, y1),
-			Vector2(x0, y1),
+			Vector2(rect.position),
+			Vector2(rect.end.x, rect.position.y),
+			Vector2(rect.end),
+			Vector2(rect.position.x, rect.end.y),
 		])
 		var local_points := PackedVector2Array()
-		for source_point in source_points:
-			var local := source_point - origin + sprite.offset
-			if sprite.flip_h:
-				local.x = -local.x
-			if sprite.flip_v:
-				local.y = -local.y
-			local *= sprite.scale
+		for source_point: Vector2 in source_points:
+			var local := _sprite_local_point(source_point, source_size, texture_size, sprite)
 			local_points.append(local)
 			max_radius = maxf(max_radius, local.length())
 
@@ -53,7 +81,7 @@ static func build_from_sprite(
 		shape.points = local_points
 		body.shape_owner_add_shape(owner_id, shape)
 
-	assert(generated_part_count(body) > 0, "Alpha collision must register at least one convex shape.")
+	assert(generated_part_count(body) > 0, "Dynamic alpha collision must register convex shapes.")
 	return max_radius
 
 static func alpha_bounds_radius(
@@ -62,20 +90,22 @@ static func alpha_bounds_radius(
 	alpha_threshold: float = DEFAULT_ALPHA_THRESHOLD
 ) -> float:
 	assert(texture != null, "Alpha collision bounds require a texture.")
-	var source_rects := _alpha_rectangles(texture, alpha_threshold)
-	var origin := texture.get_size() * 0.5
+	var mask := _alpha_mask(texture, alpha_threshold)
+	var source_size := Vector2(float(mask["width"]), float(mask["height"]))
+	var texture_size := texture.get_size()
+	var source_segments := _alpha_boundary_segments(texture, alpha_threshold)
+	var origin := texture_size * 0.5
+	var source_to_texture := Vector2(
+		texture_size.x / maxf(source_size.x, 1.0),
+		texture_size.y / maxf(source_size.y, 1.0)
+	)
 	var max_radius := 0.0
-	for rect_value in source_rects:
-		var rect := rect_value as Rect2i
-		var corners := PackedVector2Array([
-			Vector2(rect.position),
-			Vector2(rect.end.x, rect.position.y),
-			Vector2(rect.end),
-			Vector2(rect.position.x, rect.end.y),
-		])
-		for source_point: Vector2 in corners:
-			var local: Vector2 = (source_point - origin) * sprite_scale
-			max_radius = maxf(max_radius, local.length())
+
+	for source_point: Vector2 in source_segments:
+		var texture_point := source_point * source_to_texture
+		var local: Vector2 = (texture_point - origin) * sprite_scale
+		max_radius = maxf(max_radius, local.length())
+
 	assert(max_radius > 0.0, "Alpha collision bounds require visible pixels.")
 	return max_radius
 
@@ -91,17 +121,24 @@ static func generated_part_count(body: CollisionObject2D) -> int:
 		return 0
 	return body.shape_owner_get_shape_count(owner_id)
 
-static func _alpha_rectangles(texture: Texture2D, alpha_threshold: float) -> Array:
+static func generated_boundary_segment_count(body: CollisionObject2D) -> int:
+	var owner_id := _generated_owner_id(body)
+	if owner_id < 0 or body.shape_owner_get_shape_count(owner_id) != 1:
+		return 0
+	var shape := body.shape_owner_get_shape(owner_id, 0)
+	if shape is not ConcavePolygonShape2D:
+		return 0
+	return (shape as ConcavePolygonShape2D).segments.size() / 2
+
+static func _alpha_mask(texture: Texture2D, alpha_threshold: float) -> Dictionary:
 	assert(texture != null, "Cannot trace an empty texture.")
 	var threshold := clampf(alpha_threshold, 0.0, 1.0)
-	var path_key := texture.resource_path
-	var texture_key := path_key if not path_key.is_empty() else str(texture.get_instance_id())
-	var cache_key := "%s|%.4f" % [texture_key, threshold]
-	if _source_rect_cache.has(cache_key):
-		return _source_rect_cache[cache_key] as Array
+	var cache_key := _cache_key(texture, threshold)
+	if _source_mask_cache.has(cache_key):
+		return _source_mask_cache[cache_key] as Dictionary
 
-	# Texture readback happens only once per unique source texture and threshold.
-	# The resulting source-space convex partition is cached for every instance.
+	# Texture readback happens once per unique source texture and threshold.
+	# Every collision representation for that asset reuses this authoritative mask.
 	var image := texture.get_image()
 	assert(image != null and not image.is_empty(), "Collision texture must expose image data.")
 	if image.is_compressed():
@@ -116,17 +153,95 @@ static func _alpha_rectangles(texture: Texture2D, alpha_threshold: float) -> Arr
 	var height := image.get_height()
 	assert(width > 0 and height > 0, "Collision alpha image must have positive dimensions.")
 
-	var remaining := PackedByteArray()
-	remaining.resize(width * height)
+	var bits := PackedByteArray()
+	bits.resize(width * height)
 	for y in range(height):
 		var row_offset := y * width
 		for x in range(width):
-			# Source alpha is authoritative. Avoid a second thresholding layer so
-			# transparent pixels can never be reclassified by an intermediate mask.
-			if image.get_pixel(x, y).a >= threshold:
-				remaining[row_offset + x] = 1
+			if image.get_pixel(x, y).a > threshold:
+				bits[row_offset + x] = 1
 
+	var mask := {
+		"width": width,
+		"height": height,
+		"bits": bits,
+	}
+	_source_mask_cache[cache_key] = mask
+	return mask
+
+static func _alpha_boundary_segments(texture: Texture2D, alpha_threshold: float) -> PackedVector2Array:
+	var threshold := clampf(alpha_threshold, 0.0, 1.0)
+	var cache_key := _cache_key(texture, threshold)
+	if _source_boundary_cache.has(cache_key):
+		return _source_boundary_cache[cache_key] as PackedVector2Array
+
+	var mask := _alpha_mask(texture, threshold)
+	var width := int(mask["width"])
+	var height := int(mask["height"])
+	var bits := mask["bits"] as PackedByteArray
+	var segments := PackedVector2Array()
+
+	# Horizontal boundaries. Keep opposite transition directions separate at
+	# diagonal contacts so disconnected opaque islands never become linked.
+	for boundary_y in range(height + 1):
+		var x := 0
+		while x < width:
+			var above := boundary_y > 0 and bits[(boundary_y - 1) * width + x] != 0
+			var below := boundary_y < height and bits[boundary_y * width + x] != 0
+			if above == below:
+				x += 1
+				continue
+			var start_x := x
+			var transition_above := above
+			var transition_below := below
+			x += 1
+			while x < width:
+				var next_above := boundary_y > 0 and bits[(boundary_y - 1) * width + x] != 0
+				var next_below := boundary_y < height and bits[boundary_y * width + x] != 0
+				if next_above != transition_above or next_below != transition_below:
+					break
+				x += 1
+			segments.append(Vector2(start_x, boundary_y))
+			segments.append(Vector2(x, boundary_y))
+
+	# Vertical boundaries.
+	for boundary_x in range(width + 1):
+		var y := 0
+		while y < height:
+			var left := boundary_x > 0 and bits[y * width + boundary_x - 1] != 0
+			var right := boundary_x < width and bits[y * width + boundary_x] != 0
+			if left == right:
+				y += 1
+				continue
+			var start_y := y
+			var transition_left := left
+			var transition_right := right
+			y += 1
+			while y < height:
+				var next_left := boundary_x > 0 and bits[y * width + boundary_x - 1] != 0
+				var next_right := boundary_x < width and bits[y * width + boundary_x] != 0
+				if next_left != transition_left or next_right != transition_right:
+					break
+				y += 1
+			segments.append(Vector2(boundary_x, start_y))
+			segments.append(Vector2(boundary_x, y))
+
+	assert(segments.size() >= 6, "Texture alpha contains no collision boundary.")
+	_source_boundary_cache[cache_key] = segments
+	return segments
+
+static func _alpha_rectangles(texture: Texture2D, alpha_threshold: float) -> Array:
+	var threshold := clampf(alpha_threshold, 0.0, 1.0)
+	var cache_key := _cache_key(texture, threshold)
+	if _source_rect_cache.has(cache_key):
+		return _source_rect_cache[cache_key] as Array
+
+	var mask := _alpha_mask(texture, threshold)
+	var width := int(mask["width"])
+	var height := int(mask["height"])
+	var remaining := (mask["bits"] as PackedByteArray).duplicate()
 	var rectangles: Array = []
+
 	for y in range(height):
 		for x in range(width):
 			var index := y * width + x
@@ -151,7 +266,6 @@ static func _alpha_rectangles(texture: Texture2D, alpha_threshold: float) -> Arr
 				current_width = mini(current_width, scan_width)
 				if current_width <= 0:
 					break
-
 				var candidate_height := scan_y - y + 1
 				var candidate_area := current_width * candidate_height
 				if candidate_area > best_area:
@@ -167,9 +281,33 @@ static func _alpha_rectangles(texture: Texture2D, alpha_threshold: float) -> Arr
 				for clear_x in range(best_width):
 					remaining[clear_offset + clear_x] = 0
 
-	assert(not rectangles.is_empty(), "Texture alpha contains no collision silhouette.")
+	assert(not rectangles.is_empty(), "Texture alpha contains no solid collision silhouette.")
 	_source_rect_cache[cache_key] = rectangles
 	return rectangles
+
+static func _sprite_local_point(
+	source_point: Vector2,
+	source_size: Vector2,
+	texture_size: Vector2,
+	sprite: Sprite2D
+) -> Vector2:
+	var source_to_texture := Vector2(
+		texture_size.x / maxf(source_size.x, 1.0),
+		texture_size.y / maxf(source_size.y, 1.0)
+	)
+	var texture_point := source_point * source_to_texture
+	var origin := texture_size * 0.5 if sprite.centered else Vector2.ZERO
+	var local := texture_point - origin + sprite.offset
+	if sprite.flip_h:
+		local.x = -local.x
+	if sprite.flip_v:
+		local.y = -local.y
+	return local * sprite.scale
+
+static func _cache_key(texture: Texture2D, threshold: float) -> String:
+	var path_key := texture.resource_path
+	var texture_key := path_key if not path_key.is_empty() else str(texture.get_instance_id())
+	return "%s|%.4f" % [texture_key, threshold]
 
 static func _generated_owner_id(body: CollisionObject2D) -> int:
 	if not body.has_meta(GENERATED_OWNER_META):
