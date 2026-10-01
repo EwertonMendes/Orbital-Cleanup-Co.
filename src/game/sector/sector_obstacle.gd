@@ -34,12 +34,9 @@ func _ready() -> void:
 	var tint_text := String(_definition.get("sprite_modulate", "#949ea8f5"))
 	sprite.modulate = Color.from_string(tint_text, Color(0.58, 0.62, 0.66, 0.96))
 
-	var profile := _registry.get_collision_profile(String(_definition["id"]))
-	var collision_radius := CollisionGeometry2D.build_profile(
+	var collision_radius := CollisionGeometry2D.build_from_sprite(
 		self,
-		profile,
-		sprite.texture,
-		sprite.scale
+		sprite
 	)
 	marker.configure(collision_radius)
 
