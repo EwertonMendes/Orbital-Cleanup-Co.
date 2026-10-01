@@ -1,7 +1,7 @@
 extends Area2D
 class_name UnloadZone
 
-signal cargo_unloaded(units: int)
+signal cargo_unloaded(delivered_salvage: Array, units: int)
 
 @export_range(60.0, 400.0, 5.0) var radius := 145.0
 
@@ -39,13 +39,19 @@ func _on_body_entered(body: Node2D) -> void:
 	if ship == null:
 		return
 
-	var unloaded := ship.unload_cargo()
-	if unloaded <= 0:
+	var delivered := ship.unload_cargo()
+	if delivered.is_empty():
 		return
 
+	var unloaded_units := 0
+	for value in delivered:
+		var salvage := value as SalvageDefinition
+		assert(salvage != null, "UnloadZone received invalid cargo payload.")
+		unloaded_units += salvage.cargo_units
+
 	_unload_flash = 1.0
-	cargo_unloaded.emit(unloaded)
-	print("[Cargo] UNLOAD units=%d" % unloaded)
+	cargo_unloaded.emit(delivered, unloaded_units)
+	print("[Cargo] DELIVERED items=%d units=%d" % [delivered.size(), unloaded_units])
 
 func _draw() -> void:
 	var pulse_alpha := 0.20 + (sin(_pulse) + 1.0) * 0.045
