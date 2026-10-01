@@ -1526,6 +1526,10 @@ func _validate_all_world_alpha_collisions(
 				obstacle.configure(definition, 1.0)
 				root.add_child(obstacle)
 				var alpha_qa := _alpha_collision_sample_mismatches(obstacle, obstacle.sprite)
+				print("[QA] ALPHA_COLLISION_PARTS kind=obstacle id=%s parts=%d" % [
+					obstacle_id,
+					CollisionGeometry2D.generated_part_count(obstacle),
+				])
 				_expect(
 					int(alpha_qa["transparent_covered"]) == 0,
 					"Obstacle alpha collision covers transparent pixels: %s" % obstacle_id
@@ -1556,6 +1560,10 @@ func _validate_all_world_alpha_collisions(
 			landmark.configure(definition)
 			root.add_child(landmark)
 			var alpha_qa := _alpha_collision_sample_mismatches(landmark, landmark.sprite)
+			print("[QA] ALPHA_COLLISION_PARTS kind=landmark id=%s parts=%d" % [
+				landmark_id,
+				CollisionGeometry2D.generated_part_count(landmark),
+			])
 			_expect(
 				int(alpha_qa["transparent_covered"]) == 0,
 				"Landmark alpha collision covers transparent pixels: %s" % landmark_id
@@ -1602,7 +1610,11 @@ func _alpha_collision_sample_mismatches(body: CollisionObject2D, sprite: Sprite2
 			var alpha := image.get_pixel(x, y).a
 			if alpha > 0.02 and alpha < 0.15:
 				continue
-			var local := (Vector2(x, y) - origin + sprite.offset) * sprite.scale
+			# The bitmap bit represents the full source pixel cell [x,x+1] x [y,y+1].
+			# Sample its center so an adjacent opaque cell boundary is never mistaken
+			# for collision coverage of this pixel.
+			var source_sample := Vector2(float(x) + 0.5, float(y) + 0.5)
+			var local := (source_sample - origin + sprite.offset) * sprite.scale
 			var covered := false
 			for shape_entry in convex_shapes:
 				var shape := shape_entry["shape"] as ConvexPolygonShape2D
