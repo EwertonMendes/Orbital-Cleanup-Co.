@@ -22,10 +22,13 @@ class_name ShipMovementTuning
 @export_range(0.0, 160.0, 1.0) var camera_lead_distance := 46.0
 @export_range(1.0, 20.0, 0.1) var camera_lead_response := 7.0
 @export_range(0.0, 18.0, 0.1) var camera_shake_strength := 3.6
-@export_range(80.0, 600.0, 1.0) var boundary_soft_margin := 320.0
-@export_range(100.0, 1800.0, 1.0) var boundary_push_acceleration := 760.0
-@export_range(0.5, 20.0, 0.1) var boundary_outward_damping := 8.0
-@export_range(8.0, 120.0, 1.0) var boundary_hard_padding := 42.0
+@export_range(100.0, 360.0, 1.0) var boundary_warning_margin := 190.0
+@export_range(32.0, 120.0, 1.0) var boundary_repel_padding := 44.0
+@export_range(8.0, 80.0, 1.0) var boundary_hard_padding := 30.0
+@export_range(400.0, 2600.0, 10.0) var boundary_repel_acceleration := 1650.0
+@export_range(160.0, 720.0, 5.0) var boundary_return_speed := 380.0
+@export_range(0.2, 1.4, 0.01) var boundary_return_velocity_scale := 0.72
+@export_range(0.1, 1.0, 0.01) var boundary_repel_cooldown := 0.46
 
 func validate() -> void:
 	assert(max_speed > 0.0, "Ship cruise speed must be positive.")
@@ -44,4 +47,8 @@ func validate() -> void:
 	assert(collision_restitution >= 0.0 and collision_restitution <= 1.0, "Collision restitution must be in [0, 1].")
 	assert(collision_tangent_retention >= 0.0 and collision_tangent_retention <= 1.0, "Collision tangent retention must be in [0, 1].")
 	assert(collision_iterations >= 1, "Collision solver requires at least one iteration.")
-	assert(boundary_soft_margin > boundary_hard_padding, "Boundary soft margin must exceed hard padding.")
+	assert(boundary_warning_margin > boundary_repel_padding, "Boundary warning must begin before physical return.")
+	assert(boundary_repel_padding > boundary_hard_padding, "Boundary return must engage before the numerical hard limit.")
+	assert(boundary_repel_acceleration > 0.0 and boundary_return_speed > 0.0, "Boundary return requires physical force and rebound speed.")
+	assert(boundary_return_velocity_scale > 0.0, "Boundary return velocity scale must be positive.")
+	assert(boundary_repel_cooldown > 0.0, "Boundary repel cooldown must be positive.")
