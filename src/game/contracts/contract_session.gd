@@ -69,13 +69,18 @@ func start() -> void:
 	])
 	objective_changed.emit(objective)
 
-func record_salvage(definition: SalvageDefinition) -> void:
-	assert(definition != null, "ContractSession requires collected salvage definition.")
-	_cleaned = minf(_cleaned + definition.cleanliness_value, _total_cleanliness)
-	_salvage_credits += maxi(definition.base_value, 0)
-	_recovered_count += 1
-	if String(definition.id) == _priority_salvage_id:
-		_priority_recovered_count += 1
+func record_delivery(delivered_salvage: Array) -> void:
+	if delivered_salvage.is_empty():
+		return
+
+	for value in delivered_salvage:
+		var definition := value as SalvageDefinition
+		assert(definition != null, "ContractSession requires delivered salvage definitions.")
+		_cleaned = minf(_cleaned + definition.cleanliness_value, _total_cleanliness)
+		_salvage_credits += maxi(definition.base_value, 0)
+		_recovered_count += 1
+		if String(definition.id) == _priority_salvage_id:
+			_priority_recovered_count += 1
 
 	cleanliness_changed.emit(get_cleanup_percent(), _cleaned, _total_cleanliness)
 	objective_changed.emit(get_objective_snapshot())

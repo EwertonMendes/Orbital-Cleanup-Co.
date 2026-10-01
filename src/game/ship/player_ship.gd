@@ -118,7 +118,7 @@ func set_environment_physics(
 	_environment_linear_drag = clampf(linear_drag, 0.0, 1.8)
 	_environment_thrust_multiplier = clampf(thrust_multiplier, 0.65, 1.15)
 
-func unload_cargo() -> int:
+func unload_cargo() -> Array[SalvageDefinition]:
 	return cargo_hold.unload_all()
 
 func get_cargo_used() -> int:

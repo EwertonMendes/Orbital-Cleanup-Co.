@@ -3,12 +3,13 @@ class_name CargoHold
 
 signal cargo_changed(used_units: int, capacity: int)
 signal cargo_full
-signal cargo_unloaded(units: int)
+signal cargo_unloaded(delivered_salvage: Array, units: int)
 
 @export_range(1, 999, 1) var capacity := 12
 
 var used_units := 0
 var _manifest: Dictionary = {}
+var _items: Array[SalvageDefinition] = []
 var _total_mass := 0.0
 
 func can_accept(definition: SalvageDefinition) -> bool:
@@ -22,23 +23,27 @@ func store(definition: SalvageDefinition) -> bool:
 	_total_mass += maxf(definition.mass, 0.0)
 	var key := String(definition.id)
 	_manifest[key] = int(_manifest.get(key, 0)) + 1
+	_items.append(definition)
 	cargo_changed.emit(used_units, capacity)
 
 	if used_units >= capacity:
 		cargo_full.emit()
 	return true
 
-func unload_all() -> int:
-	if used_units <= 0:
-		return 0
+func unload_all() -> Array[SalvageDefinition]:
+	var delivered: Array[SalvageDefinition] = []
+	if _items.is_empty():
+		return delivered
 
-	var unloaded := used_units
+	delivered.assign(_items)
+	var unloaded_units := used_units
 	used_units = 0
 	_total_mass = 0.0
 	_manifest.clear()
+	_items.clear()
 	cargo_changed.emit(used_units, capacity)
-	cargo_unloaded.emit(unloaded)
-	return unloaded
+	cargo_unloaded.emit(delivered, unloaded_units)
+	return delivered
 
 func get_manifest() -> Dictionary:
 	return _manifest.duplicate(true)

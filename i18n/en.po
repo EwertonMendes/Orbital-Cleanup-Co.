@@ -123,6 +123,9 @@ msgstr "CARGO FULL · RETURN TO DEPOT"
 msgid "FLIGHT_RECOVERED_FMT"
 msgstr "RECOVERED · %s"
 
+msgid "FLIGHT_STOWED_FMT"
+msgstr "CARGO SECURED · %s"
+
 msgid "FLIGHT_UNLOADED_FMT"
 msgstr "CARGO UNLOADED · %d UNITS"
 
