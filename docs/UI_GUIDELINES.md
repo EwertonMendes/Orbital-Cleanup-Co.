@@ -55,7 +55,7 @@ World objects use a semantic visual language that must remain consistent across 
 - **collision hazards** use segmented warm/amber hazard rings and a darker neutral body treatment;
 - **landmarks** use broad, low-contrast environmental arcs and must read as scenery rather than pickups;
 - the cargo depot uses mint/green recovery language and is visually distinct from both salvage and hazards.
-- **operational map limits** are world-space navigation fields, not thin debug rectangles: use segmented field bands, repeated beacons, inward chevrons and proximity-driven motion. Their intensity must follow the same soft/hard boundary distances used by ship physics, and their palette may adapt through reusable biome effect profiles without sector-specific scripts.
+- **operational map limits** must not read as visible walls or drawn rectangles. Keep the world visually open: warn through a lightweight directional HUD pulse when the ship is leaving the work zone, then engage a close-range physical return force that preserves tangential momentum. The numerical hard clamp is fail-safe only and must sit behind the physical response.
 
 Shape and motion carry the first distinction; color reinforces it. Important gameplay categories must never rely on color alone.
 
