@@ -22,7 +22,7 @@ class_name ShipMovementTuning
 @export_range(0.0, 160.0, 1.0) var camera_lead_distance := 46.0
 @export_range(1.0, 20.0, 0.1) var camera_lead_response := 7.0
 @export_range(0.0, 18.0, 0.1) var camera_shake_strength := 3.6
-@export_range(80.0, 480.0, 1.0) var boundary_warning_margin := 190.0
+@export_range(24.0, 160.0, 1.0) var boundary_warning_margin := 56.0
 @export_range(4.0, 9.0, 0.1) var boundary_warning_seconds := 6.5
 @export_range(400.0, 2200.0, 10.0) var boundary_hard_escape_margin := 900.0
 @export_range(160.0, 720.0, 5.0) var boundary_return_speed := 420.0
