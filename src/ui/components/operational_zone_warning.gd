@@ -24,6 +24,15 @@ func _ready() -> void:
 	visible = false
 	set_process(false)
 
+func refresh_locale() -> void:
+	if not is_node_ready():
+		return
+	warning_label.text = (
+		tr("FLIGHT_OPERATIONAL_RETURN_ACTIVE")
+		if _return_message_time > 0.0
+		else tr("FLIGHT_OPERATIONAL_LIMIT_WARNING")
+	)
+
 func bind(ship: PlayerShip) -> void:
 	assert(ship != null, "OperationalZoneWarning requires PlayerShip.")
 	if _ship != null:
