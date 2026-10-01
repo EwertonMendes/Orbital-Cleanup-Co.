@@ -3,7 +3,6 @@ class_name SectorLandmark
 
 @onready var sprite: Sprite2D = %Sprite
 @onready var marker: SectorLandmarkMarker = %Marker
-@onready var collision_root: Node2D = %CollisionRoot
 
 var _definition: Dictionary = {}
 var _spin_speed := 0.0
@@ -35,7 +34,7 @@ func _ready() -> void:
 
 	var profile := _registry.get_collision_profile(String(_definition["id"]))
 	var collision_radius := CollisionGeometry2D.build_profile(
-		collision_root,
+		self,
 		profile,
 		sprite.texture,
 		sprite.scale
