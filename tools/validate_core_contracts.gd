@@ -749,13 +749,13 @@ func _validate_contract_session() -> void:
 		"total_cleanliness": 10.0,
 		"reward_multiplier": 1.0,
 	})
-	cleanup.record_salvage(target_salvage)
+	cleanup.record_delivery([target_salvage])
 	_expect(cleanup.is_target_reached(), "Cleanup contract must complete at configured percentage.")
 	_expect(not cleanup.is_perfect_cleanup(), "Cleanup target completion must not imply Perfect Cleanup.")
 	var standard_result := cleanup.build_result()
 	_expect(int(standard_result["credits_awarded"]) == 290, "Standard payout must combine base pay and recovered salvage.")
 	_expect(int(standard_result["xp_awarded"]) == 120, "Standard completion must grant configured Company XP.")
-	cleanup.record_salvage(final_salvage)
+	cleanup.record_delivery([final_salvage])
 	_expect(cleanup.is_perfect_cleanup(), "100% cleanliness must trigger Perfect Cleanup.")
 	var perfect_result := cleanup.build_result()
 	_expect(int(perfect_result["perfect_bonus"]) == 160, "Perfect Cleanup must grant configured credit bonus.")
@@ -770,9 +770,9 @@ func _validate_contract_session() -> void:
 		"total_cleanliness": 100.0,
 		"reward_multiplier": 1.0,
 	})
-	recovery.record_salvage(target_salvage)
+	recovery.record_delivery([target_salvage])
 	_expect(not recovery.is_target_reached(), "Recovery contract must count recovered objects.")
-	recovery.record_salvage(final_salvage)
+	recovery.record_delivery([final_salvage])
 	_expect(recovery.is_target_reached(), "Recovery contract must complete at target_count.")
 
 	var valuable := ContractSession.new()
@@ -783,9 +783,9 @@ func _validate_contract_session() -> void:
 		"total_cleanliness": 100.0,
 		"reward_multiplier": 1.0,
 	})
-	valuable.record_salvage(target_salvage)
+	valuable.record_delivery([target_salvage])
 	_expect(not valuable.is_target_reached(), "Valuable Recovery must track recovered credit value.")
-	valuable.record_salvage(final_salvage)
+	valuable.record_delivery([final_salvage])
 	_expect(valuable.is_target_reached(), "Valuable Recovery must complete at target_value.")
 
 	var priority := ContractSession.new()
@@ -800,10 +800,10 @@ func _validate_contract_session() -> void:
 		"total_cleanliness": 100.0,
 		"reward_multiplier": 1.0,
 	})
-	priority.record_salvage(target_salvage)
+	priority.record_delivery([target_salvage])
 	_expect(not priority.is_target_reached(), "Priority contract must ignore non-priority salvage.")
 	var navigation := registry.get_salvage_definition("navigation_core")
-	priority.record_salvage(navigation)
+	priority.record_delivery([navigation])
 	_expect(priority.is_target_reached(), "Priority contract must complete when designated salvage is recovered.")
 
 	var full := ContractSession.new()
@@ -963,7 +963,15 @@ func _validate_cargo_hold() -> void:
 	_expect(cargo.used_units == 4, "CargoHold must reach configured capacity.")
 	_expect(cargo.get_total_mass() > mass_after_small, "Heavier recovered cargo must increase total carried mass.")
 	_expect(not cargo.can_accept(small), "CargoHold must reject salvage when full.")
-	_expect(cargo.unload_all() == 4, "CargoHold unload must return unloaded units.")
+	var delivered := cargo.unload_all()
+	_expect(delivered.size() == 2, "CargoHold unload must return every delivered salvage item.")
+	var delivered_units := 0
+	for value in delivered:
+		var definition := value as SalvageDefinition
+		_expect(definition != null, "CargoHold delivery payload must contain salvage definitions.")
+		if definition != null:
+			delivered_units += definition.cargo_units
+	_expect(delivered_units == 4, "CargoHold delivery payload must preserve unloaded cargo units.")
 	_expect(cargo.used_units == 0, "CargoHold unload must clear used units.")
 	_expect(is_zero_approx(cargo.get_total_mass()), "CargoHold unload must clear carried physical mass.")
 	cargo.free()
