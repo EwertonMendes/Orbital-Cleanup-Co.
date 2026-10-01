@@ -294,27 +294,19 @@ func _update_operational_boundary(delta: float) -> void:
 		_reset_operational_warning()
 		return
 
-	var left_distance := global_position.x - _world_bounds.position.x
-	var right_distance := _world_bounds.end.x - global_position.x
-	var top_distance := global_position.y - _world_bounds.position.y
-	var bottom_distance := _world_bounds.end.y - global_position.y
-	var outward_direction := Vector2.ZERO
+	var closest_inside_point := Vector2(
+		clampf(global_position.x, _world_bounds.position.x, _world_bounds.end.x),
+		clampf(global_position.y, _world_bounds.position.y, _world_bounds.end.y)
+	)
+	var outside_offset := global_position - closest_inside_point
 
-	if velocity.x < -4.0 and _should_warn_for_edge(left_distance, -velocity.x):
-		outward_direction.x -= 1.0
-	elif velocity.x > 4.0 and _should_warn_for_edge(right_distance, velocity.x):
-		outward_direction.x += 1.0
-
-	if velocity.y < -4.0 and _should_warn_for_edge(top_distance, -velocity.y):
-		outward_direction.y -= 1.0
-	elif velocity.y > 4.0 and _should_warn_for_edge(bottom_distance, velocity.y):
-		outward_direction.y += 1.0
-
-	if outward_direction == Vector2.ZERO:
+	# The full authored play_bounds remain valid gameplay space. Warning time starts
+	# only after the ship has physically crossed the real sector boundary.
+	if outside_offset.length_squared() <= 0.0001:
 		_reset_operational_warning()
 		return
 
-	outward_direction = outward_direction.normalized()
+	var outward_direction := outside_offset.normalized()
 	if (
 		_boundary_warning_direction.length_squared() > 0.001
 		and _boundary_warning_direction.dot(outward_direction) < 0.35
@@ -332,14 +324,6 @@ func _update_operational_boundary(delta: float) -> void:
 
 	if _boundary_warning_elapsed >= tuning.boundary_warning_seconds:
 		_apply_boundary_repel(-outward_direction)
-
-func _should_warn_for_edge(distance_to_edge: float, outward_speed: float) -> bool:
-	if outward_speed <= 4.0:
-		return false
-	if distance_to_edge <= tuning.boundary_warning_margin:
-		return true
-	var time_to_edge := maxf(distance_to_edge, 0.0) / outward_speed
-	return time_to_edge <= tuning.boundary_warning_seconds
 
 func _apply_boundary_repel(return_direction: Vector2) -> void:
 	var inward := return_direction.normalized()
@@ -401,7 +385,7 @@ func _enforce_hard_world_bounds() -> void:
 
 	var escape_margin := maxf(
 		tuning.boundary_hard_escape_margin,
-		tuning.absolute_speed_limit * tuning.boundary_warning_seconds + tuning.boundary_warning_margin
+		tuning.absolute_speed_limit * tuning.boundary_warning_seconds + 240.0
 	)
 	var left := _world_bounds.position.x - escape_margin
 	var right := _world_bounds.end.x + escape_margin
