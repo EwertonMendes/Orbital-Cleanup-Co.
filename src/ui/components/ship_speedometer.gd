@@ -13,7 +13,7 @@ const ARC_SWEEP := PI * 1.56
 
 var _ship: PlayerShip
 var _sample_clock := 0.0
-var _display_speed := 0.0
+var _display_world_speed := 0.0
 var _normalized_speed := 0.0
 var _cruise_ratio := 0.42
 
@@ -39,7 +39,7 @@ func _process(delta: float) -> void:
 	_sample_clock = 0.0
 	var target_speed := _ship.velocity.length()
 	var smoothing := 1.0 - exp(-9.0 * sample_delta)
-	_display_speed = lerpf(_display_speed, target_speed, smoothing)
+	_display_world_speed = lerpf(_display_world_speed, target_speed, smoothing)
 	_refresh_sample(false)
 
 func _refresh_sample(force: bool) -> void:
@@ -51,14 +51,14 @@ func _refresh_sample(force: bool) -> void:
 	var cruise_speed := maxf(_ship.tuning.max_speed, 1.0)
 	var safety_speed := maxf(_ship.tuning.absolute_speed_limit, cruise_speed + 1.0)
 	_cruise_ratio = clampf(cruise_speed / safety_speed, 0.08, 0.92)
-	var next_normalized := clampf(_display_speed / safety_speed, 0.0, 1.0)
+	var next_normalized := clampf(_display_world_speed / safety_speed, 0.0, 1.0)
 	var changed := force or absf(next_normalized - _normalized_speed) >= 0.004
 	_normalized_speed = next_normalized
 
-	speed_label.text = str(int(round(_display_speed)))
-	if _display_speed < 8.0:
+	speed_label.text = FlightTelemetryUnits.format_speed_kmh(_display_world_speed)
+	if _display_world_speed < 8.0:
 		state_label.text = tr("FLIGHT_SPEED_IDLE")
-	elif _display_speed <= cruise_speed:
+	elif _display_world_speed <= cruise_speed:
 		state_label.text = tr("FLIGHT_SPEED_CRUISE")
 	else:
 		state_label.text = tr("FLIGHT_SPEED_OVERSPEED")
