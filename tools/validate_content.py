@@ -23,6 +23,7 @@ CATEGORY_DIRS = {
     "modifiers": CONTENT / "modifiers",
     "progression": CONTENT / "progression",
     "cosmetics": CONTENT / "cosmetics",
+    "collision_profiles": CONTENT / "collision_profiles",
 }
 
 REQUIRED_SCHEMAS = {
@@ -37,6 +38,7 @@ REQUIRED_SCHEMAS = {
     "career_ranks.schema.json",
     "upgrades.schema.json",
     "cosmetics.schema.json",
+    "collision_profile_catalog.schema.json",
 }
 
 ID_RE = re.compile(r"^[a-z0-9_]+$")
@@ -205,13 +207,44 @@ def validate_tables(tables: dict[str, dict[str, Any]], salvage: dict[str, dict[s
         )
 
 
-def validate_landmarks(items: dict[str, dict[str, Any]], catalogs: dict[str, set[str]]) -> None:
+def validate_collision_profiles(catalog: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    require(catalog.get("id") == "world", "collision_profiles/world.json: id must be 'world'")
+    profiles = catalog.get("profiles")
+    require(isinstance(profiles, dict) and profiles, "collision_profiles/world.json: profiles must be a non-empty object")
+
+    for profile_id, profile in profiles.items():
+        label = f"collision_profiles/{profile_id}"
+        require(ID_RE.fullmatch(str(profile_id)) is not None, f"{label}: invalid profile id")
+        require(isinstance(profile, dict), f"{label}: profile must be an object")
+        require(set(profile) == {"bounds_radius", "parts"}, f"{label}: profile fields are invalid")
+        bounds_radius = require_number(profile.get("bounds_radius"), f"{label}.bounds_radius", 0.01, 1.5)
+        parts = profile.get("parts")
+        require(isinstance(parts, list) and 1 <= len(parts) <= 24, f"{label}.parts must contain 1..24 polygons")
+        vertex_count = 0
+        max_point_radius = 0.0
+        for part_index, part in enumerate(parts):
+            require(isinstance(part, list) and 3 <= len(part) <= 24, f"{label}.parts[{part_index}] must contain 3..24 points")
+            vertex_count += len(part)
+            for point_index, point in enumerate(part):
+                point_label = f"{label}.parts[{part_index}][{point_index}]"
+                require(isinstance(point, list) and len(point) == 2, f"{point_label} must contain x/y")
+                x = require_number(point[0], f"{point_label}[0]", -0.5, 0.5)
+                y = require_number(point[1], f"{point_label}[1]", -0.5, 0.5)
+                max_point_radius = max(max_point_radius, (x * x + y * y) ** 0.5)
+        require(vertex_count <= 160, f"{label}: collision profile exceeds 160 vertices")
+        require(bounds_radius + 0.001 >= max_point_radius, f"{label}.bounds_radius must contain every authored point")
+
+    return profiles
+
+
+def validate_landmarks(items: dict[str, dict[str, Any]], catalogs: dict[str, set[str]], collision_profiles: dict[str, dict[str, Any]]) -> None:
     for item_id, data in items.items():
         label = f"landmarks/{item_id}"
         require_keys(data, (
             "display_name_key", "sprite", "scale", "reserved_radius", "placement_radius",
-            "collision", "spin_speed_range", "drift_amplitude", "ambient_effect",
+            "spin_speed_range", "drift_amplitude", "ambient_effect",
         ), label)
+        require(item_id in collision_profiles, f"{label}: missing authored collision profile")
         require_localization_key(data["display_name_key"], label, catalogs)
         require_asset(data["sprite"], f"{label}.sprite")
         require_number(data["scale"], f"{label}.scale", 0.01)
@@ -221,21 +254,7 @@ def validate_landmarks(items: dict[str, dict[str, Any]], catalogs: dict[str, set
         low = require_number(placement[0], f"{label}.placement_radius[0]", 0)
         high = require_number(placement[1], f"{label}.placement_radius[1]", 0)
         require(low <= high, f"{label}.placement_radius min cannot exceed max")
-        collision = data["collision"]
-        require(isinstance(collision, dict), f"{label}.collision must be an object")
-        shape = collision.get("shape")
-        require(shape in {"circle", "box"}, f"{label}.collision.shape must be circle or box")
-        if shape == "circle":
-            require(set(collision) == {"shape", "radius"}, f"{label}.collision circle fields are invalid")
-            collision_extent = require_number(collision.get("radius"), f"{label}.collision.radius", 20, 600)
-        else:
-            require(set(collision) == {"shape", "size"}, f"{label}.collision box fields are invalid")
-            size = collision.get("size")
-            require(isinstance(size, list) and len(size) == 2, f"{label}.collision.size must contain two values")
-            width = require_number(size[0], f"{label}.collision.size[0]", 40, 900)
-            height = require_number(size[1], f"{label}.collision.size[1]", 40, 900)
-            collision_extent = max(width, height) * 0.5
-        require(reserved_radius >= collision_extent + 60, f"{label}.reserved_radius must leave navigation clearance around collision")
+        require(reserved_radius >= 80, f"{label}.reserved_radius must leave navigation clearance around the authored profile")
         spin = data["spin_speed_range"]
         require(isinstance(spin, list) and len(spin) == 2, f"{label}.spin_speed_range must contain two values")
         spin_low = require_number(spin[0], f"{label}.spin_speed_range[0]", -0.08, 0.08)
@@ -301,6 +320,7 @@ def validate_biomes(
     landmarks: dict[str, dict[str, Any]],
     modifiers: dict[str, dict[str, Any]],
     catalogs: dict[str, set[str]],
+    collision_profiles: dict[str, dict[str, Any]],
 ) -> None:
     for item_id, data in items.items():
         label = f"biomes/{item_id}"
@@ -413,7 +433,8 @@ def validate_biomes(
             seen_obstacles.add(obstacle_id)
             require_asset(obstacle.get("sprite"), f"{label}.obstacles[{index}].sprite")
             require_positive_weight(obstacle.get("weight"), f"{label}.obstacles[{index}].weight")
-            require_number(obstacle.get("collision_radius"), f"{label}.obstacles[{index}].collision_radius", 1)
+            require(obstacle_id in collision_profiles, f"{label}.obstacles[{index}]: missing authored collision profile '{obstacle_id}'")
+            require_number(obstacle.get("texture_reference_size"), f"{label}.obstacles[{index}].texture_reference_size", 1)
             scale_min = require_number(obstacle.get("scale_min"), f"{label}.obstacles[{index}].scale_min", 0.01)
             scale_max = require_number(obstacle.get("scale_max"), f"{label}.obstacles[{index}].scale_max", 0.01)
             require(scale_min <= scale_max, f"{label}.obstacles[{index}]: scale_min cannot exceed scale_max")
@@ -726,9 +747,10 @@ def main() -> None:
         catalogs = load_catalogs()
         loaded = {name: load_category(name, path) for name, path in CATEGORY_DIRS.items()}
 
+        collision_profiles = validate_collision_profiles(loaded["collision_profiles"]["world"])
         validate_salvage(loaded["salvage"], catalogs)
         validate_tables(loaded["salvage_tables"], loaded["salvage"])
-        validate_landmarks(loaded["landmarks"], catalogs)
+        validate_landmarks(loaded["landmarks"], catalogs, collision_profiles)
         validate_contracts(loaded["contracts"], catalogs)
         validate_modifiers(loaded["modifiers"], catalogs)
         validate_biomes(
@@ -737,6 +759,7 @@ def main() -> None:
             loaded["landmarks"],
             loaded["modifiers"],
             catalogs,
+            collision_profiles,
         )
         validate_sectors(
             loaded["sectors"],
