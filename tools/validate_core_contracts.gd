@@ -1070,6 +1070,9 @@ func _validate_flight_screen() -> void:
 	var flight_input_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	_expect("velocity.length()" in speedometer_source, "Speedometer must report the real physical velocity magnitude.")
 	_expect("absolute_speed_limit" in speedometer_source and "max_speed" in speedometer_source, "Speedometer must distinguish cruise speed from the higher physical safety range.")
+	_expect("FlightTelemetryUnits.format_speed_kmh" in speedometer_source, "Speedometer must convert world velocity through the shared orbital telemetry scale.")
+	_expect(is_equal_approx(FlightTelemetryUnits.speed_kmh(300.0), 27000.0), "300 world units/s must display as 27,000 km/h on the orbital telemetry scale.")
+	_expect(is_equal_approx(FlightTelemetryUnits.distance_km(1000.0), 25.0), "1,000 world units must display as 25 km on the orbital telemetry scale.")
 	_expect("offset_left" not in speedometer_source and "anchor_bottom" not in speedometer_source, "Reusable speedometer must not own screen placement.")
 	_expect("_validate_speedometer_runtime_layout" in flight_input_source, "Flight must verify speedometer visibility inside the resolved HUD viewport.")
 	_expect("_input_service.is_pointer_boost_event(event)" in flight_input_source, "Flight must route desktop world clicks before GUI can consume them.")
@@ -1172,6 +1175,8 @@ func _validate_flight_screen() -> void:
 	_expect('theme_override_styles/normal = SubResource("ReturnButtonNormal")' not in flight_scene_source, "Flight action buttons must use stable Kenney theme states.")
 
 	var guide_source := FileAccess.get_file_as_string("res://src/ui/components/depot_navigation_guide.gd")
+	_expect("FlightTelemetryUnits.format_distance" in guide_source, "Depot navigation must use the same orbital telemetry scale as the speedometer.")
+	_expect("_format_distance" not in guide_source, "Depot navigation must not maintain a second independent distance conversion.")
 	_expect("get_canvas_transform()" in guide_source, "Depot guide must project the real world target through the active camera transform.")
 	_expect("NEAR_DISTANCE" in guide_source, "Depot guide must hide near the depot instead of remaining invasive.")
 	_expect("UPDATE_INTERVAL := 1.0 / 30.0" in guide_source, "Depot guide must use a bounded lightweight update cadence.")
