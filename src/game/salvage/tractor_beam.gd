@@ -115,7 +115,7 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 	_prune_candidates()
 
-	if not _is_target_valid(_target):
+	if not _is_locked_target_valid(_target):
 		_set_target(null)
 
 	if _target == null:
@@ -150,9 +150,11 @@ func _on_area_exited(area: Area2D) -> void:
 	var salvage := area as SalvageObject
 	if salvage == null:
 		return
+
+	# Scan range is only an acquisition boundary. Once the tractor has locked a
+	# target, the tether remains authoritative even if emergency ship movement
+	# temporarily carries the ship farther away than the scanner radius.
 	_candidates.erase(salvage)
-	if salvage == _target:
-		_set_target(null)
 	if _candidates.is_empty():
 		_reported_blocked = false
 
@@ -186,13 +188,14 @@ func _choose_target() -> SalvageObject:
 
 	return best
 
-func _is_target_valid(candidate: SalvageObject) -> bool:
+func _is_locked_target_valid(candidate: SalvageObject) -> bool:
+	# A locked tractor target is no longer governed by scanner overlap/range.
+	# It stays tethered until it is collected, destroyed, cargo can no longer
+	# accept it, or collection is explicitly disabled.
 	return (
 		candidate != null
 		and is_instance_valid(candidate)
 		and not candidate.is_queued_for_deletion()
-		and _candidates.has(candidate)
-		and candidate.global_position.distance_to(global_position) <= _effective_scan_range() * 1.04
 		and _cargo_hold.can_accept(candidate.definition)
 	)
 
