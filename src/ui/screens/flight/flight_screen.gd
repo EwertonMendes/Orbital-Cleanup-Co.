@@ -734,7 +734,6 @@ func _on_salvage_collected(definition, _used_units: int, _capacity: int) -> void
 	if salvage == null:
 		return
 	var is_new_discovery := _progression.register_discovery(salvage)
-	_contract_session.record_salvage(salvage)
 	flight_feedback.salvage_collected(salvage, is_new_discovery, player_ship.global_position)
 	if is_new_discovery:
 		if not _new_discovery_ids.has(String(salvage.id)):
@@ -746,16 +745,22 @@ func _on_salvage_collected(definition, _used_units: int, _capacity: int) -> void
 				"rarity": String(salvage.rarity),
 			})
 	else:
-		_show_toast(tr("FLIGHT_RECOVERED_FMT") % tr(String(salvage.display_name_key)))
+		_show_toast(tr("FLIGHT_STOWED_FMT") % tr(String(salvage.display_name_key)))
 
 func _on_cargo_collection_blocked() -> void:
 	beam_status.text = tr("FLIGHT_CARGO_NO_SPACE")
 	_show_toast(tr("FLIGHT_CARGO_NO_SPACE"))
 
-func _on_cargo_unloaded(units: int) -> void:
+func _on_cargo_unloaded(delivered_salvage: Array, units: int) -> void:
 	_show_toast(tr("FLIGHT_UNLOADED_FMT") % units)
 	flight_feedback.cargo_unloaded(units, unload_zone.global_position)
 	beam_status.text = tr("FLIGHT_BEAM_SCANNING")
+
+	if not _contract_active or delivered_salvage.is_empty():
+		return
+
+	# Recovery is confirmed at the depot, not when salvage merely enters the hold.
+	_contract_session.record_delivery(delivered_salvage)
 
 func _on_environment_state_changed(label_key: String, intensity: float) -> void:
 	environment_status.text = tr("FLIGHT_ENVIRONMENT_FMT") % tr(label_key)
