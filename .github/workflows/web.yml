@@ -124,6 +124,14 @@ jobs:
           npm install --no-save --ignore-scripts "playwright@${PLAYWRIGHT_VERSION}" >/tmp/occ-npm.log 2>&1 &
           NPM_PID=$!
 
+          # Godot's global class registry is generated during import. The core
+          # contract suite references class_name types, so a clean CI checkout
+          # must populate that registry before parsing the suite.
+          godot --headless --path . --import 2>&1 | tee /tmp/occ-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Failed to load script|ERR_FILE_CORRUPT|Error loading image:|Error importing ' /tmp/occ-import.log; then
+            exit 1
+          fi
+
           godot --headless --path . --script tools/validate_core_contracts.gd 2>&1 | tee /tmp/occ-contracts.log
           grep -q '\[QA\] CORE_CONTRACTS_OK' /tmp/occ-contracts.log
 
