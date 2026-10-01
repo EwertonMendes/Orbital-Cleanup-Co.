@@ -29,7 +29,6 @@ class_name ShipMovementTuning
 @export_range(1.4, 2.6, 0.05) var boundary_return_target_seconds := 2.0
 @export_range(6.0, 24.0, 0.1) var boundary_return_velocity_response := 14.0
 @export_range(80.0, 320.0, 5.0) var boundary_return_reentry_depth := 180.0
-@export_range(16.0, 80.0, 1.0) var boundary_return_release_radius := 32.0
 @export_range(180.0, 720.0, 5.0) var boundary_return_exit_speed := 360.0
 @export_range(4.0, 24.0, 0.1) var boundary_return_turn_response := 16.0
 
@@ -57,6 +56,5 @@ func validate() -> void:
 	assert(boundary_return_target_seconds >= 1.5 and boundary_return_target_seconds <= 2.5, "Boundary return should complete in about two seconds.")
 	assert(boundary_return_velocity_response > 0.0, "Boundary return velocity response must be positive.")
 	assert(boundary_return_reentry_depth > 0.0, "Boundary return must carry the ship a safe distance back inside the map.")
-	assert(boundary_return_release_radius > 0.0 and boundary_return_release_radius < boundary_return_reentry_depth, "Boundary return release radius must remain inside the safe re-entry depth.")
 	assert(boundary_return_exit_speed > 0.0 and boundary_return_exit_speed <= absolute_speed_limit, "Boundary return must hand control back at a normal controllable speed.")
 	assert(boundary_return_turn_response > turn_response, "Boundary auto-return must rotate the ship more decisively than normal steering.")
