@@ -285,17 +285,31 @@ func _validate_world_visual_language() -> void:
 	_expect(obstacle_packed != null, "SectorObstacle scene must load.")
 	if obstacle_packed != null:
 		var obstacle := obstacle_packed.instantiate()
+		_expect(obstacle is AnimatableBody2D, "Spinning obstacles require physics-synchronized bodies.")
 		_expect(obstacle.find_child("Marker", true, false) is SectorObstacleMarker, "Collision hazards require a semantic hazard marker.")
+		_expect(obstacle.find_child("CollisionRoot", true, false) is Node2D, "Obstacles require compound polygon collision roots.")
 		obstacle.free()
 
 	var landmark_packed := load("res://src/game/sector/sector_landmark.tscn") as PackedScene
 	_expect(landmark_packed != null, "SectorLandmark scene must load.")
 	if landmark_packed != null:
 		var landmark := landmark_packed.instantiate()
-		_expect(landmark is StaticBody2D, "Landmarks must participate in navigation as static structures.")
+		_expect(landmark is AnimatableBody2D, "Rotating landmarks require physics-synchronized navigation bodies.")
 		_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
-		_expect(landmark.find_child("CollisionShape", true, false) is CollisionShape2D, "Landmarks require generic collision geometry.")
+		_expect(landmark.find_child("CollisionRoot", true, false) is Node2D, "Landmarks require compound polygon collision roots.")
 		landmark.free()
+
+	var collision_geometry_source := FileAccess.get_file_as_string("res://src/game/sector/collision_geometry_2d.gd")
+	_expect(
+		"CollisionPolygon2D.BUILD_SOLIDS" in collision_geometry_source
+		and "build_profile" in collision_geometry_source,
+		"World collision geometry must use solid authored polygons."
+	)
+	var obstacle_source := FileAccess.get_file_as_string("res://src/game/sector/sector_obstacle.gd")
+	var landmark_source := FileAccess.get_file_as_string("res://src/game/sector/sector_landmark.gd")
+	_expect("CircleShape2D" not in obstacle_source, "Obstacle runtime must not fall back to circular collision.")
+	_expect("CollisionGeometry2D.build_profile" in obstacle_source, "Obstacle runtime must build authored polygon collision.")
+	_expect("CollisionGeometry2D.build_profile" in landmark_source, "Landmark runtime must build authored compound collision.")
 
 	for asset_path in [
 		"res://assets/original/landmarks/service_satellite.svg",
@@ -325,6 +339,10 @@ func _validate_content_runtime() -> void:
 	if scrap != null:
 		_expect(String(scrap.id) == "scrap_fragment", "Salvage JSON id must reach runtime definition.")
 		_expect(scrap.sprite != null, "Salvage JSON asset path must load.")
+
+	var service_profile := registry.get_collision_profile("service_satellite")
+	_expect(not service_profile.is_empty(), "Collision profiles must be available through ContentRegistry.")
+	_expect((service_profile.get("parts", []) as Array).size() >= 3, "Service satellite must preserve separate hull/panel collision parts.")
 
 	var scaler := DifficultyScaler.new()
 	scaler.configure(registry)
