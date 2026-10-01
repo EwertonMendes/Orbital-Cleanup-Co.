@@ -1266,6 +1266,28 @@ func _validate_flight_screen() -> void:
 			"Locked tractor targets must remain valid outside scanner overlap/range."
 		)
 
+	_expect(
+		"func set_capture_enabled" in tractor_source
+		and "_capture_enabled and _target.is_collection_ready" in tractor_source,
+		"TractorBeam must be able to suspend cargo capture without breaking the active tether."
+	)
+	_expect(
+		"_capture_enabled" in tractor_source
+		and "_target.tractor_step(" in tractor_source,
+		"TractorBeam must keep driving its locked target while capture is suspended."
+	)
+	var salvage_source := FileAccess.get_file_as_string("res://src/game/salvage/salvage_object.gd")
+	_expect(
+		"advance_collection: bool = true" in salvage_source
+		and "if advance_collection:" in salvage_source,
+		"SalvageObject must separate physical tether motion from collection-progress advancement."
+	)
+	_expect(
+		"tractor_beam.set_capture_enabled(false)" in ship_source
+		and "tractor_beam.set_capture_enabled(true)" in ship_source,
+		"Boundary auto-return must suspend capture until player control is restored."
+	)
+
 	var depot_source := FileAccess.get_file_as_string("res://src/game/salvage/unload_zone.gd")
 	_expect("set_cargo_state" in depot_source, "Depot world beacon must react to full cargo.")
 	_expect("1.0 / 20.0" in depot_source, "Animated depot beacon must throttle redraws for Web performance.")
