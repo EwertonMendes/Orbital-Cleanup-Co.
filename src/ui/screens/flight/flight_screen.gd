@@ -21,7 +21,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var player_ship: PlayerShip = %PlayerShip
 @onready var flight_feedback: FlightFeedback = %FlightFeedback
 @onready var environment_runtime: EnvironmentRuntime = %EnvironmentRuntime
-@onready var operational_perimeter: OperationalPerimeter = %OperationalPerimeter
+@onready var operational_zone_warning: OperationalZoneWarning = $HUD/HudRoot/OperationalZoneWarning
 @onready var world_visual_runtime: WorldVisualRuntime = %WorldVisualRuntime
 @onready var environmental_vfx: EnvironmentalVfxLayer = %EnvironmentalVfx
 @onready var space_environment: SpaceEnvironmentLayer = %SpaceEnvironment
@@ -78,7 +78,7 @@ func configure(context: Dictionary) -> void:
 	var backdrop := get_node("World/AmbientSpace") as SectorBackdrop
 	var ambient_motion := get_node("World/AmbientMotion") as AmbientOrbitLayer
 	var environment := get_node("World/EnvironmentRuntime") as EnvironmentRuntime
-	var perimeter := get_node("World/OperationalPerimeter") as OperationalPerimeter
+	var zone_warning := get_node("HUD/HudRoot/OperationalZoneWarning") as OperationalZoneWarning
 	var visual_runtime := get_node("WorldVisualRuntime") as WorldVisualRuntime
 	var environment_vfx := get_node("World/EnvironmentalVfx") as EnvironmentalVfxLayer
 	var space_environment_layer := get_node("World/SpaceEnvironment") as SpaceEnvironmentLayer
@@ -94,7 +94,7 @@ func configure(context: Dictionary) -> void:
 	assert(backdrop != null, "FlightScreen requires SectorBackdrop.")
 	assert(ambient_motion != null, "FlightScreen requires AmbientOrbitLayer.")
 	assert(environment != null, "FlightScreen requires EnvironmentRuntime.")
-	assert(perimeter != null, "FlightScreen requires OperationalPerimeter.")
+	assert(zone_warning != null, "FlightScreen requires OperationalZoneWarning.")
 	assert(visual_runtime != null, "FlightScreen requires WorldVisualRuntime.")
 	assert(environment_vfx != null, "FlightScreen requires EnvironmentalVfxLayer.")
 	assert(space_environment_layer != null, "FlightScreen requires SpaceEnvironmentLayer.")
@@ -163,15 +163,8 @@ func configure(context: Dictionary) -> void:
 		_progression.get_ship_modifiers(),
 		_progression.get_ship_cosmetics()
 	)
-	assert(ship.tuning != null, "PlayerShip tuning must exist before perimeter configuration.")
-	perimeter.configure(
-		runtime.get_play_bounds(),
-		biome_palette,
-		visual_profile,
-		ship,
-		ship.tuning.boundary_soft_margin,
-		ship.tuning.boundary_hard_padding
-	)
+	assert(ship.tuning != null, "PlayerShip tuning must exist before operational-zone feedback binding.")
+	zone_warning.bind(ship)
 	touch.configure(_input_service, ship)
 	speed.configure(ship)
 	environment.bind(ship, runtime)
@@ -349,7 +342,7 @@ func _validate_contracts() -> void:
 	assert(player_ship != null, "FlightScreen requires PlayerShip.")
 	assert(flight_feedback != null, "FlightScreen requires FlightFeedback.")
 	assert(environment_runtime != null and environment_status != null, "FlightScreen requires biome environment feedback.")
-	assert(operational_perimeter != null, "FlightScreen requires world-space operational perimeter feedback.")
+	assert(operational_zone_warning != null, "FlightScreen requires operational-zone HUD feedback.")
 	assert(depot_navigation != null and depot_nav_label != null, "FlightScreen requires contextual depot navigation.")
 	assert(mission_card != null and cargo_card != null and biome_thumbnail != null, "FlightScreen requires compact flight cards and biome thumbnail.")
 	assert(operations_button != null and operations_overlay_host != null, "FlightScreen requires floating operations access.")
