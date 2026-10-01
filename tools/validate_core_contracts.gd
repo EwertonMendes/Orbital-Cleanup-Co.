@@ -298,7 +298,7 @@ func _validate_world_visual_language() -> void:
 				_expect(obstacle is AnimatableBody2D, "Spinning obstacles require physics-synchronized bodies.")
 				_expect(obstacle.find_child("Marker", true, false) is SectorObstacleMarker, "Collision hazards require a semantic hazard marker.")
 				_expect(obstacle.find_child("CollisionRoot", true, false) == null, "Collision polygons must not be nested under an intermediate Node2D.")
-				_expect(_direct_collision_polygon_count(obstacle) > 0, "Obstacle collision polygons must be direct children of the physics body.")
+				_expect(CollisionGeometry2D.generated_part_count(obstacle) > 0, "Obstacle alpha collision must register convex shapes on the physics body.")
 				_expect(_physics_shape_count(obstacle) > 0, "Obstacle body must register polygon shapes with Godot physics.")
 				obstacle.queue_free()
 			else:
@@ -316,7 +316,7 @@ func _validate_world_visual_language() -> void:
 			_expect(landmark is AnimatableBody2D, "Rotating landmarks require physics-synchronized navigation bodies.")
 			_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
 			_expect(landmark.find_child("CollisionRoot", true, false) == null, "Landmark collision polygons must be owned directly by the physics body.")
-			_expect(_direct_collision_polygon_count(landmark) > 0, "Landmark alpha silhouette must register collision polygons directly on the body.")
+			_expect(CollisionGeometry2D.generated_part_count(landmark) > 0, "Landmark alpha silhouette must register convex shapes on the physics body.")
 			_expect(_physics_shape_count(landmark) > 0, "Landmark body must register alpha-derived polygon shapes with Godot physics.")
 			var service_alpha_qa := _alpha_collision_sample_mismatches(landmark, landmark.sprite)
 			_expect(
@@ -333,13 +333,16 @@ func _validate_world_visual_language() -> void:
 
 	var collision_geometry_source := FileAccess.get_file_as_string("res://src/game/sector/collision_geometry_2d.gd")
 	_expect(
-		"CollisionPolygon2D.BUILD_SOLIDS" in collision_geometry_source
+		"ConvexPolygonShape2D.new()" in collision_geometry_source
 		and "BitMap.new()" in collision_geometry_source
 		and "create_from_image_alpha" in collision_geometry_source
-		and "opaque_to_polygons" in collision_geometry_source
-		and "_source_polygon_cache" in collision_geometry_source
-		and "body.add_child(collision)" in collision_geometry_source,
-		"World collision geometry must be traced from texture alpha and attached directly to CollisionObject2D."
+		and "_source_rect_cache" in collision_geometry_source
+		and "shape_owner_add_shape" in collision_geometry_source,
+		"World collision geometry must partition texture alpha into solid convex physics shapes."
+	)
+	_expect(
+		"opaque_to_polygons" not in collision_geometry_source,
+		"World collision cannot rely on a filled outer contour that erases transparent holes."
 	)
 	var obstacle_source := FileAccess.get_file_as_string("res://src/game/sector/sector_obstacle.gd")
 	var landmark_source := FileAccess.get_file_as_string("res://src/game/sector/sector_landmark.gd")
@@ -1054,7 +1057,7 @@ func _validate_player_ship() -> void:
 	var qa_input := InputService.new()
 	ship.configure(qa_input)
 	root.add_child(ship)
-	_expect(_direct_collision_polygon_count(ship) > 0, "PlayerShip must build alpha-derived hull collision at runtime.")
+	_expect(CollisionGeometry2D.generated_part_count(ship) > 0, "PlayerShip must build alpha-derived hull collision at runtime.")
 	_expect(_physics_shape_count(ship) > 0, "PlayerShip alpha hull must register real physics shapes.")
 	_expect(ship.find_child("CargoHold", true, false) is CargoHold, "PlayerShip requires CargoHold.")
 	_expect(ship.find_child("TractorBeam", true, false) is TractorBeam, "PlayerShip requires TractorBeam.")
@@ -1583,10 +1586,16 @@ func _alpha_collision_sample_mismatches(body: CollisionObject2D, sprite: Sprite2
 	var origin := texture_size * 0.5 if sprite.centered else Vector2.ZERO
 	var step_x := maxi(int(texture_size.x / 28.0), 6)
 	var step_y := maxi(int(texture_size.y / 28.0), 6)
-	var polygons: Array[CollisionPolygon2D] = []
-	for child in body.get_children():
-		if child is CollisionPolygon2D:
-			polygons.append(child as CollisionPolygon2D)
+	var convex_shapes: Array[Dictionary] = []
+	for owner_id in body.get_shape_owners():
+		var owner_transform := body.shape_owner_get_transform(owner_id)
+		for shape_index in range(body.shape_owner_get_shape_count(owner_id)):
+			var shape := body.shape_owner_get_shape(owner_id, shape_index)
+			if shape is ConvexPolygonShape2D:
+				convex_shapes.append({
+					"shape": shape,
+					"transform": owner_transform,
+				})
 
 	for y in range(step_y / 2, image.get_height(), step_y):
 		for x in range(step_x / 2, image.get_width(), step_x):
@@ -1595,9 +1604,11 @@ func _alpha_collision_sample_mismatches(body: CollisionObject2D, sprite: Sprite2
 				continue
 			var local := (Vector2(x, y) - origin + sprite.offset) * sprite.scale
 			var covered := false
-			for collision in polygons:
-				var point := collision.transform.affine_inverse() * local
-				if Geometry2D.is_point_in_polygon(point, collision.polygon):
+			for shape_entry in convex_shapes:
+				var shape := shape_entry["shape"] as ConvexPolygonShape2D
+				var owner_transform := shape_entry["transform"] as Transform2D
+				var point := owner_transform.affine_inverse() * local
+				if Geometry2D.is_point_in_polygon(point, shape.points):
 					covered = true
 					break
 
@@ -1624,13 +1635,6 @@ func _alpha_collision_sample_mismatches(body: CollisionObject2D, sprite: Sprite2
 					])
 				result["visible_uncovered"] = mismatch_count + 1
 	return result
-
-func _direct_collision_polygon_count(body: CollisionObject2D) -> int:
-	var count := 0
-	for child in body.get_children():
-		if child is CollisionPolygon2D:
-			count += 1
-	return count
 
 func _physics_shape_count(body: CollisionObject2D) -> int:
 	var count := 0
