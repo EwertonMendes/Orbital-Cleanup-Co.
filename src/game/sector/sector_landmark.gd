@@ -34,7 +34,7 @@ func _ready() -> void:
 	sprite.scale = Vector2.ONE * visual_scale * texture_scale
 	sprite.modulate = Color(1.0, 1.0, 1.0, 0.96)
 
-	var collision_radius := CollisionGeometry2D.build_from_sprite(
+	var collision_radius := CollisionGeometry2D.build_static_boundary(
 		self,
 		sprite
 	)
