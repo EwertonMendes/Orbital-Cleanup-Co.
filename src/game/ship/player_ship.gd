@@ -46,6 +46,8 @@ var _boundary_warning_intensity := 0.0
 var _boundary_warning_direction := Vector2.ZERO
 var _boundary_warning_elapsed := 0.0
 var _boundary_return_direction := Vector2.ZERO
+var _boundary_return_target := Vector2.ZERO
+var _boundary_return_elapsed := 0.0
 var _boundary_return_active := false
 
 func configure(
@@ -135,6 +137,8 @@ func set_flight_controls_enabled(enabled: bool) -> void:
 		_smoothed_intent = Vector2.ZERO
 		_boundary_return_active = false
 		_boundary_return_direction = Vector2.ZERO
+		_boundary_return_target = Vector2.ZERO
+		_boundary_return_elapsed = 0.0
 		_reset_operational_warning()
 		_input_service.clear_touch_navigation()
 		_cancel_boost()
@@ -238,7 +242,7 @@ func _physics_process(delta: float) -> void:
 
 	var active_speed_limit := tuning.absolute_speed_limit
 	if _boundary_return_active:
-		active_speed_limit = maxf(active_speed_limit, tuning.boundary_return_speed)
+		active_speed_limit = maxf(active_speed_limit, tuning.boundary_return_max_speed)
 	velocity = ShipDynamics.integrate_velocity(
 		velocity,
 		total_acceleration,
@@ -246,6 +250,8 @@ func _physics_process(delta: float) -> void:
 		active_speed_limit,
 		delta
 	)
+	if _boundary_return_active:
+		_update_boundary_return_velocity(delta)
 	var turn_amount := _update_facing(motion_intent, delta)
 	_move_with_collisions(delta)
 	_update_operational_boundary(delta)
@@ -330,54 +336,78 @@ func _update_operational_boundary(delta: float) -> void:
 		_apply_boundary_repel(-outward_direction)
 
 func _apply_boundary_repel(return_direction: Vector2) -> void:
-	var inward := return_direction.normalized()
-	if inward == Vector2.ZERO:
+	var fallback_inward := return_direction.normalized()
+	if fallback_inward == Vector2.ZERO:
 		return
 
-	var outward_speed := maxf(-velocity.dot(inward), 0.0)
-	var tangential_velocity := velocity + inward * outward_speed
-	var return_speed := maxf(
+	_boundary_return_target = _boundary_safe_reentry_target(global_position)
+	var target_delta := _boundary_return_target - global_position
+	var inward := target_delta.normalized() if target_delta.length_squared() > 0.001 else fallback_inward
+	var return_speed := clampf(
+		target_delta.length() / maxf(tuning.boundary_return_target_seconds, 0.1),
 		tuning.boundary_return_speed,
-		outward_speed * tuning.boundary_return_velocity_scale
+		tuning.boundary_return_max_speed
 	)
-	velocity = (
-		tangential_velocity
-		+ inward * return_speed
-	).limit_length(maxf(tuning.absolute_speed_limit, tuning.boundary_return_speed))
 	_boundary_return_direction = inward
+	_boundary_return_elapsed = 0.0
 	_boundary_return_active = true
+	velocity = inward * return_speed
 	_reset_operational_warning()
 	_cancel_boost()
 	ship_camera.add_bump_shake(0.18)
 	operational_boundary_repelled.emit(inward)
 
-func _has_completed_boundary_return() -> bool:
-	if not _boundary_return_active or _boundary_return_direction == Vector2.ZERO:
-		return true
+func _update_boundary_return_velocity(delta: float) -> void:
+	if not _boundary_return_active:
+		return
 
+	var target_delta := _boundary_return_target - global_position
+	var distance := target_delta.length()
+	if distance <= 0.001:
+		return
+
+	_boundary_return_elapsed += maxf(delta, 0.0)
+	_boundary_return_direction = target_delta / distance
+	var remaining_time := maxf(
+		tuning.boundary_return_target_seconds - _boundary_return_elapsed,
+		0.22
+	)
+	var desired_speed := clampf(
+		distance / remaining_time,
+		tuning.boundary_return_speed,
+		tuning.boundary_return_max_speed
+	)
+	var desired_velocity := _boundary_return_direction * desired_speed
+	var response := 1.0 - exp(-tuning.boundary_return_velocity_response * maxf(delta, 0.0))
+	velocity = velocity.lerp(desired_velocity, response)
+
+func _boundary_safe_reentry_target(origin: Vector2) -> Vector2:
 	var inset := minf(
 		tuning.boundary_return_reentry_depth,
 		minf(_world_bounds.size.x, _world_bounds.size.y) * 0.22
 	)
-	var left_safe := _world_bounds.position.x + inset
-	var right_safe := _world_bounds.end.x - inset
-	var top_safe := _world_bounds.position.y + inset
-	var bottom_safe := _world_bounds.end.y - inset
+	return Vector2(
+		clampf(origin.x, _world_bounds.position.x + inset, _world_bounds.end.x - inset),
+		clampf(origin.y, _world_bounds.position.y + inset, _world_bounds.end.y - inset)
+	)
 
-	if _boundary_return_direction.x > 0.001 and global_position.x < left_safe:
-		return false
-	if _boundary_return_direction.x < -0.001 and global_position.x > right_safe:
-		return false
-	if _boundary_return_direction.y > 0.001 and global_position.y < top_safe:
-		return false
-	if _boundary_return_direction.y < -0.001 and global_position.y > bottom_safe:
-		return false
-	return true
+func _has_completed_boundary_return() -> bool:
+	if not _boundary_return_active:
+		return true
+	return global_position.distance_to(_boundary_return_target) <= tuning.boundary_return_release_radius
 
 func _finish_boundary_return() -> void:
+	var release_direction := _boundary_return_direction
 	_boundary_return_active = false
 	_boundary_return_direction = Vector2.ZERO
+	_boundary_return_target = Vector2.ZERO
+	_boundary_return_elapsed = 0.0
 	_smoothed_intent = Vector2.ZERO
+	if release_direction.length_squared() > 0.001:
+		velocity = release_direction.normalized() * minf(
+			tuning.boundary_return_exit_speed,
+			tuning.absolute_speed_limit
+		)
 	_reset_operational_warning()
 
 func _reset_operational_warning() -> void:
