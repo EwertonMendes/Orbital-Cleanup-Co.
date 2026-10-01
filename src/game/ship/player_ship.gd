@@ -46,7 +46,7 @@ var _boundary_warning_intensity := 0.0
 var _boundary_warning_direction := Vector2.ZERO
 var _boundary_warning_elapsed := 0.0
 var _boundary_return_direction := Vector2.ZERO
-var _boundary_return_remaining := 0.0
+var _boundary_return_active := false
 
 func configure(
 	input_service: InputService,
@@ -133,7 +133,7 @@ func set_flight_controls_enabled(enabled: bool) -> void:
 	if not enabled:
 		velocity = Vector2.ZERO
 		_smoothed_intent = Vector2.ZERO
-		_boundary_return_remaining = 0.0
+		_boundary_return_active = false
 		_boundary_return_direction = Vector2.ZERO
 		_reset_operational_warning()
 		_input_service.clear_touch_navigation()
@@ -184,7 +184,6 @@ func _physics_process(delta: float) -> void:
 		return
 
 	_bump_feedback_cooldown = maxf(_bump_feedback_cooldown - delta, 0.0)
-	_boundary_return_remaining = maxf(_boundary_return_remaining - delta, 0.0)
 
 	var navigation_intent := _input_service.get_navigation_vector()
 	var raw_intent := navigation_intent
@@ -205,7 +204,7 @@ func _physics_process(delta: float) -> void:
 
 	var intent := _smoothed_intent.limit_length(1.0)
 	var motion_intent := intent
-	if _boundary_return_remaining > 0.0 and _boundary_return_direction.length_squared() > 0.001:
+	if _boundary_return_active and _boundary_return_direction.length_squared() > 0.001:
 		motion_intent = _boundary_return_direction
 
 	if _boost_remaining > 0.0:
@@ -237,11 +236,14 @@ func _physics_process(delta: float) -> void:
 			effective_mass
 		)
 
+	var active_speed_limit := tuning.absolute_speed_limit
+	if _boundary_return_active:
+		active_speed_limit = maxf(active_speed_limit, tuning.boundary_return_speed)
 	velocity = ShipDynamics.integrate_velocity(
 		velocity,
 		total_acceleration,
 		_environment_linear_drag,
-		tuning.absolute_speed_limit,
+		active_speed_limit,
 		delta
 	)
 	var turn_amount := _update_facing(motion_intent, delta)
@@ -268,7 +270,7 @@ func _physics_process(delta: float) -> void:
 func _update_facing(intent: Vector2, delta: float) -> float:
 	var facing := Vector2.ZERO
 	var response := tuning.turn_response
-	if _boundary_return_remaining > 0.0 and _boundary_return_direction.length_squared() > 0.001:
+	if _boundary_return_active and _boundary_return_direction.length_squared() > 0.001:
 		facing = _boundary_return_direction
 		response = tuning.boundary_return_turn_response
 	elif intent.length_squared() > 0.001:
@@ -290,8 +292,10 @@ func _update_operational_boundary(delta: float) -> void:
 		_reset_operational_warning()
 		return
 
-	if _boundary_return_remaining > 0.0:
+	if _boundary_return_active:
 		_reset_operational_warning()
+		if _has_completed_boundary_return():
+			_finish_boundary_return()
 		return
 
 	var closest_inside_point := Vector2(
@@ -339,13 +343,42 @@ func _apply_boundary_repel(return_direction: Vector2) -> void:
 	velocity = (
 		tangential_velocity
 		+ inward * return_speed
-	).limit_length(tuning.absolute_speed_limit)
+	).limit_length(maxf(tuning.absolute_speed_limit, tuning.boundary_return_speed))
 	_boundary_return_direction = inward
-	_boundary_return_remaining = tuning.boundary_return_control_seconds
+	_boundary_return_active = true
 	_reset_operational_warning()
 	_cancel_boost()
 	ship_camera.add_bump_shake(0.18)
 	operational_boundary_repelled.emit(inward)
+
+func _has_completed_boundary_return() -> bool:
+	if not _boundary_return_active or _boundary_return_direction == Vector2.ZERO:
+		return true
+
+	var inset := minf(
+		tuning.boundary_return_reentry_depth,
+		minf(_world_bounds.size.x, _world_bounds.size.y) * 0.22
+	)
+	var left_safe := _world_bounds.position.x + inset
+	var right_safe := _world_bounds.end.x - inset
+	var top_safe := _world_bounds.position.y + inset
+	var bottom_safe := _world_bounds.end.y - inset
+
+	if _boundary_return_direction.x > 0.001 and global_position.x < left_safe:
+		return false
+	if _boundary_return_direction.x < -0.001 and global_position.x > right_safe:
+		return false
+	if _boundary_return_direction.y > 0.001 and global_position.y < top_safe:
+		return false
+	if _boundary_return_direction.y < -0.001 and global_position.y > bottom_safe:
+		return false
+	return true
+
+func _finish_boundary_return() -> void:
+	_boundary_return_active = false
+	_boundary_return_direction = Vector2.ZERO
+	_smoothed_intent = Vector2.ZERO
+	_reset_operational_warning()
 
 func _reset_operational_warning() -> void:
 	_boundary_warning_elapsed = 0.0
@@ -439,7 +472,7 @@ func can_boost() -> bool:
 	return (
 		_controls_enabled
 		and not _travel_mode
-		and _boundary_return_remaining <= 0.001
+		and not _boundary_return_active
 		and _boost_charges > 0
 		and _boost_remaining <= 0.001
 	)
