@@ -98,6 +98,10 @@ func _ready() -> void:
 			String((_pending_cosmetics["beam"] as Dictionary).get("id", "")),
 		])
 
+	var hull_collision_radius := CollisionGeometry2D.build_from_sprite(self, visuals.ship_sprite)
+	assert(hull_collision_radius > 0.0, "PlayerShip hull alpha must generate collision geometry.")
+	_sync_hull_collision_rotation()
+
 	cargo_hold.cargo_changed.connect(_on_cargo_changed)
 	tractor_beam.target_changed.connect(_on_tractor_target_changed)
 	tractor_beam.progress_changed.connect(_on_tractor_progress_changed)
@@ -152,6 +156,7 @@ func begin_travel(direction: Vector2) -> void:
 	_travel_direction = direction.normalized() if direction.length_squared() > 0.001 else Vector2.RIGHT
 	_travel_visual_intensity = 0.12
 	_facing_rotation = _travel_direction.angle() + PI * 0.5
+	_sync_hull_collision_rotation()
 	set_flight_controls_enabled(false)
 	set_collection_enabled(false)
 	ship_camera.set_motion_velocity(Vector2.ZERO)
@@ -253,6 +258,7 @@ func _physics_process(delta: float) -> void:
 	if _boundary_return_active:
 		_update_boundary_return_velocity(delta)
 	var turn_amount := _update_facing(motion_intent, delta)
+	_sync_hull_collision_rotation()
 	_move_with_collisions(delta)
 	_update_operational_boundary(delta)
 	_enforce_hard_world_bounds()
@@ -272,6 +278,11 @@ func _physics_process(delta: float) -> void:
 	if not _has_started_moving and speed_ratio > 0.08:
 		_has_started_moving = true
 		movement_started.emit()
+
+func _sync_hull_collision_rotation() -> void:
+	if not is_node_ready():
+		return
+	CollisionGeometry2D.set_generated_rotation(self, _facing_rotation)
 
 func _update_facing(intent: Vector2, delta: float) -> float:
 	var facing := Vector2.ZERO
