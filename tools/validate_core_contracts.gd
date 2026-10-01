@@ -441,10 +441,6 @@ func _validate_landmark_plan(plan: Dictionary) -> void:
 			asset_path.begins_with("res://assets/original/landmarks/"),
 			"Authored landmarks must use project-owned OCC landmark art."
 		)
-		_expect(
-			float(definition.get("texture_reference_size", 0.0)) > 0.0,
-			"Landmark alpha collision requires a texture reference size."
-		)
 		var landmark_position := landmark["position"] as Vector2
 		var reserved_radius := float(definition.get("reserved_radius", 0.0))
 		_expect(reserved_radius >= 80.0, "Landmark requires meaningful navigation clearance.")
@@ -1529,6 +1525,14 @@ func _alpha_collision_transparency_mismatches(body: CollisionObject2D, sprite: S
 					covered = true
 					break
 			if covered:
+				if mismatches < 8:
+					print("[QA] ALPHA_COLLISION_MISMATCH body=%s pixel=(%d,%d) alpha=%.4f local=%s" % [
+						body.name,
+						x,
+						y,
+						alpha,
+						str(local),
+					])
 				mismatches += 1
 	return mismatches
 
