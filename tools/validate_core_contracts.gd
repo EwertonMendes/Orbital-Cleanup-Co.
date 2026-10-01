@@ -1272,6 +1272,10 @@ func _validate_flight_screen() -> void:
 		"TractorBeam must be able to suspend cargo capture without breaking the active tether."
 	)
 	_expect(
+		"_capture_enabled = true" in tractor_source.split("func set_interaction_enabled", false, 1)[1].split("func set_capture_enabled", false, 1)[0],
+		"Disabling tractor interaction must clear any temporary boundary capture suspension."
+	)
+	_expect(
 		"_capture_enabled" in tractor_source
 		and "_target.tractor_step(" in tractor_source,
 		"TractorBeam must keep driving its locked target while capture is suspended."
