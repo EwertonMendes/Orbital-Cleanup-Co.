@@ -281,35 +281,61 @@ func _validate_world_visual_language() -> void:
 		_expect("_apply_motion" in salvage_source and "_effect_shader_mode" in salvage_source, "Salvage runtime must compose shared motion/effect profiles without per-item scenes.")
 		salvage.free()
 
+	var registry := ContentRegistry.new()
+
 	var obstacle_packed := load("res://src/game/sector/sector_obstacle.tscn") as PackedScene
 	_expect(obstacle_packed != null, "SectorObstacle scene must load.")
 	if obstacle_packed != null:
-		var obstacle := obstacle_packed.instantiate()
-		_expect(obstacle is AnimatableBody2D, "Spinning obstacles require physics-synchronized bodies.")
-		_expect(obstacle.find_child("Marker", true, false) is SectorObstacleMarker, "Collision hazards require a semantic hazard marker.")
-		_expect(obstacle.find_child("CollisionRoot", true, false) is Node2D, "Obstacles require compound polygon collision roots.")
-		obstacle.free()
+		var obstacle := obstacle_packed.instantiate() as SectorObstacle
+		_expect(obstacle != null, "SectorObstacle scene must instantiate the typed runtime.")
+		if obstacle != null:
+			var earth_biome := registry.get_biome("earth_orbit")
+			var obstacle_defs := earth_biome.get("obstacles", []) as Array
+			_expect(not obstacle_defs.is_empty(), "Earth Orbit requires at least one obstacle definition for collision QA.")
+			if not obstacle_defs.is_empty():
+				obstacle.configure(obstacle_defs[0] as Dictionary, 1.0)
+				root.add_child(obstacle)
+				_expect(obstacle is AnimatableBody2D, "Spinning obstacles require physics-synchronized bodies.")
+				_expect(obstacle.find_child("Marker", true, false) is SectorObstacleMarker, "Collision hazards require a semantic hazard marker.")
+				_expect(obstacle.find_child("CollisionRoot", true, false) == null, "Collision polygons must not be nested under an intermediate Node2D.")
+				_expect(_direct_collision_polygon_count(obstacle) > 0, "Obstacle collision polygons must be direct children of the physics body.")
+				_expect(_physics_shape_count(obstacle) > 0, "Obstacle body must register polygon shapes with Godot physics.")
+				obstacle.queue_free()
+			else:
+				obstacle.free()
 
 	var landmark_packed := load("res://src/game/sector/sector_landmark.tscn") as PackedScene
 	_expect(landmark_packed != null, "SectorLandmark scene must load.")
 	if landmark_packed != null:
-		var landmark := landmark_packed.instantiate()
-		_expect(landmark is AnimatableBody2D, "Rotating landmarks require physics-synchronized navigation bodies.")
-		_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
-		_expect(landmark.find_child("CollisionRoot", true, false) is Node2D, "Landmarks require compound polygon collision roots.")
-		landmark.free()
+		var landmark := landmark_packed.instantiate() as SectorLandmark
+		_expect(landmark != null, "SectorLandmark scene must instantiate the typed runtime.")
+		if landmark != null:
+			var landmark_definition := registry.get_landmark("service_satellite")
+			var service_profile := registry.get_collision_profile("service_satellite")
+			landmark.configure(landmark_definition)
+			root.add_child(landmark)
+			_expect(landmark is AnimatableBody2D, "Rotating landmarks require physics-synchronized navigation bodies.")
+			_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
+			_expect(landmark.find_child("CollisionRoot", true, false) == null, "Landmark collision polygons must be owned directly by the physics body.")
+			_expect(
+				_direct_collision_polygon_count(landmark) == (service_profile.get("parts", []) as Array).size(),
+				"Compound landmark collision must register every authored polygon part directly on the body."
+			)
+			_expect(_physics_shape_count(landmark) > 0, "Landmark body must register polygon shapes with Godot physics.")
+			landmark.queue_free()
 
 	var collision_geometry_source := FileAccess.get_file_as_string("res://src/game/sector/collision_geometry_2d.gd")
 	_expect(
 		"CollisionPolygon2D.BUILD_SOLIDS" in collision_geometry_source
+		and "body.add_child(collision)" in collision_geometry_source
 		and "build_profile" in collision_geometry_source,
-		"World collision geometry must use solid authored polygons."
+		"World collision geometry must use solid polygons attached directly to CollisionObject2D."
 	)
 	var obstacle_source := FileAccess.get_file_as_string("res://src/game/sector/sector_obstacle.gd")
 	var landmark_source := FileAccess.get_file_as_string("res://src/game/sector/sector_landmark.gd")
 	_expect("CircleShape2D" not in obstacle_source, "Obstacle runtime must not fall back to circular collision.")
-	_expect("CollisionGeometry2D.build_profile" in obstacle_source, "Obstacle runtime must build authored polygon collision.")
-	_expect("CollisionGeometry2D.build_profile" in landmark_source, "Landmark runtime must build authored compound collision.")
+	_expect("CollisionGeometry2D.build_profile" in obstacle_source and "\t\tself," in obstacle_source, "Obstacle runtime must build collision on its physics body.")
+	_expect("CollisionGeometry2D.build_profile" in landmark_source and "\t\tself," in landmark_source, "Landmark runtime must build compound collision on its physics body.")
 
 	for asset_path in [
 		"res://assets/original/landmarks/service_satellite.svg",
@@ -1453,6 +1479,19 @@ func _validate_polish_systems() -> void:
 
 func _validate_render_quality() -> void:
 	_expect(bool(ProjectSettings.get_setting("physics/common/physics_interpolation", false)), "Physics interpolation must remain enabled for smooth Web movement.")
+
+func _direct_collision_polygon_count(body: CollisionObject2D) -> int:
+	var count := 0
+	for child in body.get_children():
+		if child is CollisionPolygon2D:
+			count += 1
+	return count
+
+func _physics_shape_count(body: CollisionObject2D) -> int:
+	var count := 0
+	for owner_id in body.get_shape_owners():
+		count += body.shape_owner_get_shape_count(owner_id)
+	return count
 
 func _expect(condition: bool, message: String) -> void:
 	if condition:
