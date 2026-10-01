@@ -113,6 +113,19 @@ func _validate_responsive_ui() -> void:
 	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
 	var debrief_source := FileAccess.get_file_as_string("res://src/ui/screens/debrief/contract_debrief_screen.gd")
 	var touch_source := FileAccess.get_file_as_string("res://src/ui/components/touch_flight_controls.gd")
+	var collected_handler_start := flight_source.find("func _on_salvage_collected")
+	var unloaded_handler_start := flight_source.find("func _on_cargo_unloaded")
+	_expect(collected_handler_start >= 0 and unloaded_handler_start > collected_handler_start, "Flight must expose collection and depot-delivery handlers.")
+	if collected_handler_start >= 0 and unloaded_handler_start > collected_handler_start:
+		var collected_handler_source := flight_source.substr(
+			collected_handler_start,
+			unloaded_handler_start - collected_handler_start
+		)
+		_expect("record_delivery" not in collected_handler_source, "Collecting salvage into the hold must not advance contract recovery.")
+	_expect(
+		"_contract_session.record_delivery(delivered_salvage)" in flight_source,
+		"Depot unloading must be the point that confirms contract recovery."
+	)
 	_expect("ResponsiveUiProfile.current()" in flight_source, "Flight must consume the shared responsive UI profile.")
 	_expect("ResponsiveUiProfile.current()" in operations_source, "Operations must consume the shared responsive UI profile.")
 	_expect("available_width if phone" in operations_source, "Phone Operations must use the available viewport instead of the desktop console width cap.")
