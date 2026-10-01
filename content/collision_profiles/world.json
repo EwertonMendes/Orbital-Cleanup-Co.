@@ -2,7 +2,7 @@
   "id": "world",
   "profiles": {
     "earth_meteorite_01": {
-      "bounds_radius": 0.57,
+      "bounds_radius": 0.577,
       "parts": [
         [
           [
@@ -57,7 +57,7 @@
       ]
     },
     "earth_meteorite_02": {
-      "bounds_radius": 0.54,
+      "bounds_radius": 0.477,
       "parts": [
         [
           [
@@ -104,7 +104,7 @@
       ]
     },
     "earth_meteorite_03": {
-      "bounds_radius": 0.54,
+      "bounds_radius": 0.491,
       "parts": [
         [
           [
@@ -159,7 +159,7 @@
       ]
     },
     "earth_meteorite_04": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.497,
       "parts": [
         [
           [
@@ -206,7 +206,7 @@
       ]
     },
     "earth_meteorite_05": {
-      "bounds_radius": 0.58,
+      "bounds_radius": 0.573,
       "parts": [
         [
           [
@@ -253,7 +253,7 @@
       ]
     },
     "lunar_boulder_01": {
-      "bounds_radius": 0.57,
+      "bounds_radius": 0.498,
       "parts": [
         [
           [
@@ -304,7 +304,7 @@
       ]
     },
     "lunar_boulder_02": {
-      "bounds_radius": 0.52,
+      "bounds_radius": 0.458,
       "parts": [
         [
           [
@@ -351,7 +351,7 @@
       ]
     },
     "lunar_boulder_03": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.46,
       "parts": [
         [
           [
@@ -402,7 +402,7 @@
       ]
     },
     "lunar_boulder_04": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.499,
       "parts": [
         [
           [
@@ -453,7 +453,7 @@
       ]
     },
     "lunar_boulder_05": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.482,
       "parts": [
         [
           [
@@ -504,7 +504,7 @@
       ]
     },
     "mars_rock_01": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.493,
       "parts": [
         [
           [
@@ -551,7 +551,7 @@
       ]
     },
     "mars_rock_02": {
-      "bounds_radius": 0.53,
+      "bounds_radius": 0.455,
       "parts": [
         [
           [
@@ -598,7 +598,7 @@
       ]
     },
     "mars_rock_03": {
-      "bounds_radius": 0.54,
+      "bounds_radius": 0.481,
       "parts": [
         [
           [
@@ -649,7 +649,7 @@
       ]
     },
     "mars_rock_04": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.484,
       "parts": [
         [
           [
@@ -696,7 +696,7 @@
       ]
     },
     "mars_rock_05": {
-      "bounds_radius": 0.58,
+      "bounds_radius": 0.612,
       "parts": [
         [
           [
@@ -751,7 +751,7 @@
       ]
     },
     "nebula_fragment_01": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.503,
       "parts": [
         [
           [
@@ -798,7 +798,7 @@
       ]
     },
     "nebula_fragment_02": {
-      "bounds_radius": 0.52,
+      "bounds_radius": 0.457,
       "parts": [
         [
           [
@@ -845,7 +845,7 @@
       ]
     },
     "nebula_fragment_03": {
-      "bounds_radius": 0.57,
+      "bounds_radius": 0.487,
       "parts": [
         [
           [
@@ -892,7 +892,7 @@
       ]
     },
     "nebula_fragment_04": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.489,
       "parts": [
         [
           [
@@ -939,7 +939,7 @@
       ]
     },
     "nebula_fragment_05": {
-      "bounds_radius": 0.6,
+      "bounds_radius": 0.626,
       "parts": [
         [
           [
@@ -986,7 +986,7 @@
       ]
     },
     "cargo_waystation": {
-      "bounds_radius": 0.69,
+      "bounds_radius": 0.505,
       "parts": [
         [
           [
@@ -1217,7 +1217,7 @@
       ]
     },
     "comms_array": {
-      "bounds_radius": 0.61,
+      "bounds_radius": 0.523,
       "parts": [
         [
           [
@@ -1302,7 +1302,7 @@
       ]
     },
     "derelict_explorer": {
-      "bounds_radius": 0.58,
+      "bounds_radius": 0.474,
       "parts": [
         [
           [
@@ -1395,7 +1395,7 @@
       ]
     },
     "fractured_moonlet": {
-      "bounds_radius": 0.56,
+      "bounds_radius": 0.466,
       "parts": [
         [
           [
@@ -1450,7 +1450,7 @@
       ]
     },
     "mining_rig": {
-      "bounds_radius": 0.62,
+      "bounds_radius": 0.612,
       "parts": [
         [
           [
@@ -1587,7 +1587,7 @@
       ]
     },
     "relay_satellite": {
-      "bounds_radius": 0.58,
+      "bounds_radius": 0.479,
       "parts": [
         [
           [
@@ -1734,7 +1734,7 @@
       ]
     },
     "research_outpost": {
-      "bounds_radius": 0.59,
+      "bounds_radius": 0.483,
       "parts": [
         [
           [
@@ -1921,7 +1921,7 @@
       ]
     },
     "service_satellite": {
-      "bounds_radius": 0.61,
+      "bounds_radius": 0.59,
       "parts": [
         [
           [
