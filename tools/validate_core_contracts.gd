@@ -1229,6 +1229,43 @@ func _validate_flight_screen() -> void:
 	_expect("NEAR_DISTANCE" in guide_source, "Depot guide must hide near the depot instead of remaining invasive.")
 	_expect("UPDATE_INTERVAL := 1.0 / 30.0" in guide_source, "Depot guide must use a bounded lightweight update cadence.")
 
+	var tractor_source := FileAccess.get_file_as_string("res://src/game/salvage/tractor_beam.gd")
+	_expect(
+		"func _is_locked_target_valid" in tractor_source,
+		"TractorBeam must distinguish acquisition range from an already locked tether."
+	)
+	var area_exit_start := tractor_source.find("func _on_area_exited")
+	var cargo_change_start := tractor_source.find("func _on_cargo_changed")
+	_expect(
+		area_exit_start >= 0 and cargo_change_start > area_exit_start,
+		"TractorBeam must expose area-exit and cargo-validity handlers."
+	)
+	if area_exit_start >= 0 and cargo_change_start > area_exit_start:
+		var area_exit_source := tractor_source.substr(
+			area_exit_start,
+			cargo_change_start - area_exit_start
+		)
+		_expect(
+			"_set_target(null)" not in area_exit_source,
+			"Leaving scanner overlap must not break an active tractor tether."
+		)
+	var locked_validity_start := tractor_source.find("func _is_locked_target_valid")
+	var target_setter_start := tractor_source.find("func _set_target")
+	_expect(
+		locked_validity_start >= 0 and target_setter_start > locked_validity_start,
+		"TractorBeam must keep locked-target validation separate from target mutation."
+	)
+	if locked_validity_start >= 0 and target_setter_start > locked_validity_start:
+		var locked_validity_source := tractor_source.substr(
+			locked_validity_start,
+			target_setter_start - locked_validity_start
+		)
+		_expect(
+			"_candidates.has" not in locked_validity_source
+			and "_effective_scan_range" not in locked_validity_source,
+			"Locked tractor targets must remain valid outside scanner overlap/range."
+		)
+
 	var depot_source := FileAccess.get_file_as_string("res://src/game/salvage/unload_zone.gd")
 	_expect("set_cargo_state" in depot_source, "Depot world beacon must react to full cargo.")
 	_expect("1.0 / 20.0" in depot_source, "Animated depot beacon must throttle redraws for Web performance.")
