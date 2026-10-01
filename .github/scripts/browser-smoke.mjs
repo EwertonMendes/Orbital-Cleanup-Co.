@@ -98,6 +98,7 @@ async function openBuild(viewport, label, touch = false) {
   const freeSectorReady = waitForConsole(page, '[Sector] READY id=earth_training_01', 60000);
   const freeFlightReady = waitForConsole(page, '[Flight] READY mode=free_roam', 60000);
   const flightUiReady = waitForConsole(page, `[UI] PROFILE screen=flight profile=${expectedProfile}`, 60000);
+  const speedometerReady = waitForConsole(page, '[HUD] SPEEDOMETER_READY', 60000);
   const ready = waitForConsole(page, '[OCC] READY');
   await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
   await page.waitForSelector('canvas', { state: 'visible', timeout: 60000 });
@@ -105,6 +106,7 @@ async function openBuild(viewport, label, touch = false) {
   await freeSectorReady;
   await freeFlightReady;
   await flightUiReady;
+  await speedometerReady;
   await page.waitForFunction(() => {
     const canvas = document.querySelector('canvas');
     return canvas && canvas.width > 100 && canvas.height > 100;
