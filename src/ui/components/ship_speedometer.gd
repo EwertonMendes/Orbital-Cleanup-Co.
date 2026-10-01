@@ -16,7 +16,6 @@ var _sample_clock := 0.0
 var _display_speed := 0.0
 var _normalized_speed := 0.0
 var _cruise_ratio := 0.42
-var _last_density_key := -1
 
 func configure(ship: PlayerShip) -> void:
 	assert(ship != null, "ShipSpeedometer requires PlayerShip.")
@@ -27,9 +26,7 @@ func configure(ship: PlayerShip) -> void:
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	get_viewport().size_changed.connect(_apply_responsive_layout)
 	_refresh_copy()
-	_apply_responsive_layout()
 	_refresh_sample(true)
 
 func _process(delta: float) -> void:
@@ -75,31 +72,9 @@ func _refresh_copy() -> void:
 	title_label.text = tr("FLIGHT_SPEED")
 	unit_label.text = tr("FLIGHT_SPEED_UNIT")
 
-func _apply_responsive_layout() -> void:
-	if not is_node_ready():
-		return
-	var profile := ResponsiveUiProfile.current()
-	var density_key := ResponsiveUiProfile.density_key(profile)
-	if density_key == _last_density_key:
-		return
-	_last_density_key = density_key
-
-	var phone := ResponsiveUiProfile.is_phone(profile)
-	var compact := ResponsiveUiProfile.is_compact(profile)
-	var display_scale := 0.84 if phone else (0.92 if compact else 1.0)
-	scale = Vector2.ONE * display_scale
-
-	var left_margin := 12.0 if phone else (16.0 if compact else 24.0)
-	var bottom_margin := 14.0 if phone else (16.0 if compact else 20.0)
-	offset_left = left_margin
-	offset_right = left_margin + 196.0
-	offset_bottom = -bottom_margin
-	offset_top = offset_bottom - 108.0
-	queue_redraw()
-
 func _draw() -> void:
-	var center := Vector2(57.0, 57.0)
-	var radius := 34.0
+	var center := Vector2(49.0, size.y * 0.5)
+	var radius := minf(31.0, maxf(size.y * 0.30, 24.0))
 	var inactive := Color(0.35, 0.47, 0.55, 0.30)
 	var active := Color(0.40, 0.89, 1.0, 0.92)
 	var overspeed := Color(1.0, 0.75, 0.28, 0.96)
