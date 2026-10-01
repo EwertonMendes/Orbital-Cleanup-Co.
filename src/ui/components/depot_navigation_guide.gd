@@ -100,7 +100,7 @@ func _update_navigation() -> void:
 	_marker_position.y = clampf(_marker_position.y, navigation_rect.position.y, navigation_rect.end.y)
 
 	var full := _cargo_used >= _cargo_capacity
-	var distance_text := _format_distance(world_distance)
+	var distance_text := FlightTelemetryUnits.format_distance(world_distance)
 	distance_label.text = tr("FLIGHT_DEPOT_NAV_FULL_FMT") % distance_text if full else tr("FLIGHT_DEPOT_NAV_FMT") % distance_text
 	distance_label.add_theme_color_override(
 		"font_color",
@@ -118,12 +118,6 @@ func _update_navigation() -> void:
 
 	_target_alpha = 1.0 if full else 0.78
 	queue_redraw()
-
-func _format_distance(distance: float) -> String:
-	if distance >= 1000.0:
-		return tr("FLIGHT_DISTANCE_KM_FMT") % (distance / 1000.0)
-	var rounded_meters := int(round(distance / 10.0)) * 10
-	return tr("FLIGHT_DISTANCE_M_FMT") % rounded_meters
 
 func _draw() -> void:
 	if not distance_label.visible or modulate.a <= 0.01:

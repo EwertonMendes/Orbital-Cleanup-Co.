@@ -163,6 +163,11 @@ HudTelemetry/fonts/font = ExtResource("3")
 HudTelemetry/font_sizes/font_size = 10
 HudTelemetry/colors/font_color = Color(0.82, 0.87, 0.91, 1)
 
+HudTelemetryLarge/base_type = &"Label"
+HudTelemetryLarge/fonts/font = ExtResource("3")
+HudTelemetryLarge/font_sizes/font_size = 24
+HudTelemetryLarge/colors/font_color = Color(0.91, 0.97, 1, 1)
+
 HudBody/base_type = &"Label"
 HudBody/fonts/font = ExtResource("2")
 HudBody/font_sizes/font_size = 11

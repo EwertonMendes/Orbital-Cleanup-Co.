@@ -66,6 +66,25 @@
           460,
           780
         ]
+      },
+      {
+        "kind": "gravity_well",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.24,
+          0.44
+        ],
+        "radius_range": [
+          700,
+          1050
+        ],
+        "placement": "random",
+        "color": "#7395c8",
+        "secondary_color": "#090d16"
       }
     ]
   },

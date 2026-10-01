@@ -70,6 +70,25 @@
           460,
           780
         ]
+      },
+      {
+        "kind": "turbulence",
+        "count_range": [
+          1,
+          2
+        ],
+        "shape": "circle",
+        "strength_range": [
+          0.22,
+          0.4
+        ],
+        "radius_range": [
+          480,
+          760
+        ],
+        "placement": "random",
+        "color": "#7de8ff",
+        "secondary_color": "#17252f"
       }
     ]
   },

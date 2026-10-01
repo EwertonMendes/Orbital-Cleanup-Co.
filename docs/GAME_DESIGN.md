@@ -10,6 +10,8 @@ There is no combat, enemy, death or failure-by-destruction. Challenge comes from
 
 Desktop movement is primarily pointer-directed: the cursor defines thrust direction and distance from the ship controls throttle, with a center deadzone that means **coast**. WASD and arrows are an alternative thrust input. Flight is inertial: releasing input does not create invisible braking, so the ship preserves velocity until counter-thrust, environmental drag, collision response or the explicit contract-boundary RCS changes it.
 
+Flight input uses one active control source at a time. Keyboard or gamepad input immediately takes authority, hides the desktop cursor and completely ignores its last position; meaningful mouse movement restores pointer authority and the cursor. Touch has the same exclusive-authority rule. This avoids mixed-device steering and allows players to swap devices without menu settings.
+
 Mobile uses a floating relative steering pad: the first steering touch becomes a temporary origin, short thumb drags produce an analog thrust vector, and releasing the pad cuts thrust so the ship coasts. The control only appears while touching and does not require chasing the ship across the screen. A dedicated right-side Boost action supports two-thumb play without placing a permanent joystick over the playfield. Landscape is preferred; portrait must remain functional.
 
 Desktop keeps pointer-directed steering; an unhandled left click or Space triggers the same device-agnostic Pulse Boost action. UI clicks never trigger boost.
@@ -35,6 +37,10 @@ thrust intent
 ```
 
 The ship has authored dry mass. Recovered salvage contributes carried physical mass through a bounded cargo-inertia factor, so a full ship is noticeably less agile without becoming frustrating. The nominal `max_speed` tuning value is a cruise reference used for camera/feedback and diminishing aligned thrust; it is not a normal hard speed clamp.
+
+The flight HUD exposes the real velocity magnitude through a compact lower-left ship speedometer. Its cruise marker is tied to the authored nominal cruise speed while the full gauge uses the higher simulation safety range, so boosts, currents and gravitational acceleration can visibly push the ship into overspeed without pretending that cruise speed is a hard cap.
+
+Flight telemetry uses one coherent presentation scale instead of labeling raw Godot world units as SI units. One world unit is presented as 25 meters for cockpit/navigation readouts only. This makes the current 300 wu/s cruise reference read as approximately **27,000 km/h**, close to low-Earth-orbit spacecraft velocity, while a 1,000-world-unit route reads as **25 km**. This conversion does not change physics, sector geometry, collision shapes or environmental forces; it is a display-layer convention shared by speed and distance telemetry.
 
 The flight presentation must communicate the distinction between facing/thrust and actual motion. Engine trail/particles indicate active propulsion rather than raw speed, while a restrained drift chevron indicates the current inertial velocity direction.
 
@@ -145,7 +151,7 @@ Random rocks on a recolored background are not enough.
 
 Biomes constrain allowed visuals, salvage, obstacles, landmarks, ambience and modifiers. Seeds change layout while the authored biome kit preserves identity.
 
-Endless contracts are deterministic by seed and scale through centralized curves rather than level-specific conditionals. Contract 10,000 must remain generatable.
+Endless contracts are deterministic by seed and scale through centralized curves rather than level-specific conditionals. Their biome rotation is derived from the complete authored biome catalog, so infinite play inherits the same environmental physics and visual identity as normal destinations instead of repeating only the original four launch biomes. Contract 10,000 must remain generatable.
 
 ## Initial content target
 
@@ -222,6 +228,8 @@ Current biome roles:
 - **Blue Nebula** — dense-gas pockets add real drag and slightly reduce thrust authority, turbulent volumes produce changing external forces, low-visibility pockets alter world post-processing, scanner interference reduces effective detection range, Tractor Beam distortion reduces pull/collection efficiency, and magnetic zones influence loose salvage more strongly than the ship.
 
 Environmental pressure remains non-lethal and bounded, but it is allowed to change the correct way to pilot. Fields use smooth falloff, never fully disable scanner/Tractor Beam, and remain readable through matching world-space feedback. Their job is route planning, trajectory control and mastery rather than punishment.
+
+Every authored biome except Earth Orbit's intentional neutral onboarding baseline must include at least one field that physically changes ship motion. Dense/toxic atmospheres and major gas worlds now layer drag and turbulence where appropriate; previously information-only destinations such as Kuiper Belt, Makemake, Rogue Planet, Kepler-186f, abandoned stations and factory ruins now include real trajectory pressure.
 
 Visual identity uses project-owned editable SVG planets under `assets/original/planets/`, a shared animated surface/atmosphere shader, camera-relative parallax, biome-specific ambient motion and distant traffic. HUD text identifies the dominant local environmental effect while the world itself provides matching field visuals.
 
