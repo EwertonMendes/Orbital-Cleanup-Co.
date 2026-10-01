@@ -83,9 +83,9 @@ func _update_boundary_state() -> void:
 			_nearest_distance = distance
 			_nearest_side = index
 
-	var usable_soft_range := maxf(_soft_margin - _hard_padding, 1.0)
+	var distance_to_hard_limit := _nearest_distance - _hard_padding
 	var physical_t := clampf(
-		1.0 - (_nearest_distance - _hard_padding) / usable_soft_range,
+		1.0 - distance_to_hard_limit / maxf(_soft_margin, 1.0),
 		0.0,
 		1.0
 	)
@@ -93,7 +93,7 @@ func _update_boundary_state() -> void:
 
 	var awareness_margin := _soft_margin + VISUAL_AWARENESS_PADDING
 	var awareness_t := clampf(
-		1.0 - (_nearest_distance - _hard_padding) / maxf(awareness_margin - _hard_padding, 1.0),
+		1.0 - distance_to_hard_limit / maxf(awareness_margin, 1.0),
 		0.0,
 		1.0
 	)
