@@ -4,7 +4,7 @@ class_name CollisionGeometry2D
 const BUILD_MODE := CollisionPolygon2D.BUILD_SOLIDS
 const GENERATED_META := &"occ_alpha_collision_part"
 const DEFAULT_ALPHA_THRESHOLD := 0.10
-const DEFAULT_TRACE_EPSILON := 0.25
+const DEFAULT_TRACE_EPSILON := 0.0
 
 static var _source_polygon_cache: Dictionary = {}
 
