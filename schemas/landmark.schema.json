@@ -10,7 +10,6 @@
     "scale",
     "reserved_radius",
     "placement_radius",
-    "collision",
     "spin_speed_range",
     "drift_amplitude",
     "ambient_effect"
