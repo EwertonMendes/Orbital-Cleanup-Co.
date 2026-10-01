@@ -8,6 +8,7 @@ var _definition: Dictionary = {}
 var _visual_scale := 1.0
 var _spin_speed := 0.0
 var _motion_phase := 0.0
+var _base_position := Vector2.ZERO
 var _registry := ContentRegistry.new()
 
 func configure(definition: Dictionary, visual_scale: float, spin_speed: float = 0.0, motion_phase: float = 0.0) -> void:
@@ -18,6 +19,7 @@ func configure(definition: Dictionary, visual_scale: float, spin_speed: float = 
 	_motion_phase = motion_phase
 
 func _ready() -> void:
+	_base_position = position
 	assert(not _definition.is_empty(), "SectorObstacle must be configured before entering the tree.")
 	add_to_group("hazard")
 	var texture_path := String(_definition["sprite"])
@@ -46,8 +48,10 @@ func _physics_process(delta: float) -> void:
 	# polygon collision rotate as one physical object.
 	rotation = wrapf(rotation + _spin_speed * delta, -PI, PI)
 
-	# Tiny presentation drift remains cosmetic; it never changes navigable space.
-	sprite.position = Vector2(
+	# Drift is physical as well as visual so the alpha-derived silhouette and
+	# collision remain registered at the exact same world transform.
+	position = _base_position + Vector2(
 		cos(_motion_phase * 0.47),
 		sin(_motion_phase * 0.61)
 	) * 1.4
+	sprite.position = Vector2.ZERO
