@@ -112,19 +112,18 @@ static func _alpha_rectangles(texture: Texture2D, alpha_threshold: float) -> Arr
 		"Collision source must preserve transparent alpha in the imported image: %s" % texture.resource_path
 	)
 
-	var bitmap := BitMap.new()
-	bitmap.create_from_image_alpha(image, threshold)
-	var size := bitmap.get_size()
-	var width := size.x
-	var height := size.y
-	assert(width > 0 and height > 0, "Collision bitmap must have positive dimensions.")
+	var width := image.get_width()
+	var height := image.get_height()
+	assert(width > 0 and height > 0, "Collision alpha image must have positive dimensions.")
 
 	var remaining := PackedByteArray()
 	remaining.resize(width * height)
 	for y in range(height):
 		var row_offset := y * width
 		for x in range(width):
-			if bitmap.get_bit(x, y):
+			# Source alpha is authoritative. Avoid a second thresholding layer so
+			# transparent pixels can never be reclassified by an intermediate mask.
+			if image.get_pixel(x, y).a >= threshold:
 				remaining[row_offset + x] = 1
 
 	var rectangles: Array = []
