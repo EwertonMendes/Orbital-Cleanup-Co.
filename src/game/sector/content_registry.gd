@@ -21,6 +21,20 @@ func get_salvage_table(id: String) -> Dictionary:
 func get_landmark(id: String) -> Dictionary:
 	return _load_named("landmarks", id)
 
+func get_collision_profile(id: String) -> Dictionary:
+	assert(not id.is_empty(), "Collision profile id cannot be empty.")
+	var catalog := _load_named("collision_profiles", "world")
+	var profiles := catalog.get("profiles", {}) as Dictionary
+	assert(profiles.has(id), "Missing collision profile: %s" % id)
+	return (profiles[id] as Dictionary).duplicate(true)
+
+func has_collision_profile(id: String) -> bool:
+	if id.is_empty():
+		return false
+	var catalog := _load_named("collision_profiles", "world")
+	var profiles := catalog.get("profiles", {}) as Dictionary
+	return profiles.has(id)
+
 func get_contract(id: String) -> Dictionary:
 	return _load_named("contracts", id)
 
