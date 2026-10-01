@@ -1229,6 +1229,7 @@ func _validate_flight_screen() -> void:
 	_expect("NEAR_DISTANCE" in guide_source, "Depot guide must hide near the depot instead of remaining invasive.")
 	_expect("UPDATE_INTERVAL := 1.0 / 30.0" in guide_source, "Depot guide must use a bounded lightweight update cadence.")
 
+	var ship_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.gd")
 	var tractor_source := FileAccess.get_file_as_string("res://src/game/salvage/tractor_beam.gd")
 	_expect(
 		"func _is_locked_target_valid" in tractor_source,
