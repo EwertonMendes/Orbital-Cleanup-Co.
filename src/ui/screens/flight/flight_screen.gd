@@ -34,6 +34,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 @onready var operations_overlay_host: Control = %OperationsOverlayHost
 @onready var warp_transition: WarpTravelTransition = %WarpTravelTransition
 @onready var touch_controls: TouchFlightControls = %TouchFlightControls
+@onready var speedometer_anchor: MarginContainer = %SpeedometerAnchor
 @onready var speedometer: ShipSpeedometer = %ShipSpeedometer
 
 var _context: Dictionary = {}
@@ -85,6 +86,7 @@ func configure(context: Dictionary) -> void:
 	var ship := get_node("World/PlayerShip") as PlayerShip
 	var navigation := get_node("HUD/HudRoot/DepotNavigationGuide") as DepotNavigationGuide
 	var touch := get_node("HUD/HudRoot/TouchFlightControls") as TouchFlightControls
+	var speed := get_node("HUD/HudRoot/SpeedometerAnchor/ShipSpeedometer") as ShipSpeedometer
 
 	assert(runtime != null, "FlightScreen requires SectorRuntime.")
 	assert(backdrop != null, "FlightScreen requires SectorBackdrop.")
@@ -99,6 +101,7 @@ func configure(context: Dictionary) -> void:
 	assert(ship != null, "FlightScreen requires PlayerShip.")
 	assert(navigation != null, "FlightScreen requires DepotNavigationGuide.")
 	assert(touch != null, "FlightScreen requires TouchFlightControls.")
+	assert(speed != null, "FlightScreen requires ShipSpeedometer.")
 
 	if generated_definition.is_empty():
 		runtime.configure_sector(_configured_sector_id)
@@ -158,7 +161,7 @@ func configure(context: Dictionary) -> void:
 		_progression.get_ship_cosmetics()
 	)
 	touch.configure(_input_service, ship)
-	speedometer.configure(ship)
+	speed.configure(ship)
 	environment.bind(ship, runtime)
 	navigation.configure(ship, depot)
 	print("[Flight] DEPLOYMENT position=(%.1f, %.1f) depot=(%.1f, %.1f)" % [
@@ -204,6 +207,7 @@ func _ready() -> void:
 	_refresh_biome_thumbnail()
 	_refresh_cleanup()
 	_on_cargo_changed(player_ship.get_cargo_used(), player_ship.get_cargo_capacity())
+	call_deferred("_validate_speedometer_runtime_layout")
 
 	if _platform != null:
 		_platform.gameplay_started()
@@ -338,7 +342,7 @@ func _validate_contracts() -> void:
 	assert(operations_button != null and operations_overlay_host != null, "FlightScreen requires floating operations access.")
 	assert(warp_transition != null, "FlightScreen requires reusable warp travel transition.")
 	assert(touch_controls != null, "FlightScreen requires reusable touch flight controls.")
-	assert(speedometer != null, "FlightScreen requires reusable ship speedometer telemetry.")
+	assert(speedometer_anchor != null and speedometer != null, "FlightScreen requires anchored ship speedometer telemetry.")
 	assert(sector_runtime.get_play_bounds().size.x > 0.0, "SectorRuntime must provide valid play bounds.")
 
 func _apply_responsive_layout() -> void:
@@ -373,7 +377,42 @@ func _apply_responsive_layout() -> void:
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
+	# The flight screen owns HUD placement. The reusable speedometer owns only
+	# its internal presentation, so its screen position cannot silently drift
+	# because of instanced-scene anchor state.
+	var speedometer_size := Vector2(
+		300.0 if phone else (226.0 if compact else 210.0),
+		150.0 if phone else (124.0 if compact else 116.0)
+	)
+	speedometer_anchor.anchor_left = 0.0
+	speedometer_anchor.anchor_right = 0.0
+	speedometer_anchor.anchor_top = 1.0
+	speedometer_anchor.anchor_bottom = 1.0
+	speedometer_anchor.offset_left = float(horizontal_margin)
+	speedometer_anchor.offset_right = float(horizontal_margin) + speedometer_size.x
+	speedometer_anchor.offset_bottom = -float(vertical_margin)
+	speedometer_anchor.offset_top = -float(vertical_margin) - speedometer_size.y
+	speedometer_anchor.visible = true
+
 	toast_panel.custom_minimum_size.x = 320.0 if phone else (280.0 if compact else 390.0)
+
+func _validate_speedometer_runtime_layout() -> void:
+	if not is_instance_valid(speedometer_anchor) or not is_instance_valid(speedometer):
+		push_error("[HUD] Ship speedometer nodes are unavailable at runtime.")
+		return
+	var hud_size := hud_root.size
+	var rect := speedometer_anchor.get_rect()
+	var inside_viewport := (
+		rect.position.x >= -0.5
+		and rect.position.y >= -0.5
+		and rect.end.x <= hud_size.x + 0.5
+		and rect.end.y <= hud_size.y + 0.5
+		and rect.size.x >= 180.0
+		and rect.size.y >= 100.0
+	)
+	assert(inside_viewport, "Ship speedometer must resolve fully inside the live HUD viewport.")
+	assert(speedometer.visible and speedometer_anchor.visible, "Ship speedometer must remain visible during flight.")
+	print("[HUD] SPEEDOMETER_READY rect=%s viewport=%s" % [str(rect), str(hud_size)])
 
 func _refresh_biome_thumbnail() -> void:
 	var visual_profile := sector_runtime.get_biome_visual_profile()
