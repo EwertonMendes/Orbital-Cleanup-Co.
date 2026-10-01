@@ -311,31 +311,42 @@ func _validate_world_visual_language() -> void:
 		_expect(landmark != null, "SectorLandmark scene must instantiate the typed runtime.")
 		if landmark != null:
 			var landmark_definition := registry.get_landmark("service_satellite")
-			var service_profile := registry.get_collision_profile("service_satellite")
 			landmark.configure(landmark_definition)
 			root.add_child(landmark)
 			_expect(landmark is AnimatableBody2D, "Rotating landmarks require physics-synchronized navigation bodies.")
 			_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
 			_expect(landmark.find_child("CollisionRoot", true, false) == null, "Landmark collision polygons must be owned directly by the physics body.")
+			_expect(_direct_collision_polygon_count(landmark) > 0, "Landmark alpha silhouette must register collision polygons directly on the body.")
+			_expect(_physics_shape_count(landmark) > 0, "Landmark body must register alpha-derived polygon shapes with Godot physics.")
 			_expect(
-				_direct_collision_polygon_count(landmark) == (service_profile.get("parts", []) as Array).size(),
-				"Compound landmark collision must register every authored polygon part directly on the body."
+				_alpha_collision_transparency_mismatches(landmark, landmark.sprite) == 0,
+				"Service satellite collision must not cover confidently transparent sampled pixels."
 			)
-			_expect(_physics_shape_count(landmark) > 0, "Landmark body must register polygon shapes with Godot physics.")
 			landmark.queue_free()
 
 	var collision_geometry_source := FileAccess.get_file_as_string("res://src/game/sector/collision_geometry_2d.gd")
 	_expect(
 		"CollisionPolygon2D.BUILD_SOLIDS" in collision_geometry_source
-		and "body.add_child(collision)" in collision_geometry_source
-		and "build_profile" in collision_geometry_source,
-		"World collision geometry must use solid polygons attached directly to CollisionObject2D."
+		and "BitMap.new()" in collision_geometry_source
+		and "create_from_image_alpha" in collision_geometry_source
+		and "opaque_to_polygons" in collision_geometry_source
+		and "_source_polygon_cache" in collision_geometry_source
+		and "body.add_child(collision)" in collision_geometry_source,
+		"World collision geometry must be traced from texture alpha and attached directly to CollisionObject2D."
 	)
 	var obstacle_source := FileAccess.get_file_as_string("res://src/game/sector/sector_obstacle.gd")
 	var landmark_source := FileAccess.get_file_as_string("res://src/game/sector/sector_landmark.gd")
 	_expect("CircleShape2D" not in obstacle_source, "Obstacle runtime must not fall back to circular collision.")
-	_expect("CollisionGeometry2D.build_profile" in obstacle_source and "\t\tself," in obstacle_source, "Obstacle runtime must build collision on its physics body.")
-	_expect("CollisionGeometry2D.build_profile" in landmark_source and "\t\tself," in landmark_source, "Landmark runtime must build compound collision on its physics body.")
+	_expect("CollisionGeometry2D.build_from_sprite" in obstacle_source, "Obstacle runtime must trace collision from its rendered sprite alpha.")
+	_expect("CollisionGeometry2D.build_from_sprite" in landmark_source, "Landmark runtime must trace collision from its rendered sprite alpha.")
+	_expect("position = _base_position +" in obstacle_source, "Obstacle drift must move the physics body, not only its sprite.")
+	_expect("position = _base_position +" in landmark_source, "Landmark drift must move the physics body, not only its sprite.")
+
+	var ship_scene_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.tscn")
+	var ship_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.gd")
+	_expect('id="ShipCollision"' not in ship_scene_source, "Player ship must not retain the primitive circle hull collider.")
+	_expect("CollisionGeometry2D.build_from_sprite(self, visuals.ship_sprite)" in ship_source, "Player ship hull collision must come from the active hull texture alpha.")
+	_expect("_sync_hull_collision_rotation()" in ship_source, "Player ship alpha collision must rotate with the visible hull.")
 
 	for asset_path in [
 		"res://assets/original/landmarks/service_satellite.svg",
@@ -365,10 +376,6 @@ func _validate_content_runtime() -> void:
 	if scrap != null:
 		_expect(String(scrap.id) == "scrap_fragment", "Salvage JSON id must reach runtime definition.")
 		_expect(scrap.sprite != null, "Salvage JSON asset path must load.")
-
-	var service_profile := registry.get_collision_profile("service_satellite")
-	_expect(not service_profile.is_empty(), "Collision profiles must be available through ContentRegistry.")
-	_expect((service_profile.get("parts", []) as Array).size() >= 3, "Service satellite must preserve separate hull/panel collision parts.")
 
 	var scaler := DifficultyScaler.new()
 	scaler.configure(registry)
@@ -434,10 +441,9 @@ func _validate_landmark_plan(plan: Dictionary) -> void:
 			asset_path.begins_with("res://assets/original/landmarks/"),
 			"Authored landmarks must use project-owned OCC landmark art."
 		)
-		var collision := definition.get("collision", {}) as Dictionary
 		_expect(
-			String(collision.get("shape", "")) in ["circle", "box"],
-			"Landmark collision must be data-driven."
+			float(definition.get("texture_reference_size", 0.0)) > 0.0,
+			"Landmark alpha collision requires a texture reference size."
 		)
 		var landmark_position := landmark["position"] as Vector2
 		var reserved_radius := float(definition.get("reserved_radius", 0.0))
@@ -1479,6 +1485,41 @@ func _validate_polish_systems() -> void:
 
 func _validate_render_quality() -> void:
 	_expect(bool(ProjectSettings.get_setting("physics/common/physics_interpolation", false)), "Physics interpolation must remain enabled for smooth Web movement.")
+
+func _alpha_collision_transparency_mismatches(body: CollisionObject2D, sprite: Sprite2D) -> int:
+	if sprite == null or sprite.texture == null:
+		return 1
+	var image := sprite.texture.get_image()
+	if image == null or image.is_empty():
+		return 1
+	if image.is_compressed() and image.decompress() != OK:
+		return 1
+
+	var texture_size := sprite.texture.get_size()
+	var origin := texture_size * 0.5 if sprite.centered else Vector2.ZERO
+	var step_x := maxi(int(texture_size.x / 24.0), 8)
+	var step_y := maxi(int(texture_size.y / 24.0), 8)
+	var mismatches := 0
+	var polygons: Array[CollisionPolygon2D] = []
+	for child in body.get_children():
+		if child is CollisionPolygon2D:
+			polygons.append(child as CollisionPolygon2D)
+
+	for y in range(step_y / 2, image.get_height(), step_y):
+		for x in range(step_x / 2, image.get_width(), step_x):
+			var alpha := image.get_pixel(x, y).a
+			if alpha > 0.02:
+				continue
+			var local := (Vector2(x, y) - origin + sprite.offset) * sprite.scale
+			var covered := false
+			for collision in polygons:
+				var point := local.rotated(-collision.rotation)
+				if Geometry2D.is_point_in_polygon(point, collision.polygon):
+					covered = true
+					break
+			if covered:
+				mismatches += 1
+	return mismatches
 
 func _direct_collision_polygon_count(body: CollisionObject2D) -> int:
 	var count := 0
