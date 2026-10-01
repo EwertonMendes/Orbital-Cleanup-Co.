@@ -24,10 +24,10 @@ class_name ShipMovementTuning
 @export_range(0.0, 18.0, 0.1) var camera_shake_strength := 3.6
 @export_range(4.0, 9.0, 0.1) var boundary_warning_seconds := 6.5
 @export_range(400.0, 2200.0, 10.0) var boundary_hard_escape_margin := 900.0
-@export_range(160.0, 720.0, 5.0) var boundary_return_speed := 420.0
-@export_range(0.2, 1.4, 0.01) var boundary_return_velocity_scale := 0.72
-@export_range(0.4, 2.0, 0.05) var boundary_return_control_seconds := 1.15
-@export_range(4.0, 24.0, 0.1) var boundary_return_turn_response := 11.0
+@export_range(420.0, 1200.0, 5.0) var boundary_return_speed := 900.0
+@export_range(0.2, 1.4, 0.01) var boundary_return_velocity_scale := 0.9
+@export_range(80.0, 320.0, 5.0) var boundary_return_reentry_depth := 180.0
+@export_range(4.0, 24.0, 0.1) var boundary_return_turn_response := 14.0
 
 func validate() -> void:
 	assert(max_speed > 0.0, "Ship cruise speed must be positive.")
@@ -48,6 +48,7 @@ func validate() -> void:
 	assert(collision_iterations >= 1, "Collision solver requires at least one iteration.")
 	assert(boundary_warning_seconds >= 6.0 and boundary_warning_seconds <= 7.0, "Boundary warning grace must remain readable before auto-return.")
 	assert(boundary_hard_escape_margin > 0.0, "Numerical containment margin must be positive.")
-	assert(boundary_return_speed > 0.0 and boundary_return_velocity_scale > 0.0, "Boundary return requires a physical inward impulse.")
-	assert(boundary_return_control_seconds > 0.0, "Boundary return must briefly own steering so the ship visibly turns inward.")
+	assert(boundary_return_speed > absolute_speed_limit, "Boundary return must be visibly faster than normal flight containment speed.")
+	assert(boundary_return_velocity_scale > 0.0, "Boundary return requires a physical inward impulse.")
+	assert(boundary_return_reentry_depth > 0.0, "Boundary return must carry the ship a safe distance back inside the map.")
 	assert(boundary_return_turn_response > turn_response, "Boundary auto-return must rotate the ship more decisively than normal steering.")
