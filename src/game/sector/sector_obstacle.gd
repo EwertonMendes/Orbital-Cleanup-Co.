@@ -36,7 +36,7 @@ func _ready() -> void:
 	var tint_text := String(_definition.get("sprite_modulate", "#949ea8f5"))
 	sprite.modulate = Color.from_string(tint_text, Color(0.58, 0.62, 0.66, 0.96))
 
-	var collision_radius := CollisionGeometry2D.build_from_sprite(
+	var collision_radius := CollisionGeometry2D.build_static_boundary(
 		self,
 		sprite
 	)
