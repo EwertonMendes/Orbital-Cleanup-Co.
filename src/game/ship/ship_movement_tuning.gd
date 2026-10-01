@@ -25,9 +25,9 @@ class_name ShipMovementTuning
 @export_range(4.0, 9.0, 0.1) var boundary_warning_seconds := 6.5
 @export_range(400.0, 2200.0, 10.0) var boundary_hard_escape_margin := 900.0
 @export_range(420.0, 1400.0, 5.0) var boundary_return_speed := 900.0
-@export_range(1400.0, 4200.0, 10.0) var boundary_return_max_speed := 3200.0
-@export_range(1.4, 2.6, 0.05) var boundary_return_target_seconds := 2.0
-@export_range(6.0, 24.0, 0.1) var boundary_return_velocity_response := 14.0
+@export_range(1800.0, 6400.0, 10.0) var boundary_return_max_speed := 5600.0
+@export_range(0.75, 1.4, 0.05) var boundary_return_target_seconds := 1.0
+@export_range(6.0, 28.0, 0.1) var boundary_return_velocity_response := 18.0
 @export_range(80.0, 320.0, 5.0) var boundary_return_reentry_depth := 180.0
 @export_range(180.0, 720.0, 5.0) var boundary_return_exit_speed := 360.0
 @export_range(4.0, 24.0, 0.1) var boundary_return_turn_response := 16.0
@@ -53,7 +53,7 @@ func validate() -> void:
 	assert(boundary_hard_escape_margin > 0.0, "Numerical containment margin must be positive.")
 	assert(boundary_return_speed > absolute_speed_limit, "Boundary return must be visibly faster than normal flight containment speed.")
 	assert(boundary_return_max_speed > boundary_return_speed, "Boundary return needs adaptive emergency speed for distant exits.")
-	assert(boundary_return_target_seconds >= 1.5 and boundary_return_target_seconds <= 2.5, "Boundary return should complete in about two seconds.")
+	assert(boundary_return_target_seconds >= 0.8 and boundary_return_target_seconds <= 1.2, "Boundary return should complete in about one second.")
 	assert(boundary_return_velocity_response > 0.0, "Boundary return velocity response must be positive.")
 	assert(boundary_return_reentry_depth > 0.0, "Boundary return must carry the ship a safe distance back inside the map.")
 	assert(boundary_return_exit_speed > 0.0 and boundary_return_exit_speed <= absolute_speed_limit, "Boundary return must hand control back at a normal controllable speed.")
