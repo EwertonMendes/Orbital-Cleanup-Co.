@@ -40,6 +40,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 
 var _context: Dictionary = {}
 var _router: SceneRouter
+var _settings: SettingsService
 var _input_service: InputService
 var _audio: AudioService
 var _platform: PlatformService
@@ -62,6 +63,7 @@ func configure(context: Dictionary) -> void:
 	_context = context
 	_contract_active = not bool(context.get("free_roam", false))
 	_router = context.get("router") as SceneRouter
+	_settings = context.get("settings") as SettingsService
 	_input_service = context.get("input") as InputService
 	_audio = context.get("audio") as AudioService
 	_platform = context.get("platform") as PlatformService
@@ -182,6 +184,8 @@ func _ready() -> void:
 	resized.connect(_apply_responsive_layout)
 	return_button.pressed.connect(_return_to_operations)
 	operations_button.pressed.connect(_open_operations)
+	if _settings != null and not _settings.locale_changed.is_connected(_on_locale_changed):
+		_settings.locale_changed.connect(_on_locale_changed)
 	_wire_hud_button_feedback(return_button)
 	_wire_hud_button_feedback(operations_button)
 	player_ship.cargo_changed.connect(_on_cargo_changed)
@@ -398,7 +402,9 @@ func _apply_responsive_layout() -> void:
 	speedometer_anchor.offset_right = float(horizontal_margin) + speedometer_size.x
 	speedometer_anchor.offset_bottom = -float(vertical_margin)
 	speedometer_anchor.offset_top = -float(vertical_margin) - speedometer_size.y
-	speedometer_anchor.visible = true
+	# Keep flight-only telemetry behind modal/operations overlays. This condition
+	# also prevents a resize/profile refresh from accidentally making it visible.
+	speedometer_anchor.visible = _operations_overlay == null or not is_instance_valid(_operations_overlay)
 
 	toast_panel.custom_minimum_size.x = 320.0 if phone else (280.0 if compact else 390.0)
 
@@ -531,6 +537,7 @@ func _open_operations() -> void:
 	player_ship.set_flight_controls_enabled(false)
 	touch_controls.set_controls_enabled(false)
 	_operations_overlay = overlay
+	speedometer_anchor.visible = false
 	operations_overlay_host.add_child(overlay)
 	overlay.modulate.a = 0.0
 	var reveal := create_tween()
@@ -547,6 +554,7 @@ func _close_operations() -> void:
 	overlay.queue_free()
 	player_ship.set_flight_controls_enabled(true)
 	touch_controls.set_controls_enabled(true)
+	speedometer_anchor.visible = true
 	print("[Flight] OPERATIONS_CLOSED")
 
 func _on_operations_deployment_requested(target_context: Dictionary) -> void:
@@ -584,6 +592,15 @@ func _play_hud_hover() -> void:
 func _play_hud_click() -> void:
 	if _audio != null:
 		_audio.play_ui_click()
+
+func _on_locale_changed(_locale: String) -> void:
+	_refresh_copy()
+	# Reusable HUD components cache some copy outside their per-frame telemetry,
+	# so refresh them explicitly when SettingsService changes the active locale.
+	speedometer.refresh_locale()
+	touch_controls.refresh_locale()
+	operational_zone_warning.refresh_locale()
+	depot_navigation.refresh_locale()
 
 func _stop_gameplay() -> void:
 	if not _gameplay_active:

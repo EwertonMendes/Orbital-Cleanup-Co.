@@ -473,13 +473,17 @@ func _deploy_training() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("ui_cancel"):
 		return
+
+	# Consume Escape before changing/removing the overlay. Closing the Operations
+	# node synchronously can otherwise let the same unhandled event fall through
+	# to FlightScreen, which interprets Escape as "open Operations" and immediately
+	# recreates the overlay.
+	get_viewport().set_input_as_handled()
+
 	if settings_layer.visible:
 		_close_settings()
 	elif _overlay_mode:
 		_request_close()
-	else:
-		return
-	get_viewport().set_input_as_handled()
 
 func _request_close() -> void:
 	if not _overlay_mode:

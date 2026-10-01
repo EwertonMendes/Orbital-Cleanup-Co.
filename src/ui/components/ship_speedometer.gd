@@ -29,6 +29,10 @@ func _ready() -> void:
 	_refresh_copy()
 	_refresh_sample(true)
 
+func refresh_locale() -> void:
+	_refresh_copy()
+	_refresh_sample(true)
+
 func _process(delta: float) -> void:
 	if _ship == null or not is_instance_valid(_ship):
 		return
