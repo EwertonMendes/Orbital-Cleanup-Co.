@@ -226,13 +226,16 @@ func _build_obstacle_spawns(
 			float(definition.get("scale_min", 1.0)),
 			float(definition.get("scale_max", 1.0))
 		)
-		var profile := _registry.get_collision_profile(String(definition["id"]))
+		var texture_path := String(definition["sprite"])
+		var texture := load(texture_path) as Texture2D
+		assert(texture != null, "Obstacle collision spacing requires a loadable texture: %s" % texture_path)
 		var reference_size := float(definition.get("texture_reference_size", 0.0))
 		assert(reference_size > 0.0, "Obstacle collision spacing requires texture_reference_size.")
-		var collision_bounds_radius := CollisionGeometry2D.reference_bounds_radius(
-			profile,
-			reference_size,
-			visual_scale
+		var max_texture_size := maxf(float(texture.get_width()), float(texture.get_height()))
+		var texture_scale := reference_size / maxf(max_texture_size, 1.0)
+		var collision_bounds_radius := CollisionGeometry2D.alpha_bounds_radius(
+			texture,
+			Vector2.ONE * visual_scale * texture_scale
 		)
 		var position := _find_obstacle_position(
 			rng,
