@@ -133,6 +133,9 @@ func set_flight_controls_enabled(enabled: bool) -> void:
 	if not enabled:
 		velocity = Vector2.ZERO
 		_smoothed_intent = Vector2.ZERO
+		_boundary_return_remaining = 0.0
+		_boundary_return_direction = Vector2.ZERO
+		_reset_operational_warning()
 		_input_service.clear_touch_navigation()
 		_cancel_boost()
 		ship_camera.set_motion_velocity(Vector2.ZERO)
