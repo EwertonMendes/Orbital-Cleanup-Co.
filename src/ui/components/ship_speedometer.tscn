@@ -79,7 +79,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
 theme_type_variation = &"HudTelemetry"
-text = "m/s"
+text = "km/h"
 
 [node name="StateLabel" type="Label" parent="ContentMargin/ContentRow/Telemetry"]
 unique_name_in_owner = true
