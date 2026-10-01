@@ -79,6 +79,14 @@ func _refresh_visibility() -> void:
 		else Control.MOUSE_FILTER_IGNORE
 	)
 
+func refresh_locale() -> void:
+	_refresh_copy()
+	if _ship != null:
+		boost_status.text = tr("FLIGHT_BOOST_CHARGES_FMT") % [
+			_ship.get_boost_charges(),
+			_ship.get_boost_capacity(),
+		]
+
 func _refresh_copy() -> void:
 	boost_button.text = tr("FLIGHT_BOOST")
 
