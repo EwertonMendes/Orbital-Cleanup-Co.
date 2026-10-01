@@ -351,6 +351,10 @@ func _apply_boundary_repel(return_direction: Vector2) -> void:
 	_boundary_return_direction = inward
 	_boundary_return_elapsed = 0.0
 	_boundary_return_active = true
+	# Emergency movement may carry the ship across its tethered salvage. Keep
+	# the tether physical, but never authorize cargo capture while the player
+	# has no control over the ship.
+	tractor_beam.set_capture_enabled(false)
 	velocity = inward * return_speed
 	_reset_operational_warning()
 	_cancel_boost()
@@ -409,6 +413,7 @@ func _finish_boundary_return() -> void:
 	_boundary_return_direction = Vector2.ZERO
 	_boundary_return_target = Vector2.ZERO
 	_boundary_return_elapsed = 0.0
+	tractor_beam.set_capture_enabled(true)
 	_smoothed_intent = Vector2.ZERO
 	if release_direction.length_squared() > 0.001:
 		velocity = release_direction.normalized() * minf(
