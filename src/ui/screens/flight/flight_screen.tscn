@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3]
+[gd_scene load_steps=24 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/flight/flight_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/sector/sector_backdrop.gd" id="2"]
@@ -20,6 +20,7 @@
 [ext_resource type="Script" path="res://src/game/visual/world_visual_runtime.gd" id="20"]
 [ext_resource type="Script" path="res://src/game/visual/space_environment_layer.gd" id="21"]
 [ext_resource type="PackedScene" path="res://src/ui/components/ship_speedometer.tscn" id="22"]
+[ext_resource type="Script" path="res://src/game/visual/operational_perimeter.gd" id="23"]
 
 [sub_resource type="CircleShape2D" id="UnloadShape"]
 radius = 145.0
@@ -70,6 +71,11 @@ unique_name_in_owner = true
 [node name="EnvironmentRuntime" type="Node2D" parent="World"]
 unique_name_in_owner = true
 script = ExtResource("14")
+
+[node name="OperationalPerimeter" type="Node2D" parent="World"]
+unique_name_in_owner = true
+z_index = -12
+script = ExtResource("23")
 
 [node name="UnloadDepot" type="Area2D" parent="World"]
 unique_name_in_owner = true
