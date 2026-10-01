@@ -70,6 +70,10 @@ func set_interaction_enabled(enabled: bool) -> void:
 	if _scan_area != null:
 		_scan_area.set_deferred("monitoring", enabled)
 	if not enabled:
+		# Interaction disable is a full lifecycle reset (travel, scene handoff,
+		# etc.). Do not carry a boundary-only capture suspension into the next
+		# gameplay session.
+		_capture_enabled = true
 		_candidates.clear()
 		_set_target(null)
 		_hide_beam()
