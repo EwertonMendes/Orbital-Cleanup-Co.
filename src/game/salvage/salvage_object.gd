@@ -107,11 +107,18 @@ func _integrate_environment(delta: float) -> void:
 	global_position.x = clampf(global_position.x, safe_bounds.position.x, safe_bounds.end.x)
 	global_position.y = clampf(global_position.y, safe_bounds.position.y, safe_bounds.end.y)
 
-func tractor_step(anchor: Vector2, delta: float, base_pull_speed: float, collection_speed_multiplier: float = 1.0) -> void:
+func tractor_step(
+	anchor: Vector2,
+	delta: float,
+	base_pull_speed: float,
+	collection_speed_multiplier: float = 1.0,
+	advance_collection: bool = true
+) -> void:
 	assert(_targeted, "tractor_step requires an active target.")
-	var effective_speed := maxf(collection_speed_multiplier, 0.1)
-	_tractor_progress = minf(_tractor_progress + (delta * effective_speed) / definition.collect_duration, 1.0)
-	marker.set_progress(_tractor_progress)
+	if advance_collection:
+		var effective_speed := maxf(collection_speed_multiplier, 0.1)
+		_tractor_progress = minf(_tractor_progress + (delta * effective_speed) / definition.collect_duration, 1.0)
+		marker.set_progress(_tractor_progress)
 
 	var offset := anchor - global_position
 	var distance := offset.length()

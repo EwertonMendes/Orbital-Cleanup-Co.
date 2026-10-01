@@ -37,6 +37,7 @@ var _scan_phase := 0.0
 var _environment_scan_multiplier := 1.0
 var _environment_tractor_multiplier := 1.0
 var _interaction_enabled := true
+var _capture_enabled := true
 
 func _ready() -> void:
 	_cargo_hold = get_node(cargo_hold_path) as CargoHold
@@ -69,11 +70,19 @@ func set_interaction_enabled(enabled: bool) -> void:
 	if _scan_area != null:
 		_scan_area.set_deferred("monitoring", enabled)
 	if not enabled:
+		# Interaction disable is a full lifecycle reset (travel, scene handoff,
+		# etc.). Do not carry a boundary-only capture suspension into the next
+		# gameplay session.
+		_capture_enabled = true
 		_candidates.clear()
 		_set_target(null)
 		_hide_beam()
 		progress_changed.emit(0.0)
 	queue_redraw()
+
+func set_capture_enabled(enabled: bool) -> void:
+	_capture_enabled = enabled
+
 
 func set_environment_modifiers(scanner_multiplier: float, tractor_multiplier: float) -> void:
 	var next_scan := clampf(scanner_multiplier, 0.46, 1.0)
@@ -115,7 +124,7 @@ func _physics_process(delta: float) -> void:
 	queue_redraw()
 	_prune_candidates()
 
-	if not _is_target_valid(_target):
+	if not _is_locked_target_valid(_target):
 		_set_target(null)
 
 	if _target == null:
@@ -130,13 +139,14 @@ func _physics_process(delta: float) -> void:
 		anchor,
 		delta,
 		pull_speed * _environment_tractor_multiplier,
-		collection_speed_multiplier * _environment_tractor_multiplier
+		collection_speed_multiplier * _environment_tractor_multiplier,
+		_capture_enabled
 	)
 	var progress := _target.get_tractor_progress()
 	progress_changed.emit(progress)
 	_update_beam_visual(_target.global_position, delta)
 
-	if _target.is_collection_ready(anchor, capture_distance):
+	if _capture_enabled and _target.is_collection_ready(anchor, capture_distance):
 		_complete_target()
 
 func _on_area_entered(area: Area2D) -> void:
@@ -150,9 +160,11 @@ func _on_area_exited(area: Area2D) -> void:
 	var salvage := area as SalvageObject
 	if salvage == null:
 		return
+
+	# Scan range is only an acquisition boundary. Once the tractor has locked a
+	# target, the tether remains authoritative even if emergency ship movement
+	# temporarily carries the ship farther away than the scanner radius.
 	_candidates.erase(salvage)
-	if salvage == _target:
-		_set_target(null)
 	if _candidates.is_empty():
 		_reported_blocked = false
 
@@ -186,13 +198,14 @@ func _choose_target() -> SalvageObject:
 
 	return best
 
-func _is_target_valid(candidate: SalvageObject) -> bool:
+func _is_locked_target_valid(candidate: SalvageObject) -> bool:
+	# A locked tractor target is no longer governed by scanner overlap/range.
+	# It stays tethered until it is collected, destroyed, cargo can no longer
+	# accept it, or collection is explicitly disabled.
 	return (
 		candidate != null
 		and is_instance_valid(candidate)
 		and not candidate.is_queued_for_deletion()
-		and _candidates.has(candidate)
-		and candidate.global_position.distance_to(global_position) <= _effective_scan_range() * 1.04
 		and _cargo_hold.can_accept(candidate.definition)
 	)
 
