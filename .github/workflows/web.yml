@@ -32,8 +32,6 @@ jobs:
     if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 3
-    environment:
-      name: github-pages
     steps:
       - name: Resolve tested revision
         id: source
