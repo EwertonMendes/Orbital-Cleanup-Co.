@@ -67,13 +67,14 @@ static func alpha_bounds_radius(
 	var max_radius := 0.0
 	for rect_value in source_rects:
 		var rect := rect_value as Rect2i
-		for source_point in [
+		var corners := PackedVector2Array([
 			Vector2(rect.position),
 			Vector2(rect.end.x, rect.position.y),
 			Vector2(rect.end),
 			Vector2(rect.position.x, rect.end.y),
-		]:
-			var local := (source_point - origin) * sprite_scale
+		])
+		for source_point: Vector2 in corners:
+			var local: Vector2 = (source_point - origin) * sprite_scale
 			max_radius = maxf(max_radius, local.length())
 	assert(max_radius > 0.0, "Alpha collision bounds require visible pixels.")
 	return max_radius
