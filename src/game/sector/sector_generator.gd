@@ -222,20 +222,37 @@ func _build_obstacle_spawns(
 
 	for _index in range(count):
 		var definition: Dictionary = _weighted_pick(obstacle_definitions, "weight", rng) as Dictionary
+		var visual_scale := rng.randf_range(
+			float(definition.get("scale_min", 1.0)),
+			float(definition.get("scale_max", 1.0))
+		)
+		var texture_path := String(definition["sprite"])
+		var texture := load(texture_path) as Texture2D
+		assert(texture != null, "Obstacle collision spacing requires a loadable texture: %s" % texture_path)
+		var reference_size := float(definition.get("texture_reference_size", 0.0))
+		assert(reference_size > 0.0, "Obstacle collision spacing requires texture_reference_size.")
+		var max_texture_size := maxf(float(texture.get_width()), float(texture.get_height()))
+		var texture_scale := reference_size / maxf(max_texture_size, 1.0)
+		var collision_bounds_radius := CollisionGeometry2D.alpha_bounds_radius(
+			texture,
+			Vector2.ONE * visual_scale * texture_scale
+		)
 		var position := _find_obstacle_position(
 			rng,
 			play_bounds,
 			edge_margin,
 			min_spacing,
 			occupied,
-			environment_fields
+			environment_fields,
+			collision_bounds_radius
 		)
-		occupied.append(_occupied_zone(position))
+		occupied.append(_occupied_zone(position, collision_bounds_radius))
 		output.append({
 			"definition": definition.duplicate(true),
 			"position": position,
 			"rotation": rng.randf_range(-PI, PI),
-			"scale": rng.randf_range(float(definition.get("scale_min", 1.0)), float(definition.get("scale_max", 1.0))),
+			"scale": visual_scale,
+			"collision_bounds_radius": collision_bounds_radius,
 			"spin_speed": rng.randf_range(-0.24, 0.24),
 			"motion_phase": rng.randf_range(0.0, TAU),
 		})
@@ -305,21 +322,29 @@ func _find_obstacle_position(
 	edge_margin: float,
 	min_spacing: float,
 	occupied: Array[Dictionary],
-	environment_fields: Array[Dictionary]
+	environment_fields: Array[Dictionary],
+	candidate_radius: float
 ) -> Vector2:
-	var left := play_bounds.position.x + edge_margin
-	var right := play_bounds.end.x - edge_margin
-	var top := play_bounds.position.y + edge_margin
-	var bottom := play_bounds.end.y - edge_margin
+	var left := play_bounds.position.x + edge_margin + candidate_radius
+	var right := play_bounds.end.x - edge_margin - candidate_radius
+	var top := play_bounds.position.y + edge_margin + candidate_radius
+	var bottom := play_bounds.end.y - edge_margin - candidate_radius
 
 	for _attempt in range(48):
 		var candidate := Vector2(rng.randf_range(left, right), rng.randf_range(top, bottom))
-		if not _is_far_enough(candidate, occupied, min_spacing):
+		if not _is_far_enough(candidate, occupied, min_spacing, candidate_radius):
 			continue
-		if _inside_safe_corridor(candidate, environment_fields, 80.0):
+		if _inside_safe_corridor(candidate, environment_fields, 80.0 + candidate_radius):
 			continue
 		return candidate
-	return _find_position(rng, play_bounds, edge_margin, min_spacing, occupied)
+	return _find_position(
+		rng,
+		play_bounds,
+		edge_margin + candidate_radius,
+		min_spacing,
+		occupied,
+		candidate_radius
+	)
 
 func _inside_safe_corridor(
 	point: Vector2,

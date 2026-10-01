@@ -100,9 +100,9 @@
           "id",
           "sprite",
           "weight",
-          "collision_radius",
           "scale_min",
-          "scale_max"
+          "scale_max",
+          "texture_reference_size"
         ],
         "properties": {
           "id": {

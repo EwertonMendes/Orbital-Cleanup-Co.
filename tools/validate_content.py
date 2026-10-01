@@ -210,7 +210,7 @@ def validate_landmarks(items: dict[str, dict[str, Any]], catalogs: dict[str, set
         label = f"landmarks/{item_id}"
         require_keys(data, (
             "display_name_key", "sprite", "scale", "reserved_radius", "placement_radius",
-            "collision", "spin_speed_range", "drift_amplitude", "ambient_effect",
+            "spin_speed_range", "drift_amplitude", "ambient_effect",
         ), label)
         require_localization_key(data["display_name_key"], label, catalogs)
         require_asset(data["sprite"], f"{label}.sprite")
@@ -221,21 +221,7 @@ def validate_landmarks(items: dict[str, dict[str, Any]], catalogs: dict[str, set
         low = require_number(placement[0], f"{label}.placement_radius[0]", 0)
         high = require_number(placement[1], f"{label}.placement_radius[1]", 0)
         require(low <= high, f"{label}.placement_radius min cannot exceed max")
-        collision = data["collision"]
-        require(isinstance(collision, dict), f"{label}.collision must be an object")
-        shape = collision.get("shape")
-        require(shape in {"circle", "box"}, f"{label}.collision.shape must be circle or box")
-        if shape == "circle":
-            require(set(collision) == {"shape", "radius"}, f"{label}.collision circle fields are invalid")
-            collision_extent = require_number(collision.get("radius"), f"{label}.collision.radius", 20, 600)
-        else:
-            require(set(collision) == {"shape", "size"}, f"{label}.collision box fields are invalid")
-            size = collision.get("size")
-            require(isinstance(size, list) and len(size) == 2, f"{label}.collision.size must contain two values")
-            width = require_number(size[0], f"{label}.collision.size[0]", 40, 900)
-            height = require_number(size[1], f"{label}.collision.size[1]", 40, 900)
-            collision_extent = max(width, height) * 0.5
-        require(reserved_radius >= collision_extent + 60, f"{label}.reserved_radius must leave navigation clearance around collision")
+        require(reserved_radius >= 80, f"{label}.reserved_radius must leave navigation clearance around the authored profile")
         spin = data["spin_speed_range"]
         require(isinstance(spin, list) and len(spin) == 2, f"{label}.spin_speed_range must contain two values")
         spin_low = require_number(spin[0], f"{label}.spin_speed_range[0]", -0.08, 0.08)
@@ -413,7 +399,7 @@ def validate_biomes(
             seen_obstacles.add(obstacle_id)
             require_asset(obstacle.get("sprite"), f"{label}.obstacles[{index}].sprite")
             require_positive_weight(obstacle.get("weight"), f"{label}.obstacles[{index}].weight")
-            require_number(obstacle.get("collision_radius"), f"{label}.obstacles[{index}].collision_radius", 1)
+            require_number(obstacle.get("texture_reference_size"), f"{label}.obstacles[{index}].texture_reference_size", 1)
             scale_min = require_number(obstacle.get("scale_min"), f"{label}.obstacles[{index}].scale_min", 0.01)
             scale_max = require_number(obstacle.get("scale_max"), f"{label}.obstacles[{index}].scale_max", 0.01)
             require(scale_min <= scale_max, f"{label}.obstacles[{index}]: scale_min cannot exceed scale_max")

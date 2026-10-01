@@ -281,21 +281,76 @@ func _validate_world_visual_language() -> void:
 		_expect("_apply_motion" in salvage_source and "_effect_shader_mode" in salvage_source, "Salvage runtime must compose shared motion/effect profiles without per-item scenes.")
 		salvage.free()
 
+	var registry := ContentRegistry.new()
+
 	var obstacle_packed := load("res://src/game/sector/sector_obstacle.tscn") as PackedScene
 	_expect(obstacle_packed != null, "SectorObstacle scene must load.")
 	if obstacle_packed != null:
-		var obstacle := obstacle_packed.instantiate()
-		_expect(obstacle.find_child("Marker", true, false) is SectorObstacleMarker, "Collision hazards require a semantic hazard marker.")
-		obstacle.free()
+		var obstacle := obstacle_packed.instantiate() as SectorObstacle
+		_expect(obstacle != null, "SectorObstacle scene must instantiate the typed runtime.")
+		if obstacle != null:
+			var earth_biome := registry.get_biome("earth_orbit")
+			var obstacle_defs := earth_biome.get("obstacles", []) as Array
+			_expect(not obstacle_defs.is_empty(), "Earth Orbit requires at least one obstacle definition for collision QA.")
+			if not obstacle_defs.is_empty():
+				obstacle.configure(obstacle_defs[0] as Dictionary, 1.0)
+				root.add_child(obstacle)
+				_expect(obstacle is AnimatableBody2D, "Spinning obstacles require physics-synchronized bodies.")
+				_expect(obstacle.find_child("Marker", true, false) is SectorObstacleMarker, "Collision hazards require a semantic hazard marker.")
+				_expect(obstacle.find_child("CollisionRoot", true, false) == null, "Collision polygons must not be nested under an intermediate Node2D.")
+				_expect(CollisionGeometry2D.generated_part_count(obstacle) == 1, "Obstacle alpha collision must use one concave boundary shape.")
+				_expect(_has_concave_boundary_shape(obstacle), "Obstacle body must register a ConcavePolygonShape2D alpha boundary.")
+				_expect(CollisionGeometry2D.generated_boundary_segment_count(obstacle) > 8, "Obstacle alpha boundary requires meaningful contour segments.")
+				obstacle.queue_free()
+			else:
+				obstacle.free()
 
 	var landmark_packed := load("res://src/game/sector/sector_landmark.tscn") as PackedScene
 	_expect(landmark_packed != null, "SectorLandmark scene must load.")
 	if landmark_packed != null:
-		var landmark := landmark_packed.instantiate()
-		_expect(landmark is StaticBody2D, "Landmarks must participate in navigation as static structures.")
-		_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
-		_expect(landmark.find_child("CollisionShape", true, false) is CollisionShape2D, "Landmarks require generic collision geometry.")
-		landmark.free()
+		var landmark := landmark_packed.instantiate() as SectorLandmark
+		_expect(landmark != null, "SectorLandmark scene must instantiate the typed runtime.")
+		if landmark != null:
+			var landmark_definition := registry.get_landmark("service_satellite")
+			landmark.configure(landmark_definition)
+			root.add_child(landmark)
+			_expect(landmark is AnimatableBody2D, "Rotating landmarks require physics-synchronized navigation bodies.")
+			_expect(landmark.find_child("Marker", true, false) is SectorLandmarkMarker, "Landmarks require ambient visual treatment.")
+			_expect(landmark.find_child("CollisionRoot", true, false) == null, "Landmark collision polygons must be owned directly by the physics body.")
+			_expect(CollisionGeometry2D.generated_part_count(landmark) == 1, "Landmark alpha silhouette must use one concave boundary shape.")
+			_expect(_has_concave_boundary_shape(landmark), "Landmark body must register a ConcavePolygonShape2D alpha boundary.")
+			_expect(CollisionGeometry2D.generated_boundary_segment_count(landmark) > 12, "Service satellite alpha boundary requires detailed contour segments.")
+			landmark.queue_free()
+
+	_validate_all_world_alpha_collisions(registry, obstacle_packed, landmark_packed)
+
+	var collision_geometry_source := FileAccess.get_file_as_string("res://src/game/sector/collision_geometry_2d.gd")
+	_expect(
+		"ConcavePolygonShape2D.new()" in collision_geometry_source
+		and "ConvexPolygonShape2D.new()" in collision_geometry_source
+		and "image.get_pixel(x, y).a > threshold" in collision_geometry_source
+		and "_source_boundary_cache" in collision_geometry_source
+		and "_source_rect_cache" in collision_geometry_source
+		and "shape_owner_add_shape" in collision_geometry_source,
+		"Collision geometry must derive both static boundaries and dynamic solids directly from source alpha."
+	)
+	_expect(
+		"opaque_to_polygons" not in collision_geometry_source,
+		"World collision cannot rely on a filled outer contour that erases transparent holes."
+	)
+	var obstacle_source := FileAccess.get_file_as_string("res://src/game/sector/sector_obstacle.gd")
+	var landmark_source := FileAccess.get_file_as_string("res://src/game/sector/sector_landmark.gd")
+	_expect("CircleShape2D" not in obstacle_source, "Obstacle runtime must not fall back to circular collision.")
+	_expect("CollisionGeometry2D.build_static_boundary" in obstacle_source, "Obstacle runtime must trace a hollow static boundary from rendered sprite alpha.")
+	_expect("CollisionGeometry2D.build_static_boundary" in landmark_source, "Landmark runtime must trace a hollow static boundary from rendered sprite alpha.")
+	_expect("position = _base_position +" in obstacle_source, "Obstacle drift must move the physics body, not only its sprite.")
+	_expect("position = _base_position +" in landmark_source, "Landmark drift must move the physics body, not only its sprite.")
+
+	var ship_scene_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.tscn")
+	var ship_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.gd")
+	_expect('id="ShipCollision"' not in ship_scene_source, "Player ship must not retain the primitive circle hull collider.")
+	_expect("CollisionGeometry2D.build_dynamic_solid(self, visuals.ship_sprite)" in ship_source, "Player ship hull collision must remain solid and come from active hull texture alpha.")
+	_expect("_sync_hull_collision_rotation()" in ship_source, "Player ship alpha collision must rotate with the visible hull.")
 
 	for asset_path in [
 		"res://assets/original/landmarks/service_satellite.svg",
@@ -389,11 +444,6 @@ func _validate_landmark_plan(plan: Dictionary) -> void:
 		_expect(
 			asset_path.begins_with("res://assets/original/landmarks/"),
 			"Authored landmarks must use project-owned OCC landmark art."
-		)
-		var collision := definition.get("collision", {}) as Dictionary
-		_expect(
-			String(collision.get("shape", "")) in ["circle", "box"],
-			"Landmark collision must be data-driven."
 		)
 		var landmark_position := landmark["position"] as Vector2
 		var reserved_radius := float(definition.get("reserved_radius", 0.0))
@@ -827,9 +877,9 @@ func _validate_contract_session() -> void:
 		"total_cleanliness": 10.0,
 		"reward_multiplier": 1.0,
 	})
-	full.record_salvage(target_salvage)
+	full.record_delivery([target_salvage])
 	_expect(not full.is_target_reached(), "Full Cleanup cannot complete below 100%.")
-	full.record_salvage(final_salvage)
+	full.record_delivery([final_salvage])
 	_expect(full.is_target_reached() and full.is_perfect_cleanup(), "Full Cleanup must complete only at 100%.")
 
 func _validate_contract_plan_feasibility(plan: Dictionary, registry: ContentRegistry) -> void:
@@ -994,9 +1044,15 @@ func _validate_player_ship() -> void:
 	_expect(packed != null, "PlayerShip scene must load.")
 	if packed == null:
 		return
-	var ship := packed.instantiate()
-	_expect(ship is PlayerShip, "PlayerShip root must use PlayerShip controller.")
-	_expect(ship.get_node_or_null("CollisionShape2D") is CollisionShape2D, "PlayerShip requires collision.")
+	var ship := packed.instantiate() as PlayerShip
+	_expect(ship != null, "PlayerShip root must use PlayerShip controller.")
+	if ship == null:
+		return
+	var qa_input := InputService.new()
+	ship.configure(qa_input)
+	root.add_child(ship)
+	_expect(CollisionGeometry2D.generated_part_count(ship) > 0, "PlayerShip must build alpha-derived hull collision at runtime.")
+	_expect(_physics_shape_count(ship) > 0, "PlayerShip alpha hull must register real physics shapes.")
 	_expect(ship.find_child("CargoHold", true, false) is CargoHold, "PlayerShip requires CargoHold.")
 	_expect(ship.find_child("TractorBeam", true, false) is TractorBeam, "PlayerShip requires TractorBeam.")
 	var sprite := ship.find_child("ShipSprite", true, false) as Sprite2D
@@ -1013,6 +1069,15 @@ func _validate_player_ship() -> void:
 				"Gameplay ship HD artwork must be normalized to the established on-screen footprint."
 			)
 		_expect(sprite.material is ShaderMaterial, "Gameplay ship requires paint ShaderMaterial.")
+		var ship_alpha_qa := _alpha_collision_sample_mismatches(ship, sprite)
+		_expect(
+			int(ship_alpha_qa["visible_uncovered"]) == 0,
+			"PlayerShip hull collision must cover confidently visible sampled pixels."
+		)
+		_expect(
+			int(ship_alpha_qa["transparent_covered"]) == 0,
+			"PlayerShip solid alpha collision must not cover confidently transparent sampled pixels."
+		)
 	var engine_anchor := ship.find_child("EngineAnchor", true, false) as Marker2D
 	_expect(engine_anchor != null, "PlayerShip requires an engine trail anchor.")
 	if engine_anchor != null:
@@ -1093,6 +1158,7 @@ func _validate_player_ship() -> void:
 		"Desktop world-click boost must not depend on _unhandled_input after GUI dispatch."
 	)
 	ship.free()
+	qa_input.free()
 
 func _validate_flight_screen() -> void:
 	var packed := load("res://src/ui/screens/flight/flight_screen.tscn") as PackedScene
@@ -1435,6 +1501,164 @@ func _validate_polish_systems() -> void:
 
 func _validate_render_quality() -> void:
 	_expect(bool(ProjectSettings.get_setting("physics/common/physics_interpolation", false)), "Physics interpolation must remain enabled for smooth Web movement.")
+
+func _validate_all_world_alpha_collisions(
+	registry: ContentRegistry,
+	obstacle_packed: PackedScene,
+	landmark_packed: PackedScene
+) -> void:
+	if obstacle_packed != null:
+		var checked_obstacles: Dictionary = {}
+		for biome_id in ["earth_orbit", "lunar_belt", "mars_freight", "blue_nebula"]:
+			var biome := registry.get_biome(biome_id)
+			for value in biome.get("obstacles", []) as Array:
+				var definition := value as Dictionary
+				var obstacle_id := String(definition.get("id", ""))
+				if obstacle_id.is_empty() or checked_obstacles.has(obstacle_id):
+					continue
+				checked_obstacles[obstacle_id] = true
+				var obstacle := obstacle_packed.instantiate() as SectorObstacle
+				_expect(obstacle != null, "Alpha boundary QA must instantiate obstacle: %s" % obstacle_id)
+				if obstacle == null:
+					continue
+				obstacle.configure(definition, 1.0)
+				root.add_child(obstacle)
+				var segment_count := CollisionGeometry2D.generated_boundary_segment_count(obstacle)
+				_expect(
+					CollisionGeometry2D.generated_part_count(obstacle) == 1
+					and _has_concave_boundary_shape(obstacle),
+					"Obstacle must use one static concave alpha boundary: %s" % obstacle_id
+				)
+				_expect(segment_count > 8, "Obstacle alpha boundary is unexpectedly empty: %s" % obstacle_id)
+				print("[QA] ALPHA_BOUNDARY kind=obstacle id=%s shapes=1 segments=%d" % [
+					obstacle_id,
+					segment_count,
+				])
+				obstacle.free()
+		_expect(checked_obstacles.size() >= 18, "Alpha boundary QA must cover the authored obstacle families.")
+
+	if landmark_packed != null:
+		for landmark_id in [
+			"service_satellite",
+			"cargo_waystation",
+			"relay_satellite",
+			"mining_rig",
+			"fractured_moonlet",
+			"comms_array",
+			"research_outpost",
+			"derelict_explorer",
+		]:
+			var definition := registry.get_landmark(landmark_id)
+			var landmark := landmark_packed.instantiate() as SectorLandmark
+			_expect(landmark != null, "Alpha boundary QA must instantiate landmark: %s" % landmark_id)
+			if landmark == null:
+				continue
+			landmark.configure(definition)
+			root.add_child(landmark)
+			var segment_count := CollisionGeometry2D.generated_boundary_segment_count(landmark)
+			_expect(
+				CollisionGeometry2D.generated_part_count(landmark) == 1
+				and _has_concave_boundary_shape(landmark),
+				"Landmark must use one static concave alpha boundary: %s" % landmark_id
+			)
+			_expect(segment_count > 12, "Landmark alpha boundary is unexpectedly empty: %s" % landmark_id)
+			print("[QA] ALPHA_BOUNDARY kind=landmark id=%s shapes=1 segments=%d" % [
+				landmark_id,
+				segment_count,
+			])
+			landmark.free()
+
+func _has_concave_boundary_shape(body: CollisionObject2D) -> bool:
+	var concave_count := 0
+	var other_generated_shapes := 0
+	for owner_id in body.get_shape_owners():
+		for shape_index in range(body.shape_owner_get_shape_count(owner_id)):
+			var shape := body.shape_owner_get_shape(owner_id, shape_index)
+			if shape is ConcavePolygonShape2D:
+				concave_count += 1
+			elif shape is ConvexPolygonShape2D:
+				other_generated_shapes += 1
+	return concave_count == 1 and other_generated_shapes == 0
+
+func _alpha_collision_sample_mismatches(body: CollisionObject2D, sprite: Sprite2D) -> Dictionary:
+	var result := {
+		"transparent_covered": 0,
+		"visible_uncovered": 0,
+	}
+	if sprite == null or sprite.texture == null:
+		result["visible_uncovered"] = 1
+		return result
+	var image := sprite.texture.get_image()
+	if image == null or image.is_empty():
+		result["visible_uncovered"] = 1
+		return result
+	if image.is_compressed() and image.decompress() != OK:
+		result["visible_uncovered"] = 1
+		return result
+
+	var texture_size := sprite.texture.get_size()
+	var origin := texture_size * 0.5 if sprite.centered else Vector2.ZERO
+	var step_x := maxi(int(texture_size.x / 28.0), 6)
+	var step_y := maxi(int(texture_size.y / 28.0), 6)
+	var convex_shapes: Array[Dictionary] = []
+	for owner_id in body.get_shape_owners():
+		var owner_transform := body.shape_owner_get_transform(owner_id)
+		for shape_index in range(body.shape_owner_get_shape_count(owner_id)):
+			var shape := body.shape_owner_get_shape(owner_id, shape_index)
+			if shape is ConvexPolygonShape2D:
+				convex_shapes.append({
+					"shape": shape,
+					"transform": owner_transform,
+				})
+
+	for y in range(step_y / 2, image.get_height(), step_y):
+		for x in range(step_x / 2, image.get_width(), step_x):
+			var alpha := image.get_pixel(x, y).a
+			if alpha > 0.02 and alpha < 0.15:
+				continue
+			# The bitmap bit represents the full source pixel cell [x,x+1] x [y,y+1].
+			# Sample its center so an adjacent opaque cell boundary is never mistaken
+			# for collision coverage of this pixel.
+			var source_sample := Vector2(float(x) + 0.5, float(y) + 0.5)
+			var local := (source_sample - origin + sprite.offset) * sprite.scale
+			var covered := false
+			for shape_entry in convex_shapes:
+				var shape := shape_entry["shape"] as ConvexPolygonShape2D
+				var owner_transform := shape_entry["transform"] as Transform2D
+				var point := owner_transform.affine_inverse() * local
+				if Geometry2D.is_point_in_polygon(point, shape.points):
+					covered = true
+					break
+
+			if alpha <= 0.02 and covered:
+				var mismatch_count := int(result["transparent_covered"])
+				if mismatch_count < 5:
+					print("[QA] ALPHA_FALSE_POSITIVE body=%s pixel=(%d,%d) alpha=%.4f local=%s" % [
+						body.name,
+						x,
+						y,
+						alpha,
+						str(local),
+					])
+				result["transparent_covered"] = mismatch_count + 1
+			elif alpha >= 0.15 and not covered:
+				var mismatch_count := int(result["visible_uncovered"])
+				if mismatch_count < 5:
+					print("[QA] ALPHA_FALSE_NEGATIVE body=%s pixel=(%d,%d) alpha=%.4f local=%s" % [
+						body.name,
+						x,
+						y,
+						alpha,
+						str(local),
+					])
+				result["visible_uncovered"] = mismatch_count + 1
+	return result
+
+func _physics_shape_count(body: CollisionObject2D) -> int:
+	var count := 0
+	for owner_id in body.get_shape_owners():
+		count += body.shape_owner_get_shape_count(owner_id)
+	return count
 
 func _expect(condition: bool, message: String) -> void:
 	if condition:
