@@ -95,7 +95,7 @@ msgid "FLIGHT_SPEED"
 msgstr "SPEED"
 
 msgid "FLIGHT_SPEED_UNIT"
-msgstr "m/s"
+msgstr "km/h"
 
 msgid "FLIGHT_SPEED_IDLE"
 msgstr "IDLE"
@@ -909,6 +909,9 @@ msgstr "%d m"
 
 msgid "FLIGHT_DISTANCE_KM_FMT"
 msgstr "%.1f km"
+
+msgid "FLIGHT_DISTANCE_KM_LONG_FMT"
+msgstr "%d km"
 
 msgid "BIOME_MERCURY_TERMINATOR"
 msgstr "Mercury Terminator"
