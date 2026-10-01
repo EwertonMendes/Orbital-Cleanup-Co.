@@ -318,11 +318,18 @@ func _validate_world_visual_language() -> void:
 			_expect(landmark.find_child("CollisionRoot", true, false) == null, "Landmark collision polygons must be owned directly by the physics body.")
 			_expect(_direct_collision_polygon_count(landmark) > 0, "Landmark alpha silhouette must register collision polygons directly on the body.")
 			_expect(_physics_shape_count(landmark) > 0, "Landmark body must register alpha-derived polygon shapes with Godot physics.")
+			var service_alpha_qa := _alpha_collision_sample_mismatches(landmark, landmark.sprite)
 			_expect(
-				_alpha_collision_transparency_mismatches(landmark, landmark.sprite) == 0,
+				int(service_alpha_qa["transparent_covered"]) == 0,
 				"Service satellite collision must not cover confidently transparent sampled pixels."
 			)
+			_expect(
+				int(service_alpha_qa["visible_uncovered"]) == 0,
+				"Service satellite collision must cover confidently visible sampled pixels."
+			)
 			landmark.queue_free()
+
+	_validate_all_world_alpha_collisions(registry, obstacle_packed, landmark_packed)
 
 	var collision_geometry_source := FileAccess.get_file_as_string("res://src/game/sector/collision_geometry_2d.gd")
 	_expect(
@@ -1065,9 +1072,10 @@ func _validate_player_ship() -> void:
 				"Gameplay ship HD artwork must be normalized to the established on-screen footprint."
 			)
 		_expect(sprite.material is ShaderMaterial, "Gameplay ship requires paint ShaderMaterial.")
+		var ship_alpha_qa := _alpha_collision_sample_mismatches(ship, sprite)
 		_expect(
-			_alpha_collision_transparency_mismatches(ship, sprite) == 0,
-			"PlayerShip hull collision must not cover confidently transparent sampled pixels."
+			int(ship_alpha_qa["visible_uncovered"]) == 0,
+			"PlayerShip hull collision must cover confidently visible sampled pixels."
 		)
 	var engine_anchor := ship.find_child("EngineAnchor", true, false) as Marker2D
 	_expect(engine_anchor != null, "PlayerShip requires an engine trail anchor.")
@@ -1493,20 +1501,88 @@ func _validate_polish_systems() -> void:
 func _validate_render_quality() -> void:
 	_expect(bool(ProjectSettings.get_setting("physics/common/physics_interpolation", false)), "Physics interpolation must remain enabled for smooth Web movement.")
 
-func _alpha_collision_transparency_mismatches(body: CollisionObject2D, sprite: Sprite2D) -> int:
+func _validate_all_world_alpha_collisions(
+	registry: ContentRegistry,
+	obstacle_packed: PackedScene,
+	landmark_packed: PackedScene
+) -> void:
+	if obstacle_packed != null:
+		var checked_obstacles: Dictionary = {}
+		for biome_id in ["earth_orbit", "lunar_belt", "mars_freight", "blue_nebula"]:
+			var biome := registry.get_biome(biome_id)
+			for value in biome.get("obstacles", []) as Array:
+				var definition := value as Dictionary
+				var obstacle_id := String(definition.get("id", ""))
+				if obstacle_id.is_empty() or checked_obstacles.has(obstacle_id):
+					continue
+				checked_obstacles[obstacle_id] = true
+				var obstacle := obstacle_packed.instantiate() as SectorObstacle
+				_expect(obstacle != null, "Alpha collision QA must instantiate obstacle: %s" % obstacle_id)
+				if obstacle == null:
+					continue
+				obstacle.configure(definition, 1.0)
+				root.add_child(obstacle)
+				var alpha_qa := _alpha_collision_sample_mismatches(obstacle, obstacle.sprite)
+				_expect(
+					int(alpha_qa["transparent_covered"]) == 0,
+					"Obstacle alpha collision covers transparent pixels: %s" % obstacle_id
+				)
+				_expect(
+					int(alpha_qa["visible_uncovered"]) == 0,
+					"Obstacle alpha collision misses visible pixels: %s" % obstacle_id
+				)
+				obstacle.free()
+		_expect(checked_obstacles.size() >= 18, "Alpha collision QA must cover the authored obstacle families.")
+
+	if landmark_packed != null:
+		for landmark_id in [
+			"service_satellite",
+			"cargo_waystation",
+			"relay_satellite",
+			"mining_rig",
+			"fractured_moonlet",
+			"comms_array",
+			"research_outpost",
+			"derelict_explorer",
+		]:
+			var definition := registry.get_landmark(landmark_id)
+			var landmark := landmark_packed.instantiate() as SectorLandmark
+			_expect(landmark != null, "Alpha collision QA must instantiate landmark: %s" % landmark_id)
+			if landmark == null:
+				continue
+			landmark.configure(definition)
+			root.add_child(landmark)
+			var alpha_qa := _alpha_collision_sample_mismatches(landmark, landmark.sprite)
+			_expect(
+				int(alpha_qa["transparent_covered"]) == 0,
+				"Landmark alpha collision covers transparent pixels: %s" % landmark_id
+			)
+			_expect(
+				int(alpha_qa["visible_uncovered"]) == 0,
+				"Landmark alpha collision misses visible pixels: %s" % landmark_id
+			)
+			landmark.free()
+
+func _alpha_collision_sample_mismatches(body: CollisionObject2D, sprite: Sprite2D) -> Dictionary:
+	var result := {
+		"transparent_covered": 0,
+		"visible_uncovered": 0,
+	}
 	if sprite == null or sprite.texture == null:
-		return 1
+		result["visible_uncovered"] = 1
+		return result
 	var image := sprite.texture.get_image()
 	if image == null or image.is_empty():
-		return 1
+		result["visible_uncovered"] = 1
+		return result
 	if image.is_compressed() and image.decompress() != OK:
-		return 1
+		result["visible_uncovered"] = 1
+		return result
 
 	var texture_size := sprite.texture.get_size()
 	var origin := texture_size * 0.5 if sprite.centered else Vector2.ZERO
-	var step_x := maxi(int(texture_size.x / 24.0), 8)
-	var step_y := maxi(int(texture_size.y / 24.0), 8)
-	var mismatches := 0
+	var step_x := maxi(int(texture_size.x / 28.0), 6)
+	var step_y := maxi(int(texture_size.y / 28.0), 6)
 	var polygons: Array[CollisionPolygon2D] = []
 	for child in body.get_children():
 		if child is CollisionPolygon2D:
@@ -1515,26 +1591,39 @@ func _alpha_collision_transparency_mismatches(body: CollisionObject2D, sprite: S
 	for y in range(step_y / 2, image.get_height(), step_y):
 		for x in range(step_x / 2, image.get_width(), step_x):
 			var alpha := image.get_pixel(x, y).a
-			if alpha > 0.02:
+			if alpha > 0.02 and alpha < 0.15:
 				continue
 			var local := (Vector2(x, y) - origin + sprite.offset) * sprite.scale
 			var covered := false
 			for collision in polygons:
-				var point := local.rotated(-collision.rotation)
+				var point := collision.transform.affine_inverse() * local
 				if Geometry2D.is_point_in_polygon(point, collision.polygon):
 					covered = true
 					break
-			if covered:
-				if mismatches < 8:
-					print("[QA] ALPHA_COLLISION_MISMATCH body=%s pixel=(%d,%d) alpha=%.4f local=%s" % [
+
+			if alpha <= 0.02 and covered:
+				var mismatch_count := int(result["transparent_covered"])
+				if mismatch_count < 5:
+					print("[QA] ALPHA_FALSE_POSITIVE body=%s pixel=(%d,%d) alpha=%.4f local=%s" % [
 						body.name,
 						x,
 						y,
 						alpha,
 						str(local),
 					])
-				mismatches += 1
-	return mismatches
+				result["transparent_covered"] = mismatch_count + 1
+			elif alpha >= 0.15 and not covered:
+				var mismatch_count := int(result["visible_uncovered"])
+				if mismatch_count < 5:
+					print("[QA] ALPHA_FALSE_NEGATIVE body=%s pixel=(%d,%d) alpha=%.4f local=%s" % [
+						body.name,
+						x,
+						y,
+						alpha,
+						str(local),
+					])
+				result["visible_uncovered"] = mismatch_count + 1
+	return result
 
 func _direct_collision_polygon_count(body: CollisionObject2D) -> int:
 	var count := 0
