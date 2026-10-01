@@ -22,10 +22,15 @@ class_name ShipMovementTuning
 @export_range(0.0, 160.0, 1.0) var camera_lead_distance := 46.0
 @export_range(1.0, 20.0, 0.1) var camera_lead_response := 7.0
 @export_range(0.0, 18.0, 0.1) var camera_shake_strength := 3.6
-@export_range(80.0, 600.0, 1.0) var boundary_soft_margin := 320.0
-@export_range(100.0, 1800.0, 1.0) var boundary_push_acceleration := 760.0
-@export_range(0.5, 20.0, 0.1) var boundary_outward_damping := 8.0
-@export_range(8.0, 120.0, 1.0) var boundary_hard_padding := 42.0
+@export_range(4.0, 9.0, 0.1) var boundary_warning_seconds := 6.5
+@export_range(400.0, 2200.0, 10.0) var boundary_hard_escape_margin := 900.0
+@export_range(420.0, 1400.0, 5.0) var boundary_return_speed := 900.0
+@export_range(1800.0, 6400.0, 10.0) var boundary_return_max_speed := 5600.0
+@export_range(0.75, 1.4, 0.05) var boundary_return_target_seconds := 1.0
+@export_range(6.0, 28.0, 0.1) var boundary_return_velocity_response := 18.0
+@export_range(80.0, 320.0, 5.0) var boundary_return_reentry_depth := 180.0
+@export_range(180.0, 720.0, 5.0) var boundary_return_exit_speed := 360.0
+@export_range(4.0, 24.0, 0.1) var boundary_return_turn_response := 16.0
 
 func validate() -> void:
 	assert(max_speed > 0.0, "Ship cruise speed must be positive.")
@@ -44,4 +49,12 @@ func validate() -> void:
 	assert(collision_restitution >= 0.0 and collision_restitution <= 1.0, "Collision restitution must be in [0, 1].")
 	assert(collision_tangent_retention >= 0.0 and collision_tangent_retention <= 1.0, "Collision tangent retention must be in [0, 1].")
 	assert(collision_iterations >= 1, "Collision solver requires at least one iteration.")
-	assert(boundary_soft_margin > boundary_hard_padding, "Boundary soft margin must exceed hard padding.")
+	assert(boundary_warning_seconds >= 6.0 and boundary_warning_seconds <= 7.0, "Boundary warning grace must remain readable before auto-return.")
+	assert(boundary_hard_escape_margin > 0.0, "Numerical containment margin must be positive.")
+	assert(boundary_return_speed > absolute_speed_limit, "Boundary return must be visibly faster than normal flight containment speed.")
+	assert(boundary_return_max_speed > boundary_return_speed, "Boundary return needs adaptive emergency speed for distant exits.")
+	assert(boundary_return_target_seconds >= 0.8 and boundary_return_target_seconds <= 1.2, "Boundary return should complete in about one second.")
+	assert(boundary_return_velocity_response > 0.0, "Boundary return velocity response must be positive.")
+	assert(boundary_return_reentry_depth > 0.0, "Boundary return must carry the ship a safe distance back inside the map.")
+	assert(boundary_return_exit_speed > 0.0 and boundary_return_exit_speed <= absolute_speed_limit, "Boundary return must hand control back at a normal controllable speed.")
+	assert(boundary_return_turn_response > turn_response, "Boundary auto-return must rotate the ship more decisively than normal steering.")

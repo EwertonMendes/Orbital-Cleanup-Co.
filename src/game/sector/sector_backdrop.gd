@@ -6,7 +6,6 @@ const STAR_EXTENT := 11500.0
 const CELESTIAL_BODY_SHADER := preload("res://src/game/visual/celestial_body.gdshader")
 const CELESTIAL_GLOW_SHADER := preload("res://src/game/visual/celestial_glow.gdshader")
 
-var _play_bounds := Rect2(-4800.0, -3000.0, 9600.0, 6000.0)
 var _background_color := Color("#040b13")
 var _nebula_color := Color("#0b3d4d")
 var _accent_color := Color("#53d7f1")
@@ -28,7 +27,6 @@ func configure(
 	visual_profile: Dictionary = {}
 ) -> void:
 	assert(play_bounds.size.x > 0.0 and play_bounds.size.y > 0.0, "SectorBackdrop requires valid bounds.")
-	_play_bounds = play_bounds
 	_background_color = Color(String(palette.get("background", "#040b13")))
 	_nebula_color = Color(String(palette.get("nebula", "#0b3d4d")))
 	_accent_color = Color(String(palette.get("accent", "#53d7f1")))
@@ -71,7 +69,6 @@ func _draw() -> void:
 	draw_arc(Vector2(450, 260), 3200.0, deg_to_rad(208.0), deg_to_rad(304.0), 120, Color(_accent_color, 0.045), 1.0, true)
 	_draw_glint(Vector2(2200, 980), 10.0, Color(_accent_color, 0.5))
 	_draw_glint(Vector2(-2850, -1250), 7.0, Color(1.0, 0.82, 0.5, 0.42))
-	_draw_perimeter()
 
 func _build_star_multimesh() -> void:
 	if _star_field != null and is_instance_valid(_star_field):
@@ -290,26 +287,3 @@ func _update_primary_parallax() -> void:
 	if _primary_glow != null and is_instance_valid(_primary_glow):
 		var glow_scale := 1.055 + WorldVisualLanguage.environment_effect_intensity(_visual_profile) * 0.045
 		_primary_glow.scale = _primary_visual.scale * glow_scale
-
-func _draw_perimeter() -> void:
-	var outer := _play_bounds
-	var inner := _play_bounds.grow(-180.0)
-
-	draw_rect(outer, Color(_accent_color, 0.16), false, 3.0, true)
-	draw_rect(inner, Color(_accent_color, 0.05), false, 1.0, true)
-
-	var corner := 180.0
-	var color := Color(1.0, 0.78, 0.28, 0.46)
-	var left := outer.position.x
-	var right := outer.end.x
-	var top := outer.position.y
-	var bottom := outer.end.y
-
-	draw_line(Vector2(left, top), Vector2(left + corner, top), color, 4.0, true)
-	draw_line(Vector2(left, top), Vector2(left, top + corner), color, 4.0, true)
-	draw_line(Vector2(right, top), Vector2(right - corner, top), color, 4.0, true)
-	draw_line(Vector2(right, top), Vector2(right, top + corner), color, 4.0, true)
-	draw_line(Vector2(left, bottom), Vector2(left + corner, bottom), color, 4.0, true)
-	draw_line(Vector2(left, bottom), Vector2(left, bottom - corner), color, 4.0, true)
-	draw_line(Vector2(right, bottom), Vector2(right - corner, bottom), color, 4.0, true)
-	draw_line(Vector2(right, bottom), Vector2(right, bottom - corner), color, 4.0, true)
