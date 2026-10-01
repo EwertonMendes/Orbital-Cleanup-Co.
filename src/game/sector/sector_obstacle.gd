@@ -3,7 +3,6 @@ class_name SectorObstacle
 
 @onready var sprite: Sprite2D = %Sprite
 @onready var marker: SectorObstacleMarker = %Marker
-@onready var collision_root: Node2D = %CollisionRoot
 
 var _definition: Dictionary = {}
 var _visual_scale := 1.0
@@ -37,7 +36,7 @@ func _ready() -> void:
 
 	var profile := _registry.get_collision_profile(String(_definition["id"]))
 	var collision_radius := CollisionGeometry2D.build_profile(
-		collision_root,
+		self,
 		profile,
 		sprite.texture,
 		sprite.scale
