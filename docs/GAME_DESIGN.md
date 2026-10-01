@@ -40,6 +40,8 @@ The ship has authored dry mass. Recovered salvage contributes carried physical m
 
 The flight HUD exposes the real velocity magnitude through a compact lower-left ship speedometer. Its cruise marker is tied to the authored nominal cruise speed while the full gauge uses the higher simulation safety range, so boosts, currents and gravitational acceleration can visibly push the ship into overspeed without pretending that cruise speed is a hard cap.
 
+Flight telemetry uses one coherent presentation scale instead of labeling raw Godot world units as SI units. One world unit is presented as 25 meters for cockpit/navigation readouts only. This makes the current 300 wu/s cruise reference read as approximately **27,000 km/h**, close to low-Earth-orbit spacecraft velocity, while a 1,000-world-unit route reads as **25 km**. This conversion does not change physics, sector geometry, collision shapes or environmental forces; it is a display-layer convention shared by speed and distance telemetry.
+
 The flight presentation must communicate the distinction between facing/thrust and actual motion. Engine trail/particles indicate active propulsion rather than raw speed, while a restrained drift chevron indicates the current inertial velocity direction.
 
 ## Automatic collection
