@@ -24,7 +24,6 @@ collision_iterations = 3
 camera_lead_distance = 42.0
 camera_lead_response = 6.5
 camera_shake_strength = 3.2
-boundary_warning_margin = 56.0
 boundary_warning_seconds = 6.5
 boundary_hard_escape_margin = 900.0
 boundary_return_speed = 420.0
