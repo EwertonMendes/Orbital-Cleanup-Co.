@@ -381,20 +381,27 @@ func _update_boundary_return_velocity(delta: float) -> void:
 	var response := 1.0 - exp(-tuning.boundary_return_velocity_response * maxf(delta, 0.0))
 	velocity = velocity.lerp(desired_velocity, response)
 
-func _boundary_safe_reentry_target(origin: Vector2) -> Vector2:
+func _boundary_safe_reentry_rect() -> Rect2:
 	var inset := minf(
 		tuning.boundary_return_reentry_depth,
 		minf(_world_bounds.size.x, _world_bounds.size.y) * 0.22
 	)
+	return Rect2(
+		_world_bounds.position + Vector2(inset, inset),
+		_world_bounds.size - Vector2(inset * 2.0, inset * 2.0)
+	)
+
+func _boundary_safe_reentry_target(origin: Vector2) -> Vector2:
+	var safe_rect := _boundary_safe_reentry_rect()
 	return Vector2(
-		clampf(origin.x, _world_bounds.position.x + inset, _world_bounds.end.x - inset),
-		clampf(origin.y, _world_bounds.position.y + inset, _world_bounds.end.y - inset)
+		clampf(origin.x, safe_rect.position.x, safe_rect.end.x),
+		clampf(origin.y, safe_rect.position.y, safe_rect.end.y)
 	)
 
 func _has_completed_boundary_return() -> bool:
 	if not _boundary_return_active:
 		return true
-	return global_position.distance_to(_boundary_return_target) <= tuning.boundary_return_release_radius
+	return _boundary_safe_reentry_rect().has_point(global_position)
 
 func _finish_boundary_return() -> void:
 	var release_direction := _boundary_return_direction
