@@ -26,6 +26,10 @@ func configure(ship: PlayerShip, depot: Node2D) -> void:
 	_configured = true
 	_update_navigation()
 
+func refresh_locale() -> void:
+	if _configured:
+		_update_navigation()
+
 func set_cargo_state(used_units: int, capacity: int) -> void:
 	_cargo_used = maxi(used_units, 0)
 	_cargo_capacity = maxi(capacity, 1)
