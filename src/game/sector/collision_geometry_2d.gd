@@ -85,7 +85,6 @@ static func _trace_texture_alpha(
 	trace_epsilon: float
 ) -> Array:
 	assert(texture != null, "Cannot trace an empty texture.")
-	assert(texture.has_alpha(), "Collision texture must contain an alpha channel.")
 	var threshold := clampf(alpha_threshold, 0.0, 1.0)
 	var epsilon := maxf(trace_epsilon, 0.0)
 	var path_key := texture.resource_path
@@ -101,7 +100,11 @@ static func _trace_texture_alpha(
 	assert(image != null and not image.is_empty(), "Collision texture must expose image data.")
 	if image.is_compressed():
 		var error := image.decompress()
-		assert(error == OK, "Collision texture image must be decompressible.")
+		assert(error == OK, "Collision texture image must be decompressible: %s" % texture.resource_path)
+	assert(
+		image.detect_alpha() != Image.ALPHA_NONE,
+		"Collision source must preserve transparent alpha in the imported image: %s" % texture.resource_path
+	)
 
 	var bitmap := BitMap.new()
 	bitmap.create_from_image_alpha(image, threshold)
