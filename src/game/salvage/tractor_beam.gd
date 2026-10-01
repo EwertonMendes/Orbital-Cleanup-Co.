@@ -37,6 +37,7 @@ var _scan_phase := 0.0
 var _environment_scan_multiplier := 1.0
 var _environment_tractor_multiplier := 1.0
 var _interaction_enabled := true
+var _capture_enabled := true
 
 func _ready() -> void:
 	_cargo_hold = get_node(cargo_hold_path) as CargoHold
@@ -74,6 +75,10 @@ func set_interaction_enabled(enabled: bool) -> void:
 		_hide_beam()
 		progress_changed.emit(0.0)
 	queue_redraw()
+
+func set_capture_enabled(enabled: bool) -> void:
+	_capture_enabled = enabled
+
 
 func set_environment_modifiers(scanner_multiplier: float, tractor_multiplier: float) -> void:
 	var next_scan := clampf(scanner_multiplier, 0.46, 1.0)
@@ -130,13 +135,14 @@ func _physics_process(delta: float) -> void:
 		anchor,
 		delta,
 		pull_speed * _environment_tractor_multiplier,
-		collection_speed_multiplier * _environment_tractor_multiplier
+		collection_speed_multiplier * _environment_tractor_multiplier,
+		_capture_enabled
 	)
 	var progress := _target.get_tractor_progress()
 	progress_changed.emit(progress)
 	_update_beam_visual(_target.global_position, delta)
 
-	if _target.is_collection_ready(anchor, capture_distance):
+	if _capture_enabled and _target.is_collection_ready(anchor, capture_distance):
 		_complete_target()
 
 func _on_area_entered(area: Area2D) -> void:
