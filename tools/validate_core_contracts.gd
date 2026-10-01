@@ -334,8 +334,7 @@ func _validate_world_visual_language() -> void:
 	var collision_geometry_source := FileAccess.get_file_as_string("res://src/game/sector/collision_geometry_2d.gd")
 	_expect(
 		"ConvexPolygonShape2D.new()" in collision_geometry_source
-		and "BitMap.new()" in collision_geometry_source
-		and "create_from_image_alpha" in collision_geometry_source
+		and "image.get_pixel(x, y).a >= threshold" in collision_geometry_source
 		and "_source_rect_cache" in collision_geometry_source
 		and "shape_owner_add_shape" in collision_geometry_source,
 		"World collision geometry must partition texture alpha into solid convex physics shapes."
