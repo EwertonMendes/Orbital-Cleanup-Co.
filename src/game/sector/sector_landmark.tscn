@@ -16,6 +16,3 @@ script = ExtResource("2")
 [node name="Sprite" type="Sprite2D" parent="."]
 unique_name_in_owner = true
 texture_filter = 2
-
-[node name="CollisionRoot" type="Node2D" parent="."]
-unique_name_in_owner = true
