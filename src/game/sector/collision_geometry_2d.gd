@@ -2,20 +2,20 @@ extends RefCounted
 class_name CollisionGeometry2D
 
 const BUILD_MODE := CollisionPolygon2D.BUILD_SOLIDS
+const GENERATED_META := &"occ_collision_profile_part"
 
 static func build_profile(
-	root: Node2D,
+	body: CollisionObject2D,
 	profile: Dictionary,
 	texture: Texture2D,
 	sprite_scale: Vector2
 ) -> float:
-	assert(root != null, "CollisionGeometry2D requires a collision root.")
+	assert(body != null, "CollisionGeometry2D requires a CollisionObject2D owner.")
 	assert(not profile.is_empty(), "CollisionGeometry2D requires a profile.")
 	assert(texture != null, "CollisionGeometry2D requires the rendered texture.")
 	assert(is_equal_approx(sprite_scale.x, sprite_scale.y), "World collision profiles require uniform sprite scale.")
 
-	for child in root.get_children():
-		child.queue_free()
+	_clear_generated_parts(body)
 
 	var parts := profile.get("parts", []) as Array
 	assert(not parts.is_empty(), "Collision profile requires at least one polygon part.")
@@ -41,9 +41,20 @@ static func build_profile(
 		collision.name = "CollisionPart%02d" % index
 		collision.build_mode = BUILD_MODE
 		collision.polygon = polygon
-		root.add_child(collision)
+		collision.set_meta(GENERATED_META, true)
+
+		# CollisionPolygon2D must be a direct child of CollisionObject2D.
+		# Nesting it under an intermediate Node2D leaves visible nodes in the
+		# scene tree but does not register any shape with the physics body.
+		body.add_child(collision)
 
 	return max_radius
+
+static func _clear_generated_parts(body: CollisionObject2D) -> void:
+	for child in body.get_children():
+		if child is CollisionPolygon2D and bool(child.get_meta(GENERATED_META, false)):
+			body.remove_child(child)
+			child.free()
 
 static func reference_bounds_radius(profile: Dictionary, reference_size: float, visual_scale: float) -> float:
 	assert(not profile.is_empty(), "Collision bounds require a profile.")
