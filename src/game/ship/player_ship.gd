@@ -318,7 +318,6 @@ func _update_operational_boundary(delta: float) -> void:
 	):
 		_boundary_warning_elapsed = 0.0
 
-	_boundary_warning_direction = outward_direction
 	_boundary_warning_elapsed += maxf(delta, 0.0)
 	var progress := clampf(
 		_boundary_warning_elapsed / maxf(tuning.boundary_warning_seconds, 0.001),
@@ -363,7 +362,6 @@ func _apply_boundary_repel(return_direction: Vector2) -> void:
 
 func _reset_operational_warning() -> void:
 	_boundary_warning_elapsed = 0.0
-	_boundary_warning_direction = Vector2.ZERO
 	_set_operational_boundary_state(0.0, Vector2.ZERO)
 
 func _set_operational_boundary_state(intensity: float, outward_direction: Vector2) -> void:
@@ -372,7 +370,8 @@ func _set_operational_boundary_state(intensity: float, outward_direction: Vector
 	if absf(_boundary_warning_intensity - safe_intensity) < 0.01 and _boundary_warning_direction.is_equal_approx(safe_direction):
 		return
 	_boundary_warning_intensity = safe_intensity
-	operational_boundary_changed.emit(_boundary_warning_intensity, safe_direction)
+	_boundary_warning_direction = safe_direction
+	operational_boundary_changed.emit(_boundary_warning_intensity, _boundary_warning_direction)
 
 func _move_with_collisions(delta: float) -> void:
 	var time_remaining := delta
@@ -397,7 +396,10 @@ func _enforce_hard_world_bounds() -> void:
 	if _world_bounds.size == Vector2.ZERO:
 		return
 
-	var escape_margin := tuning.boundary_hard_escape_margin
+	var escape_margin := maxf(
+		tuning.boundary_hard_escape_margin,
+		tuning.absolute_speed_limit * tuning.boundary_warning_seconds + tuning.boundary_warning_margin
+	)
 	var left := _world_bounds.position.x - escape_margin
 	var right := _world_bounds.end.x + escape_margin
 	var top := _world_bounds.position.y - escape_margin
