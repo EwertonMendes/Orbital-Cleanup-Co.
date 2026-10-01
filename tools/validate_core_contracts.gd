@@ -877,9 +877,9 @@ func _validate_contract_session() -> void:
 		"total_cleanliness": 10.0,
 		"reward_multiplier": 1.0,
 	})
-	full.record_salvage(target_salvage)
+	full.record_delivery([target_salvage])
 	_expect(not full.is_target_reached(), "Full Cleanup cannot complete below 100%.")
-	full.record_salvage(final_salvage)
+	full.record_delivery([final_salvage])
 	_expect(full.is_target_reached() and full.is_perfect_cleanup(), "Full Cleanup must complete only at 100%.")
 
 func _validate_contract_plan_feasibility(plan: Dictionary, registry: ContentRegistry) -> void:
@@ -1044,9 +1044,15 @@ func _validate_player_ship() -> void:
 	_expect(packed != null, "PlayerShip scene must load.")
 	if packed == null:
 		return
-	var ship := packed.instantiate()
-	_expect(ship is PlayerShip, "PlayerShip root must use PlayerShip controller.")
-	_expect(ship.get_node_or_null("CollisionShape2D") is CollisionShape2D, "PlayerShip requires collision.")
+	var ship := packed.instantiate() as PlayerShip
+	_expect(ship != null, "PlayerShip root must use PlayerShip controller.")
+	if ship == null:
+		return
+	var qa_input := InputService.new()
+	ship.configure(qa_input)
+	root.add_child(ship)
+	_expect(_direct_collision_polygon_count(ship) > 0, "PlayerShip must build alpha-derived hull collision at runtime.")
+	_expect(_physics_shape_count(ship) > 0, "PlayerShip alpha hull must register real physics shapes.")
 	_expect(ship.find_child("CargoHold", true, false) is CargoHold, "PlayerShip requires CargoHold.")
 	_expect(ship.find_child("TractorBeam", true, false) is TractorBeam, "PlayerShip requires TractorBeam.")
 	var sprite := ship.find_child("ShipSprite", true, false) as Sprite2D
@@ -1063,6 +1069,10 @@ func _validate_player_ship() -> void:
 				"Gameplay ship HD artwork must be normalized to the established on-screen footprint."
 			)
 		_expect(sprite.material is ShaderMaterial, "Gameplay ship requires paint ShaderMaterial.")
+		_expect(
+			_alpha_collision_transparency_mismatches(ship, sprite) == 0,
+			"PlayerShip hull collision must not cover confidently transparent sampled pixels."
+		)
 	var engine_anchor := ship.find_child("EngineAnchor", true, false) as Marker2D
 	_expect(engine_anchor != null, "PlayerShip requires an engine trail anchor.")
 	if engine_anchor != null:
@@ -1143,6 +1153,7 @@ func _validate_player_ship() -> void:
 		"Desktop world-click boost must not depend on _unhandled_input after GUI dispatch."
 	)
 	ship.free()
+	qa_input.free()
 
 func _validate_flight_screen() -> void:
 	var packed := load("res://src/ui/screens/flight/flight_screen.tscn") as PackedScene
