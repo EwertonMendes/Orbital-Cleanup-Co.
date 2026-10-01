@@ -7,6 +7,7 @@ class_name SectorLandmark
 var _definition: Dictionary = {}
 var _spin_speed := 0.0
 var _motion_phase := 0.0
+var _base_position := Vector2.ZERO
 var _registry := ContentRegistry.new()
 
 func configure(definition: Dictionary, spin_speed: float = 0.0, motion_phase: float = 0.0) -> void:
@@ -16,6 +17,7 @@ func configure(definition: Dictionary, spin_speed: float = 0.0, motion_phase: fl
 	_motion_phase = motion_phase
 
 func _ready() -> void:
+	_base_position = position
 	assert(not _definition.is_empty(), "SectorLandmark must be configured before entering the tree.")
 	add_to_group("landmark")
 	add_to_group("structure")
@@ -52,5 +54,7 @@ func _physics_process(delta: float) -> void:
 	rotation = wrapf(rotation + _spin_speed * delta, -PI, PI)
 
 	var drift := float(_definition.get("drift_amplitude", 0.0))
-	# Sub-pixel/low-amplitude breathing remains visual only to keep routing stable.
-	sprite.position = Vector2(cos(_motion_phase * 0.23), sin(_motion_phase * 0.31)) * drift
+	# Landmark drift belongs to the physics body. Keeping it on Sprite2D alone
+	# would make the visible alpha and collision diverge.
+	position = _base_position + Vector2(cos(_motion_phase * 0.23), sin(_motion_phase * 0.31)) * drift
+	sprite.position = Vector2.ZERO
