@@ -22,8 +22,8 @@ class_name ShipMovementTuning
 @export_range(0.0, 160.0, 1.0) var camera_lead_distance := 46.0
 @export_range(1.0, 20.0, 0.1) var camera_lead_response := 7.0
 @export_range(0.0, 18.0, 0.1) var camera_shake_strength := 3.6
-@export_range(4.0, 9.0, 0.1) var boundary_warning_seconds := 6.5
-@export_range(400.0, 2200.0, 10.0) var boundary_hard_escape_margin := 900.0
+@export_range(240.0, 1800.0, 10.0) var boundary_return_trigger_margin := 900.0
+@export_range(300.0, 2200.0, 10.0) var boundary_hard_escape_margin := 900.0
 @export_range(420.0, 1400.0, 5.0) var boundary_return_speed := 900.0
 @export_range(1800.0, 6400.0, 10.0) var boundary_return_max_speed := 5600.0
 @export_range(0.75, 1.4, 0.05) var boundary_return_target_seconds := 1.0
@@ -49,8 +49,8 @@ func validate() -> void:
 	assert(collision_restitution >= 0.0 and collision_restitution <= 1.0, "Collision restitution must be in [0, 1].")
 	assert(collision_tangent_retention >= 0.0 and collision_tangent_retention <= 1.0, "Collision tangent retention must be in [0, 1].")
 	assert(collision_iterations >= 1, "Collision solver requires at least one iteration.")
-	assert(boundary_warning_seconds >= 6.0 and boundary_warning_seconds <= 7.0, "Boundary warning grace must remain readable before auto-return.")
-	assert(boundary_hard_escape_margin > 0.0, "Numerical containment margin must be positive.")
+	assert(boundary_return_trigger_margin > 0.0, "Boundary return trigger margin must leave a spatial recovery band outside play_bounds.")
+	assert(boundary_hard_escape_margin > 0.0, "Numerical containment margin must remain beyond the return trigger.")
 	assert(boundary_return_speed > absolute_speed_limit, "Boundary return must be visibly faster than normal flight containment speed.")
 	assert(boundary_return_max_speed > boundary_return_speed, "Boundary return needs adaptive emergency speed for distant exits.")
 	assert(boundary_return_target_seconds >= 0.8 and boundary_return_target_seconds <= 1.2, "Boundary return should complete in about one second.")
