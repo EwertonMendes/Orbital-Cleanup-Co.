@@ -134,6 +134,7 @@ func _validate_responsive_ui() -> void:
 	_expect("ResponsiveUiProfile.current()" in operations_source, "Operations must consume the shared responsive UI profile.")
 	_expect("available_width if phone" in operations_source, "Phone Operations must use the available viewport instead of the desktop console width cap.")
 	_expect("ResponsiveUiProfile.current()" in debrief_source, "Debrief must consume the shared responsive UI profile.")
+	_expect("_configure_page_focus_graph" in debrief_source and "previous_page if _page == 1 else next_page" in debrief_source, "Debrief pager must keep gamepad focus on the active page arrow instead of falling through to Continue.")
 	_expect("touch_target_height" in touch_source, "Touch flight controls must size from the shared UI profile.")
 	_expect("visible = _controls_enabled" in touch_source, "Boost HUD must remain visible on desktop as well as touch devices.")
 	_expect("steering_area.visible = touch_steering" in touch_source, "Only the floating steering surface should be touch-specific.")
