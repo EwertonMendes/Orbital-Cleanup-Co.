@@ -75,6 +75,8 @@ func _ready() -> void:
 	next_page.pressed.connect(_change_page.bind(1))
 	continue_button.mouse_entered.connect(_play_ui_hover)
 	continue_button.focus_entered.connect(_play_ui_hover)
+	GamepadUiNavigation.prepare_button(previous_page)
+	GamepadUiNavigation.prepare_button(next_page)
 	GamepadUiNavigation.prepare_button(continue_button)
 	if _input_service != null and not _input_service.input_mode_changed.is_connected(_on_input_mode_changed):
 		_input_service.input_mode_changed.connect(_on_input_mode_changed)
@@ -90,7 +92,7 @@ func _ready() -> void:
 
 	await get_tree().process_frame
 	if _input_service != null and _input_service.prefers_gamepad():
-		GamepadUiNavigation.grab(continue_button, self)
+		GamepadUiNavigation.grab(next_page, self)
 	_play_sequence()
 
 	if _platform != null:
@@ -148,8 +150,13 @@ func _apply_responsive_layout() -> void:
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
 func _change_page(delta: int) -> void:
-	_set_page(clampi(_page + delta, 0, 1))
-	GamepadUiNavigation.grab(previous_page if delta < 0 else next_page, self)
+	var target_page := clampi(_page + delta, 0, 1)
+	if target_page == _page:
+		return
+	_set_page(target_page)
+	# The arrow that triggered the transition becomes disabled at the new edge.
+	# Move focus to the valid opposite arrow instead of falling back to Continue.
+	GamepadUiNavigation.grab(previous_page if _page == 1 else next_page, self)
 
 func _set_page(page: int) -> void:
 	_page = clampi(page, 0, 1)
@@ -158,6 +165,24 @@ func _set_page(page: int) -> void:
 	page_label.text = "%d / 2" % (_page + 1)
 	previous_page.disabled = _page == 0
 	next_page.disabled = _page == 1
+	_configure_page_focus_graph()
+
+func _configure_page_focus_graph() -> void:
+	# Pager navigation is semantic, not geometric. This prevents the very wide
+	# Continue button from stealing left/right focus from the page controls.
+	previous_page.focus_neighbor_left = previous_page.get_path_to(previous_page)
+	previous_page.focus_neighbor_right = previous_page.get_path_to(next_page)
+	previous_page.focus_neighbor_down = previous_page.get_path_to(continue_button)
+
+	next_page.focus_neighbor_left = next_page.get_path_to(previous_page)
+	next_page.focus_neighbor_right = next_page.get_path_to(next_page)
+	next_page.focus_neighbor_down = next_page.get_path_to(continue_button)
+
+	continue_button.focus_neighbor_up = continue_button.get_path_to(
+		previous_page if _page == 1 else next_page
+	)
+	continue_button.focus_neighbor_left = continue_button.get_path_to(previous_page)
+	continue_button.focus_neighbor_right = continue_button.get_path_to(next_page)
 
 func _refresh_copy() -> void:
 	var perfect := bool(_result.get("perfect_cleanup", false))
