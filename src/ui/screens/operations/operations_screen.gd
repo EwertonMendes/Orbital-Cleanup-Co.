@@ -17,6 +17,7 @@ const DEFAULT_SECTOR_ID := "earth_training_01"
 const UPGRADE_CARD_SCENE := preload("res://src/ui/components/hq_upgrade_card.tscn")
 const RANK_ROW_SCENE := preload("res://src/ui/components/hq_rank_row.tscn")
 const CHROME_BUTTON_SCENE := preload("res://src/ui/components/occ_chrome_button.tscn")
+const ENGINE_FX_RIG_SCENE := preload("res://src/game/ship/engine_fx_rig.tscn")
 const DISCOVERY_CARD_SCENE := preload("res://src/ui/components/hq_discovery_card.tscn")
 const STATUS_GREEN := preload("res://assets/third_party/kenney_ui_sci_fi/ui/squareGreen.png")
 const STATUS_YELLOW := preload("res://assets/third_party/kenney_ui_sci_fi/ui/squareYellow.png")
@@ -166,6 +167,7 @@ var _ship_option_page := 0
 var _selected_module_slot := ""
 var _ship_category_group := ButtonGroup.new()
 var _suppress_progression_refresh := false
+var _engine_fx_preview_rigs: Array[EngineFxRig] = []
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -1260,6 +1262,7 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 		},
 		hull, paint, livery, decal, canopy, body_kit, active_visual
 	)
+	_refresh_engine_fx_preview(engine, trail, active_visual)
 
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
@@ -1325,6 +1328,71 @@ func _set_ship_preview_layer(target: TextureRect, texture_path: String, tint: Co
 	target.texture = texture
 	target.visible = true
 
+func _refresh_engine_fx_preview(engine_style: Dictionary, trail_palette: Dictionary, visual: Dictionary) -> void:
+	_clear_engine_fx_preview()
+	if _ship_category not in ["engine", "trail"]:
+		return
+	if ship_preview.texture == null:
+		return
+
+	var sockets := visual.get("engine_sockets", []) as Array
+	if sockets.is_empty():
+		sockets = [{"id": "main", "position": [0.0, 41.0]}]
+
+	var native_size := ship_preview.texture.get_size()
+	if native_size.x <= 0.0 or native_size.y <= 0.0:
+		return
+	var display_scale := minf(
+		ship_preview.size.x / native_size.x,
+		ship_preview.size.y / native_size.y
+	)
+	var runtime_scale := maxf(float(visual.get("render_scale", 1.0)), 0.001)
+	var preview_runtime_ratio := clampf(display_scale / runtime_scale, 0.35, 4.0)
+	var per_engine_budget := clampi(int(floor(48.0 / float(maxi(sockets.size(), 1)))), 8, 48)
+
+	for index in range(sockets.size()):
+		var socket := sockets[index] as Dictionary
+		var values := socket.get("position", [0.0, 41.0]) as Array
+		if values.size() != 2:
+			continue
+		var runtime_position := Vector2(float(values[0]), float(values[1]))
+		var source_offset := runtime_position / runtime_scale
+
+		var rig := ENGINE_FX_RIG_SCENE.instantiate() as EngineFxRig
+		assert(rig != null, "Fleet engine VFX preview must instantiate.")
+		rig.name = "EngineFxPreview_%d" % index
+		rig.show_behind_parent = true
+		rig.position = ship_preview.size * 0.5 + source_offset * display_scale
+		rig.rotation = deg_to_rad(float(socket.get("rotation_degrees", 0.0)))
+		ship_preview.add_child(rig)
+		rig.configure(
+			engine_style,
+			trail_palette,
+			clampf(float(socket.get("fx_scale", 1.0)) * preview_runtime_ratio, 0.25, 4.0),
+			per_engine_budget
+		)
+		rig.set_preview_mode(true)
+		_engine_fx_preview_rigs.append(rig)
+
+func _clear_engine_fx_preview() -> void:
+	for rig in _engine_fx_preview_rigs:
+		if is_instance_valid(rig):
+			rig.queue_free()
+	_engine_fx_preview_rigs.clear()
+
+func _create_engine_palette_icon(option: Dictionary) -> Texture2D:
+	var palette := option.get("palette", {}) as Dictionary
+	if palette.is_empty():
+		return null
+	var keys := ["primary", "secondary", "accent", "core"]
+	var image := Image.create(36, 12, false, Image.FORMAT_RGBA8)
+	for x in range(36):
+		var color_index := mini(int(floor(float(x) / 9.0)), keys.size() - 1)
+		var color := Color.from_string(String(palette.get(keys[color_index], "#FFFFFF")), Color.WHITE)
+		for y in range(12):
+			image.set_pixel(x, y, color)
+	return ImageTexture.create_from_image(image)
+
 func _refresh_ship_category_options() -> void:
 	for container in [
 		hull_options,
@@ -1378,6 +1446,9 @@ func _refresh_ship_category_options() -> void:
 		button.set_meta(&"occ_cosmetic_name_key", String(option["display_name_key"]))
 		var name := tr(String(option["display_name_key"]))
 		button.text = _ship_option_button_text(_ship_category, cosmetic_id, name, selected)
+		if _ship_category == "trail":
+			button.icon = _create_engine_palette_icon(option)
+			button.expand_icon = false
 		var owned := _progression.is_cosmetic_owned(_ship_category, cosmetic_id)
 		button.disabled = not owned and not _progression.can_purchase_cosmetic(_ship_category, cosmetic_id)
 		if button.disabled and not owned:
