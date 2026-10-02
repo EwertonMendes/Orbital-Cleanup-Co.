@@ -1365,3 +1365,33 @@ msgstr "+%d scanner · +%d%% coleta"
 
 msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
 msgstr "+%d carga · -%d%% inércia de carga"
+
+msgid "HQ_SHIP_TAB_LIVERY"
+msgstr "PINTURA"
+
+msgid "HQ_SHIP_TAB_DECAL"
+msgstr "DECALQUE"
+
+msgid "HQ_SHIP_TAB_CANOPY"
+msgstr "CABINE"
+
+msgid "HQ_SHIP_TAB_BODY_KIT"
+msgstr "KIT EXTERNO"
+
+msgid "HQ_SHIP_TAB_ENGINE"
+msgstr "FX MOTOR"
+
+msgid "HQ_CUSTOMIZE_LIVERY"
+msgstr "Pintura gráfica"
+
+msgid "HQ_CUSTOMIZE_DECAL"
+msgstr "Decalque"
+
+msgid "HQ_CUSTOMIZE_CANOPY"
+msgstr "Cabine"
+
+msgid "HQ_CUSTOMIZE_BODY_KIT"
+msgstr "Kit externo"
+
+msgid "HQ_CUSTOMIZE_ENGINE"
+msgstr "Efeito do motor"
