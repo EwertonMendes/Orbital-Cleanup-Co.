@@ -51,3 +51,10 @@ func _on_purchase_pressed() -> void:
 	if _upgrade_id.is_empty():
 		return
 	purchase_requested.emit(_upgrade_id)
+
+
+func get_upgrade_id() -> String:
+	return _upgrade_id
+
+func get_purchase_button() -> Button:
+	return purchase_button

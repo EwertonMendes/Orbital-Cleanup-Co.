@@ -312,6 +312,10 @@ def validate_visual_foundation() -> None:
         fail("Selected Operations tabs must use the yellow full-surface state")
     if 'text = "-"' not in operations:
         fail("Settings volume-down must use the supported ASCII minus glyph")
+    if "upgrade_grid.columns = 1 if portrait else 2" not in operations_source:
+        fail("Operations upgrades must stay within a two-column fixed-stage layout")
+    if "_refresh_visible_upgrade_cards" not in operations_source or "_configure_upgrade_focus_graph" not in operations_source:
+        fail("Upgrade purchase flow must update cards in place and preserve controller navigation")
     if 'SecondaryButton/fonts/font = ExtResource("1")' not in operations_theme:
         fail("Interactive button labels must use the principal Neuropol game face")
 

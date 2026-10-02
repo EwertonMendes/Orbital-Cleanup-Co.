@@ -423,7 +423,7 @@ func _apply_responsive_layout() -> void:
 	ship_body.vertical = portrait
 	tab_grid.columns = 3 if portrait else 1
 	contract_selector.columns = 3 if portrait else 4
-	upgrade_grid.columns = 1 if portrait else (2 if compact else 3)
+	upgrade_grid.columns = 1 if portrait else 2
 	discovery_list.columns = 1 if portrait else 2
 	ship_category_bar.columns = 4
 	for option_grid in [hull_options, paint_options, trail_options, beam_options]:
@@ -854,9 +854,10 @@ func _refresh_upgrades() -> void:
 		var max_level := int(definition["max_level"])
 		var cost := _progression.get_upgrade_cost(id)
 		card.configure(id, tr(String(definition["display_name_key"])), tr(String(definition["description_key"])), level, max_level, cost, _upgrade_effect_text(definition, level), _progression.can_purchase_upgrade(id))
-		card.purchase_requested.connect(_purchase_upgrade)
+		card.purchase_requested.connect(_purchase_upgrade.bind(card))
 
 	_set_pager_state(upgrade_pager, upgrade_previous_page, upgrade_page_label, upgrade_next_page, _upgrade_page, page_count)
+	_configure_upgrade_focus_graph()
 
 func _change_upgrade_page(delta: int) -> void:
 	var definitions := _progression.get_upgrade_definitions()
@@ -871,7 +872,7 @@ func _upgrade_page_size() -> int:
 		return 1
 	if profile == ResponsiveUiProfile.Profile.PHONE_LANDSCAPE or profile == ResponsiveUiProfile.Profile.COMPACT:
 		return 2
-	return 6
+	return 4
 
 func _set_pager_state(pager: Control, previous_button: Button, page_label: Label, next_button: Button, page: int, page_count: int) -> void:
 	pager.visible = page_count > 1
@@ -879,14 +880,117 @@ func _set_pager_state(pager: Control, previous_button: Button, page_label: Label
 	previous_button.disabled = page <= 0
 	next_button.disabled = page >= page_count - 1
 
-func _purchase_upgrade(upgrade_id: String) -> void:
-	if not _progression.purchase_upgrade(upgrade_id):
+func _purchase_upgrade(upgrade_id: String, source_card: HqUpgradeCard) -> void:
+	var focused_control := get_viewport().gui_get_focus_owner()
+
+	# Buying changes credits/levels but not the page structure. Suppress the
+	# global rebuild emitted by ProgressionService and refresh the existing
+	# card nodes in place so ui_accept never deletes the focused button.
+	_suppress_progression_refresh = true
+	var purchased := _progression.purchase_upgrade(upgrade_id)
+	_suppress_progression_refresh = false
+	if not purchased:
 		return
+
+	_refresh_header()
+	_refresh_visible_upgrade_cards()
+
+	if _input_service != null and _input_service.prefers_gamepad():
+		if focused_control != null and is_instance_valid(focused_control) and focused_control.is_inside_tree():
+			var button := focused_control as BaseButton
+			if button != null and not button.disabled:
+				button.call_deferred("grab_focus")
+			else:
+				call_deferred("_focus_nearest_upgrade_control", source_card)
+		else:
+			call_deferred("_focus_nearest_upgrade_control", source_card)
+
 	if _platform != null:
 		_platform.track_event("upgrade_purchased", {
 			"upgrade_id": upgrade_id,
 			"level": _progression.get_upgrade_level(upgrade_id),
 		})
+
+func _refresh_visible_upgrade_cards() -> void:
+	var definitions_by_id: Dictionary = {}
+	for definition_variant in _progression.get_upgrade_definitions():
+		var definition := definition_variant as Dictionary
+		definitions_by_id[String(definition["id"])] = definition
+
+	for child in upgrade_grid.get_children():
+		if not child is HqUpgradeCard:
+			continue
+		var card := child as HqUpgradeCard
+		var upgrade_id := card.get_upgrade_id()
+		if not definitions_by_id.has(upgrade_id):
+			continue
+		var definition := definitions_by_id[upgrade_id] as Dictionary
+		var level := _progression.get_upgrade_level(upgrade_id)
+		var max_level := int(definition["max_level"])
+		var cost := _progression.get_upgrade_cost(upgrade_id)
+		card.configure(
+			upgrade_id,
+			tr(String(definition["display_name_key"])),
+			tr(String(definition["description_key"])),
+			level,
+			max_level,
+			cost,
+			_upgrade_effect_text(definition, level),
+			_progression.can_purchase_upgrade(upgrade_id)
+		)
+
+	_configure_upgrade_focus_graph()
+
+func _focus_nearest_upgrade_control(source_card: HqUpgradeCard) -> void:
+	if _input_service == null or not _input_service.prefers_gamepad():
+		return
+	if source_card != null and is_instance_valid(source_card):
+		var source_button := source_card.get_purchase_button()
+		if source_button != null and not source_button.disabled:
+			GamepadUiNavigation.grab(source_button, upgrades_panel)
+			return
+	var fallback := GamepadUiNavigation.first_focusable(upgrade_grid)
+	if fallback != null:
+		GamepadUiNavigation.grab(fallback, upgrades_panel)
+		return
+	GamepadUiNavigation.grab(upgrades_tab, self)
+
+func _configure_upgrade_focus_graph() -> void:
+	var buttons: Array[Button] = []
+	for child in upgrade_grid.get_children():
+		if not child is HqUpgradeCard:
+			continue
+		var button := (child as HqUpgradeCard).get_purchase_button()
+		if button != null and not button.disabled:
+			buttons.append(button)
+
+	for index in range(buttons.size()):
+		var button := buttons[index]
+		button.focus_neighbor_left = NodePath()
+		button.focus_neighbor_right = NodePath()
+		button.focus_neighbor_up = NodePath()
+		button.focus_neighbor_down = NodePath()
+
+		var columns := maxi(upgrade_grid.columns, 1)
+		var column := index % columns
+		if column > 0:
+			button.focus_neighbor_left = button.get_path_to(buttons[index - 1])
+		if column + 1 < columns and index + 1 < buttons.size():
+			button.focus_neighbor_right = button.get_path_to(buttons[index + 1])
+
+		var up_index := index - columns
+		if up_index >= 0:
+			button.focus_neighbor_up = button.get_path_to(buttons[up_index])
+		else:
+			button.focus_neighbor_up = button.get_path_to(upgrades_tab)
+
+		var down_index := index + columns
+		if down_index < buttons.size():
+			button.focus_neighbor_down = button.get_path_to(buttons[down_index])
+		elif upgrade_pager.visible:
+			var pager_target := upgrade_previous_page if column == 0 else upgrade_next_page
+			if not pager_target.disabled:
+				button.focus_neighbor_down = button.get_path_to(pager_target)
 
 func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 	var id := String(definition["id"])

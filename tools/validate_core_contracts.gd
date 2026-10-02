@@ -214,6 +214,8 @@ func _validate_operations_screen() -> void:
 	_expect("occ_focus_restore_key" in operations_source and "grab_by_meta" in operations_source, "Dynamic Operations lists must restore gamepad focus after selection-driven refreshes.")
 	_expect("_suppress_progression_refresh" in operations_source and "_refresh_ship(false)" in operations_source, "Cosmetic selection must update in place so controller focus is never destroyed.")
 	_expect("_configure_ship_option_focus_graph" in operations_source, "Ship option lists require explicit controller neighbors after dynamic construction.")
+	_expect("_refresh_visible_upgrade_cards" in operations_source and "_configure_upgrade_focus_graph" in operations_source, "Upgrade purchases must update existing cards in place and preserve controller navigation.")
+	_expect("upgrade_grid.columns = 1 if portrait else 2" in operations_source and "return 4" in operations_source, "Desktop upgrades must use a bounded 2x2 page that fits the fixed content stage.")
 	_expect("ResponsiveUiProfile.viewport_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use the shared real viewport source and a tall portrait console to prevent clipping.")
 	_expect("settings_modal.custom_minimum_size" in operations_source and "footer_spacer.visible = not portrait" in operations_source, "Operations must protect compact Settings and portrait deployment layouts from overflow.")
 	_expect('"modulate:a"' in operations_source and "position:x" not in operations_source and "_update_tab_visuals" in operations_source, "Operations tab transitions must animate opacity without mutating fixed page geometry.")
@@ -221,6 +223,11 @@ func _validate_operations_screen() -> void:
 	_expect('event.is_action_pressed("ui_cancel")' in operations_source, "Operations overlay must close from ESC / ui_cancel.")
 	var operations_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.tscn")
 	_expect('text = "-"' in operations_scene_source, "Settings volume-down must use an ASCII minus glyph supported by the display font.")
+
+	var upgrade_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_upgrade_card.tscn")
+	_expect("Vector2(250, 168)" in upgrade_card_scene_source and "max_lines_visible = 2" in upgrade_card_scene_source, "Upgrade cards must use compact bounded geometry for zero-scroll pages.")
+	var discovery_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_discovery_card.tscn")
+	_expect("Vector2(286, 132)" in discovery_card_scene_source and "Vector2(102, 102)" in discovery_card_scene_source, "Discovery cards must use compact geometry that keeps a 2x2 page inside the fixed stage.")
 
 	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_operations_theme.tres")
 	_expect("StyleBoxTexture" in theme_source, "Operations must skin controls with original Kenney textures.")
