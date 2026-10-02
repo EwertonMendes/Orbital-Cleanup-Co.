@@ -470,7 +470,6 @@ func _apply_responsive_layout() -> void:
 		canopy_options,
 		body_kit_options,
 		engine_options,
-		modules_options,
 		trail_options,
 		beam_options,
 	]:
@@ -478,6 +477,10 @@ func _apply_responsive_layout() -> void:
 		# Keep enough horizontal room for complete labels instead of allowing
 		# a third column to overflow the loadout card.
 		option_grid.columns = 1 if portrait else 2
+	# Modules are not cosmetic tiles. Each bay is rendered as its own bounded
+	# row and must never be promoted back to a multi-column grid by responsive
+	# layout, otherwise long hardware names can escape the loadout card.
+	modules_options.columns = 1
 
 	%DeskLabel.visible = not phone
 	contract_ship_card.visible = not portrait
@@ -1490,27 +1493,52 @@ func _refresh_module_options() -> void:
 		var slot_index := int(entry["slot_index"])
 		var module_id := String(entry["module_id"])
 		var selected := bool(entry["selected"])
+		var slot_key := "MODULE_SLOT_%s" % slot.to_upper()
+
+		var row := HBoxContainer.new()
+		row.name = "ModuleRow_%d" % index
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_theme_constant_override("separation", 10)
+		modules_options.add_child(row)
+
+		var slot_label := Label.new()
+		slot_label.name = "SlotLabel"
+		slot_label.custom_minimum_size = Vector2(118, 50)
+		slot_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		slot_label.theme_type_variation = &"TelemetryLabel"
+		slot_label.text = "%s %d" % [tr(slot_key), slot_index + 1]
+		slot_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		slot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		row.add_child(slot_label)
+
 		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
 		assert(button != null, "Module option must use OccChromeButton.")
+		button.name = "ModuleButton"
 		button.custom_minimum_size = Vector2(0, 50)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
+		button.clip_text = true
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		button.set_meta(&"occ_focus_restore_key", "module:%s:%d:%s" % [slot, slot_index, module_id])
 		button.set_meta(&"occ_module_slot", slot)
 		button.set_meta(&"occ_module_slot_index", slot_index)
 		button.set_meta(&"occ_module_id", module_id)
 		button.set_meta(&"occ_module_name_key", String(entry["display_name_key"]))
+
 		var module_name := tr(String(entry["display_name_key"]))
-		button.text = _module_button_text(slot, slot_index, module_id, module_name, selected)
+		button.text = _module_button_text(module_id, module_name, selected)
 		var description_key := String(entry.get("description_key", ""))
+		var tooltip_lines := PackedStringArray(["%s %d - %s" % [tr(slot_key), slot_index + 1, module_name]])
 		if not description_key.is_empty():
-			button.tooltip_text = tr(description_key)
+			tooltip_lines.append(tr(description_key))
+		button.tooltip_text = "\n".join(tooltip_lines)
+
 		var owned := _progression.is_module_owned(module_id)
 		button.disabled = not owned and not _progression.can_purchase_module(module_id)
 		if button.disabled and not owned:
-			button.tooltip_text = tr("HQ_FLEET_NEED_CREDITS")
+			button.tooltip_text += "\n%s" % tr("HQ_FLEET_NEED_CREDITS")
 		button.pressed.connect(_equip_module.bind(slot, slot_index, module_id))
-		modules_options.add_child(button)
+		row.add_child(button)
 		option_buttons.append(button)
 		_wire_button_feedback(button)
 
@@ -1543,14 +1571,12 @@ func _equip_module(slot: String, slot_index: int, module_id: String) -> void:
 			"module_id": module_id,
 		})
 
-func _module_button_text(slot: String, slot_index: int, module_id: String, display_name: String, selected: bool) -> String:
-	var slot_key := "MODULE_SLOT_%s" % slot.to_upper()
-	var state_text := display_name
+func _module_button_text(module_id: String, display_name: String, selected: bool) -> String:
 	if selected:
-		state_text = tr("HQ_FLEET_MODULE_ACTIVE_FMT") % display_name
-	elif not _progression.is_module_owned(module_id):
-		state_text = tr("HQ_FLEET_MODULE_BUY_FMT") % [display_name, _progression.get_module_cost(module_id)]
-	return "%s %d - %s" % [tr(slot_key), slot_index + 1, state_text]
+		return tr("HQ_FLEET_MODULE_ACTIVE_FMT") % display_name
+	if not _progression.is_module_owned(module_id):
+		return tr("HQ_FLEET_MODULE_BUY_FMT") % [display_name, _progression.get_module_cost(module_id)]
+	return display_name
 
 func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 	# Ship-model selection and cosmetic purchases share the existing zero-scroll
@@ -1601,10 +1627,13 @@ func _refresh_ship_option_selection_visuals() -> void:
 
 func _refresh_module_selection_visuals() -> void:
 	var equipped := _progression.get_equipped_modules()
-	for child in modules_options.get_children():
-		if not child is OccChromeButton:
+	for row_child in modules_options.get_children():
+		var row := row_child as HBoxContainer
+		if row == null:
 			continue
-		var button := child as OccChromeButton
+		var button := row.get_node_or_null("ModuleButton") as OccChromeButton
+		if button == null:
+			continue
 		var slot := String(button.get_meta(&"occ_module_slot", ""))
 		var slot_index := int(button.get_meta(&"occ_module_slot_index", 0))
 		var module_id := String(button.get_meta(&"occ_module_id", ""))
@@ -1615,7 +1644,7 @@ func _refresh_module_selection_visuals() -> void:
 		var slot_values: Array = slot_values_variant as Array if slot_values_variant is Array else [slot_values_variant]
 		var selected := slot_index < slot_values.size() and String(slot_values[slot_index]) == module_id
 		button.emphasis = selected
-		button.text = _module_button_text(slot, slot_index, module_id, tr(name_key), selected)
+		button.text = _module_button_text(module_id, tr(name_key), selected)
 		var owned := _progression.is_module_owned(module_id)
 		button.disabled = not owned and not _progression.can_purchase_module(module_id)
 
