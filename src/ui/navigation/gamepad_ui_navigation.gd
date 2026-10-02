@@ -5,7 +5,7 @@ class_name GamepadUiNavigation
 ## Screens still own semantic navigation (tabs, back, confirm); this helper only
 ## keeps focusable controls consistent and visible.
 
-static func prepare_button(button: Button) -> void:
+static func prepare_button(button: BaseButton) -> void:
 	if button == null:
 		return
 	button.focus_mode = Control.FOCUS_ALL
@@ -13,11 +13,11 @@ static func prepare_button(button: Button) -> void:
 static func prepare_tree(root: Node) -> void:
 	if root == null:
 		return
-	if root is Button:
-		prepare_button(root as Button)
-	for node in root.find_children("*", "Button", true, false):
-		if node is Button:
-			prepare_button(node as Button)
+	if root is BaseButton:
+		prepare_button(root as BaseButton)
+	for node in root.find_children("*", "Control", true, false):
+		if node is BaseButton:
+			prepare_button(node as BaseButton)
 
 static func grab(preferred: Control, fallback_root: Node = null) -> void:
 	if _can_focus(preferred):
@@ -52,10 +52,10 @@ static func ensure_visible(control: Control) -> void:
 static func set_focus_enabled(root: Node, enabled: bool, except_root: Node = null) -> void:
 	if root == null:
 		return
-	for node in root.find_children("*", "Button", true, false):
-		if not node is Button:
+	for node in root.find_children("*", "Control", true, false):
+		if not node is BaseButton:
 			continue
-		var button := node as Button
+		var button := node as BaseButton
 		if except_root != null and (button == except_root or except_root.is_ancestor_of(button)):
 			continue
 
