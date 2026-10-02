@@ -1241,7 +1241,7 @@ msgid "SHIP_PIONEER_01"
 msgstr "Pioneer-01"
 
 msgid "SHIP_PIONEER_01_DESC"
-msgstr "Balanced starter recovery craft built for dependable orbital cleanup."
+msgstr "Balanced civilian recovery craft for dependable cleanup work."
 
 msgid "SHIP_ROLE_GENERALIST"
 msgstr "Generalist"
@@ -1416,3 +1416,174 @@ msgstr "Cargo"
 
 msgid "MODULE_SLOT_UTILITY"
 msgstr "Utility"
+
+msgid "SHIP_SWIFTLET_S1"
+msgstr "Swiftlet-S1"
+
+msgid "SHIP_SWIFTLET_S1_DESC"
+msgstr "Lightweight agile craft tuned for fast corrections and tight debris fields."
+
+msgid "SHIP_MANTA_T1"
+msgstr "Manta-T1"
+
+msgid "SHIP_MANTA_T1_DESC"
+msgstr "Wide survey craft with extended sensor coverage and strong scanning range."
+
+msgid "SHIP_MULE_C1"
+msgstr "Mule-C1"
+
+msgid "SHIP_MULE_C1_DESC"
+msgstr "Rugged utility hauler built around expanded cargo capacity."
+
+msgid "SHIP_VECTOR_V1"
+msgstr "Vector-V1"
+
+msgid "SHIP_VECTOR_V1_DESC"
+msgstr "Precision maneuvering craft with exceptional turn response and control."
+
+msgid "SHIP_ANGLER_T2"
+msgstr "Angler-T2"
+
+msgid "SHIP_ANGLER_T2_DESC"
+msgstr "Dedicated recovery ship with fast collection and a stronger tractor system."
+
+msgid "SHIP_KESTREL_S2"
+msgstr "Kestrel-S2"
+
+msgid "SHIP_KESTREL_S2_DESC"
+msgstr "Long, light service craft optimized for sustained cruise speed."
+
+msgid "SHIP_PULSE_V2"
+msgstr "Pulse-V2"
+
+msgid "SHIP_PULSE_V2_DESC"
+msgstr "Compact performance craft built around powerful boost capacitors."
+
+msgid "SHIP_OX_C2"
+msgstr "Ox-C2"
+
+msgid "SHIP_OX_C2_DESC"
+msgstr "Stable cargo ship engineered to stay controllable under heavy loads."
+
+msgid "SHIP_MAGNETAR_T4"
+msgstr "Magnetar-T4"
+
+msgid "SHIP_MAGNETAR_T4_DESC"
+msgstr "Advanced recovery craft with long-range magnetic tractor hardware."
+
+msgid "SHIP_GRAPPLER_T5"
+msgstr "Grappler-T5"
+
+msgid "SHIP_GRAPPLER_T5_DESC"
+msgstr "Heavy orbital tug built to pull and stabilize massive debris."
+
+msgid "SHIP_NOMAD_V3"
+msgstr "Nomad-V3"
+
+msgid "SHIP_NOMAD_V3_DESC"
+msgstr "Long-duration service ship that carries cargo with reduced inertial penalty."
+
+msgid "SHIP_BEACON_S3"
+msgstr "Beacon-S3"
+
+msgid "SHIP_BEACON_S3_DESC"
+msgstr "Sensor specialist with exceptional long-range scanning coverage."
+
+msgid "SHIP_COMET_X4"
+msgstr "Comet-X4"
+
+msgid "SHIP_COMET_X4_DESC"
+msgstr "Extreme-speed response craft with aggressive boost performance and low cargo capacity."
+
+msgid "SHIP_ATLAS_C4"
+msgstr "Atlas-C4"
+
+msgid "SHIP_ATLAS_C4_DESC"
+msgstr "Heavy hauler with a reinforced cargo spine and very large capacity."
+
+msgid "SHIP_BASTION_H4"
+msgstr "Bastion-H4"
+
+msgid "SHIP_BASTION_H4_DESC"
+msgstr "Protected service hull designed to resist hazardous environmental forces."
+
+msgid "SHIP_PROSPECTOR_Q3"
+msgstr "Prospector-Q3"
+
+msgid "SHIP_PROSPECTOR_Q3_DESC"
+msgstr "Precision survey and recovery craft balancing scan, tractor and collection systems."
+
+msgid "SHIP_AURORA_E4"
+msgstr "Aurora-E4"
+
+msgid "SHIP_AURORA_E4_DESC"
+msgstr "Deep-space craft insulated for currents, drag and extreme environmental conditions."
+
+msgid "SHIP_LEVIATHAN_C6"
+msgstr "Leviathan-C6"
+
+msgid "SHIP_LEVIATHAN_C6_DESC"
+msgstr "Massive recovery hauler with unmatched cargo capacity and deliberate handling."
+
+msgid "SHIP_HORIZON_M5"
+msgstr "Horizon-M5"
+
+msgid "SHIP_HORIZON_M5_DESC"
+msgstr "Premium modular flagship with an extra utility bay for flexible mission builds."
+
+msgid "SHIP_ROLE_AGILITY"
+msgstr "Agility"
+
+msgid "SHIP_ROLE_SCANNER"
+msgstr "Scanner"
+
+msgid "SHIP_ROLE_CARGO"
+msgstr "Cargo"
+
+msgid "SHIP_ROLE_MANEUVERING"
+msgstr "Maneuvering"
+
+msgid "SHIP_ROLE_RECOVERY"
+msgstr "Recovery"
+
+msgid "SHIP_ROLE_CRUISE"
+msgstr "Cruise speed"
+
+msgid "SHIP_ROLE_BOOST"
+msgstr "Boost"
+
+msgid "SHIP_ROLE_STABLE_CARGO"
+msgstr "Stable cargo"
+
+msgid "SHIP_ROLE_TRACTOR_RANGE"
+msgstr "Tractor range"
+
+msgid "SHIP_ROLE_HEAVY_TOW"
+msgstr "Heavy tow"
+
+msgid "SHIP_ROLE_INERTIAL_CARGO"
+msgstr "Inertial cargo"
+
+msgid "SHIP_ROLE_LONG_RANGE_SENSOR"
+msgstr "Long-range sensor"
+
+msgid "SHIP_ROLE_SPEED_BOOST"
+msgstr "Speed / boost"
+
+msgid "SHIP_ROLE_HEAVY_CARGO"
+msgstr "Heavy cargo"
+
+msgid "SHIP_ROLE_HAZARDS"
+msgstr "Hazard response"
+
+msgid "SHIP_ROLE_PRECISION_RECOVERY"
+msgstr "Precision recovery"
+
+msgid "SHIP_ROLE_EXTREME_ENVIRONMENTS"
+msgstr "Extreme environments"
+
+msgid "SHIP_ROLE_MEGA_HAULER"
+msgstr "Mega hauler"
+
+msgid "SHIP_ROLE_MODULAR_FLAGSHIP"
+msgstr "Modular flagship"

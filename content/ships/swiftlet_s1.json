@@ -1,31 +1,31 @@
 {
-  "id": "pioneer_01",
-  "display_name_key": "SHIP_PIONEER_01",
-  "description_key": "SHIP_PIONEER_01_DESC",
-  "role_key": "SHIP_ROLE_GENERALIST",
+  "id": "swiftlet_s1",
+  "display_name_key": "SHIP_SWIFTLET_S1",
+  "description_key": "SHIP_SWIFTLET_S1_DESC",
+  "role_key": "SHIP_ROLE_AGILITY",
   "unlock": {
     "rank": "trainee",
-    "price": 0
+    "price": 900
   },
   "base_stats": {
-    "max_speed": 300,
-    "acceleration": 420,
-    "dry_mass": 12,
-    "cargo_inertia_factor": 0.35,
-    "turn_response": 6,
-    "boost_acceleration": 220,
-    "boost_duration": 0.62,
-    "boost_recharge_seconds": 3.2,
-    "boost_turn_authority": 0.78,
-    "scan_range": 320,
-    "capture_distance": 58,
-    "pull_speed": 520,
-    "collection_speed_multiplier": 1,
-    "cargo_capacity": 12,
-    "boost_recharge_rate": 1,
+    "max_speed": 335,
+    "acceleration": 525,
+    "dry_mass": 8.5,
+    "cargo_inertia_factor": 0.38,
+    "turn_response": 7.4,
+    "boost_acceleration": 250,
+    "boost_duration": 0.6,
+    "boost_recharge_seconds": 3,
+    "boost_turn_authority": 0.88,
+    "scan_range": 300,
+    "capture_distance": 54,
+    "pull_speed": 500,
+    "collection_speed_multiplier": 0.95,
+    "cargo_capacity": 9,
+    "boost_recharge_rate": 1.08,
     "boost_duration_bonus": 0,
     "boost_charge_capacity": 1,
-    "environment_force_response": 1,
+    "environment_force_response": 1.05,
     "environment_drag_response": 1
   },
   "upgrade_profile": "standard",
@@ -50,32 +50,32 @@
     ]
   },
   "visual": {
-    "base_texture": "res://assets/original/ships/pioneer_01/base.webp",
-    "render_scale": 0.085,
+    "base_texture": "res://assets/original/ships/swiftlet_s1/base.webp",
+    "render_scale": 0.072,
     "paint_mode": "rgb_mask",
-    "paint_mask": "res://assets/original/ships/pioneer_01/paint_mask.png",
+    "paint_mask": "res://assets/original/ships/swiftlet_s1/paint_mask.png",
     "details_texture": "",
     "emissive_texture": "",
     "engine_sockets": [
       {
         "id": "engine_1",
         "position": [
-          -16.1,
-          36.4
+          -13.3,
+          30.8
         ]
       },
       {
         "id": "engine_2",
         "position": [
-          -0.2,
-          36.9
+          0,
+          31.2
         ]
       },
       {
         "id": "engine_3",
         "position": [
-          15.8,
-          36.5
+          13.3,
+          30.8
         ]
       }
     ],

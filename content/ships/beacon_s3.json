@@ -1,0 +1,88 @@
+{
+  "id": "beacon_s3",
+  "display_name_key": "SHIP_BEACON_S3",
+  "description_key": "SHIP_BEACON_S3_DESC",
+  "role_key": "SHIP_ROLE_LONG_RANGE_SENSOR",
+  "unlock": {
+    "rank": "senior_cleaner",
+    "price": 3600
+  },
+  "base_stats": {
+    "max_speed": 285,
+    "acceleration": 395,
+    "dry_mass": 11.5,
+    "cargo_inertia_factor": 0.36,
+    "turn_response": 6,
+    "boost_acceleration": 205,
+    "boost_duration": 0.59,
+    "boost_recharge_seconds": 3.3,
+    "boost_turn_authority": 0.77,
+    "scan_range": 530,
+    "capture_distance": 62,
+    "pull_speed": 505,
+    "collection_speed_multiplier": 0.88,
+    "cargo_capacity": 8,
+    "boost_recharge_rate": 0.95,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.95,
+    "environment_drag_response": 0.93
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/beacon_s3/base.webp",
+    "render_scale": 0.079,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/beacon_s3/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -12.2,
+          32.1
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0,
+          33.9
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          12.1,
+          32.1
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -30
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

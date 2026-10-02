@@ -1,32 +1,32 @@
 {
-  "id": "pioneer_01",
-  "display_name_key": "SHIP_PIONEER_01",
-  "description_key": "SHIP_PIONEER_01_DESC",
-  "role_key": "SHIP_ROLE_GENERALIST",
+  "id": "manta_t1",
+  "display_name_key": "SHIP_MANTA_T1",
+  "description_key": "SHIP_MANTA_T1_DESC",
+  "role_key": "SHIP_ROLE_SCANNER",
   "unlock": {
-    "rank": "trainee",
-    "price": 0
+    "rank": "junior_cleaner",
+    "price": 1250
   },
   "base_stats": {
-    "max_speed": 300,
-    "acceleration": 420,
-    "dry_mass": 12,
-    "cargo_inertia_factor": 0.35,
-    "turn_response": 6,
-    "boost_acceleration": 220,
+    "max_speed": 285,
+    "acceleration": 400,
+    "dry_mass": 12.5,
+    "cargo_inertia_factor": 0.34,
+    "turn_response": 5.8,
+    "boost_acceleration": 210,
     "boost_duration": 0.62,
-    "boost_recharge_seconds": 3.2,
-    "boost_turn_authority": 0.78,
-    "scan_range": 320,
-    "capture_distance": 58,
-    "pull_speed": 520,
+    "boost_recharge_seconds": 3.3,
+    "boost_turn_authority": 0.76,
+    "scan_range": 440,
+    "capture_distance": 64,
+    "pull_speed": 540,
     "collection_speed_multiplier": 1,
-    "cargo_capacity": 12,
-    "boost_recharge_rate": 1,
+    "cargo_capacity": 11,
+    "boost_recharge_rate": 0.96,
     "boost_duration_bonus": 0,
     "boost_charge_capacity": 1,
-    "environment_force_response": 1,
-    "environment_drag_response": 1
+    "environment_force_response": 0.98,
+    "environment_drag_response": 0.96
   },
   "upgrade_profile": "standard",
   "module_slots": {
@@ -50,38 +50,38 @@
     ]
   },
   "visual": {
-    "base_texture": "res://assets/original/ships/pioneer_01/base.webp",
-    "render_scale": 0.085,
+    "base_texture": "res://assets/original/ships/manta_t1/base.webp",
+    "render_scale": 0.082,
     "paint_mode": "rgb_mask",
-    "paint_mask": "res://assets/original/ships/pioneer_01/paint_mask.png",
+    "paint_mask": "res://assets/original/ships/manta_t1/paint_mask.png",
     "details_texture": "",
     "emissive_texture": "",
     "engine_sockets": [
       {
         "id": "engine_1",
         "position": [
-          -16.1,
-          36.4
+          -12.9,
+          31.8
         ]
       },
       {
         "id": "engine_2",
         "position": [
-          -0.2,
-          36.9
+          -0.1,
+          32.1
         ]
       },
       {
         "id": "engine_3",
         "position": [
-          15.8,
-          36.5
+          12.8,
+          31.8
         ]
       }
     ],
     "tractor_socket": [
       0,
-      -27
+      -28
     ],
     "collision_mode": "base_alpha"
   }

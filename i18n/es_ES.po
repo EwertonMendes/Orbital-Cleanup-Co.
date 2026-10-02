@@ -1241,7 +1241,7 @@ msgid "SHIP_PIONEER_01"
 msgstr "Pioneer-01"
 
 msgid "SHIP_PIONEER_01_DESC"
-msgstr "Nave inicial equilibrada para trabajos fiables de limpieza orbital."
+msgstr "Nave civil de recuperación equilibrada para trabajos fiables de limpieza."
 
 msgid "SHIP_ROLE_GENERALIST"
 msgstr "Generalista"
@@ -1416,3 +1416,174 @@ msgstr "Carga"
 
 msgid "MODULE_SLOT_UTILITY"
 msgstr "Utilidad"
+
+msgid "SHIP_SWIFTLET_S1"
+msgstr "Swiftlet-S1"
+
+msgid "SHIP_SWIFTLET_S1_DESC"
+msgstr "Nave ligera y ágil, ajustada para correcciones rápidas y campos de residuos estrechos."
+
+msgid "SHIP_MANTA_T1"
+msgstr "Manta-T1"
+
+msgid "SHIP_MANTA_T1_DESC"
+msgstr "Nave de exploración ancha con mayor cobertura y alcance de sensores."
+
+msgid "SHIP_MULE_C1"
+msgstr "Mule-C1"
+
+msgid "SHIP_MULE_C1_DESC"
+msgstr "Carguero utilitario robusto construido alrededor de una gran capacidad de carga."
+
+msgid "SHIP_VECTOR_V1"
+msgstr "Vector-V1"
+
+msgid "SHIP_VECTOR_V1_DESC"
+msgstr "Nave de maniobra precisa con excelente respuesta de giro y control."
+
+msgid "SHIP_ANGLER_T2"
+msgstr "Angler-T2"
+
+msgid "SHIP_ANGLER_T2_DESC"
+msgstr "Nave dedicada a recuperación, con recolección rápida y un tractor más potente."
+
+msgid "SHIP_KESTREL_S2"
+msgstr "Kestrel-S2"
+
+msgid "SHIP_KESTREL_S2_DESC"
+msgstr "Nave de servicio larga y ligera optimizada para alta velocidad de crucero."
+
+msgid "SHIP_PULSE_V2"
+msgstr "Pulse-V2"
+
+msgid "SHIP_PULSE_V2_DESC"
+msgstr "Nave compacta de rendimiento construida alrededor de potentes capacitores de impulso."
+
+msgid "SHIP_OX_C2"
+msgstr "Ox-C2"
+
+msgid "SHIP_OX_C2_DESC"
+msgstr "Nave de carga estable diseñada para mantener el control bajo cargas pesadas."
+
+msgid "SHIP_MAGNETAR_T4"
+msgstr "Magnetar-T4"
+
+msgid "SHIP_MAGNETAR_T4_DESC"
+msgstr "Nave avanzada de recuperación con tractor magnético de largo alcance."
+
+msgid "SHIP_GRAPPLER_T5"
+msgstr "Grappler-T5"
+
+msgid "SHIP_GRAPPLER_T5_DESC"
+msgstr "Remolcador orbital pesado diseñado para arrastrar y estabilizar residuos masivos."
+
+msgid "SHIP_NOMAD_V3"
+msgstr "Nomad-V3"
+
+msgid "SHIP_NOMAD_V3_DESC"
+msgstr "Nave de servicio de larga duración que reduce la penalización inercial de la carga."
+
+msgid "SHIP_BEACON_S3"
+msgstr "Beacon-S3"
+
+msgid "SHIP_BEACON_S3_DESC"
+msgstr "Especialista en sensores con cobertura excepcional de escaneo a larga distancia."
+
+msgid "SHIP_COMET_X4"
+msgstr "Comet-X4"
+
+msgid "SHIP_COMET_X4_DESC"
+msgstr "Nave de respuesta de velocidad extrema, impulso agresivo y poca capacidad de carga."
+
+msgid "SHIP_ATLAS_C4"
+msgstr "Atlas-C4"
+
+msgid "SHIP_ATLAS_C4_DESC"
+msgstr "Carguero pesado con estructura reforzada y una capacidad de carga muy alta."
+
+msgid "SHIP_BASTION_H4"
+msgstr "Bastion-H4"
+
+msgid "SHIP_BASTION_H4_DESC"
+msgstr "Casco de servicio protegido para resistir fuerzas ambientales peligrosas."
+
+msgid "SHIP_PROSPECTOR_Q3"
+msgstr "Prospector-Q3"
+
+msgid "SHIP_PROSPECTOR_Q3_DESC"
+msgstr "Nave de exploración y recuperación precisa que equilibra escáner, tractor y recolección."
+
+msgid "SHIP_AURORA_E4"
+msgstr "Aurora-E4"
+
+msgid "SHIP_AURORA_E4_DESC"
+msgstr "Nave de espacio profundo aislada contra corrientes, arrastre y ambientes extremos."
+
+msgid "SHIP_LEVIATHAN_C6"
+msgstr "Leviathan-C6"
+
+msgid "SHIP_LEVIATHAN_C6_DESC"
+msgstr "Megacarguero de recuperación con enorme capacidad y manejo deliberadamente pesado."
+
+msgid "SHIP_HORIZON_M5"
+msgstr "Horizon-M5"
+
+msgid "SHIP_HORIZON_M5_DESC"
+msgstr "Nave insignia modular premium con una bahía de utilidad extra para configuraciones flexibles."
+
+msgid "SHIP_ROLE_AGILITY"
+msgstr "Agilidad"
+
+msgid "SHIP_ROLE_SCANNER"
+msgstr "Escáner"
+
+msgid "SHIP_ROLE_CARGO"
+msgstr "Carga"
+
+msgid "SHIP_ROLE_MANEUVERING"
+msgstr "Maniobra"
+
+msgid "SHIP_ROLE_RECOVERY"
+msgstr "Recuperación"
+
+msgid "SHIP_ROLE_CRUISE"
+msgstr "Velocidad de crucero"
+
+msgid "SHIP_ROLE_BOOST"
+msgstr "Impulso"
+
+msgid "SHIP_ROLE_STABLE_CARGO"
+msgstr "Carga estable"
+
+msgid "SHIP_ROLE_TRACTOR_RANGE"
+msgstr "Alcance del tractor"
+
+msgid "SHIP_ROLE_HEAVY_TOW"
+msgstr "Remolque pesado"
+
+msgid "SHIP_ROLE_INERTIAL_CARGO"
+msgstr "Carga inercial"
+
+msgid "SHIP_ROLE_LONG_RANGE_SENSOR"
+msgstr "Sensor de largo alcance"
+
+msgid "SHIP_ROLE_SPEED_BOOST"
+msgstr "Velocidad / impulso"
+
+msgid "SHIP_ROLE_HEAVY_CARGO"
+msgstr "Carga pesada"
+
+msgid "SHIP_ROLE_HAZARDS"
+msgstr "Entornos peligrosos"
+
+msgid "SHIP_ROLE_PRECISION_RECOVERY"
+msgstr "Recuperación de precisión"
+
+msgid "SHIP_ROLE_EXTREME_ENVIRONMENTS"
+msgstr "Entornos extremos"
+
+msgid "SHIP_ROLE_MEGA_HAULER"
+msgstr "Megacarguero"
+
+msgid "SHIP_ROLE_MODULAR_FLAGSHIP"
+msgstr "Nave insignia modular"

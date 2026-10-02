@@ -1,0 +1,88 @@
+{
+  "id": "magnetar_t4",
+  "display_name_key": "SHIP_MAGNETAR_T4",
+  "description_key": "SHIP_MAGNETAR_T4_DESC",
+  "role_key": "SHIP_ROLE_TRACTOR_RANGE",
+  "unlock": {
+    "rank": "senior_cleaner",
+    "price": 2900
+  },
+  "base_stats": {
+    "max_speed": 270,
+    "acceleration": 380,
+    "dry_mass": 14,
+    "cargo_inertia_factor": 0.34,
+    "turn_response": 5.5,
+    "boost_acceleration": 205,
+    "boost_duration": 0.6,
+    "boost_recharge_seconds": 3.4,
+    "boost_turn_authority": 0.74,
+    "scan_range": 450,
+    "capture_distance": 76,
+    "pull_speed": 680,
+    "collection_speed_multiplier": 1.1,
+    "cargo_capacity": 11,
+    "boost_recharge_rate": 0.94,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.92,
+    "environment_drag_response": 0.94
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/magnetar_t4/base.webp",
+    "render_scale": 0.08,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/magnetar_t4/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -13.7,
+          34.2
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0,
+          35.1
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          13.5,
+          34.2
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -32
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

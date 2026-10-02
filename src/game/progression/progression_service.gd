@@ -197,6 +197,21 @@ func purchase_ship(ship_id: String) -> bool:
 	print("[Fleet] PURCHASE ship=%s cost=%d" % [ship_id, cost])
 	return true
 
+func debug_select_ship(ship_id: String) -> bool:
+	if not _registry.has_ship(ship_id):
+		return false
+	var fleet := (_state["fleet"] as Dictionary).duplicate(true)
+	var ships := fleet.get("ships", {}) as Dictionary
+	if not ships.has(ship_id):
+		ships[ship_id] = _default_ship_state(ship_id)
+	fleet["ships"] = ships
+	fleet["active_ship_id"] = ship_id
+	_state["fleet"] = fleet
+	_ensure_default_assets_owned(ship_id)
+	state_changed.emit(get_snapshot())
+	print("[Fleet][QA] ACTIVE ship=%s transient=true" % ship_id)
+	return true
+
 func select_ship(ship_id: String) -> bool:
 	if not is_ship_owned(ship_id):
 		return false

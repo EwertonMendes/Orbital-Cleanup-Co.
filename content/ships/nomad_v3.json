@@ -1,32 +1,32 @@
 {
-  "id": "pioneer_01",
-  "display_name_key": "SHIP_PIONEER_01",
-  "description_key": "SHIP_PIONEER_01_DESC",
-  "role_key": "SHIP_ROLE_GENERALIST",
+  "id": "nomad_v3",
+  "display_name_key": "SHIP_NOMAD_V3",
+  "description_key": "SHIP_NOMAD_V3_DESC",
+  "role_key": "SHIP_ROLE_INERTIAL_CARGO",
   "unlock": {
-    "rank": "trainee",
-    "price": 0
+    "rank": "senior_cleaner",
+    "price": 3500
   },
   "base_stats": {
-    "max_speed": 300,
-    "acceleration": 420,
-    "dry_mass": 12,
-    "cargo_inertia_factor": 0.35,
-    "turn_response": 6,
-    "boost_acceleration": 220,
-    "boost_duration": 0.62,
-    "boost_recharge_seconds": 3.2,
+    "max_speed": 295,
+    "acceleration": 390,
+    "dry_mass": 13.5,
+    "cargo_inertia_factor": 0.18,
+    "turn_response": 5.8,
+    "boost_acceleration": 215,
+    "boost_duration": 0.66,
+    "boost_recharge_seconds": 3.15,
     "boost_turn_authority": 0.78,
-    "scan_range": 320,
-    "capture_distance": 58,
-    "pull_speed": 520,
-    "collection_speed_multiplier": 1,
-    "cargo_capacity": 12,
+    "scan_range": 340,
+    "capture_distance": 60,
+    "pull_speed": 560,
+    "collection_speed_multiplier": 1.02,
+    "cargo_capacity": 15,
     "boost_recharge_rate": 1,
-    "boost_duration_bonus": 0,
+    "boost_duration_bonus": 0.02,
     "boost_charge_capacity": 1,
-    "environment_force_response": 1,
-    "environment_drag_response": 1
+    "environment_force_response": 0.88,
+    "environment_drag_response": 0.86
   },
   "upgrade_profile": "standard",
   "module_slots": {
@@ -50,32 +50,32 @@
     ]
   },
   "visual": {
-    "base_texture": "res://assets/original/ships/pioneer_01/base.webp",
-    "render_scale": 0.085,
+    "base_texture": "res://assets/original/ships/nomad_v3/base.webp",
+    "render_scale": 0.082,
     "paint_mode": "rgb_mask",
-    "paint_mask": "res://assets/original/ships/pioneer_01/paint_mask.png",
+    "paint_mask": "res://assets/original/ships/nomad_v3/paint_mask.png",
     "details_texture": "",
     "emissive_texture": "",
     "engine_sockets": [
       {
         "id": "engine_1",
         "position": [
-          -16.1,
-          36.4
+          -18,
+          34.3
         ]
       },
       {
         "id": "engine_2",
         "position": [
-          -0.2,
-          36.9
+          0,
+          35
         ]
       },
       {
         "id": "engine_3",
         "position": [
-          15.8,
-          36.5
+          17.9,
+          34.3
         ]
       }
     ],

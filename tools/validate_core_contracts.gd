@@ -973,7 +973,7 @@ func _validate_progression_service() -> void:
 
 	var ship_build := progression.get_active_ship_build()
 	_expect(String(ship_build["ship_id"]) == "pioneer_01", "Resolved build must identify the active model.")
-	_expect(String((ship_build["visual"] as Dictionary)["base_texture"]) == "res://assets/original/ships/pioneer_01_hd.webp", "Pioneer model content must own the staged HD runtime artwork.")
+	_expect(String((ship_build["visual"] as Dictionary)["base_texture"]) == "res://assets/original/ships/pioneer_01/base.webp", "Pioneer model content must own the production fleet artwork.")
 	_expect((ship_build["modules"] as Dictionary).size() == 4, "Resolved ship build must include the four module families.")
 
 	var default_cosmetics := progression.get_equipped_cosmetic_ids()
@@ -986,6 +986,14 @@ func _validate_progression_service() -> void:
 	var registry := ContentRegistry.new()
 	_expect(registry.has_ship("pioneer_01"), "ContentRegistry must expose ship definitions.")
 	_expect(registry.list_ship_ids().has("pioneer_01"), "Ship catalog enumeration must include Pioneer-01.")
+	var fleet_ship_ids := registry.list_ship_ids()
+	_expect(fleet_ship_ids.size() == 20, "Fleet catalog must expose all 20 authored ship models.")
+	for ship_id in fleet_ship_ids:
+		var ship_definition := registry.get_ship(ship_id)
+		var ship_visual := ship_definition["visual"] as Dictionary
+		_expect(FileAccess.file_exists(String(ship_visual["base_texture"])), "Fleet base artwork must exist: %s" % ship_id)
+		_expect(FileAccess.file_exists(String(ship_visual["paint_mask"])), "Fleet paint mask must exist: %s" % ship_id)
+		_expect((ship_visual["engine_sockets"] as Array).size() >= 1, "Every fleet ship needs at least one engine socket: %s" % ship_id)
 	var rare_salvage := registry.get_salvage_definition("navigation_core")
 	var common_salvage := registry.get_salvage_definition("scrap_fragment")
 	_expect(not progression.register_discovery(common_salvage), "Common salvage must not enter the special Discovery catalog.")

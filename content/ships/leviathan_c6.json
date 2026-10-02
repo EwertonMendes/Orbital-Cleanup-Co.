@@ -1,32 +1,32 @@
 {
-  "id": "pioneer_01",
-  "display_name_key": "SHIP_PIONEER_01",
-  "description_key": "SHIP_PIONEER_01_DESC",
-  "role_key": "SHIP_ROLE_GENERALIST",
+  "id": "leviathan_c6",
+  "display_name_key": "SHIP_LEVIATHAN_C6",
+  "description_key": "SHIP_LEVIATHAN_C6_DESC",
+  "role_key": "SHIP_ROLE_MEGA_HAULER",
   "unlock": {
-    "rank": "trainee",
-    "price": 0
+    "rank": "deep_space_operator",
+    "price": 7600
   },
   "base_stats": {
-    "max_speed": 300,
-    "acceleration": 420,
-    "dry_mass": 12,
-    "cargo_inertia_factor": 0.35,
-    "turn_response": 6,
-    "boost_acceleration": 220,
-    "boost_duration": 0.62,
-    "boost_recharge_seconds": 3.2,
-    "boost_turn_authority": 0.78,
-    "scan_range": 320,
-    "capture_distance": 58,
-    "pull_speed": 520,
+    "max_speed": 240,
+    "acceleration": 290,
+    "dry_mass": 25,
+    "cargo_inertia_factor": 0.44,
+    "turn_response": 4,
+    "boost_acceleration": 160,
+    "boost_duration": 0.55,
+    "boost_recharge_seconds": 4,
+    "boost_turn_authority": 0.55,
+    "scan_range": 330,
+    "capture_distance": 65,
+    "pull_speed": 650,
     "collection_speed_multiplier": 1,
-    "cargo_capacity": 12,
-    "boost_recharge_rate": 1,
+    "cargo_capacity": 28,
+    "boost_recharge_rate": 0.82,
     "boost_duration_bonus": 0,
     "boost_charge_capacity": 1,
-    "environment_force_response": 1,
-    "environment_drag_response": 1
+    "environment_force_response": 0.72,
+    "environment_drag_response": 0.82
   },
   "upgrade_profile": "standard",
   "module_slots": {
@@ -50,32 +50,32 @@
     ]
   },
   "visual": {
-    "base_texture": "res://assets/original/ships/pioneer_01/base.webp",
-    "render_scale": 0.085,
+    "base_texture": "res://assets/original/ships/leviathan_c6/base.webp",
+    "render_scale": 0.105,
     "paint_mode": "rgb_mask",
-    "paint_mask": "res://assets/original/ships/pioneer_01/paint_mask.png",
+    "paint_mask": "res://assets/original/ships/leviathan_c6/paint_mask.png",
     "details_texture": "",
     "emissive_texture": "",
     "engine_sockets": [
       {
         "id": "engine_1",
         "position": [
-          -16.1,
-          36.4
+          -20.9,
+          42.9
         ]
       },
       {
         "id": "engine_2",
         "position": [
-          -0.2,
-          36.9
+          0.1,
+          46.3
         ]
       },
       {
         "id": "engine_3",
         "position": [
-          15.8,
-          36.5
+          20.7,
+          42.9
         ]
       }
     ],
