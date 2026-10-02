@@ -135,49 +135,36 @@ Before a ship can be enabled:
 - content/core contracts are green.
 
 
-## Engine VFX customization
+## Propulsion trail customization
 
 Ship propulsion presentation is composed from two existing save-facing cosmetic categories:
 
-- `engine` selects the reusable effect behavior/style;
-- `trail` selects the tint palette shared by the plume, particles and world-space trail.
+- `engine` selects the procedural trail behavior/style;
+- `trail` selects the color palette used by that style.
 
-Keeping these category IDs preserves existing saves while allowing style and color to combine independently. A normal engine style is authored in `content/cosmetics/ship_customization.json`; adding one must not require ship-specific GDScript.
+The Fleet UI exposes both under one **Propulsion** editor. Keeping the two internal category IDs preserves existing saves while allowing style and color to combine independently.
 
-Runtime composition is:
+Runtime composition is intentionally trail-only:
 
 ```
 Ship engine_sockets[]
-  -> EngineFxRig per socket
-     -> neutral core plume
-     -> primary CPU particles
-     -> optional secondary CPU particles
-     -> primary world-space EngineTrail
-     -> optional secondary EngineTrail
+  -> PropulsionTrailRig per socket
+     -> one to three world-space EngineTrail strands
 ```
 
-`EngineFxRig` is the single propulsion-VFX runtime component. The same rig is used in flight and for animated Fleet workshop previews. Engine effect styles own motion/shape parameters; trail palettes own colors. Neither may modify collision, physics or ship stats.
+`PropulsionTrailRig` contains no nozzle sprite, plume texture or propulsion particle emitter. This is deliberate: the ship can rotate while retaining inertial velocity, so a static nozzle flame can point somewhere different from the actual motion history and create contradictory feedback. The trail is generated from the real world-space socket history, so turning, coasting and boost remain visually truthful.
 
-The ship-wide particle budget is bounded and divided across authored engine sockets, so a multi-engine hull gains more emitters rather than multiplying total particle cost without limit. CPU particles are intentional for the project's GL Compatibility/Web/mobile baseline and 2D physics-interpolation behavior.
+The eight authored styles must be structurally different, not simple width variants:
 
-Engine sockets may optionally author:
+- Ion Stream — clean tapered core/ribbon;
+- Plasma Bloom — wide animated multi-strand wave;
+- Pulse Wave — repeated width pulses with visible gaps;
+- Spark Jet — short broken jittering strands;
+- Comet Ribbon — long tapered flowing tail;
+- Shard Drive — angular segmented zig-zag;
+- Nebula Mist — broad low-opacity multi-strand drift;
+- Twin Helix — two animated sinusoidal strands in opposite phase.
 
-- `fx_scale` for nozzle-specific visual size;
-- `rotation_degrees` for visually angled/vectorable nozzles.
+Engine sockets may optionally author `fx_scale` and `rotation_degrees` for placement/preview alignment. These values affect presentation only. Propulsion cosmetics never modify collision, physics or ship stats.
 
-Omitted values resolve to `1.0` and `0.0`, keeping all existing ship definitions compatible.
-
-### Engine VFX art rules
-
-Engine VFX textures under `assets/original/vfx/` are neutral white/grayscale primitives with true alpha. Runtime palettes provide color; do not create separate raster files for every color.
-
-The propulsion set includes:
-
-- `engine_core_plume.svg` — reusable tapered nozzle plume;
-- `particle_ring.svg` — expanding pulse-wave ring;
-- `particle_cloud.svg` — diffuse plasma/nebula particle;
-- `particle_glow.svg` — soft ion/glow mote;
-- `particle_streak.svg` — fast spark/energy streak;
-- `particle_shard.svg` — geometric energized fragment.
-
-Do not bake a full exhaust trail into ship artwork. Trails are generated from the ship's real world-space motion history so inertia, turning and boost remain visually truthful.
+Do not bake exhaust artwork into ship textures and do not add separate propulsion raster/SVG assets. New propulsion looks should be implemented through bounded procedural trail parameters and reusable renderer behavior.
