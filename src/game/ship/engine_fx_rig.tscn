@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/game/ship/engine_fx_rig.gd" id="1"]
 [ext_resource type="Script" path="res://src/game/ship/engine_trail.gd" id="2"]
-[ext_resource type="Texture2D" path="res://assets/original/vfx/engine_core_plume.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/original/vfx/engine_core_plume.svg" id="3"]
 
 [sub_resource type="Gradient" id="TrailGradient"]
 offsets = PackedFloat32Array(0, 0.34, 0.76, 1)
