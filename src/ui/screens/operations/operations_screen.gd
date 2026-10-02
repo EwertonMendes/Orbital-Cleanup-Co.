@@ -1450,6 +1450,8 @@ func _equip_module(slot: String, slot_index: int, module_id: String) -> void:
 	if not equipped_ok:
 		return
 
+	_refresh_header()
+	_refresh_header()
 	_refresh_ship(false)
 	if focus_owner != null and is_instance_valid(focus_owner) and focus_owner.is_inside_tree():
 		if _input_service != null and _input_service.prefers_gamepad():
