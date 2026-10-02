@@ -163,6 +163,7 @@ var _upgrade_page := 0
 var _discovery_page := 0
 var _ship_category := "hull"
 var _ship_option_page := 0
+var _selected_module_slot := ""
 var _ship_category_group := ButtonGroup.new()
 var _suppress_progression_refresh := false
 
@@ -457,11 +458,34 @@ func _apply_responsive_layout() -> void:
 	main_row.vertical = portrait
 	contract_hero.vertical = portrait
 	ship_body.vertical = portrait
+	ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tab_grid.columns = 3 if portrait else 1
 	contract_selector.columns = 3 if portrait else 4
 	upgrade_grid.columns = 1 if portrait else 2
 	discovery_list.columns = 1 if portrait else 2
+
+	# Fleet is a fixed workspace, not a document. Keep navigation compact so
+	# preview + editor always fit without requiring a ScrollContainer.
+	%ShipTitle.visible = false
+	%ShipSubtitle.visible = false
 	ship_category_bar.columns = 3 if portrait else 5
+	ship_category_bar.add_theme_constant_override("h_separation", 6 if compact else 8)
+	ship_category_bar.add_theme_constant_override("v_separation", 6)
+	var category_height := ResponsiveUiProfile.touch_target_height(profile) if phone else 40.0
+	for category_button in [
+		hull_category,
+		paint_category,
+		livery_category,
+		decal_category,
+		canopy_category,
+		body_kit_category,
+		engine_category,
+		modules_category,
+		trail_category,
+		beam_category,
+	]:
+		(category_button as Button).custom_minimum_size.y = category_height
+
 	for option_grid in [
 		hull_options,
 		paint_options,
@@ -473,24 +497,36 @@ func _apply_responsive_layout() -> void:
 		trail_options,
 		beam_options,
 	]:
-		# Cosmetic labels can be substantially wider than generic actions.
-		# Keep enough horizontal room for complete labels instead of allowing
-		# a third column to overflow the loadout card.
 		option_grid.columns = 1 if portrait else 2
-	# Modules are not cosmetic tiles. Each bay is rendered as its own bounded
-	# row and must never be promoted back to a multi-column grid by responsive
-	# layout, otherwise long hardware names can escape the loadout card.
 	modules_options.columns = 1
 
 	%DeskLabel.visible = not phone
 	contract_ship_card.visible = not portrait
-	%WorkshopStatus.visible = not portrait
+	%WorkshopStatus.visible = false
+	%LoadoutCard.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	%LoadoutLayout.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
 	if portrait:
-		ship_preview_card.custom_minimum_size = Vector2(0.0, 160.0)
-		ship_preview.custom_minimum_size = Vector2(150.0, 118.0)
+		ship_preview_card.custom_minimum_size = Vector2(0.0, 138.0)
+		ship_preview_card.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		ship_preview.custom_minimum_size = Vector2(126.0, 92.0)
+	elif compact:
+		ship_preview_card.custom_minimum_size = Vector2(205.0, 0.0)
+		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		ship_preview.custom_minimum_size = Vector2(165.0, 126.0)
 	else:
-		ship_preview_card.custom_minimum_size = Vector2(300.0, 300.0)
-		ship_preview.custom_minimum_size = Vector2(250.0, 210.0)
+		ship_preview_card.custom_minimum_size = Vector2(245.0, 0.0)
+		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		ship_preview.custom_minimum_size = Vector2(205.0, 160.0)
+
+	var fleet_margin := 8 if phone else (10 if compact else 12)
+	for margin_name in ["PreviewMargin", "LoadoutMargin"]:
+		var fleet_margin_container := ship_panel.find_child(margin_name, true, false) as MarginContainer
+		if fleet_margin_container != null:
+			fleet_margin_container.add_theme_constant_override("margin_left", fleet_margin)
+			fleet_margin_container.add_theme_constant_override("margin_top", fleet_margin)
+			fleet_margin_container.add_theme_constant_override("margin_right", fleet_margin)
+			fleet_margin_container.add_theme_constant_override("margin_bottom", fleet_margin)
 
 	content_shell.custom_minimum_size.y = 0.0
 	content_shell.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -1147,7 +1183,7 @@ func _select_ship_category(category: String) -> void:
 func _refresh_ship(rebuild_options: bool = true) -> void:
 	%ShipTitle.text = tr("HQ_SHIP_TITLE")
 	%ShipSubtitle.text = tr("HQ_SHIP_SUBTITLE")
-	%LoadoutTitle.text = tr("HQ_SHIP_LOADOUT")
+	%LoadoutTitle.text = tr(_ship_category_title_key(_ship_category))
 	%HullHeading.text = tr("HQ_CUSTOMIZE_HULL")
 	%PaintHeading.text = tr("HQ_CUSTOMIZE_PAINT")
 	%LiveryHeading.text = tr("HQ_CUSTOMIZE_LIVERY")
@@ -1227,7 +1263,12 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
-	ship_stats.text = tr("HQ_SHIP_STATS_FMT") % [int(round(float(ship["scan_range"]))), int(round(float(ship["cargo_capacity"]))), recovery_percent]
+	var ship_stat_line := tr("HQ_SHIP_STATS_FMT") % [
+		int(round(float(ship["scan_range"]))),
+		int(round(float(ship["cargo_capacity"]))),
+		recovery_percent,
+	]
+	ship_stats.text = "%s\n%s" % [ship_stat_line, %WorkshopStatus.text]
 	if rebuild_options:
 		_refresh_ship_category_options()
 	else:
@@ -1400,10 +1441,35 @@ func _apply_ship_category_visibility() -> void:
 	]
 	for index in range(categories.size()):
 		var active: bool = String(categories[index]) == _ship_category
-		(headings[index] as Control).visible = active
+		# LoadoutTitle already names the active editor. Keeping a second heading
+		# wastes vertical space and makes compact/touch layouts harder to scan.
+		(headings[index] as Control).visible = false
 		(values[index] as Control).visible = active
 		(grids[index] as Control).visible = active
 		(buttons[index] as Button).button_pressed = active
+
+func _ship_category_title_key(category: String) -> String:
+	match category:
+		"paint":
+			return "HQ_CUSTOMIZE_PAINT"
+		"livery":
+			return "HQ_CUSTOMIZE_LIVERY"
+		"decal":
+			return "HQ_CUSTOMIZE_DECAL"
+		"canopy":
+			return "HQ_CUSTOMIZE_CANOPY"
+		"body_kit":
+			return "HQ_CUSTOMIZE_BODY_KIT"
+		"engine":
+			return "HQ_CUSTOMIZE_ENGINE"
+		"modules":
+			return "HQ_FLEET_MODULES"
+		"trail":
+			return "HQ_CUSTOMIZE_TRAIL"
+		"beam":
+			return "HQ_CUSTOMIZE_BEAM"
+		_:
+			return "HQ_CUSTOMIZE_HULL"
 
 func _ship_container(category: String) -> GridContainer:
 	match category:
@@ -1430,120 +1496,209 @@ func _ship_container(category: String) -> GridContainer:
 
 func _ship_option_page_size() -> int:
 	var profile := ResponsiveUiProfile.current()
-	if _ship_category == "modules":
-		return 2 if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT else 3
 	if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT:
 		return 2
 	return 4
 
 func _change_ship_option_page(delta: int) -> void:
-	var unlocked_count := 0
 	if _ship_category == "modules":
-		unlocked_count = _module_option_entries().size()
-	else:
-		for option_variant in _progression.get_cosmetic_options(_ship_category):
-			var option := option_variant as Dictionary
-			if _progression.is_cosmetic_unlocked(_ship_category, String(option["id"])):
-				unlocked_count += 1
+		return
+	var unlocked_count := 0
+	for option_variant in _progression.get_cosmetic_options(_ship_category):
+		var option := option_variant as Dictionary
+		if _progression.is_cosmetic_unlocked(_ship_category, String(option["id"])):
+			unlocked_count += 1
 	var page_count := maxi(1, int(ceil(float(unlocked_count) / float(_ship_option_page_size()))))
 	_ship_option_page = clampi(_ship_option_page + delta, 0, page_count - 1)
 	_refresh_ship_category_options()
 	GamepadUiNavigation.grab(ship_options_previous_page if delta < 0 else ship_options_next_page, ship_panel)
 
-func _module_option_entries() -> Array[Dictionary]:
+func _module_slot_entries() -> Array[Dictionary]:
 	var output: Array[Dictionary] = []
 	var definition := _progression.get_active_ship_definition()
 	var slot_counts := definition.get("module_slots", {}) as Dictionary
 	var equipped := _progression.get_equipped_modules()
 	for slot in ["propulsion", "recovery", "cargo", "utility"]:
 		var capacity := maxi(int(slot_counts.get(slot, 0)), 0)
-		if capacity <= 0:
-			continue
 		var slot_equipped_variant = equipped.get(slot, [])
 		var slot_equipped: Array = slot_equipped_variant as Array if slot_equipped_variant is Array else [slot_equipped_variant]
-		var definitions := _progression.get_module_definitions(slot)
 		for slot_index in range(capacity):
-			var current_id := String(slot_equipped[slot_index]) if slot_index < slot_equipped.size() else ""
-			for module_definition in definitions:
-				var module_id := String(module_definition["id"])
-				if not _progression.is_module_unlocked(module_id):
-					continue
-				output.append({
-					"slot": slot,
-					"slot_index": slot_index,
-					"module_id": module_id,
-					"display_name_key": String(module_definition["display_name_key"]),
-					"description_key": String(module_definition.get("description_key", "")),
-					"selected": current_id == module_id,
-				})
+			output.append({
+				"slot": slot,
+				"slot_index": slot_index,
+				"equipped_id": String(slot_equipped[slot_index]) if slot_index < slot_equipped.size() else "",
+				"capacity": capacity,
+			})
+	return output
+
+func _module_slot_key(slot: String, slot_index: int) -> String:
+	return "%s:%d" % [slot, slot_index]
+
+func _module_slot_label(slot: String, slot_index: int, capacity: int) -> String:
+	var slot_key := "MODULE_SLOT_%s" % slot.to_upper()
+	if capacity <= 1:
+		return tr(slot_key)
+	return "%s %d" % [tr(slot_key), slot_index + 1]
+
+func _ensure_selected_module_slot(slots: Array[Dictionary]) -> Dictionary:
+	if slots.is_empty():
+		_selected_module_slot = ""
+		return {}
+	for entry in slots:
+		var key := _module_slot_key(String(entry["slot"]), int(entry["slot_index"]))
+		if key == _selected_module_slot:
+			return entry
+	_selected_module_slot = _module_slot_key(String(slots[0]["slot"]), int(slots[0]["slot_index"]))
+	return slots[0]
+
+func _module_choices_for_slot(slot_entry: Dictionary) -> Array[Dictionary]:
+	var output: Array[Dictionary] = []
+	if slot_entry.is_empty():
+		return output
+	var slot := String(slot_entry["slot"])
+	var current_id := String(slot_entry.get("equipped_id", ""))
+	for module_definition_variant in _progression.get_module_definitions(slot):
+		var module_definition := module_definition_variant as Dictionary
+		var module_id := String(module_definition["id"])
+		if not _progression.is_module_unlocked(module_id):
+			continue
+		output.append({
+			"module_id": module_id,
+			"display_name_key": String(module_definition["display_name_key"]),
+			"description_key": String(module_definition.get("description_key", "")),
+			"selected": module_id == current_id,
+		})
 	return output
 
 func _refresh_module_options() -> void:
-	var entries := _module_option_entries()
-	var page_size := _ship_option_page_size()
-	var page_count := maxi(1, int(ceil(float(entries.size()) / float(page_size))))
-	_ship_option_page = clampi(_ship_option_page, 0, page_count - 1)
-	var first := _ship_option_page * page_size
-	var last := mini(first + page_size, entries.size())
+	var slots := _module_slot_entries()
+	var selected_slot := _ensure_selected_module_slot(slots)
+	var slot_buttons: Array[Button] = []
 	var option_buttons: Array[Button] = []
 
-	for index in range(first, last):
-		var entry := entries[index]
-		var slot := String(entry["slot"])
-		var slot_index := int(entry["slot_index"])
+	var slot_bar := GridContainer.new()
+	slot_bar.name = "ModuleSlotBar"
+	slot_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var profile := ResponsiveUiProfile.current()
+	slot_bar.columns = 2 if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT else mini(3, maxi(slots.size(), 1))
+	slot_bar.add_theme_constant_override("h_separation", 6)
+	slot_bar.add_theme_constant_override("v_separation", 6)
+	modules_options.add_child(slot_bar)
+
+	for slot_entry in slots:
+		var slot := String(slot_entry["slot"])
+		var slot_index := int(slot_entry["slot_index"])
+		var key := _module_slot_key(slot, slot_index)
+		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
+		assert(button != null, "Module bay selector must use OccChromeButton.")
+		button.name = "ModuleSlot_%s_%d" % [slot, slot_index]
+		button.role = "utility"
+		button.custom_minimum_size = Vector2(0, 44)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.clip_text = true
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		button.emphasis = key == _selected_module_slot
+		button.text = _module_slot_label(slot, slot_index, int(slot_entry["capacity"]))
+		button.tooltip_text = button.text
+		button.set_meta(&"occ_focus_restore_key", "module-slot:%s" % key)
+		button.pressed.connect(_select_module_slot.bind(slot, slot_index))
+		slot_bar.add_child(button)
+		slot_buttons.append(button)
+		_wire_button_feedback(button)
+
+	var divider := HSeparator.new()
+	divider.name = "ModuleBayDivider"
+	divider.custom_minimum_size.y = 6
+	modules_options.add_child(divider)
+
+	var choice_grid := GridContainer.new()
+	choice_grid.name = "ModuleChoiceGrid"
+	choice_grid.columns = 1
+	choice_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	choice_grid.add_theme_constant_override("v_separation", 6)
+	modules_options.add_child(choice_grid)
+
+	for entry in _module_choices_for_slot(selected_slot):
 		var module_id := String(entry["module_id"])
 		var selected := bool(entry["selected"])
-		var slot_key := "MODULE_SLOT_%s" % slot.to_upper()
-
-		var row := HBoxContainer.new()
-		row.name = "ModuleRow_%d" % index
-		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		row.add_theme_constant_override("separation", 10)
-		modules_options.add_child(row)
-
-		var slot_label := Label.new()
-		slot_label.name = "SlotLabel"
-		slot_label.custom_minimum_size = Vector2(118, 50)
-		slot_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		slot_label.theme_type_variation = &"TelemetryLabel"
-		slot_label.text = "%s %d" % [tr(slot_key), slot_index + 1]
-		slot_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		slot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		row.add_child(slot_label)
-
 		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
-		assert(button != null, "Module option must use OccChromeButton.")
-		button.name = "ModuleButton"
-		button.custom_minimum_size = Vector2(0, 50)
+		assert(button != null, "Module choice must use OccChromeButton.")
+		button.name = "ModuleChoice_%s" % module_id
+		button.custom_minimum_size = Vector2(0, 48)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
 		button.clip_text = true
 		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		button.set_meta(&"occ_focus_restore_key", "module:%s:%d:%s" % [slot, slot_index, module_id])
-		button.set_meta(&"occ_module_slot", slot)
-		button.set_meta(&"occ_module_slot_index", slot_index)
+		button.set_meta(&"occ_focus_restore_key", "module:%s:%s" % [_selected_module_slot, module_id])
+		button.set_meta(&"occ_module_slot", String(selected_slot.get("slot", "")))
+		button.set_meta(&"occ_module_slot_index", int(selected_slot.get("slot_index", 0)))
 		button.set_meta(&"occ_module_id", module_id)
 		button.set_meta(&"occ_module_name_key", String(entry["display_name_key"]))
-
 		var module_name := tr(String(entry["display_name_key"]))
 		button.text = _module_button_text(module_id, module_name, selected)
 		var description_key := String(entry.get("description_key", ""))
-		var tooltip_lines := PackedStringArray(["%s %d - %s" % [tr(slot_key), slot_index + 1, module_name]])
+		button.tooltip_text = module_name
 		if not description_key.is_empty():
-			tooltip_lines.append(tr(description_key))
-		button.tooltip_text = "\n".join(tooltip_lines)
-
+			button.tooltip_text += "\n%s" % tr(description_key)
 		var owned := _progression.is_module_owned(module_id)
 		button.disabled = not owned and not _progression.can_purchase_module(module_id)
 		if button.disabled and not owned:
 			button.tooltip_text += "\n%s" % tr("HQ_FLEET_NEED_CREDITS")
-		button.pressed.connect(_equip_module.bind(slot, slot_index, module_id))
-		row.add_child(button)
+		button.pressed.connect(_equip_module.bind(String(selected_slot.get("slot", "")), int(selected_slot.get("slot_index", 0)), module_id))
+		choice_grid.add_child(button)
 		option_buttons.append(button)
 		_wire_button_feedback(button)
 
-	_set_pager_state(ship_options_pager, ship_options_previous_page, ship_options_page_label, ship_options_next_page, _ship_option_page, page_count)
-	_configure_ship_option_focus_graph(option_buttons)
+	_set_pager_state(ship_options_pager, ship_options_previous_page, ship_options_page_label, ship_options_next_page, 0, 1)
+	_configure_module_focus_graph(slot_buttons, option_buttons)
+
+func _select_module_slot(slot: String, slot_index: int) -> void:
+	_selected_module_slot = _module_slot_key(slot, slot_index)
+	_refresh_ship_category_options()
+	if _input_service != null and _input_service.prefers_gamepad():
+		for candidate in modules_options.find_children("ModuleSlot_*", "Button", true, false):
+			var button := candidate as Button
+			if button != null and String(button.get_meta(&"occ_focus_restore_key", "")) == "module-slot:%s" % _selected_module_slot:
+				button.call_deferred("grab_focus")
+				break
+
+func _configure_module_focus_graph(slot_buttons: Array[Button], option_buttons: Array[Button]) -> void:
+	var category_button := modules_category
+	category_button.focus_neighbor_down = NodePath()
+	if slot_buttons.is_empty():
+		return
+	var selected_index := 0
+	for index in range(slot_buttons.size()):
+		var button := slot_buttons[index]
+		if String(button.get_meta(&"occ_focus_restore_key", "")).ends_with(_selected_module_slot):
+			selected_index = index
+		button.focus_neighbor_left = NodePath()
+		button.focus_neighbor_right = NodePath()
+		button.focus_neighbor_up = button.get_path_to(category_button)
+		button.focus_neighbor_down = NodePath()
+		if index > 0:
+			button.focus_neighbor_left = button.get_path_to(slot_buttons[index - 1])
+		if index + 1 < slot_buttons.size():
+			button.focus_neighbor_right = button.get_path_to(slot_buttons[index + 1])
+	category_button.focus_neighbor_down = category_button.get_path_to(slot_buttons[selected_index])
+
+	if option_buttons.is_empty():
+		return
+	slot_buttons[selected_index].focus_neighbor_down = slot_buttons[selected_index].get_path_to(option_buttons[0])
+	for index in range(option_buttons.size()):
+		var button := option_buttons[index]
+		button.focus_neighbor_left = NodePath()
+		button.focus_neighbor_right = NodePath()
+		button.focus_neighbor_up = (
+			button.get_path_to(slot_buttons[selected_index])
+			if index == 0
+			else button.get_path_to(option_buttons[index - 1])
+		)
+		button.focus_neighbor_down = (
+			button.get_path_to(option_buttons[index + 1])
+			if index + 1 < option_buttons.size()
+			else NodePath()
+		)
 
 func _equip_module(slot: String, slot_index: int, module_id: String) -> void:
 	var focus_owner := get_viewport().gui_get_focus_owner()
@@ -1627,11 +1782,8 @@ func _refresh_ship_option_selection_visuals() -> void:
 
 func _refresh_module_selection_visuals() -> void:
 	var equipped := _progression.get_equipped_modules()
-	for row_child in modules_options.get_children():
-		var row := row_child as HBoxContainer
-		if row == null:
-			continue
-		var button := row.get_node_or_null("ModuleButton") as OccChromeButton
+	for candidate in modules_options.find_children("ModuleChoice_*", "Button", true, false):
+		var button := candidate as OccChromeButton
 		if button == null:
 			continue
 		var slot := String(button.get_meta(&"occ_module_slot", ""))
