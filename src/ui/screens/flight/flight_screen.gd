@@ -556,6 +556,11 @@ func _open_operations() -> void:
 	touch_controls.set_controls_enabled(false)
 	_operations_overlay = overlay
 	speedometer_anchor.visible = false
+
+	# The overlay owns controller focus while it is visible. Preserve each
+	# background HUD control's original focus mode so hidden flight actions can
+	# never enter the gamepad tab order behind Operations or Settings.
+	GamepadUiNavigation.set_focus_enabled(hud_root, false, operations_overlay_host)
 	operations_overlay_host.add_child(overlay)
 	overlay.modulate.a = 0.0
 	var reveal := create_tween()
@@ -570,6 +575,7 @@ func _close_operations() -> void:
 	if overlay.get_parent() != null:
 		overlay.get_parent().remove_child(overlay)
 	overlay.queue_free()
+	GamepadUiNavigation.set_focus_enabled(hud_root, true)
 	player_ship.set_flight_controls_enabled(true)
 	touch_controls.set_controls_enabled(true)
 	speedometer_anchor.visible = true
