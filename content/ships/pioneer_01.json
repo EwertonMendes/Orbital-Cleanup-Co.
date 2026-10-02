@@ -1,0 +1,60 @@
+{
+  "id": "pioneer_01",
+  "display_name_key": "SHIP_PIONEER_01",
+  "description_key": "SHIP_PIONEER_01_DESC",
+  "role_key": "SHIP_ROLE_GENERALIST",
+  "unlock": {
+    "rank": "trainee",
+    "price": 0
+  },
+  "base_stats": {
+    "max_speed": 300.0,
+    "acceleration": 420.0,
+    "dry_mass": 12.0,
+    "cargo_inertia_factor": 0.35,
+    "turn_response": 6.0,
+    "boost_acceleration": 220.0,
+    "boost_duration": 0.62,
+    "boost_recharge_seconds": 3.2,
+    "boost_turn_authority": 0.78,
+    "scan_range": 320.0,
+    "capture_distance": 58.0,
+    "pull_speed": 520.0,
+    "collection_speed_multiplier": 1.0,
+    "cargo_capacity": 12.0,
+    "boost_recharge_rate": 1.0,
+    "boost_duration_bonus": 0.0,
+    "boost_charge_capacity": 1.0,
+    "environment_force_response": 1.0,
+    "environment_drag_response": 1.0
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": "balanced_drive",
+    "recovery": "standard_recovery",
+    "cargo": "standard_cargo",
+    "utility": "standard_utility"
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/pioneer_01_hd.webp",
+    "render_scale": 0.14,
+    "paint_mode": "legacy_blue_bias",
+    "paint_mask": "",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "main",
+        "position": [0.0, 41.0]
+      }
+    ],
+    "tractor_socket": [0.0, -2.0],
+    "collision_mode": "base_alpha"
+  }
+}
