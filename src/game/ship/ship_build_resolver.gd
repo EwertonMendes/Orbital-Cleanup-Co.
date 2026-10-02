@@ -78,7 +78,7 @@ static func _sanitize_stats(stats: Dictionary) -> void:
 	stats["turn_response"] = maxf(float(stats.get("turn_response", 6.0)), 1.0)
 	stats["boost_acceleration"] = maxf(float(stats.get("boost_acceleration", 220.0)), 40.0)
 	stats["boost_duration"] = clampf(float(stats.get("boost_duration", 0.62)), 0.2, 1.5)
-	stats["boost_recharge_seconds"] = maxf(float(stats.get("boost_recharge_seconds", 3.2)), stats["boost_duration"] + 0.2)
+	stats["boost_recharge_seconds"] = maxf(float(stats.get("boost_recharge_seconds", 3.2)), float(stats["boost_duration"]) + 0.2)
 	stats["boost_turn_authority"] = clampf(float(stats.get("boost_turn_authority", 0.78)), 0.2, 1.0)
 	stats["scan_range"] = maxf(float(stats.get("scan_range", 320.0)), 80.0)
 	stats["capture_distance"] = maxf(float(stats.get("capture_distance", 58.0)), 20.0)
