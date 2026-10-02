@@ -239,7 +239,18 @@ func _validate_contracts() -> void:
 	assert(career_list != null, "Headquarters requires CareerList.")
 	assert(ship_preview != null and contract_ship_art != null, "Headquarters requires cosmetic ship previews.")
 	assert(ship_category_bar != null and ship_options_pager != null, "Headquarters requires paged ship customization categories.")
-	assert(hull_options != null and paint_options != null and trail_options != null and beam_options != null, "Headquarters requires cosmetic option grids.")
+	assert(
+		hull_options != null
+		and paint_options != null
+		and livery_options != null
+		and decal_options != null
+		and canopy_options != null
+		and body_kit_options != null
+		and engine_options != null
+		and trail_options != null
+		and beam_options != null,
+		"Headquarters requires complete layered customization option grids."
+	)
 	assert(contracts_panel != null and upgrades_panel != null and career_panel != null, "Headquarters core panels are required.")
 	assert(ship_panel != null and discovery_panel != null, "Headquarters future-facing panels are required.")
 	assert(discovery_empty_card != null and discovery_list != null and discovery_pager != null, "Headquarters discovery catalog containers are required.")
@@ -435,8 +446,18 @@ func _apply_responsive_layout() -> void:
 	contract_selector.columns = 3 if portrait else 4
 	upgrade_grid.columns = 1 if portrait else 2
 	discovery_list.columns = 1 if portrait else 2
-	ship_category_bar.columns = 4
-	for option_grid in [hull_options, paint_options, trail_options, beam_options]:
+	ship_category_bar.columns = 3 if portrait else 5
+	for option_grid in [
+		hull_options,
+		paint_options,
+		livery_options,
+		decal_options,
+		canopy_options,
+		body_kit_options,
+		engine_options,
+		trail_options,
+		beam_options,
+	]:
 		# Cosmetic labels can be substantially wider than generic actions.
 		# Keep enough horizontal room for complete labels instead of allowing
 		# a third column to overflow the loadout card.
