@@ -52,14 +52,24 @@ static func ensure_visible(control: Control) -> void:
 static func set_focus_enabled(root: Node, enabled: bool, except_root: Node = null) -> void:
 	if root == null:
 		return
-	var mode := Control.FOCUS_ALL if enabled else Control.FOCUS_NONE
 	for node in root.find_children("*", "Button", true, false):
 		if not node is Button:
 			continue
 		var button := node as Button
 		if except_root != null and (button == except_root or except_root.is_ancestor_of(button)):
 			continue
-		button.focus_mode = mode
+
+		if enabled:
+			if button.has_meta("occ_focus_mode_before_scope"):
+				button.focus_mode = int(button.get_meta("occ_focus_mode_before_scope"))
+				button.remove_meta("occ_focus_mode_before_scope")
+			continue
+
+		if not button.has_meta("occ_focus_mode_before_scope"):
+			button.set_meta("occ_focus_mode_before_scope", button.focus_mode)
+		if button.has_focus():
+			button.release_focus()
+		button.focus_mode = Control.FOCUS_NONE
 
 static func _can_focus(control: Control) -> bool:
 	if control == null or not is_instance_valid(control):
