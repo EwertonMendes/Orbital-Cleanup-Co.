@@ -1,0 +1,88 @@
+{
+  "id": "nomad_v3",
+  "display_name_key": "SHIP_NOMAD_V3",
+  "description_key": "SHIP_NOMAD_V3_DESC",
+  "role_key": "SHIP_ROLE_INERTIAL_CARGO",
+  "unlock": {
+    "rank": "senior_cleaner",
+    "price": 3500
+  },
+  "base_stats": {
+    "max_speed": 295,
+    "acceleration": 390,
+    "dry_mass": 13.5,
+    "cargo_inertia_factor": 0.18,
+    "turn_response": 5.8,
+    "boost_acceleration": 215,
+    "boost_duration": 0.66,
+    "boost_recharge_seconds": 3.15,
+    "boost_turn_authority": 0.78,
+    "scan_range": 340,
+    "capture_distance": 60,
+    "pull_speed": 560,
+    "collection_speed_multiplier": 1.02,
+    "cargo_capacity": 15,
+    "boost_recharge_rate": 1,
+    "boost_duration_bonus": 0.02,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.88,
+    "environment_drag_response": 0.86
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/nomad_v3/base.webp",
+    "render_scale": 0.082,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/nomad_v3/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -18,
+          34.3
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0,
+          35
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          17.9,
+          34.3
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -27
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

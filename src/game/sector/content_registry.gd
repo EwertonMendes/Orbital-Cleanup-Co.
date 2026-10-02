@@ -33,6 +33,9 @@ func get_progression(id: String) -> Dictionary:
 func get_cosmetic(id: String) -> Dictionary:
 	return _load_named("cosmetics", id)
 
+func get_ship(id: String) -> Dictionary:
+	return _load_named("ships", id)
+
 func has_sector(id: String) -> bool:
 	if id.is_empty():
 		return false
@@ -42,6 +45,11 @@ func has_salvage(id: String) -> bool:
 	if id.is_empty():
 		return false
 	return FileAccess.file_exists("%s/salvage/%s.json" % [CONTENT_ROOT, id])
+
+func has_ship(id: String) -> bool:
+	if id.is_empty():
+		return false
+	return FileAccess.file_exists("%s/ships/%s.json" % [CONTENT_ROOT, id])
 
 func list_sector_ids() -> PackedStringArray:
 	var entries: Array[Dictionary] = []
@@ -78,6 +86,20 @@ func list_biome_ids() -> PackedStringArray:
 	var ids := PackedStringArray()
 	var dir := DirAccess.open("%s/biomes" % CONTENT_ROOT)
 	assert(dir != null, "Unable to enumerate biome content.")
+	dir.list_dir_begin()
+	var filename := dir.get_next()
+	while not filename.is_empty():
+		if not dir.current_is_dir() and filename.ends_with(".json"):
+			ids.append(filename.left(filename.length() - 5))
+		filename = dir.get_next()
+	dir.list_dir_end()
+	ids.sort()
+	return ids
+
+func list_ship_ids() -> PackedStringArray:
+	var ids := PackedStringArray()
+	var dir := DirAccess.open("%s/ships" % CONTENT_ROOT)
+	assert(dir != null, "Unable to enumerate ship content.")
 	dir.list_dir_begin()
 	var filename := dir.get_next()
 	while not filename.is_empty():

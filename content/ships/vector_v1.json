@@ -1,0 +1,88 @@
+{
+  "id": "vector_v1",
+  "display_name_key": "SHIP_VECTOR_V1",
+  "description_key": "SHIP_VECTOR_V1_DESC",
+  "role_key": "SHIP_ROLE_MANEUVERING",
+  "unlock": {
+    "rank": "junior_cleaner",
+    "price": 1500
+  },
+  "base_stats": {
+    "max_speed": 315,
+    "acceleration": 455,
+    "dry_mass": 10,
+    "cargo_inertia_factor": 0.33,
+    "turn_response": 8.1,
+    "boost_acceleration": 235,
+    "boost_duration": 0.6,
+    "boost_recharge_seconds": 3,
+    "boost_turn_authority": 0.92,
+    "scan_range": 285,
+    "capture_distance": 54,
+    "pull_speed": 500,
+    "collection_speed_multiplier": 0.92,
+    "cargo_capacity": 10,
+    "boost_recharge_rate": 1.03,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 1,
+    "environment_drag_response": 0.98
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/vector_v1/base.webp",
+    "render_scale": 0.073,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/vector_v1/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -10.6,
+          27.7
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0.3,
+          32.1
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          10.5,
+          27.7
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -27
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

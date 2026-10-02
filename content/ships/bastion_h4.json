@@ -1,0 +1,88 @@
+{
+  "id": "bastion_h4",
+  "display_name_key": "SHIP_BASTION_H4",
+  "description_key": "SHIP_BASTION_H4_DESC",
+  "role_key": "SHIP_ROLE_HAZARDS",
+  "unlock": {
+    "rank": "sector_specialist",
+    "price": 4750
+  },
+  "base_stats": {
+    "max_speed": 255,
+    "acceleration": 335,
+    "dry_mass": 19,
+    "cargo_inertia_factor": 0.31,
+    "turn_response": 4.8,
+    "boost_acceleration": 180,
+    "boost_duration": 0.6,
+    "boost_recharge_seconds": 3.6,
+    "boost_turn_authority": 0.65,
+    "scan_range": 315,
+    "capture_distance": 62,
+    "pull_speed": 565,
+    "collection_speed_multiplier": 0.98,
+    "cargo_capacity": 15,
+    "boost_recharge_rate": 0.9,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.55,
+    "environment_drag_response": 0.7
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/bastion_h4/base.webp",
+    "render_scale": 0.09,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/bastion_h4/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -15.7,
+          36.7
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0.1,
+          39.6
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          15.5,
+          36.7
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -27
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

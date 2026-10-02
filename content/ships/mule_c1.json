@@ -1,0 +1,88 @@
+{
+  "id": "mule_c1",
+  "display_name_key": "SHIP_MULE_C1",
+  "description_key": "SHIP_MULE_C1_DESC",
+  "role_key": "SHIP_ROLE_CARGO",
+  "unlock": {
+    "rank": "junior_cleaner",
+    "price": 1400
+  },
+  "base_stats": {
+    "max_speed": 270,
+    "acceleration": 355,
+    "dry_mass": 15,
+    "cargo_inertia_factor": 0.39,
+    "turn_response": 5.1,
+    "boost_acceleration": 190,
+    "boost_duration": 0.58,
+    "boost_recharge_seconds": 3.5,
+    "boost_turn_authority": 0.7,
+    "scan_range": 300,
+    "capture_distance": 58,
+    "pull_speed": 530,
+    "collection_speed_multiplier": 0.95,
+    "cargo_capacity": 18,
+    "boost_recharge_rate": 0.92,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.95,
+    "environment_drag_response": 0.98
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/mule_c1/base.webp",
+    "render_scale": 0.088,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/mule_c1/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -13.8,
+          37.6
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0,
+          37.2
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          13.6,
+          37.6
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -27
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

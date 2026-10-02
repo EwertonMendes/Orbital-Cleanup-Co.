@@ -18,7 +18,7 @@ The application starts at `src/core/app/app_root.tscn`.
 - `InputService` — pointer/keyboard, touch and gamepad input-mode detection;
 - `SceneRouter` — controlled player-facing screen replacement.
 
-The root also owns the game-specific `ProgressionService`, which sits above the generic `SaveService` and owns Credits, Company XP, career rank, upgrades and completed-contract history.
+The root also owns the game-specific `ProgressionService`, which sits above the generic `SaveService` and owns Credits, Company XP, career rank, fleet ownership, per-ship progression, modules, cosmetics and completed-contract history.
 
 The service context is passed to routed screens that opt into `configure(context)`.
 
@@ -62,6 +62,7 @@ content/
   modifiers/
   progression/
   cosmetics/
+  ships/
 
 web/
   shell/
@@ -112,17 +113,19 @@ GitHub Pages and PR previews use `debug`.
 
 ## Save contract
 
-`SaveService` owns only the versioned envelope and file I/O. `ProgressionService` owns the game payload:
+`SaveService` owns only the versioned envelope, legacy-source detection and file I/O. `ProgressionService` owns the game payload:
 
-- Credits;
-- Company XP;
+- Credits and Company XP;
 - current career rank;
-- upgrade levels;
-- completed-contract counters;
-- last contract result;
-- reserved discovery/cosmetic collections.
+- owned ships and active ship id;
+- per-ship Mastery, permanent upgrade levels, module loadout and cosmetic loadout;
+- globally owned modules/cosmetics;
+- completed-contract counters and last result;
+- Discovery state.
 
-Gameplay systems never write arbitrary save fragments directly. Progression mutations flow through `ProgressionService`, which persists after payouts and upgrade purchases. Do not silently change persisted semantics after publication; use explicit schema migrations.
+Save schema V2 writes to `user://save_v2.json`. A V1 save remains readable from `user://save_v1.json`; the first V2 load migrates its global ship upgrades into preserved Pioneer-01 legacy effects, carries forward equipped cosmetics and writes V2 without deleting the V1 rollback source.
+
+Gameplay systems never write arbitrary save fragments directly. Progression mutations flow through `ProgressionService`. Persisted semantics are a product contract and require explicit migrations.
 
 ## Determinism
 
@@ -220,18 +223,29 @@ Only one panel is visible at a time. The Contract Board alone owns the deploy ac
 
 Ship customization controls and the actual discovery-unlock loop remain separate game-domain deliveries; the HQ shell exposes their current persisted state without embedding future business rules.
 
-## Ship customization
+## Fleet and ship customization
 
-Ship customization is authored in `content/cosmetics/ship_customization.json` and persisted by `ProgressionService`.
+Ships are gameplay definitions under `content/ships/`, not cosmetic hulls. `ContentRegistry` enumerates ship definitions, and `ShipBuildResolver` composes a deterministic flight snapshot from:
 
-The saved loadout stores only stable cosmetic IDs for four categories: hull, paint, engine trail and Tractor Beam. Runtime code resolves those IDs through `ContentRegistry`; presentation details are not stored in the save.
+```text
+Ship definition
+  + per-ship permanent upgrades
+  + equipped modules
+  + cosmetic loadout
+  -> ShipBuildSnapshot
+  -> PlayerShip
+```
 
-Responsibilities remain separated:
+`PlayerShip` remains one generic runtime. A normal new ship must not require a new scene, a new ship-specific GDScript branch or sector changes. Ship definitions own base movement/recovery/cargo/boost/environment-response stats, visual scale, engine sockets, Tractor Beam socket and the base model texture.
 
-- `ProgressionService` validates unlock rank and persists equipped IDs;
-- `ShipVisuals` applies hull texture, paint shader and engine-trail style;
-- `TractorBeam` applies beam color/width/pulse style;
-- Headquarters presents the available options and never owns unlock rules.
+The five permanent upgrade tracks are Propulsion, Maneuvering, Recovery, Cargo and Pulse. Upgrade levels and Mastery belong to one owned ship. Modules are reusable company-inventory items in propulsion/recovery/cargo/utility families and are applied by the same build resolver. The Fleet page exposes compatible module bays, including multiple bays in one family, so future ships can add slot capacity through data without UI or runtime branches.
 
-Paint uses one reusable shader rather than duplicate recolored sprites. Trail and beam variants are parameter data rather than dedicated scenes. The current curated repository contains one hull model; the hull category is fully data-driven and ready for additional licensed textures without changing gameplay code.
+Cosmetics remain presentation-only and are authored in `content/cosmetics/ship_customization.json`. The persistent cosmetic surface supports paint, livery, decal, canopy, body kit, engine FX, trail and beam FX. The Fleet page exposes all of those categories through the same paged, zero-scroll purchase/equip surface; categories with only their stock/default option remain intentionally minimal until approved art is added.
 
+The `hull` category exposed by `ProgressionService` is a compatibility adapter for the existing zero-scroll Operations surface: its ids are real ship models and selection changes `active_ship_id`. It is not persisted as a cosmetic category.
+
+`ShipVisuals` composes the base model plus optional detail/emissive/cosmetic overlays. The paint shader supports RGB masks (R primary, G secondary, B accent) and a temporary legacy blue-bias mode for the current Pioneer art. Engine trails/glows are generated from authored engine sockets, so future ships can use one or many engines without gameplay conditionals.
+
+Collision is derived from the active model's **base sprite only**. Cosmetic overlays are separate nodes and therefore cannot alter collision or stats.
+
+See `docs/SHIP_ASSET_PIPELINE.md` for the asset-generation contract and the planned 20-ship fleet.

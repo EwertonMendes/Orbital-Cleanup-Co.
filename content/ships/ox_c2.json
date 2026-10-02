@@ -1,0 +1,88 @@
+{
+  "id": "ox_c2",
+  "display_name_key": "SHIP_OX_C2",
+  "description_key": "SHIP_OX_C2_DESC",
+  "role_key": "SHIP_ROLE_STABLE_CARGO",
+  "unlock": {
+    "rank": "orbital_cleaner",
+    "price": 2400
+  },
+  "base_stats": {
+    "max_speed": 280,
+    "acceleration": 350,
+    "dry_mass": 16,
+    "cargo_inertia_factor": 0.22,
+    "turn_response": 5,
+    "boost_acceleration": 195,
+    "boost_duration": 0.6,
+    "boost_recharge_seconds": 3.4,
+    "boost_turn_authority": 0.68,
+    "scan_range": 305,
+    "capture_distance": 60,
+    "pull_speed": 545,
+    "collection_speed_multiplier": 0.96,
+    "cargo_capacity": 16,
+    "boost_recharge_rate": 0.94,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.9,
+    "environment_drag_response": 0.9
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/ox_c2/base.webp",
+    "render_scale": 0.086,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/ox_c2/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -16.9,
+          34.5
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0,
+          34.7
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          16.8,
+          34.5
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -27
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "id": "horizon_m5",
+  "display_name_key": "SHIP_HORIZON_M5",
+  "description_key": "SHIP_HORIZON_M5_DESC",
+  "role_key": "SHIP_ROLE_MODULAR_FLAGSHIP",
+  "unlock": {
+    "rank": "deep_space_operator",
+    "price": 8000
+  },
+  "base_stats": {
+    "max_speed": 305,
+    "acceleration": 415,
+    "dry_mass": 14,
+    "cargo_inertia_factor": 0.3,
+    "turn_response": 6,
+    "boost_acceleration": 225,
+    "boost_duration": 0.66,
+    "boost_recharge_seconds": 3,
+    "boost_turn_authority": 0.8,
+    "scan_range": 360,
+    "capture_distance": 62,
+    "pull_speed": 575,
+    "collection_speed_multiplier": 1.04,
+    "cargo_capacity": 14,
+    "boost_recharge_rate": 1.05,
+    "boost_duration_bonus": 0.02,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.82,
+    "environment_drag_response": 0.82
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 2
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility",
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/horizon_m5/base.webp",
+    "render_scale": 0.094,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/horizon_m5/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -15.8,
+          37.9
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          -0.1,
+          37.7
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          15.7,
+          37.9
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -27
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

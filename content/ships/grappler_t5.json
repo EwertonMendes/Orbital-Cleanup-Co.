@@ -1,0 +1,88 @@
+{
+  "id": "grappler_t5",
+  "display_name_key": "SHIP_GRAPPLER_T5",
+  "description_key": "SHIP_GRAPPLER_T5_DESC",
+  "role_key": "SHIP_ROLE_HEAVY_TOW",
+  "unlock": {
+    "rank": "senior_cleaner",
+    "price": 3250
+  },
+  "base_stats": {
+    "max_speed": 255,
+    "acceleration": 340,
+    "dry_mass": 18,
+    "cargo_inertia_factor": 0.3,
+    "turn_response": 4.7,
+    "boost_acceleration": 185,
+    "boost_duration": 0.58,
+    "boost_recharge_seconds": 3.6,
+    "boost_turn_authority": 0.64,
+    "scan_range": 335,
+    "capture_distance": 74,
+    "pull_speed": 790,
+    "collection_speed_multiplier": 1.18,
+    "cargo_capacity": 15,
+    "boost_recharge_rate": 0.9,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.82,
+    "environment_drag_response": 0.88
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/grappler_t5/base.webp",
+    "render_scale": 0.086,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/grappler_t5/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -13.8,
+          36.3
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0,
+          36.7
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          13.8,
+          36.2
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -34
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

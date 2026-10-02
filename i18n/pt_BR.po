@@ -303,7 +303,7 @@ msgid "HQ_TAB_CAREER"
 msgstr "CARREIRA"
 
 msgid "HQ_TAB_SHIP"
-msgstr "NAVE"
+msgstr "FROTA"
 
 msgid "HQ_TAB_DISCOVERY"
 msgstr "DESCOBERTAS"
@@ -330,7 +330,7 @@ msgid "HQ_UPGRADES_TITLE"
 msgstr "MELHORIAS DE EQUIPAMENTO"
 
 msgid "HQ_UPGRADES_SUBTITLE"
-msgstr "Melhorias permanentes compradas com Créditos. As mudanças valem no próximo contrato."
+msgstr "Sistemas permanentes da nave ativa."
 
 msgid "HQ_UPGRADE_MAX"
 msgstr "NÍVEL MÁX."
@@ -377,10 +377,10 @@ msgid "HQ_RANK_LOCKED"
 msgstr "BLOQUEADO"
 
 msgid "HQ_SHIP_TITLE"
-msgstr "NAVE"
+msgstr "FROTA"
 
 msgid "HQ_SHIP_SUBTITLE"
-msgstr "Status da Pioneer-01 e configuração visual padrão da empresa."
+msgstr "Escolha, evolua e personalize a nave de limpeza ativa."
 
 msgid "HQ_SHIP_LOADOUT"
 msgstr "CONFIGURAÇÃO VISUAL"
@@ -422,7 +422,7 @@ msgid "HQ_COMPLETED_CONTRACTS_FMT"
 msgstr "CONTRATOS CONCLUÍDOS · %d"
 
 msgid "HQ_CUSTOMIZE_HULL"
-msgstr "CASCO"
+msgstr "Modelo da frota"
 
 msgid "HQ_CUSTOMIZE_PAINT"
 msgstr "PINTURA"
@@ -434,7 +434,7 @@ msgid "HQ_CUSTOMIZE_BEAM"
 msgstr "FEIXE TRATOR"
 
 msgid "HQ_SHIP_TAB_HULL"
-msgstr "CASCO"
+msgstr "MODELOS"
 
 msgid "HQ_SHIP_TAB_PAINT"
 msgstr "PINTURA"
@@ -1236,3 +1236,447 @@ msgstr "LIMITE DA ZONA DE TRABALHO · RETORNE À OPERAÇÃO"
 
 msgid "FLIGHT_OPERATIONAL_RETURN_ACTIVE"
 msgstr "RETORNO RCS · CORREÇÃO DE ROTA"
+
+msgid "SHIP_PIONEER_01"
+msgstr "Pioneer-01"
+
+msgid "SHIP_PIONEER_01_DESC"
+msgstr "Nave civil de recuperação equilibrada para trabalhos confiáveis de limpeza."
+
+msgid "SHIP_ROLE_GENERALIST"
+msgstr "Generalista"
+
+msgid "UPGRADE_PROPULSION_CORE"
+msgstr "Núcleo de Propulsão"
+
+msgid "UPGRADE_PROPULSION_CORE_DESC"
+msgstr "Melhora a velocidade de cruzeiro e a força de propulsão."
+
+msgid "UPGRADE_MANEUVERING_THRUSTERS"
+msgstr "Propulsores de Manobra"
+
+msgid "UPGRADE_MANEUVERING_THRUSTERS_DESC"
+msgstr "Melhora a resposta de giro e o controle com carga."
+
+msgid "UPGRADE_RECOVERY_ARRAY"
+msgstr "Matriz de Recuperação"
+
+msgid "UPGRADE_RECOVERY_ARRAY_DESC"
+msgstr "Amplia o scanner e acelera a recuperação de detritos."
+
+msgid "UPGRADE_CARGO_FRAME"
+msgstr "Estrutura de Carga"
+
+msgid "UPGRADE_CARGO_FRAME_DESC"
+msgstr "Aumenta a capacidade e reduz a inércia causada pela carga."
+
+msgid "UPGRADE_PULSE_SYSTEM"
+msgstr "Sistema de Pulso"
+
+msgid "UPGRADE_PULSE_SYSTEM_DESC"
+msgstr "Melhora a recarga e a duração do boost."
+
+msgid "MODULE_BALANCED_DRIVE"
+msgstr "Motor Equilibrado"
+
+msgid "MODULE_BALANCED_DRIVE_DESC"
+msgstr "Conjunto de propulsão padrão e confiável da empresa."
+
+msgid "MODULE_HIGH_OUTPUT_DRIVE"
+msgstr "Motor de Alto Desempenho"
+
+msgid "MODULE_HIGH_OUTPUT_DRIVE_DESC"
+msgstr "Mais velocidade e impulso em troca de pior controle com carga."
+
+msgid "MODULE_STANDARD_RECOVERY"
+msgstr "Recuperação Padrão"
+
+msgid "MODULE_STANDARD_RECOVERY_DESC"
+msgstr "Hardware padrão da empresa para recuperação de detritos."
+
+msgid "MODULE_PRECISION_TRACTOR"
+msgstr "Trator de Precisão"
+
+msgid "MODULE_PRECISION_TRACTOR_DESC"
+msgstr "Recuperação mais rápida e forte com alcance de scanner um pouco menor."
+
+msgid "MODULE_STANDARD_CARGO"
+msgstr "Carga Padrão"
+
+msgid "MODULE_STANDARD_CARGO_DESC"
+msgstr "Estrutura de carga padrão e equilibrada da empresa."
+
+msgid "MODULE_EXPANDED_CARGO_RACK"
+msgstr "Rack de Carga Expandido"
+
+msgid "MODULE_EXPANDED_CARGO_RACK_DESC"
+msgstr "Mais capacidade com aumento da inércia transportada."
+
+msgid "MODULE_STANDARD_UTILITY"
+msgstr "Utilitário Padrão"
+
+msgid "MODULE_STANDARD_UTILITY_DESC"
+msgstr "Compartimento de serviço geral sem penalidade de pilotagem."
+
+msgid "MODULE_INERTIAL_DAMPENER"
+msgstr "Amortecedor Inercial"
+
+msgid "MODULE_INERTIAL_DAMPENER_DESC"
+msgstr "Reduz a inércia da carga com pequena perda de aceleração."
+
+msgid "MODULE_FIELD_STABILIZER"
+msgstr "Estabilizador de Campo"
+
+msgid "MODULE_FIELD_STABILIZER_DESC"
+msgstr "Reduz o efeito de forças ambientais e arrasto."
+
+msgid "COSMETIC_LIVERY_STANDARD_SERVICE"
+msgstr "Serviço Padrão"
+
+msgid "COSMETIC_DECAL_NONE"
+msgstr "Sem Decalque"
+
+msgid "COSMETIC_CANOPY_CYAN_GLASS"
+msgstr "Vidro Ciano"
+
+msgid "COSMETIC_BODY_KIT_STOCK"
+msgstr "Carroceria Padrão"
+
+msgid "COSMETIC_ENGINE_ION_CYAN"
+msgstr "Íon Ciano"
+
+msgid "HQ_FLEET_MASTERY_FMT"
+msgstr "Domínio %d/%d · %d XP"
+
+msgid "HQ_FLEET_BUY_FMT"
+msgstr "%s - COMPRAR %d"
+
+msgid "HQ_FLEET_NEED_CREDITS"
+msgstr "Créditos insuficientes."
+
+msgid "HQ_UPGRADE_EFFECT_PROPULSION_FMT"
+msgstr "+%d cruzeiro · +%d impulso"
+
+msgid "HQ_UPGRADE_EFFECT_MANEUVERING_FMT"
+msgstr "+%d controle · -%d%% inércia de carga"
+
+msgid "HQ_UPGRADE_EFFECT_RECOVERY_FMT"
+msgstr "+%d scanner · +%d%% coleta"
+
+msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
+msgstr "+%d carga · -%d%% inércia de carga"
+
+msgid "HQ_SHIP_TAB_LIVERY"
+msgstr "GRAFISMO"
+
+msgid "HQ_SHIP_TAB_DECAL"
+msgstr "DECALQUE"
+
+msgid "HQ_SHIP_TAB_CANOPY"
+msgstr "CABINE"
+
+msgid "HQ_SHIP_TAB_BODY_KIT"
+msgstr "KIT EXTERNO"
+
+msgid "HQ_SHIP_TAB_ENGINE"
+msgstr "FX MOTOR"
+
+msgid "HQ_CUSTOMIZE_LIVERY"
+msgstr "Grafismo"
+
+msgid "HQ_CUSTOMIZE_DECAL"
+msgstr "Decalque"
+
+msgid "HQ_CUSTOMIZE_CANOPY"
+msgstr "Cabine"
+
+msgid "HQ_CUSTOMIZE_BODY_KIT"
+msgstr "Kit externo"
+
+msgid "HQ_CUSTOMIZE_ENGINE"
+msgstr "Efeito do motor"
+
+msgid "HQ_FLEET_MODULES"
+msgstr "MÓDULOS"
+
+msgid "HQ_FLEET_MODULES_HELP"
+msgstr "Escolha uma baia e equipe um módulo compatível."
+
+msgid "HQ_FLEET_MODULE_SLOT_FMT"
+msgstr "%s %d - %s"
+
+msgid "MODULE_SLOT_PROPULSION"
+msgstr "Propulsão"
+
+msgid "MODULE_SLOT_RECOVERY"
+msgstr "Recuperação"
+
+msgid "MODULE_SLOT_CARGO"
+msgstr "Carga"
+
+msgid "MODULE_SLOT_UTILITY"
+msgstr "Utilitário"
+
+msgid "SHIP_SWIFTLET_S1"
+msgstr "Swiftlet-S1"
+
+msgid "SHIP_SWIFTLET_S1_DESC"
+msgstr "Nave leve e ágil, ajustada para correções rápidas e campos de detritos apertados."
+
+msgid "SHIP_MANTA_T1"
+msgstr "Manta-T1"
+
+msgid "SHIP_MANTA_T1_DESC"
+msgstr "Nave de varredura larga com cobertura de sensores e alcance de scanner ampliados."
+
+msgid "SHIP_MULE_C1"
+msgstr "Mule-C1"
+
+msgid "SHIP_MULE_C1_DESC"
+msgstr "Cargueiro utilitário robusto construído em torno de maior capacidade de carga."
+
+msgid "SHIP_VECTOR_V1"
+msgstr "Vector-V1"
+
+msgid "SHIP_VECTOR_V1_DESC"
+msgstr "Nave de manobra precisa com excelente resposta de giro e controle."
+
+msgid "SHIP_ANGLER_T2"
+msgstr "Angler-T2"
+
+msgid "SHIP_ANGLER_T2_DESC"
+msgstr "Nave dedicada à recuperação, com coleta rápida e sistema trator mais forte."
+
+msgid "SHIP_KESTREL_S2"
+msgstr "Kestrel-S2"
+
+msgid "SHIP_KESTREL_S2_DESC"
+msgstr "Nave de serviço longa e leve otimizada para alta velocidade de cruzeiro."
+
+msgid "SHIP_PULSE_V2"
+msgstr "Pulse-V2"
+
+msgid "SHIP_PULSE_V2_DESC"
+msgstr "Nave compacta de desempenho construída em torno de capacitores de boost potentes."
+
+msgid "SHIP_OX_C2"
+msgstr "Ox-C2"
+
+msgid "SHIP_OX_C2_DESC"
+msgstr "Nave de carga estável projetada para manter o controle mesmo muito carregada."
+
+msgid "SHIP_MAGNETAR_T4"
+msgstr "Magnetar-T4"
+
+msgid "SHIP_MAGNETAR_T4_DESC"
+msgstr "Nave avançada de recuperação com sistema trator magnético de longo alcance."
+
+msgid "SHIP_GRAPPLER_T5"
+msgstr "Grappler-T5"
+
+msgid "SHIP_GRAPPLER_T5_DESC"
+msgstr "Rebocador orbital pesado feito para puxar e estabilizar detritos massivos."
+
+msgid "SHIP_NOMAD_V3"
+msgstr "Nomad-V3"
+
+msgid "SHIP_NOMAD_V3_DESC"
+msgstr "Nave de serviço de longa duração que reduz a penalidade inercial da carga."
+
+msgid "SHIP_BEACON_S3"
+msgstr "Beacon-S3"
+
+msgid "SHIP_BEACON_S3_DESC"
+msgstr "Especialista em sensores com cobertura excepcional de scanner a longa distância."
+
+msgid "SHIP_COMET_X4"
+msgstr "Comet-X4"
+
+msgid "SHIP_COMET_X4_DESC"
+msgstr "Nave de resposta em velocidade extrema, boost agressivo e baixa capacidade de carga."
+
+msgid "SHIP_ATLAS_C4"
+msgstr "Atlas-C4"
+
+msgid "SHIP_ATLAS_C4_DESC"
+msgstr "Cargueiro pesado com espinha reforçada e capacidade de carga muito alta."
+
+msgid "SHIP_BASTION_H4"
+msgstr "Bastion-H4"
+
+msgid "SHIP_BASTION_H4_DESC"
+msgstr "Casco de serviço protegido para resistir melhor a forças ambientais perigosas."
+
+msgid "SHIP_PROSPECTOR_Q3"
+msgstr "Prospector-Q3"
+
+msgid "SHIP_PROSPECTOR_Q3_DESC"
+msgstr "Nave de pesquisa e recuperação precisa que equilibra scanner, trator e coleta."
+
+msgid "SHIP_AURORA_E4"
+msgstr "Aurora-E4"
+
+msgid "SHIP_AURORA_E4_DESC"
+msgstr "Nave de espaço profundo isolada contra correntes, arrasto e ambientes extremos."
+
+msgid "SHIP_LEVIATHAN_C6"
+msgstr "Leviathan-C6"
+
+msgid "SHIP_LEVIATHAN_C6_DESC"
+msgstr "Mega cargueiro de recuperação com enorme capacidade e pilotagem deliberadamente pesada."
+
+msgid "SHIP_HORIZON_M5"
+msgstr "Horizon-M5"
+
+msgid "SHIP_HORIZON_M5_DESC"
+msgstr "Flagship modular premium com uma baia utilitária extra para builds flexíveis."
+
+msgid "SHIP_ROLE_AGILITY"
+msgstr "Agilidade"
+
+msgid "SHIP_ROLE_SCANNER"
+msgstr "Scanner"
+
+msgid "SHIP_ROLE_CARGO"
+msgstr "Carga"
+
+msgid "SHIP_ROLE_MANEUVERING"
+msgstr "Manobra"
+
+msgid "SHIP_ROLE_RECOVERY"
+msgstr "Recuperação"
+
+msgid "SHIP_ROLE_CRUISE"
+msgstr "Velocidade de cruzeiro"
+
+msgid "SHIP_ROLE_BOOST"
+msgstr "Boost"
+
+msgid "SHIP_ROLE_STABLE_CARGO"
+msgstr "Carga estável"
+
+msgid "SHIP_ROLE_TRACTOR_RANGE"
+msgstr "Alcance do trator"
+
+msgid "SHIP_ROLE_HEAVY_TOW"
+msgstr "Reboque pesado"
+
+msgid "SHIP_ROLE_INERTIAL_CARGO"
+msgstr "Carga inercial"
+
+msgid "SHIP_ROLE_LONG_RANGE_SENSOR"
+msgstr "Sensor de longo alcance"
+
+msgid "SHIP_ROLE_SPEED_BOOST"
+msgstr "Velocidade / boost"
+
+msgid "SHIP_ROLE_HEAVY_CARGO"
+msgstr "Carga pesada"
+
+msgid "SHIP_ROLE_HAZARDS"
+msgstr "Ambientes perigosos"
+
+msgid "SHIP_ROLE_PRECISION_RECOVERY"
+msgstr "Recuperação de precisão"
+
+msgid "SHIP_ROLE_EXTREME_ENVIRONMENTS"
+msgstr "Ambientes extremos"
+
+msgid "SHIP_ROLE_MEGA_HAULER"
+msgstr "Mega cargueiro"
+
+msgid "SHIP_ROLE_MODULAR_FLAGSHIP"
+msgstr "Flagship modular"
+
+msgid "HQ_FLEET_MODULE_ACTIVE_FMT"
+msgstr "%s [ATIVO]"
+
+msgid "HQ_FLEET_MODULE_BUY_FMT"
+msgstr "%s - %d cr"
+
+msgid "COSMETIC_PAINT_ARCTIC_WHITE"
+msgstr "Branco Ártico"
+
+msgid "COSMETIC_PAINT_GRAPHITE_BLACK"
+msgstr "Grafite"
+
+msgid "COSMETIC_PAINT_OCEAN_BLUE"
+msgstr "Azul Oceano"
+
+msgid "COSMETIC_PAINT_RESCUE_RED"
+msgstr "Vermelho Resgate"
+
+msgid "COSMETIC_PAINT_EMERALD_GREEN"
+msgstr "Verde Esmeralda"
+
+msgid "COSMETIC_PAINT_ROYAL_PURPLE"
+msgstr "Roxo Imperial"
+
+msgid "COSMETIC_PAINT_ORANGE_BURST"
+msgstr "Laranja Solar"
+
+msgid "COSMETIC_PAINT_TEAL_HORIZON"
+msgstr "Turquesa Horizonte"
+
+msgid "COSMETIC_PAINT_STEEL_SILVER"
+msgstr "Prata Aço"
+
+msgid "COSMETIC_PAINT_CRIMSON_NIGHT"
+msgstr "Carmesim Noturno"
+
+msgid "COSMETIC_PAINT_VIOLET_STORM"
+msgstr "Tempestade Violeta"
+
+msgid "COSMETIC_PAINT_NEON_MAGENTA"
+msgstr "Magenta Neon"
+
+msgid "COSMETIC_PAINT_SOLAR_GOLD"
+msgstr "Ouro Solar"
+
+msgid "COSMETIC_PAINT_ROSE_QUARTZ"
+msgstr "Quartzo Rosa"
+
+msgid "COSMETIC_PAINT_ICE_BLUE"
+msgstr "Azul Gelo"
+
+msgid "COSMETIC_PAINT_COPPER_INDUSTRIAL"
+msgstr "Cobre Industrial"
+
+msgid "COSMETIC_PAINT_LIME_SIGNAL"
+msgstr "Lima de Sinalização"
+
+msgid "COSMETIC_BEAM_COBALT_ARC"
+msgstr "Arco Cobalto"
+
+msgid "COSMETIC_BEAM_VIOLET_PULSE"
+msgstr "Pulso Violeta"
+
+msgid "COSMETIC_BEAM_CRIMSON_LOCK"
+msgstr "Trava Carmesim"
+
+msgid "COSMETIC_BEAM_EMERALD_LATTICE"
+msgstr "Malha Esmeralda"
+
+msgid "COSMETIC_BEAM_WHITE_PRISM"
+msgstr "Prisma Branco"
+
+msgid "COSMETIC_BEAM_MAGENTA_WAVE"
+msgstr "Onda Magenta"
+
+msgid "COSMETIC_BEAM_ORANGE_TOW"
+msgstr "Reboque Laranja"
+
+msgid "COSMETIC_BEAM_DEEP_BLUE"
+msgstr "Azul Profundo"
+
+msgid "COSMETIC_BEAM_LIME_SIGNAL"
+msgstr "Sinal Lima"
+
+msgid "COSMETIC_BEAM_ROSE_VECTOR"
+msgstr "Vetor Rosa"
+
+msgid "COSMETIC_BEAM_GOLDEN_FLUX"
+msgstr "Fluxo Dourado"
+
+msgid "COSMETIC_BEAM_ULTRAVIOLET"
+msgstr "Ultravioleta"

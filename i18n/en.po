@@ -303,7 +303,7 @@ msgid "HQ_TAB_CAREER"
 msgstr "CAREER"
 
 msgid "HQ_TAB_SHIP"
-msgstr "SHIP"
+msgstr "FLEET"
 
 msgid "HQ_TAB_DISCOVERY"
 msgstr "DISCOVERY"
@@ -330,7 +330,7 @@ msgid "HQ_UPGRADES_TITLE"
 msgstr "EQUIPMENT UPGRADES"
 
 msgid "HQ_UPGRADES_SUBTITLE"
-msgstr "Permanent improvements purchased with Credits. Changes apply to the next deployment."
+msgstr "Permanent systems for the active ship."
 
 msgid "HQ_UPGRADE_MAX"
 msgstr "MAX LEVEL"
@@ -377,10 +377,10 @@ msgid "HQ_RANK_LOCKED"
 msgstr "LOCKED"
 
 msgid "HQ_SHIP_TITLE"
-msgstr "SHIP"
+msgstr "FLEET"
 
 msgid "HQ_SHIP_SUBTITLE"
-msgstr "Pioneer-01 status and current company-issued visual loadout."
+msgstr "Choose, improve and personalize the active cleanup craft."
 
 msgid "HQ_SHIP_LOADOUT"
 msgstr "VISUAL LOADOUT"
@@ -422,7 +422,7 @@ msgid "HQ_COMPLETED_CONTRACTS_FMT"
 msgstr "CONTRACTS COMPLETED · %d"
 
 msgid "HQ_CUSTOMIZE_HULL"
-msgstr "HULL"
+msgstr "Fleet model"
 
 msgid "HQ_CUSTOMIZE_PAINT"
 msgstr "PAINT"
@@ -434,7 +434,7 @@ msgid "HQ_CUSTOMIZE_BEAM"
 msgstr "TRACTOR BEAM"
 
 msgid "HQ_SHIP_TAB_HULL"
-msgstr "HULL"
+msgstr "MODELS"
 
 msgid "HQ_SHIP_TAB_PAINT"
 msgstr "PAINT"
@@ -1236,3 +1236,447 @@ msgstr "WORK ZONE LIMIT · RETURN TO OPERATIONS"
 
 msgid "FLIGHT_OPERATIONAL_RETURN_ACTIVE"
 msgstr "RCS RETURN · COURSE CORRECTION"
+
+msgid "SHIP_PIONEER_01"
+msgstr "Pioneer-01"
+
+msgid "SHIP_PIONEER_01_DESC"
+msgstr "Balanced civilian recovery craft for dependable cleanup work."
+
+msgid "SHIP_ROLE_GENERALIST"
+msgstr "Generalist"
+
+msgid "UPGRADE_PROPULSION_CORE"
+msgstr "Propulsion Core"
+
+msgid "UPGRADE_PROPULSION_CORE_DESC"
+msgstr "Improves cruise speed and thrust authority."
+
+msgid "UPGRADE_MANEUVERING_THRUSTERS"
+msgstr "Maneuvering Thrusters"
+
+msgid "UPGRADE_MANEUVERING_THRUSTERS_DESC"
+msgstr "Improves turning response and handling under cargo load."
+
+msgid "UPGRADE_RECOVERY_ARRAY"
+msgstr "Recovery Array"
+
+msgid "UPGRADE_RECOVERY_ARRAY_DESC"
+msgstr "Extends scanning and accelerates salvage recovery."
+
+msgid "UPGRADE_CARGO_FRAME"
+msgstr "Cargo Frame"
+
+msgid "UPGRADE_CARGO_FRAME_DESC"
+msgstr "Expands cargo capacity and reduces carried-load inertia."
+
+msgid "UPGRADE_PULSE_SYSTEM"
+msgstr "Pulse System"
+
+msgid "UPGRADE_PULSE_SYSTEM_DESC"
+msgstr "Improves boost recharge and pulse duration."
+
+msgid "MODULE_BALANCED_DRIVE"
+msgstr "Balanced Drive"
+
+msgid "MODULE_BALANCED_DRIVE_DESC"
+msgstr "Reliable company-standard propulsion package."
+
+msgid "MODULE_HIGH_OUTPUT_DRIVE"
+msgstr "High Output Drive"
+
+msgid "MODULE_HIGH_OUTPUT_DRIVE_DESC"
+msgstr "More speed and thrust at the cost of heavier loaded handling."
+
+msgid "MODULE_STANDARD_RECOVERY"
+msgstr "Standard Recovery Array"
+
+msgid "MODULE_STANDARD_RECOVERY_DESC"
+msgstr "Company-standard salvage recovery hardware."
+
+msgid "MODULE_PRECISION_TRACTOR"
+msgstr "Precision Tractor"
+
+msgid "MODULE_PRECISION_TRACTOR_DESC"
+msgstr "Faster, stronger recovery with a slightly shorter scan envelope."
+
+msgid "MODULE_STANDARD_CARGO"
+msgstr "Standard Cargo Rack"
+
+msgid "MODULE_STANDARD_CARGO_DESC"
+msgstr "Balanced company-standard cargo mounting."
+
+msgid "MODULE_EXPANDED_CARGO_RACK"
+msgstr "Expanded Cargo Rack"
+
+msgid "MODULE_EXPANDED_CARGO_RACK_DESC"
+msgstr "Extra capacity with additional carried inertia."
+
+msgid "MODULE_STANDARD_UTILITY"
+msgstr "Standard Utility Bay"
+
+msgid "MODULE_STANDARD_UTILITY_DESC"
+msgstr "General-purpose service bay with no handling trade-off."
+
+msgid "MODULE_INERTIAL_DAMPENER"
+msgstr "Inertial Dampener"
+
+msgid "MODULE_INERTIAL_DAMPENER_DESC"
+msgstr "Reduces cargo inertia while slightly lowering acceleration."
+
+msgid "MODULE_FIELD_STABILIZER"
+msgstr "Field Stabilizer"
+
+msgid "MODULE_FIELD_STABILIZER_DESC"
+msgstr "Reduces the effect of environmental forces and drag."
+
+msgid "COSMETIC_LIVERY_STANDARD_SERVICE"
+msgstr "Standard Service"
+
+msgid "COSMETIC_DECAL_NONE"
+msgstr "No Decal"
+
+msgid "COSMETIC_CANOPY_CYAN_GLASS"
+msgstr "Cyan Glass"
+
+msgid "COSMETIC_BODY_KIT_STOCK"
+msgstr "Stock Body"
+
+msgid "COSMETIC_ENGINE_ION_CYAN"
+msgstr "Ion Cyan"
+
+msgid "HQ_FLEET_MASTERY_FMT"
+msgstr "Mastery %d/%d · %d XP"
+
+msgid "HQ_FLEET_BUY_FMT"
+msgstr "%s - BUY %d"
+
+msgid "HQ_FLEET_NEED_CREDITS"
+msgstr "Not enough Credits."
+
+msgid "HQ_UPGRADE_EFFECT_PROPULSION_FMT"
+msgstr "+%d cruise · +%d thrust"
+
+msgid "HQ_UPGRADE_EFFECT_MANEUVERING_FMT"
+msgstr "+%d handling · -%d%% cargo inertia"
+
+msgid "HQ_UPGRADE_EFFECT_RECOVERY_FMT"
+msgstr "+%d scan · +%d%% recovery"
+
+msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
+msgstr "+%d cargo · -%d%% cargo inertia"
+
+msgid "HQ_SHIP_TAB_LIVERY"
+msgstr "LIVERY"
+
+msgid "HQ_SHIP_TAB_DECAL"
+msgstr "DECAL"
+
+msgid "HQ_SHIP_TAB_CANOPY"
+msgstr "CANOPY"
+
+msgid "HQ_SHIP_TAB_BODY_KIT"
+msgstr "BODY KIT"
+
+msgid "HQ_SHIP_TAB_ENGINE"
+msgstr "ENGINE FX"
+
+msgid "HQ_CUSTOMIZE_LIVERY"
+msgstr "Livery"
+
+msgid "HQ_CUSTOMIZE_DECAL"
+msgstr "Decal"
+
+msgid "HQ_CUSTOMIZE_CANOPY"
+msgstr "Canopy"
+
+msgid "HQ_CUSTOMIZE_BODY_KIT"
+msgstr "Body Kit"
+
+msgid "HQ_CUSTOMIZE_ENGINE"
+msgstr "Engine FX"
+
+msgid "HQ_FLEET_MODULES"
+msgstr "MODULES"
+
+msgid "HQ_FLEET_MODULES_HELP"
+msgstr "Choose a bay, then equip a compatible module."
+
+msgid "HQ_FLEET_MODULE_SLOT_FMT"
+msgstr "%s %d - %s"
+
+msgid "MODULE_SLOT_PROPULSION"
+msgstr "Propulsion"
+
+msgid "MODULE_SLOT_RECOVERY"
+msgstr "Recovery"
+
+msgid "MODULE_SLOT_CARGO"
+msgstr "Cargo"
+
+msgid "MODULE_SLOT_UTILITY"
+msgstr "Utility"
+
+msgid "SHIP_SWIFTLET_S1"
+msgstr "Swiftlet-S1"
+
+msgid "SHIP_SWIFTLET_S1_DESC"
+msgstr "Lightweight agile craft tuned for fast corrections and tight debris fields."
+
+msgid "SHIP_MANTA_T1"
+msgstr "Manta-T1"
+
+msgid "SHIP_MANTA_T1_DESC"
+msgstr "Wide survey craft with extended sensor coverage and strong scanning range."
+
+msgid "SHIP_MULE_C1"
+msgstr "Mule-C1"
+
+msgid "SHIP_MULE_C1_DESC"
+msgstr "Rugged utility hauler built around expanded cargo capacity."
+
+msgid "SHIP_VECTOR_V1"
+msgstr "Vector-V1"
+
+msgid "SHIP_VECTOR_V1_DESC"
+msgstr "Precision maneuvering craft with exceptional turn response and control."
+
+msgid "SHIP_ANGLER_T2"
+msgstr "Angler-T2"
+
+msgid "SHIP_ANGLER_T2_DESC"
+msgstr "Dedicated recovery ship with fast collection and a stronger tractor system."
+
+msgid "SHIP_KESTREL_S2"
+msgstr "Kestrel-S2"
+
+msgid "SHIP_KESTREL_S2_DESC"
+msgstr "Long, light service craft optimized for sustained cruise speed."
+
+msgid "SHIP_PULSE_V2"
+msgstr "Pulse-V2"
+
+msgid "SHIP_PULSE_V2_DESC"
+msgstr "Compact performance craft built around powerful boost capacitors."
+
+msgid "SHIP_OX_C2"
+msgstr "Ox-C2"
+
+msgid "SHIP_OX_C2_DESC"
+msgstr "Stable cargo ship engineered to stay controllable under heavy loads."
+
+msgid "SHIP_MAGNETAR_T4"
+msgstr "Magnetar-T4"
+
+msgid "SHIP_MAGNETAR_T4_DESC"
+msgstr "Advanced recovery craft with long-range magnetic tractor hardware."
+
+msgid "SHIP_GRAPPLER_T5"
+msgstr "Grappler-T5"
+
+msgid "SHIP_GRAPPLER_T5_DESC"
+msgstr "Heavy orbital tug built to pull and stabilize massive debris."
+
+msgid "SHIP_NOMAD_V3"
+msgstr "Nomad-V3"
+
+msgid "SHIP_NOMAD_V3_DESC"
+msgstr "Long-duration service ship that carries cargo with reduced inertial penalty."
+
+msgid "SHIP_BEACON_S3"
+msgstr "Beacon-S3"
+
+msgid "SHIP_BEACON_S3_DESC"
+msgstr "Sensor specialist with exceptional long-range scanning coverage."
+
+msgid "SHIP_COMET_X4"
+msgstr "Comet-X4"
+
+msgid "SHIP_COMET_X4_DESC"
+msgstr "Extreme-speed response craft with aggressive boost performance and low cargo capacity."
+
+msgid "SHIP_ATLAS_C4"
+msgstr "Atlas-C4"
+
+msgid "SHIP_ATLAS_C4_DESC"
+msgstr "Heavy hauler with a reinforced cargo spine and very large capacity."
+
+msgid "SHIP_BASTION_H4"
+msgstr "Bastion-H4"
+
+msgid "SHIP_BASTION_H4_DESC"
+msgstr "Protected service hull designed to resist hazardous environmental forces."
+
+msgid "SHIP_PROSPECTOR_Q3"
+msgstr "Prospector-Q3"
+
+msgid "SHIP_PROSPECTOR_Q3_DESC"
+msgstr "Precision survey and recovery craft balancing scan, tractor and collection systems."
+
+msgid "SHIP_AURORA_E4"
+msgstr "Aurora-E4"
+
+msgid "SHIP_AURORA_E4_DESC"
+msgstr "Deep-space craft insulated for currents, drag and extreme environmental conditions."
+
+msgid "SHIP_LEVIATHAN_C6"
+msgstr "Leviathan-C6"
+
+msgid "SHIP_LEVIATHAN_C6_DESC"
+msgstr "Massive recovery hauler with unmatched cargo capacity and deliberate handling."
+
+msgid "SHIP_HORIZON_M5"
+msgstr "Horizon-M5"
+
+msgid "SHIP_HORIZON_M5_DESC"
+msgstr "Premium modular flagship with an extra utility bay for flexible mission builds."
+
+msgid "SHIP_ROLE_AGILITY"
+msgstr "Agility"
+
+msgid "SHIP_ROLE_SCANNER"
+msgstr "Scanner"
+
+msgid "SHIP_ROLE_CARGO"
+msgstr "Cargo"
+
+msgid "SHIP_ROLE_MANEUVERING"
+msgstr "Maneuvering"
+
+msgid "SHIP_ROLE_RECOVERY"
+msgstr "Recovery"
+
+msgid "SHIP_ROLE_CRUISE"
+msgstr "Cruise speed"
+
+msgid "SHIP_ROLE_BOOST"
+msgstr "Boost"
+
+msgid "SHIP_ROLE_STABLE_CARGO"
+msgstr "Stable cargo"
+
+msgid "SHIP_ROLE_TRACTOR_RANGE"
+msgstr "Tractor range"
+
+msgid "SHIP_ROLE_HEAVY_TOW"
+msgstr "Heavy tow"
+
+msgid "SHIP_ROLE_INERTIAL_CARGO"
+msgstr "Inertial cargo"
+
+msgid "SHIP_ROLE_LONG_RANGE_SENSOR"
+msgstr "Long-range sensor"
+
+msgid "SHIP_ROLE_SPEED_BOOST"
+msgstr "Speed / boost"
+
+msgid "SHIP_ROLE_HEAVY_CARGO"
+msgstr "Heavy cargo"
+
+msgid "SHIP_ROLE_HAZARDS"
+msgstr "Hazard response"
+
+msgid "SHIP_ROLE_PRECISION_RECOVERY"
+msgstr "Precision recovery"
+
+msgid "SHIP_ROLE_EXTREME_ENVIRONMENTS"
+msgstr "Extreme environments"
+
+msgid "SHIP_ROLE_MEGA_HAULER"
+msgstr "Mega hauler"
+
+msgid "SHIP_ROLE_MODULAR_FLAGSHIP"
+msgstr "Modular flagship"
+
+msgid "HQ_FLEET_MODULE_ACTIVE_FMT"
+msgstr "%s [ACTIVE]"
+
+msgid "HQ_FLEET_MODULE_BUY_FMT"
+msgstr "%s - %d cr"
+
+msgid "COSMETIC_PAINT_ARCTIC_WHITE"
+msgstr "Arctic White"
+
+msgid "COSMETIC_PAINT_GRAPHITE_BLACK"
+msgstr "Graphite Black"
+
+msgid "COSMETIC_PAINT_OCEAN_BLUE"
+msgstr "Ocean Blue"
+
+msgid "COSMETIC_PAINT_RESCUE_RED"
+msgstr "Rescue Red"
+
+msgid "COSMETIC_PAINT_EMERALD_GREEN"
+msgstr "Emerald Green"
+
+msgid "COSMETIC_PAINT_ROYAL_PURPLE"
+msgstr "Royal Purple"
+
+msgid "COSMETIC_PAINT_ORANGE_BURST"
+msgstr "Orange Burst"
+
+msgid "COSMETIC_PAINT_TEAL_HORIZON"
+msgstr "Teal Horizon"
+
+msgid "COSMETIC_PAINT_STEEL_SILVER"
+msgstr "Steel Silver"
+
+msgid "COSMETIC_PAINT_CRIMSON_NIGHT"
+msgstr "Crimson Night"
+
+msgid "COSMETIC_PAINT_VIOLET_STORM"
+msgstr "Violet Storm"
+
+msgid "COSMETIC_PAINT_NEON_MAGENTA"
+msgstr "Neon Magenta"
+
+msgid "COSMETIC_PAINT_SOLAR_GOLD"
+msgstr "Solar Gold"
+
+msgid "COSMETIC_PAINT_ROSE_QUARTZ"
+msgstr "Rose Quartz"
+
+msgid "COSMETIC_PAINT_ICE_BLUE"
+msgstr "Ice Blue"
+
+msgid "COSMETIC_PAINT_COPPER_INDUSTRIAL"
+msgstr "Industrial Copper"
+
+msgid "COSMETIC_PAINT_LIME_SIGNAL"
+msgstr "Signal Lime"
+
+msgid "COSMETIC_BEAM_COBALT_ARC"
+msgstr "Cobalt Arc"
+
+msgid "COSMETIC_BEAM_VIOLET_PULSE"
+msgstr "Violet Pulse"
+
+msgid "COSMETIC_BEAM_CRIMSON_LOCK"
+msgstr "Crimson Lock"
+
+msgid "COSMETIC_BEAM_EMERALD_LATTICE"
+msgstr "Emerald Lattice"
+
+msgid "COSMETIC_BEAM_WHITE_PRISM"
+msgstr "White Prism"
+
+msgid "COSMETIC_BEAM_MAGENTA_WAVE"
+msgstr "Magenta Wave"
+
+msgid "COSMETIC_BEAM_ORANGE_TOW"
+msgstr "Orange Tow"
+
+msgid "COSMETIC_BEAM_DEEP_BLUE"
+msgstr "Deep Blue"
+
+msgid "COSMETIC_BEAM_LIME_SIGNAL"
+msgstr "Lime Signal"
+
+msgid "COSMETIC_BEAM_ROSE_VECTOR"
+msgstr "Rose Vector"
+
+msgid "COSMETIC_BEAM_GOLDEN_FLUX"
+msgstr "Golden Flux"
+
+msgid "COSMETIC_BEAM_ULTRAVIOLET"
+msgstr "Ultraviolet"

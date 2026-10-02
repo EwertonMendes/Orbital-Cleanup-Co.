@@ -159,11 +159,13 @@ func configure(context: Dictionary) -> void:
 		ship.position += _context["debug_ship_offset"] as Vector2
 		print("[QA] DEPOT_NAV_PREVIEW ship_offset=%s" % str(_context["debug_ship_offset"]))
 
+	var ship_build := _progression.get_active_ship_build()
 	ship.configure(
 		_input_service,
 		runtime.get_play_bounds(),
-		_progression.get_ship_modifiers(),
-		_progression.get_ship_cosmetics()
+		ship_build["stats"] as Dictionary,
+		ship_build["cosmetics"] as Dictionary,
+		ship_build
 	)
 	assert(ship.tuning != null, "PlayerShip tuning must exist before operational-zone feedback binding.")
 	zone_warning.bind(ship)
@@ -188,6 +190,8 @@ func _ready() -> void:
 		_settings.locale_changed.connect(_on_locale_changed)
 	if _input_service != null and not _input_service.input_mode_changed.is_connected(_on_input_mode_changed):
 		_input_service.input_mode_changed.connect(_on_input_mode_changed)
+	if _progression != null and not _progression.state_changed.is_connected(_on_progression_state_changed):
+		_progression.state_changed.connect(_on_progression_state_changed)
 	_wire_hud_button_feedback(return_button)
 	_wire_hud_button_feedback(operations_button)
 	player_ship.cargo_changed.connect(_on_cargo_changed)
@@ -575,6 +579,7 @@ func _close_operations() -> void:
 	if overlay.get_parent() != null:
 		overlay.get_parent().remove_child(overlay)
 	overlay.queue_free()
+	_sync_live_ship_build()
 	GamepadUiNavigation.set_focus_enabled(hud_root, true)
 	player_ship.set_flight_controls_enabled(true)
 	touch_controls.set_controls_enabled(true)
@@ -617,6 +622,22 @@ func _play_hud_hover() -> void:
 func _play_hud_click() -> void:
 	if _audio != null:
 		_audio.play_ui_click()
+
+func _on_progression_state_changed(_snapshot: Dictionary) -> void:
+	# Contract deployments keep their immutable build snapshot. Free Flight is
+	# the service context where Fleet changes are allowed to update the live ship.
+	if _contract_active or _travel_in_progress:
+		return
+	call_deferred("_sync_live_ship_build")
+
+func _sync_live_ship_build() -> void:
+	if _contract_active or _travel_in_progress:
+		return
+	if _progression == null or player_ship == null or not player_ship.is_node_ready():
+		return
+	var ship_build := _progression.get_active_ship_build()
+	player_ship.apply_ship_build(ship_build)
+	print("[Flight] LIVE_SHIP_SYNC ship=%s" % String(ship_build.get("ship_id", "")))
 
 func _on_locale_changed(_locale: String) -> void:
 	_refresh_copy()

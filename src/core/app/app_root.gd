@@ -71,6 +71,20 @@ func _resolve_startup_route() -> Dictionary:
 	var boost_click_qa := platform_service.get_query_parameter("boost_click_qa").to_lower()
 	var endless_text := platform_service.get_query_parameter("endless")
 	var seed_text := platform_service.get_query_parameter("seed")
+	var unlock_customization := platform_service.get_query_parameter("unlock_customization").to_lower()
+
+	if unlock_customization in ["1", "true", "yes", "all"]:
+		progression_service.debug_unlock_all_customization()
+		print("[QA] CUSTOMIZATION_UNLOCK persisted=true")
+
+	var requested_ship := platform_service.get_query_parameter("ship")
+	if not requested_ship.is_empty():
+		var ship_catalog := ContentRegistry.new()
+		if ship_catalog.has_ship(requested_ship):
+			assert(progression_service.debug_select_ship(requested_ship), "QA ship override must resolve: %s" % requested_ship)
+			print("[QA] SHIP_OVERRIDE ship=%s" % requested_ship)
+		else:
+			push_warning("Unknown ?ship= deep link: %s" % requested_ship)
 
 	if not debrief.is_empty():
 		var promoted := debrief in ["1", "true", "yes", "promotion", "promoted"]

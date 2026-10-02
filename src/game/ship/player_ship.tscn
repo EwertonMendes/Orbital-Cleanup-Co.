@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://src/game/ship/player_ship.gd" id="1"]
 [ext_resource type="Resource" path="res://src/game/ship/ship_movement_tuning.tres" id="2"]
-[ext_resource type="Texture2D" path="res://assets/original/ships/pioneer_01_hd.webp" id="3"]
+[ext_resource type="Texture2D" path="res://assets/original/ships/pioneer_01/base.webp" id="3"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_space_shooter/effects/engine_speed.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_simple_space/scenery/star_small.png" id="5"]
 [ext_resource type="Script" path="res://src/game/ship/ship_visuals.gd" id="6"]
@@ -54,7 +54,7 @@ capture_distance = 58.0
 pull_speed = 520.0
 
 [node name="CollectAnchor" type="Marker2D" parent="TractorBeam"]
-position = Vector2(0, -2)
+position = Vector2(0, -27)
 
 [node name="ScanArea" type="Area2D" parent="TractorBeam"]
 collision_layer = 0
@@ -93,7 +93,7 @@ unique_name_in_owner = true
 [node name="EngineGlow" type="Sprite2D" parent="FeedbackRoot/SteeringVisual"]
 unique_name_in_owner = true
 z_index = -1
-position = Vector2(0, 39)
+position = Vector2(-16.1, 34.4)
 modulate = Color(0.32, 0.88, 1, 0.42)
 scale = Vector2(0.72, 0.66)
 texture_filter = 2
@@ -102,7 +102,7 @@ texture = ExtResource("4")
 [node name="EngineParticles" type="CPUParticles2D" parent="FeedbackRoot/SteeringVisual"]
 unique_name_in_owner = true
 z_index = -2
-position = Vector2(0, 41)
+position = Vector2(-16.1, 36.4)
 emitting = false
 amount = 16
 texture = ExtResource("5")
@@ -125,11 +125,11 @@ unique_name_in_owner = true
 z_index = 2
 material = SubResource("ShipPaintMaterial")
 texture_filter = 2
-scale = Vector2(0.14, 0.14)
+scale = Vector2(0.085, 0.085)
 texture = ExtResource("3")
 
 [node name="EngineAnchor" type="Marker2D" parent="FeedbackRoot/SteeringVisual"]
-position = Vector2(0, 41)
+position = Vector2(-16.1, 36.4)
 
 [node name="EngineTrail" type="Line2D" parent="."]
 unique_name_in_owner = true

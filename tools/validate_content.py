@@ -23,6 +23,7 @@ CATEGORY_DIRS = {
     "modifiers": CONTENT / "modifiers",
     "progression": CONTENT / "progression",
     "cosmetics": CONTENT / "cosmetics",
+    "ships": CONTENT / "ships",
 }
 
 REQUIRED_SCHEMAS = {
@@ -37,6 +38,8 @@ REQUIRED_SCHEMAS = {
     "career_ranks.schema.json",
     "upgrades.schema.json",
     "cosmetics.schema.json",
+    "ship.schema.json",
+    "fleet_rules.schema.json",
 }
 
 ID_RE = re.compile(r"^[a-z0-9_]+$")
@@ -636,6 +639,151 @@ def validate_upgrades(data: dict[str, Any], catalogs: dict[str, set[str]]) -> No
             require_number(amount, f"{label}.{upgrade_id}.effects.{effect_id}", 0.0001)
 
 
+def validate_fleet_rules(
+    data: dict[str, Any],
+    ranks_data: dict[str, Any],
+    catalogs: dict[str, set[str]],
+) -> None:
+    label = "progression/fleet_rules"
+    require(data.get("id") == "fleet_rules", f"{label}.id must be fleet_rules")
+    default_ship_id = data.get("default_ship_id")
+    require(isinstance(default_ship_id, str) and ID_RE.fullmatch(default_ship_id), f"{label}.default_ship_id is invalid")
+
+    mastery = data.get("mastery")
+    require(isinstance(mastery, dict), f"{label}.mastery must be an object")
+    require_number(mastery.get("contract_xp"), f"{label}.mastery.contract_xp", 0)
+    require_number(mastery.get("perfect_cleanup_bonus"), f"{label}.mastery.perfect_cleanup_bonus", 0)
+    levels = mastery.get("levels")
+    require(isinstance(levels, list) and len(levels) >= 2, f"{label}.mastery.levels must contain at least two thresholds")
+    previous = -1
+    for index, value in enumerate(levels):
+        require(isinstance(value, int) and value >= 0, f"{label}.mastery.levels[{index}] must be a non-negative integer")
+        require(value > previous, f"{label}.mastery.levels must be strictly increasing")
+        previous = value
+
+    rank_ids = {str(rank["id"]) for rank in ranks_data.get("ranks", [])}
+    tracks = data.get("upgrade_tracks")
+    require(isinstance(tracks, list) and len(tracks) == 5, f"{label}.upgrade_tracks must define exactly five permanent systems")
+    track_ids: set[str] = set()
+    for index, track in enumerate(tracks):
+        require(isinstance(track, dict), f"{label}.upgrade_tracks[{index}] must be an object")
+        track_id = track.get("id")
+        require(isinstance(track_id, str) and ID_RE.fullmatch(track_id), f"{label}.upgrade_tracks[{index}].id is invalid")
+        require(track_id not in track_ids, f"{label}: duplicate upgrade track {track_id}")
+        track_ids.add(track_id)
+        require_localization_key(track.get("display_name_key"), f"{label}.{track_id}", catalogs)
+        require_localization_key(track.get("description_key"), f"{label}.{track_id}", catalogs)
+        require_number(track.get("max_level"), f"{label}.{track_id}.max_level", 1)
+        require_number(track.get("base_cost"), f"{label}.{track_id}.base_cost", 1)
+        require_number(track.get("cost_multiplier"), f"{label}.{track_id}.cost_multiplier", 1)
+        effects = track.get("effects")
+        require(isinstance(effects, dict) and effects, f"{label}.{track_id}.effects must be non-empty")
+        for effect_id, amount in effects.items():
+            require(effect_id.endswith("_add"), f"{label}.{track_id}: unsupported effect semantic {effect_id}")
+            require(isinstance(amount, (int, float)) and not isinstance(amount, bool), f"{label}.{track_id}.{effect_id} must be numeric")
+        for milestone_index, milestone in enumerate(track.get("milestones", [])):
+            require(isinstance(milestone, dict), f"{label}.{track_id}.milestones[{milestone_index}] must be an object")
+            level = milestone.get("level")
+            require(isinstance(level, int) and 1 <= level <= int(track["max_level"]), f"{label}.{track_id}.milestones[{milestone_index}].level is invalid")
+            milestone_effects = milestone.get("effects")
+            require(isinstance(milestone_effects, dict) and milestone_effects, f"{label}.{track_id}.milestones[{milestone_index}].effects required")
+
+    modules = data.get("modules")
+    require(isinstance(modules, list) and len(modules) >= 4, f"{label}.modules must contain starter modules")
+    module_ids: set[str] = set()
+    for index, module in enumerate(modules):
+        require(isinstance(module, dict), f"{label}.modules[{index}] must be an object")
+        module_id = module.get("id")
+        require(isinstance(module_id, str) and ID_RE.fullmatch(module_id), f"{label}.modules[{index}].id is invalid")
+        require(module_id not in module_ids, f"{label}: duplicate module {module_id}")
+        module_ids.add(module_id)
+        require(module.get("slot") in {"propulsion", "recovery", "cargo", "utility"}, f"{label}.{module_id}: invalid slot")
+        require_localization_key(module.get("display_name_key"), f"{label}.{module_id}", catalogs)
+        require_localization_key(module.get("description_key"), f"{label}.{module_id}", catalogs)
+        require(module.get("unlock_rank") in rank_ids, f"{label}.{module_id}: unknown unlock rank")
+        require_number(module.get("price"), f"{label}.{module_id}.price", 0)
+        effects = module.get("effects")
+        require(isinstance(effects, dict), f"{label}.{module_id}.effects must be an object")
+        for effect_id, amount in effects.items():
+            require(effect_id.endswith("_add"), f"{label}.{module_id}: unsupported effect semantic {effect_id}")
+            require(isinstance(amount, (int, float)) and not isinstance(amount, bool), f"{label}.{module_id}.{effect_id} must be numeric")
+
+
+def validate_ships(
+    ships: dict[str, dict[str, Any]],
+    fleet_rules: dict[str, Any],
+    ranks_data: dict[str, Any],
+    catalogs: dict[str, set[str]],
+) -> None:
+    label = "ships"
+    require(ships, f"{label}: at least one ship definition is required")
+    rank_ids = {str(rank["id"]) for rank in ranks_data.get("ranks", [])}
+    modules = {str(item["id"]): item for item in fleet_rules.get("modules", [])}
+    default_ship_id = str(fleet_rules.get("default_ship_id", ""))
+    require(default_ship_id in ships, f"{label}: default ship {default_ship_id} is missing")
+
+    required_stats = {
+        "max_speed", "acceleration", "dry_mass", "cargo_inertia_factor", "turn_response",
+        "boost_acceleration", "boost_duration", "boost_recharge_seconds", "boost_turn_authority",
+        "scan_range", "capture_distance", "pull_speed", "collection_speed_multiplier",
+        "cargo_capacity", "boost_recharge_rate", "boost_duration_bonus", "boost_charge_capacity",
+        "environment_force_response", "environment_drag_response",
+    }
+    for ship_id, ship in ships.items():
+        ship_label = f"{label}/{ship_id}"
+        require_localization_key(ship.get("display_name_key"), ship_label, catalogs)
+        require_localization_key(ship.get("description_key"), ship_label, catalogs)
+        require_localization_key(ship.get("role_key"), ship_label, catalogs)
+
+        unlock = ship.get("unlock")
+        require(isinstance(unlock, dict), f"{ship_label}.unlock must be an object")
+        require(unlock.get("rank") in rank_ids, f"{ship_label}.unlock.rank is unknown")
+        require_number(unlock.get("price"), f"{ship_label}.unlock.price", 0)
+
+        stats = ship.get("base_stats")
+        require(isinstance(stats, dict), f"{ship_label}.base_stats must be an object")
+        require(set(stats) == required_stats, f"{ship_label}.base_stats must define exactly {sorted(required_stats)}")
+        for stat_id, value in stats.items():
+            minimum = 0 if stat_id == "boost_duration_bonus" else 0.0001
+            require_number(value, f"{ship_label}.base_stats.{stat_id}", minimum)
+
+        slots = ship.get("module_slots")
+        defaults = ship.get("default_modules")
+        require(isinstance(slots, dict) and isinstance(defaults, dict), f"{ship_label}: module slots/defaults required")
+        require(set(slots) == {"propulsion", "recovery", "cargo", "utility"}, f"{ship_label}: invalid module slot set")
+        require(set(defaults) == set(slots), f"{ship_label}: every slot requires a default module")
+        for slot, module_ids in defaults.items():
+            require(isinstance(module_ids, list), f"{ship_label}: default modules for {slot} must be an array")
+            require(len(module_ids) == int(slots[slot]), f"{ship_label}: {slot} defaults must match authored slot count")
+            for module_id in module_ids:
+                require(module_id in modules, f"{ship_label}: unknown default module {module_id}")
+                require(str(modules[module_id]["slot"]) == slot, f"{ship_label}: default module {module_id} does not match {slot}")
+
+        visual = ship.get("visual")
+        require(isinstance(visual, dict), f"{ship_label}.visual must be an object")
+        require_asset(visual.get("base_texture"), f"{ship_label}.visual.base_texture")
+        require_number(visual.get("render_scale"), f"{ship_label}.visual.render_scale", 0.001)
+        require(visual.get("paint_mode") in {"legacy_blue_bias", "rgb_mask"}, f"{ship_label}.visual.paint_mode is invalid")
+        mask_path = str(visual.get("paint_mask", ""))
+        if visual.get("paint_mode") == "rgb_mask":
+            require(mask_path, f"{ship_label}: rgb_mask paint mode requires paint_mask")
+            require_asset(mask_path, f"{ship_label}.visual.paint_mask")
+        for optional_asset in ("details_texture", "emissive_texture"):
+            path = str(visual.get(optional_asset, ""))
+            if path:
+                require_asset(path, f"{ship_label}.visual.{optional_asset}")
+        sockets = visual.get("engine_sockets")
+        require(isinstance(sockets, list) and sockets, f"{ship_label}: at least one engine socket is required")
+        for socket_index, socket in enumerate(sockets):
+            require(isinstance(socket, dict), f"{ship_label}.engine_sockets[{socket_index}] must be an object")
+            position = socket.get("position")
+            require(isinstance(position, list) and len(position) == 2, f"{ship_label}.engine_sockets[{socket_index}].position must have two values")
+            require(all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in position), f"{ship_label}.engine_sockets[{socket_index}].position must be numeric")
+        tractor_socket = visual.get("tractor_socket")
+        require(isinstance(tractor_socket, list) and len(tractor_socket) == 2, f"{ship_label}.tractor_socket must have two values")
+        require(visual.get("collision_mode") == "base_alpha", f"{ship_label}: collision must come from the base model only")
+
+
 def validate_cosmetics(
     data: dict[str, Any],
     ranks_data: dict[str, Any],
@@ -647,7 +795,7 @@ def validate_cosmetics(
     require(isinstance(categories, dict), f"{label}.categories must be an object")
     require(isinstance(defaults, dict), f"{label}.default_loadout must be an object")
 
-    expected_categories = {"hull", "paint", "trail", "beam"}
+    expected_categories = {"paint", "livery", "decal", "canopy", "body_kit", "engine", "trail", "beam"}
     require(set(categories) == expected_categories, f"{label}.categories must define exactly {sorted(expected_categories)}")
     require(set(defaults) == expected_categories, f"{label}.default_loadout must define exactly {sorted(expected_categories)}")
 
@@ -669,17 +817,28 @@ def validate_cosmetics(
             require(isinstance(option_id, str) and ID_RE.fullmatch(option_id), f"{label}.{category}[{index}].id is invalid")
             require(option_id not in seen, f"{label}.{category}: duplicate id: {option_id}")
             seen.add(option_id)
-
             require_localization_key(option.get("display_name_key"), f"{label}.{category}.{option_id}", catalogs)
             unlock_rank = option.get("unlock_rank")
             require(unlock_rank in rank_ids, f"{label}.{category}.{option_id}: Unknown rank: {unlock_rank}")
+            require_number(option.get("price"), f"{label}.{category}.{option_id}.price", 0)
             ranks_by_id[option_id] = str(unlock_rank)
 
-            if category == "hull":
-                require_asset(option.get("texture"), f"{label}.{category}.{option_id}.texture")
-            elif category == "paint":
-                require(HEX_COLOR_RE.fullmatch(str(option.get("color", ""))) is not None, f"{label}.{category}.{option_id}.color: expected #RRGGBB")
+            if category == "paint":
+                for color_key in ("color", "secondary_color", "accent_color"):
+                    require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
                 require_number(option.get("strength"), f"{label}.{category}.{option_id}.strength", 0, 1)
+            elif category in {"livery", "decal", "body_kit"}:
+                path = str(option.get("texture", ""))
+                if path:
+                    require_asset(path, f"{label}.{category}.{option_id}.texture")
+            elif category == "canopy":
+                require(HEX_COLOR_RE.fullmatch(str(option.get("color", ""))) is not None, f"{label}.{category}.{option_id}.color: expected #RRGGBB")
+                path = str(option.get("texture", ""))
+                if path:
+                    require_asset(path, f"{label}.{category}.{option_id}.texture")
+            elif category == "engine":
+                for color_key in ("glow_color", "particle_color"):
+                    require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
             elif category == "trail":
                 for color_key in ("tail_color", "head_color", "glow_color"):
                     require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
@@ -737,6 +896,7 @@ def main() -> None:
         require("difficulty_scaling" in loaded["progression"], "Missing progression/difficulty_scaling.json")
         require("career_ranks" in loaded["progression"], "Missing progression/career_ranks.json")
         require("upgrades" in loaded["progression"], "Missing progression/upgrades.json")
+        require("fleet_rules" in loaded["progression"], "Missing progression/fleet_rules.json")
         validate_difficulty(loaded["progression"]["difficulty_scaling"])
         validate_career_ranks(loaded["progression"]["career_ranks"], catalogs)
         validate_sector_progression(
@@ -744,6 +904,17 @@ def main() -> None:
             loaded["progression"]["career_ranks"],
         )
         validate_upgrades(loaded["progression"]["upgrades"], catalogs)
+        validate_fleet_rules(
+            loaded["progression"]["fleet_rules"],
+            loaded["progression"]["career_ranks"],
+            catalogs,
+        )
+        validate_ships(
+            loaded["ships"],
+            loaded["progression"]["fleet_rules"],
+            loaded["progression"]["career_ranks"],
+            catalogs,
+        )
         require("ship_customization" in loaded["cosmetics"], "Missing cosmetics/ship_customization.json")
         validate_cosmetics(
             loaded["cosmetics"]["ship_customization"],
@@ -768,7 +939,8 @@ def main() -> None:
             f"{len(loaded['salvage'])} salvage definition(s), "
             f"{len(loaded['landmarks'])} landmark(s), "
             f"{len(loaded['modifiers'])} modifier(s), "
-            f"{len(loaded['cosmetics'])} cosmetic set(s)."
+            f"{len(loaded['cosmetics'])} cosmetic set(s), "
+            f"{len(loaded['ships'])} ship(s)."
         )
     except ValidationError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

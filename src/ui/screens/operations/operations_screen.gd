@@ -68,16 +68,40 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var last_result: Label = %LastResult
 @onready var ship_stats: Label = %ShipStats
 @onready var ship_preview: TextureRect = %ShipPreview
+@onready var ship_details_preview: TextureRect = %ShipDetailsPreview
+@onready var ship_livery_preview: TextureRect = %ShipLiveryPreview
+@onready var ship_decal_preview: TextureRect = %ShipDecalPreview
+@onready var ship_canopy_preview: TextureRect = %ShipCanopyPreview
+@onready var ship_emissive_preview: TextureRect = %ShipEmissivePreview
+@onready var ship_body_kit_preview: TextureRect = %ShipBodyKitPreview
 @onready var ship_preview_card: PanelContainer = %ShipPreviewCard
 @onready var contract_ship_art: TextureRect = %ShipArt
+@onready var contract_ship_details_preview: TextureRect = %ContractShipDetailsPreview
+@onready var contract_ship_livery_preview: TextureRect = %ContractShipLiveryPreview
+@onready var contract_ship_decal_preview: TextureRect = %ContractShipDecalPreview
+@onready var contract_ship_canopy_preview: TextureRect = %ContractShipCanopyPreview
+@onready var contract_ship_emissive_preview: TextureRect = %ContractShipEmissivePreview
+@onready var contract_ship_body_kit_preview: TextureRect = %ContractShipBodyKitPreview
 @onready var contract_ship_card: PanelContainer = %ContractShipCard
 @onready var ship_category_bar: GridContainer = %ShipCategoryBar
 @onready var hull_category: Button = %HullCategory
 @onready var paint_category: Button = %PaintCategory
+@onready var livery_category: Button = %LiveryCategory
+@onready var decal_category: Button = %DecalCategory
+@onready var canopy_category: Button = %CanopyCategory
+@onready var body_kit_category: Button = %BodyKitCategory
+@onready var engine_category: Button = %EngineCategory
+@onready var modules_category: Button = %ModulesCategory
 @onready var trail_category: Button = %TrailCategory
 @onready var beam_category: Button = %BeamCategory
 @onready var hull_options: GridContainer = %HullOptions
 @onready var paint_options: GridContainer = %PaintOptions
+@onready var livery_options: GridContainer = %LiveryOptions
+@onready var decal_options: GridContainer = %DecalOptions
+@onready var canopy_options: GridContainer = %CanopyOptions
+@onready var body_kit_options: GridContainer = %BodyKitOptions
+@onready var engine_options: GridContainer = %EngineOptions
+@onready var modules_options: GridContainer = %ModulesOptions
 @onready var trail_options: GridContainer = %TrailOptions
 @onready var beam_options: GridContainer = %BeamOptions
 @onready var ship_options_pager: HBoxContainer = %ShipOptionsPager
@@ -139,6 +163,7 @@ var _upgrade_page := 0
 var _discovery_page := 0
 var _ship_category := "hull"
 var _ship_option_page := 0
+var _selected_module_slot := ""
 var _ship_category_group := ButtonGroup.new()
 var _suppress_progression_refresh := false
 
@@ -229,7 +254,19 @@ func _validate_contracts() -> void:
 	assert(career_list != null, "Headquarters requires CareerList.")
 	assert(ship_preview != null and contract_ship_art != null, "Headquarters requires cosmetic ship previews.")
 	assert(ship_category_bar != null and ship_options_pager != null, "Headquarters requires paged ship customization categories.")
-	assert(hull_options != null and paint_options != null and trail_options != null and beam_options != null, "Headquarters requires cosmetic option grids.")
+	assert(
+		hull_options != null
+		and paint_options != null
+		and livery_options != null
+		and decal_options != null
+		and canopy_options != null
+		and body_kit_options != null
+		and engine_options != null
+		and modules_options != null
+		and trail_options != null
+		and beam_options != null,
+		"Headquarters requires complete layered customization option grids."
+	)
 	assert(contracts_panel != null and upgrades_panel != null and career_panel != null, "Headquarters core panels are required.")
 	assert(ship_panel != null and discovery_panel != null, "Headquarters future-facing panels are required.")
 	assert(discovery_empty_card != null and discovery_list != null and discovery_pager != null, "Headquarters discovery catalog containers are required.")
@@ -421,26 +458,75 @@ func _apply_responsive_layout() -> void:
 	main_row.vertical = portrait
 	contract_hero.vertical = portrait
 	ship_body.vertical = portrait
+	ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tab_grid.columns = 3 if portrait else 1
 	contract_selector.columns = 3 if portrait else 4
 	upgrade_grid.columns = 1 if portrait else 2
 	discovery_list.columns = 1 if portrait else 2
-	ship_category_bar.columns = 4
-	for option_grid in [hull_options, paint_options, trail_options, beam_options]:
-		# Cosmetic labels can be substantially wider than generic actions.
-		# Keep enough horizontal room for complete labels instead of allowing
-		# a third column to overflow the loadout card.
+
+	# Fleet is a fixed workspace, not a document. Keep navigation compact so
+	# preview + editor always fit without requiring a ScrollContainer.
+	%ShipTitle.visible = false
+	%ShipSubtitle.visible = false
+	ship_category_bar.columns = 3 if portrait else 5
+	ship_category_bar.add_theme_constant_override("h_separation", 6 if compact else 8)
+	ship_category_bar.add_theme_constant_override("v_separation", 6)
+	var category_height := ResponsiveUiProfile.touch_target_height(profile) if phone else 40.0
+	for category_button in [
+		hull_category,
+		paint_category,
+		livery_category,
+		decal_category,
+		canopy_category,
+		body_kit_category,
+		engine_category,
+		modules_category,
+		trail_category,
+		beam_category,
+	]:
+		(category_button as Button).custom_minimum_size.y = category_height
+
+	for option_grid in [
+		hull_options,
+		paint_options,
+		livery_options,
+		decal_options,
+		canopy_options,
+		body_kit_options,
+		engine_options,
+		trail_options,
+		beam_options,
+	]:
 		option_grid.columns = 1 if portrait else 2
+	modules_options.columns = 1
 
 	%DeskLabel.visible = not phone
 	contract_ship_card.visible = not portrait
-	%WorkshopStatus.visible = not portrait
+	%WorkshopStatus.visible = false
+	%LoadoutCard.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	%LoadoutLayout.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
 	if portrait:
-		ship_preview_card.custom_minimum_size = Vector2(0.0, 160.0)
-		ship_preview.custom_minimum_size = Vector2(150.0, 118.0)
+		ship_preview_card.custom_minimum_size = Vector2(0.0, 138.0)
+		ship_preview_card.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		ship_preview.custom_minimum_size = Vector2(126.0, 92.0)
+	elif compact:
+		ship_preview_card.custom_minimum_size = Vector2(205.0, 0.0)
+		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		ship_preview.custom_minimum_size = Vector2(165.0, 126.0)
 	else:
-		ship_preview_card.custom_minimum_size = Vector2(300.0, 300.0)
-		ship_preview.custom_minimum_size = Vector2(250.0, 210.0)
+		ship_preview_card.custom_minimum_size = Vector2(245.0, 0.0)
+		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		ship_preview.custom_minimum_size = Vector2(205.0, 160.0)
+
+	var fleet_margin := 8 if phone else (10 if compact else 12)
+	for margin_name in ["PreviewMargin", "LoadoutMargin"]:
+		var fleet_margin_container := ship_panel.find_child(margin_name, true, false) as MarginContainer
+		if fleet_margin_container != null:
+			fleet_margin_container.add_theme_constant_override("margin_left", fleet_margin)
+			fleet_margin_container.add_theme_constant_override("margin_top", fleet_margin)
+			fleet_margin_container.add_theme_constant_override("margin_right", fleet_margin)
+			fleet_margin_container.add_theme_constant_override("margin_bottom", fleet_margin)
 
 	content_shell.custom_minimum_size.y = 0.0
 	content_shell.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -996,24 +1082,33 @@ func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 	var id := String(definition["id"])
 	var effects := definition.get("effects", {}) as Dictionary
 	match id:
-		"tractor_range":
-			var value := float(effects.get("scan_range_add", 0.0))
-			return tr("HQ_UPGRADE_EFFECT_RANGE_FMT") % int(round(value * float(level)))
-		"collection_speed":
-			var value := float(effects.get("collection_speed_multiplier_add", 0.0))
-			return tr("HQ_UPGRADE_EFFECT_SPEED_FMT") % int(round(value * 100.0 * float(level)))
-		"cargo_capacity":
-			var value := float(effects.get("cargo_capacity_add", 0.0))
-			return tr("HQ_UPGRADE_EFFECT_CARGO_FMT") % int(round(value * float(level)))
-		"pulse_boost":
+		"propulsion_core":
+			return tr("HQ_UPGRADE_EFFECT_PROPULSION_FMT") % [
+				int(round(float(effects.get("max_speed_add", 0.0)) * float(level))),
+				int(round(float(effects.get("acceleration_add", 0.0)) * float(level))),
+			]
+		"maneuvering_thrusters":
+			return tr("HQ_UPGRADE_EFFECT_MANEUVERING_FMT") % [
+				int(round(float(effects.get("turn_response_add", 0.0)) * 100.0 * float(level))),
+				int(round(absf(float(effects.get("cargo_inertia_factor_add", 0.0))) * 100.0 * float(level))),
+			]
+		"recovery_array":
+			return tr("HQ_UPGRADE_EFFECT_RECOVERY_FMT") % [
+				int(round(float(effects.get("scan_range_add", 0.0)) * float(level))),
+				int(round(float(effects.get("collection_speed_multiplier_add", 0.0)) * 100.0 * float(level))),
+			]
+		"cargo_frame":
+			return tr("HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT") % [
+				int(round(float(effects.get("cargo_capacity_add", 0.0)) * float(level))),
+				int(round(absf(float(effects.get("cargo_inertia_factor_add", 0.0))) * 100.0 * float(level))),
+			]
+		"pulse_system":
 			var recharge := float(effects.get("boost_recharge_rate_add", 0.0)) * float(level)
 			var duration := float(effects.get("boost_duration_bonus_add", 0.0)) * float(level)
 			return tr("HQ_UPGRADE_EFFECT_BOOST_FMT") % [
 				int(round(recharge * 100.0)),
 				int(round(duration * 1000.0)),
 			]
-		"boost_capacitor":
-			return tr("HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT") % (1 + level)
 	return ""
 
 func _refresh_career() -> void:
@@ -1062,6 +1157,12 @@ func _setup_ship_categories() -> void:
 	var categories := [
 		{"button": hull_category, "id": "hull"},
 		{"button": paint_category, "id": "paint"},
+		{"button": livery_category, "id": "livery"},
+		{"button": decal_category, "id": "decal"},
+		{"button": canopy_category, "id": "canopy"},
+		{"button": body_kit_category, "id": "body_kit"},
+		{"button": engine_category, "id": "engine"},
+		{"button": modules_category, "id": "modules"},
 		{"button": trail_category, "id": "trail"},
 		{"button": beam_category, "id": "beam"},
 	]
@@ -1082,51 +1183,169 @@ func _select_ship_category(category: String) -> void:
 func _refresh_ship(rebuild_options: bool = true) -> void:
 	%ShipTitle.text = tr("HQ_SHIP_TITLE")
 	%ShipSubtitle.text = tr("HQ_SHIP_SUBTITLE")
-	%LoadoutTitle.text = tr("HQ_SHIP_LOADOUT")
+	%LoadoutTitle.text = tr(_ship_category_title_key(_ship_category))
 	%HullHeading.text = tr("HQ_CUSTOMIZE_HULL")
 	%PaintHeading.text = tr("HQ_CUSTOMIZE_PAINT")
+	%LiveryHeading.text = tr("HQ_CUSTOMIZE_LIVERY")
+	%DecalHeading.text = tr("HQ_CUSTOMIZE_DECAL")
+	%CanopyHeading.text = tr("HQ_CUSTOMIZE_CANOPY")
+	%BodyKitHeading.text = tr("HQ_CUSTOMIZE_BODY_KIT")
+	%EngineHeading.text = tr("HQ_CUSTOMIZE_ENGINE")
+	%ModulesHeading.text = tr("HQ_FLEET_MODULES")
+	%ModulesValue.text = tr("HQ_FLEET_MODULES_HELP")
 	%TrailHeading.text = tr("HQ_CUSTOMIZE_TRAIL")
 	%BeamHeading.text = tr("HQ_CUSTOMIZE_BEAM")
-	%WorkshopStatus.text = tr("HQ_SHIP_WORKSHOP_STATUS")
+	var mastery := _progression.get_active_ship_mastery()
+	%WorkshopStatus.text = tr("HQ_FLEET_MASTERY_FMT") % [
+		int(mastery["level"]),
+		int(mastery["max_level"]),
+		int(mastery["xp"]),
+	]
 	hull_category.text = tr("HQ_SHIP_TAB_HULL")
 	paint_category.text = tr("HQ_SHIP_TAB_PAINT")
+	livery_category.text = tr("HQ_SHIP_TAB_LIVERY")
+	decal_category.text = tr("HQ_SHIP_TAB_DECAL")
+	canopy_category.text = tr("HQ_SHIP_TAB_CANOPY")
+	body_kit_category.text = tr("HQ_SHIP_TAB_BODY_KIT")
+	engine_category.text = tr("HQ_SHIP_TAB_ENGINE")
+	modules_category.text = tr("HQ_FLEET_MODULES")
 	trail_category.text = tr("HQ_SHIP_TAB_TRAIL")
 	beam_category.text = tr("HQ_SHIP_TAB_BEAM")
 
 	var loadout := _progression.get_ship_cosmetics()
 	var hull := loadout["hull"] as Dictionary
 	var paint := loadout["paint"] as Dictionary
+	var livery := loadout["livery"] as Dictionary
+	var decal := loadout["decal"] as Dictionary
+	var canopy := loadout["canopy"] as Dictionary
+	var body_kit := loadout["body_kit"] as Dictionary
+	var engine := loadout["engine"] as Dictionary
 	var trail := loadout["trail"] as Dictionary
 	var beam := loadout["beam"] as Dictionary
 	%ShipName.text = tr(String(hull["display_name_key"]))
 	%ContractShipName.text = tr(String(hull["display_name_key"]))
 	%HullValue.text = tr("HQ_SHIP_HULL_FMT") % tr(String(hull["display_name_key"]))
 	%PaintValue.text = tr("HQ_SHIP_PAINT_FMT") % tr(String(paint["display_name_key"]))
+	%LiveryValue.text = tr(String(livery["display_name_key"]))
+	%DecalValue.text = tr(String(decal["display_name_key"]))
+	%CanopyValue.text = tr(String(canopy["display_name_key"]))
+	%BodyKitValue.text = tr(String(body_kit["display_name_key"]))
+	%EngineValue.text = tr(String(engine["display_name_key"]))
 	%TrailValue.text = tr("HQ_SHIP_TRAIL_FMT") % tr(String(trail["display_name_key"]))
 	%BeamStyleValue.text = tr("HQ_SHIP_BEAM_FMT") % tr(String(beam["display_name_key"]))
 
-	var texture := load(String(hull["texture"])) as Texture2D
-	assert(texture != null, "HQ hull preview texture must load.")
-	ship_preview.texture = texture
-	contract_ship_art.texture = texture
-	var preview_material := ship_preview.material as ShaderMaterial
-	assert(preview_material != null, "HQ ship preview requires paint ShaderMaterial.")
-	preview_material.set_shader_parameter("paint_color", Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0)))
-	preview_material.set_shader_parameter("paint_strength", float(paint["strength"]))
+	var active_definition := _progression.get_active_ship_definition()
+	var active_visual := active_definition.get("visual", {}) as Dictionary
+	_apply_composed_ship_preview(
+		ship_preview,
+		{
+			"details": ship_details_preview,
+			"livery": ship_livery_preview,
+			"decal": ship_decal_preview,
+			"canopy": ship_canopy_preview,
+			"emissive": ship_emissive_preview,
+			"body_kit": ship_body_kit_preview,
+		},
+		hull, paint, livery, decal, canopy, body_kit, active_visual
+	)
+	_apply_composed_ship_preview(
+		contract_ship_art,
+		{
+			"details": contract_ship_details_preview,
+			"livery": contract_ship_livery_preview,
+			"decal": contract_ship_decal_preview,
+			"canopy": contract_ship_canopy_preview,
+			"emissive": contract_ship_emissive_preview,
+			"body_kit": contract_ship_body_kit_preview,
+		},
+		hull, paint, livery, decal, canopy, body_kit, active_visual
+	)
 
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
-	ship_stats.text = tr("HQ_SHIP_STATS_FMT") % [int(round(float(ship["scan_range"]))), int(round(float(ship["cargo_capacity"]))), recovery_percent]
+	var ship_stat_line := tr("HQ_SHIP_STATS_FMT") % [
+		int(round(float(ship["scan_range"]))),
+		int(round(float(ship["cargo_capacity"]))),
+		recovery_percent,
+	]
+	ship_stats.text = "%s\n%s" % [ship_stat_line, %WorkshopStatus.text]
 	if rebuild_options:
 		_refresh_ship_category_options()
 	else:
 		_refresh_ship_option_selection_visuals()
 
+func _apply_composed_ship_preview(
+	base_target: TextureRect,
+	layers: Dictionary,
+	hull: Dictionary,
+	paint: Dictionary,
+	livery: Dictionary,
+	decal: Dictionary,
+	canopy: Dictionary,
+	body_kit: Dictionary,
+	visual: Dictionary
+) -> void:
+	var texture := load(String(hull["texture"])) as Texture2D
+	assert(texture != null, "HQ hull preview texture must load.")
+	base_target.texture = texture
+
+	var preview_material := base_target.material as ShaderMaterial
+	assert(preview_material != null, "Every HQ ship preview requires the paint ShaderMaterial.")
+	preview_material.set_shader_parameter("paint_color", Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0)))
+	preview_material.set_shader_parameter("secondary_color", Color.from_string(String(paint.get("secondary_color", "#1B3345")), Color(0.106, 0.200, 0.271, 1.0)))
+	preview_material.set_shader_parameter("accent_color", Color.from_string(String(paint.get("accent_color", "#E7F8FF")), Color(0.906, 0.973, 1.0, 1.0)))
+	preview_material.set_shader_parameter("paint_strength", float(paint["strength"]))
+	var mask_path := String(visual.get("paint_mask", ""))
+	var use_mask := String(visual.get("paint_mode", "legacy_blue_bias")) == "rgb_mask" and not mask_path.is_empty()
+	preview_material.set_shader_parameter("use_rgb_mask", use_mask)
+	if use_mask:
+		var mask := load(mask_path) as Texture2D
+		assert(mask != null, "HQ ship paint mask must load: %s" % mask_path)
+		preview_material.set_shader_parameter("paint_mask", mask)
+
+	_set_ship_preview_layer(layers["details"] as TextureRect, String(visual.get("details_texture", "")))
+	_set_ship_preview_layer(layers["livery"] as TextureRect, String(livery.get("texture", "")))
+	_set_ship_preview_layer(layers["decal"] as TextureRect, String(decal.get("texture", "")))
+	_set_ship_preview_layer(
+		layers["canopy"] as TextureRect,
+		String(canopy.get("texture", "")),
+		Color.from_string(String(canopy.get("color", "#FFFFFF")), Color.WHITE)
+	)
+	_set_ship_preview_layer(layers["emissive"] as TextureRect, String(visual.get("emissive_texture", "")))
+	_set_ship_preview_layer(layers["body_kit"] as TextureRect, String(body_kit.get("texture", "")))
+
+func _set_ship_preview_layer(target: TextureRect, texture_path: String, tint: Color = Color.WHITE) -> void:
+	target.modulate = tint
+	if texture_path.is_empty():
+		target.texture = null
+		target.visible = false
+		return
+	var texture := load(texture_path) as Texture2D
+	assert(texture != null, "Fleet preview layer must load: %s" % texture_path)
+	target.texture = texture
+	target.visible = true
+
 func _refresh_ship_category_options() -> void:
-	for container in [hull_options, paint_options, trail_options, beam_options]:
+	for container in [
+		hull_options,
+		paint_options,
+		livery_options,
+		decal_options,
+		canopy_options,
+		body_kit_options,
+		engine_options,
+		modules_options,
+		trail_options,
+		beam_options,
+	]:
 		for child in container.get_children():
+			container.remove_child(child)
 			child.queue_free()
 	_apply_ship_category_visibility()
+
+	if _ship_category == "modules":
+		_refresh_module_options()
+		return
 
 	var available: Array = []
 	for option_variant in _progression.get_cosmetic_options(_ship_category):
@@ -1158,7 +1377,11 @@ func _refresh_ship_category_options() -> void:
 		button.set_meta(&"occ_cosmetic_id", cosmetic_id)
 		button.set_meta(&"occ_cosmetic_name_key", String(option["display_name_key"]))
 		var name := tr(String(option["display_name_key"]))
-		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % name if selected else name
+		button.text = _ship_option_button_text(_ship_category, cosmetic_id, name, selected)
+		var owned := _progression.is_cosmetic_owned(_ship_category, cosmetic_id)
+		button.disabled = not owned and not _progression.can_purchase_cosmetic(_ship_category, cosmetic_id)
+		if button.disabled and not owned:
+			button.tooltip_text = tr("HQ_FLEET_NEED_CREDITS")
 		button.pressed.connect(_equip_cosmetic.bind(_ship_category, cosmetic_id))
 		container.add_child(button)
 		option_buttons.append(button)
@@ -1168,22 +1391,103 @@ func _refresh_ship_category_options() -> void:
 	_configure_ship_option_focus_graph(option_buttons)
 
 func _apply_ship_category_visibility() -> void:
-	var categories := ["hull", "paint", "trail", "beam"]
-	var headings := [%HullHeading, %PaintHeading, %TrailHeading, %BeamHeading]
-	var values := [%HullValue, %PaintValue, %TrailValue, %BeamStyleValue]
-	var grids := [hull_options, paint_options, trail_options, beam_options]
-	var buttons := [hull_category, paint_category, trail_category, beam_category]
+	var categories := ["hull", "paint", "livery", "decal", "canopy", "body_kit", "engine", "modules", "trail", "beam"]
+	var headings := [
+		%HullHeading,
+		%PaintHeading,
+		%LiveryHeading,
+		%DecalHeading,
+		%CanopyHeading,
+		%BodyKitHeading,
+		%EngineHeading,
+		%ModulesHeading,
+		%TrailHeading,
+		%BeamHeading,
+	]
+	var values := [
+		%HullValue,
+		%PaintValue,
+		%LiveryValue,
+		%DecalValue,
+		%CanopyValue,
+		%BodyKitValue,
+		%EngineValue,
+		%ModulesValue,
+		%TrailValue,
+		%BeamStyleValue,
+	]
+	var grids := [
+		hull_options,
+		paint_options,
+		livery_options,
+		decal_options,
+		canopy_options,
+		body_kit_options,
+		engine_options,
+		modules_options,
+		trail_options,
+		beam_options,
+	]
+	var buttons := [
+		hull_category,
+		paint_category,
+		livery_category,
+		decal_category,
+		canopy_category,
+		body_kit_category,
+		engine_category,
+		modules_category,
+		trail_category,
+		beam_category,
+	]
 	for index in range(categories.size()):
 		var active: bool = String(categories[index]) == _ship_category
-		(headings[index] as Control).visible = active
+		# LoadoutTitle already names the active editor. Keeping a second heading
+		# wastes vertical space and makes compact/touch layouts harder to scan.
+		(headings[index] as Control).visible = false
 		(values[index] as Control).visible = active
 		(grids[index] as Control).visible = active
 		(buttons[index] as Button).button_pressed = active
+
+func _ship_category_title_key(category: String) -> String:
+	match category:
+		"paint":
+			return "HQ_CUSTOMIZE_PAINT"
+		"livery":
+			return "HQ_CUSTOMIZE_LIVERY"
+		"decal":
+			return "HQ_CUSTOMIZE_DECAL"
+		"canopy":
+			return "HQ_CUSTOMIZE_CANOPY"
+		"body_kit":
+			return "HQ_CUSTOMIZE_BODY_KIT"
+		"engine":
+			return "HQ_CUSTOMIZE_ENGINE"
+		"modules":
+			return "HQ_FLEET_MODULES"
+		"trail":
+			return "HQ_CUSTOMIZE_TRAIL"
+		"beam":
+			return "HQ_CUSTOMIZE_BEAM"
+		_:
+			return "HQ_CUSTOMIZE_HULL"
 
 func _ship_container(category: String) -> GridContainer:
 	match category:
 		"paint":
 			return paint_options
+		"livery":
+			return livery_options
+		"decal":
+			return decal_options
+		"canopy":
+			return canopy_options
+		"body_kit":
+			return body_kit_options
+		"engine":
+			return engine_options
+		"modules":
+			return modules_options
 		"trail":
 			return trail_options
 		"beam":
@@ -1198,6 +1502,8 @@ func _ship_option_page_size() -> int:
 	return 4
 
 func _change_ship_option_page(delta: int) -> void:
+	if _ship_category == "modules":
+		return
 	var unlocked_count := 0
 	for option_variant in _progression.get_cosmetic_options(_ship_category):
 		var option := option_variant as Dictionary
@@ -1208,12 +1514,235 @@ func _change_ship_option_page(delta: int) -> void:
 	_refresh_ship_category_options()
 	GamepadUiNavigation.grab(ship_options_previous_page if delta < 0 else ship_options_next_page, ship_panel)
 
-func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
-	# Equipping a cosmetic changes presentation only. Do not rebuild the
-	# focused option list: replacing the focused button during ui_accept is
-	# exactly what makes controller navigation appear to lock.
+func _module_slot_entries() -> Array[Dictionary]:
+	var output: Array[Dictionary] = []
+	var definition := _progression.get_active_ship_definition()
+	var slot_counts := definition.get("module_slots", {}) as Dictionary
+	var equipped := _progression.get_equipped_modules()
+	for slot in ["propulsion", "recovery", "cargo", "utility"]:
+		var capacity := maxi(int(slot_counts.get(slot, 0)), 0)
+		var slot_equipped_variant = equipped.get(slot, [])
+		var slot_equipped: Array = slot_equipped_variant as Array if slot_equipped_variant is Array else [slot_equipped_variant]
+		for slot_index in range(capacity):
+			output.append({
+				"slot": slot,
+				"slot_index": slot_index,
+				"equipped_id": String(slot_equipped[slot_index]) if slot_index < slot_equipped.size() else "",
+				"capacity": capacity,
+			})
+	return output
+
+func _module_slot_key(slot: String, slot_index: int) -> String:
+	return "%s:%d" % [slot, slot_index]
+
+func _module_slot_label(slot: String, slot_index: int, capacity: int) -> String:
+	var slot_key := "MODULE_SLOT_%s" % slot.to_upper()
+	if capacity <= 1:
+		return tr(slot_key)
+	return "%s %d" % [tr(slot_key), slot_index + 1]
+
+func _ensure_selected_module_slot(slots: Array[Dictionary]) -> Dictionary:
+	if slots.is_empty():
+		_selected_module_slot = ""
+		return {}
+	for entry in slots:
+		var key := _module_slot_key(String(entry["slot"]), int(entry["slot_index"]))
+		if key == _selected_module_slot:
+			return entry
+	_selected_module_slot = _module_slot_key(String(slots[0]["slot"]), int(slots[0]["slot_index"]))
+	return slots[0]
+
+func _module_choices_for_slot(slot_entry: Dictionary) -> Array[Dictionary]:
+	var output: Array[Dictionary] = []
+	if slot_entry.is_empty():
+		return output
+	var slot := String(slot_entry["slot"])
+	var current_id := String(slot_entry.get("equipped_id", ""))
+	for module_definition_variant in _progression.get_module_definitions(slot):
+		var module_definition := module_definition_variant as Dictionary
+		var module_id := String(module_definition["id"])
+		if not _progression.is_module_unlocked(module_id):
+			continue
+		output.append({
+			"module_id": module_id,
+			"display_name_key": String(module_definition["display_name_key"]),
+			"description_key": String(module_definition.get("description_key", "")),
+			"selected": module_id == current_id,
+		})
+	return output
+
+func _refresh_module_options() -> void:
+	var slots := _module_slot_entries()
+	var selected_slot := _ensure_selected_module_slot(slots)
+	var slot_buttons: Array[Button] = []
+	var option_buttons: Array[Button] = []
+
+	var slot_bar := GridContainer.new()
+	slot_bar.name = "ModuleSlotBar"
+	slot_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var profile := ResponsiveUiProfile.current()
+	slot_bar.columns = 2 if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT else mini(4, maxi(slots.size(), 1))
+	slot_bar.add_theme_constant_override("h_separation", 6)
+	slot_bar.add_theme_constant_override("v_separation", 6)
+	modules_options.add_child(slot_bar)
+
+	for slot_entry in slots:
+		var slot := String(slot_entry["slot"])
+		var slot_index := int(slot_entry["slot_index"])
+		var key := _module_slot_key(slot, slot_index)
+		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
+		assert(button != null, "Module bay selector must use OccChromeButton.")
+		button.name = "ModuleSlot_%s_%d" % [slot, slot_index]
+		button.role = "utility"
+		button.custom_minimum_size = Vector2(0, 44)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.clip_text = true
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		button.emphasis = key == _selected_module_slot
+		button.text = _module_slot_label(slot, slot_index, int(slot_entry["capacity"]))
+		button.tooltip_text = button.text
+		button.set_meta(&"occ_focus_restore_key", "module-slot:%s" % key)
+		button.pressed.connect(_select_module_slot.bind(slot, slot_index))
+		slot_bar.add_child(button)
+		slot_buttons.append(button)
+		_wire_button_feedback(button)
+
+	var divider := HSeparator.new()
+	divider.name = "ModuleBayDivider"
+	divider.custom_minimum_size.y = 6
+	modules_options.add_child(divider)
+
+	var choice_grid := GridContainer.new()
+	choice_grid.name = "ModuleChoiceGrid"
+	choice_grid.columns = 1
+	choice_grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	choice_grid.add_theme_constant_override("v_separation", 6)
+	modules_options.add_child(choice_grid)
+
+	for entry in _module_choices_for_slot(selected_slot):
+		var module_id := String(entry["module_id"])
+		var selected := bool(entry["selected"])
+		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
+		assert(button != null, "Module choice must use OccChromeButton.")
+		button.name = "ModuleChoice_%s" % module_id
+		button.custom_minimum_size = Vector2(0, 48)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.emphasis = selected
+		button.clip_text = true
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		button.set_meta(&"occ_focus_restore_key", "module:%s:%s" % [_selected_module_slot, module_id])
+		button.set_meta(&"occ_module_slot", String(selected_slot.get("slot", "")))
+		button.set_meta(&"occ_module_slot_index", int(selected_slot.get("slot_index", 0)))
+		button.set_meta(&"occ_module_id", module_id)
+		button.set_meta(&"occ_module_name_key", String(entry["display_name_key"]))
+		var module_name := tr(String(entry["display_name_key"]))
+		button.text = _module_button_text(module_id, module_name, selected)
+		var description_key := String(entry.get("description_key", ""))
+		button.tooltip_text = module_name
+		if not description_key.is_empty():
+			button.tooltip_text += "\n%s" % tr(description_key)
+		var owned := _progression.is_module_owned(module_id)
+		button.disabled = not owned and not _progression.can_purchase_module(module_id)
+		if button.disabled and not owned:
+			button.tooltip_text += "\n%s" % tr("HQ_FLEET_NEED_CREDITS")
+		button.pressed.connect(_equip_module.bind(String(selected_slot.get("slot", "")), int(selected_slot.get("slot_index", 0)), module_id))
+		choice_grid.add_child(button)
+		option_buttons.append(button)
+		_wire_button_feedback(button)
+
+	_set_pager_state(ship_options_pager, ship_options_previous_page, ship_options_page_label, ship_options_next_page, 0, 1)
+	_configure_module_focus_graph(slot_buttons, option_buttons)
+
+func _select_module_slot(slot: String, slot_index: int) -> void:
+	_selected_module_slot = _module_slot_key(slot, slot_index)
+	_refresh_ship_category_options()
+	if _input_service != null and _input_service.prefers_gamepad():
+		for candidate in modules_options.find_children("ModuleSlot_*", "Button", true, false):
+			var button := candidate as Button
+			if button != null and String(button.get_meta(&"occ_focus_restore_key", "")) == "module-slot:%s" % _selected_module_slot:
+				button.call_deferred("grab_focus")
+				break
+
+func _configure_module_focus_graph(slot_buttons: Array[Button], option_buttons: Array[Button]) -> void:
+	var category_button := modules_category
+	category_button.focus_neighbor_down = NodePath()
+	if slot_buttons.is_empty():
+		return
+	var selected_index := 0
+	for index in range(slot_buttons.size()):
+		var button := slot_buttons[index]
+		if String(button.get_meta(&"occ_focus_restore_key", "")).ends_with(_selected_module_slot):
+			selected_index = index
+		button.focus_neighbor_left = NodePath()
+		button.focus_neighbor_right = NodePath()
+		button.focus_neighbor_up = button.get_path_to(category_button)
+		button.focus_neighbor_down = NodePath()
+		if index > 0:
+			button.focus_neighbor_left = button.get_path_to(slot_buttons[index - 1])
+		if index + 1 < slot_buttons.size():
+			button.focus_neighbor_right = button.get_path_to(slot_buttons[index + 1])
+	category_button.focus_neighbor_down = category_button.get_path_to(slot_buttons[selected_index])
+
+	if option_buttons.is_empty():
+		return
+	slot_buttons[selected_index].focus_neighbor_down = slot_buttons[selected_index].get_path_to(option_buttons[0])
+	for index in range(option_buttons.size()):
+		var button := option_buttons[index]
+		button.focus_neighbor_left = NodePath()
+		button.focus_neighbor_right = NodePath()
+		button.focus_neighbor_up = (
+			button.get_path_to(slot_buttons[selected_index])
+			if index == 0
+			else button.get_path_to(option_buttons[index - 1])
+		)
+		button.focus_neighbor_down = (
+			button.get_path_to(option_buttons[index + 1])
+			if index + 1 < option_buttons.size()
+			else NodePath()
+		)
+
+func _equip_module(slot: String, slot_index: int, module_id: String) -> void:
 	var focus_owner := get_viewport().gui_get_focus_owner()
 	_suppress_progression_refresh = true
+	if not _progression.is_module_owned(module_id):
+		if not _progression.purchase_module(module_id):
+			_suppress_progression_refresh = false
+			return
+	var equipped_ok := _progression.equip_module(slot, module_id, slot_index)
+	_suppress_progression_refresh = false
+	if not equipped_ok:
+		return
+
+	_refresh_header()
+	_refresh_ship(false)
+	if focus_owner != null and is_instance_valid(focus_owner) and focus_owner.is_inside_tree():
+		if _input_service != null and _input_service.prefers_gamepad():
+			focus_owner.call_deferred("grab_focus")
+
+	if _platform != null:
+		_platform.track_event("fleet_module_equipped", {
+			"ship_id": _progression.get_active_ship_id(),
+			"slot": slot,
+			"slot_index": slot_index,
+			"module_id": module_id,
+		})
+
+func _module_button_text(module_id: String, display_name: String, selected: bool) -> String:
+	if selected:
+		return tr("HQ_FLEET_MODULE_ACTIVE_FMT") % display_name
+	if not _progression.is_module_owned(module_id):
+		return tr("HQ_FLEET_MODULE_BUY_FMT") % [display_name, _progression.get_module_cost(module_id)]
+	return display_name
+
+func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
+	# Ship-model selection and cosmetic purchases share the existing zero-scroll
+	# option surface. ProgressionService owns all economy/ownership rules.
+	var focus_owner := get_viewport().gui_get_focus_owner()
+	_suppress_progression_refresh = true
+	if not _progression.is_cosmetic_owned(category, cosmetic_id):
+		if not _progression.purchase_cosmetic(category, cosmetic_id):
+			_suppress_progression_refresh = false
+			return
 	var equipped_ok := _progression.equip_cosmetic(category, cosmetic_id)
 	_suppress_progression_refresh = false
 	if not equipped_ok:
@@ -1225,12 +1754,16 @@ func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 			focus_owner.call_deferred("grab_focus")
 
 	if _platform != null:
-		_platform.track_event("cosmetic_equipped", {
+		_platform.track_event("fleet_option_equipped", {
 			"category": category,
-			"cosmetic_id": cosmetic_id,
+			"option_id": cosmetic_id,
+			"ship_id": _progression.get_active_ship_id(),
 		})
 
 func _refresh_ship_option_selection_visuals() -> void:
+	if _ship_category == "modules":
+		_refresh_module_selection_visuals()
+		return
 	var equipped := _progression.get_equipped_cosmetic_id(_ship_category)
 	var container := _ship_container(_ship_category)
 	for child in container.get_children():
@@ -1244,7 +1777,36 @@ func _refresh_ship_option_selection_visuals() -> void:
 		var selected := cosmetic_id == equipped
 		button.emphasis = selected
 		var display_name := tr(name_key)
-		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % display_name if selected else display_name
+		button.text = _ship_option_button_text(_ship_category, cosmetic_id, display_name, selected)
+		var owned := _progression.is_cosmetic_owned(_ship_category, cosmetic_id)
+		button.disabled = not owned and not _progression.can_purchase_cosmetic(_ship_category, cosmetic_id)
+
+func _refresh_module_selection_visuals() -> void:
+	var equipped := _progression.get_equipped_modules()
+	for candidate in modules_options.find_children("ModuleChoice_*", "Button", true, false):
+		var button := candidate as OccChromeButton
+		if button == null:
+			continue
+		var slot := String(button.get_meta(&"occ_module_slot", ""))
+		var slot_index := int(button.get_meta(&"occ_module_slot_index", 0))
+		var module_id := String(button.get_meta(&"occ_module_id", ""))
+		var name_key := String(button.get_meta(&"occ_module_name_key", ""))
+		if slot.is_empty() or module_id.is_empty() or name_key.is_empty():
+			continue
+		var slot_values_variant = equipped.get(slot, [])
+		var slot_values: Array = slot_values_variant as Array if slot_values_variant is Array else [slot_values_variant]
+		var selected := slot_index < slot_values.size() and String(slot_values[slot_index]) == module_id
+		button.emphasis = selected
+		button.text = _module_button_text(module_id, tr(name_key), selected)
+		var owned := _progression.is_module_owned(module_id)
+		button.disabled = not owned and not _progression.can_purchase_module(module_id)
+
+func _ship_option_button_text(category: String, cosmetic_id: String, display_name: String, selected: bool) -> String:
+	if selected:
+		return tr("HQ_COSMETIC_EQUIPPED_FMT") % display_name
+	if not _progression.is_cosmetic_owned(category, cosmetic_id):
+		return tr("HQ_FLEET_BUY_FMT") % [display_name, _progression.get_cosmetic_cost(category, cosmetic_id)]
+	return display_name
 
 func _configure_ship_option_focus_graph(option_buttons: Array[Button]) -> void:
 	var category_button := _ship_category_button(_ship_category)
@@ -1298,6 +1860,18 @@ func _ship_category_button(category: String) -> Button:
 	match category:
 		"paint":
 			return paint_category
+		"livery":
+			return livery_category
+		"decal":
+			return decal_category
+		"canopy":
+			return canopy_category
+		"body_kit":
+			return body_kit_category
+		"engine":
+			return engine_category
+		"modules":
+			return modules_category
 		"trail":
 			return trail_category
 		"beam":

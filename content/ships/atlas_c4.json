@@ -1,0 +1,88 @@
+{
+  "id": "atlas_c4",
+  "display_name_key": "SHIP_ATLAS_C4",
+  "description_key": "SHIP_ATLAS_C4_DESC",
+  "role_key": "SHIP_ROLE_HEAVY_CARGO",
+  "unlock": {
+    "rank": "sector_specialist",
+    "price": 4550
+  },
+  "base_stats": {
+    "max_speed": 260,
+    "acceleration": 330,
+    "dry_mass": 20,
+    "cargo_inertia_factor": 0.42,
+    "turn_response": 4.5,
+    "boost_acceleration": 175,
+    "boost_duration": 0.56,
+    "boost_recharge_seconds": 3.8,
+    "boost_turn_authority": 0.6,
+    "scan_range": 300,
+    "capture_distance": 60,
+    "pull_speed": 575,
+    "collection_speed_multiplier": 0.95,
+    "cargo_capacity": 22,
+    "boost_recharge_rate": 0.86,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.82,
+    "environment_drag_response": 0.92
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/atlas_c4/base.webp",
+    "render_scale": 0.092,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/atlas_c4/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -17,
+          37
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0.4,
+          40.5
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          16.8,
+          37
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -27
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

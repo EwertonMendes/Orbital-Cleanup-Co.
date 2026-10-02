@@ -1,0 +1,88 @@
+{
+  "id": "leviathan_c6",
+  "display_name_key": "SHIP_LEVIATHAN_C6",
+  "description_key": "SHIP_LEVIATHAN_C6_DESC",
+  "role_key": "SHIP_ROLE_MEGA_HAULER",
+  "unlock": {
+    "rank": "deep_space_operator",
+    "price": 7600
+  },
+  "base_stats": {
+    "max_speed": 240,
+    "acceleration": 290,
+    "dry_mass": 25,
+    "cargo_inertia_factor": 0.44,
+    "turn_response": 4,
+    "boost_acceleration": 160,
+    "boost_duration": 0.55,
+    "boost_recharge_seconds": 4,
+    "boost_turn_authority": 0.55,
+    "scan_range": 330,
+    "capture_distance": 65,
+    "pull_speed": 650,
+    "collection_speed_multiplier": 1,
+    "cargo_capacity": 28,
+    "boost_recharge_rate": 0.82,
+    "boost_duration_bonus": 0,
+    "boost_charge_capacity": 1,
+    "environment_force_response": 0.72,
+    "environment_drag_response": 0.82
+  },
+  "upgrade_profile": "standard",
+  "module_slots": {
+    "propulsion": 1,
+    "recovery": 1,
+    "cargo": 1,
+    "utility": 1
+  },
+  "default_modules": {
+    "propulsion": [
+      "balanced_drive"
+    ],
+    "recovery": [
+      "standard_recovery"
+    ],
+    "cargo": [
+      "standard_cargo"
+    ],
+    "utility": [
+      "standard_utility"
+    ]
+  },
+  "visual": {
+    "base_texture": "res://assets/original/ships/leviathan_c6/base.webp",
+    "render_scale": 0.105,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/leviathan_c6/paint_mask.png",
+    "details_texture": "",
+    "emissive_texture": "",
+    "engine_sockets": [
+      {
+        "id": "engine_1",
+        "position": [
+          -20.9,
+          42.9
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          0.1,
+          46.3
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          20.7,
+          42.9
+        ]
+      }
+    ],
+    "tractor_socket": [
+      0,
+      -27
+    ],
+    "collision_mode": "base_alpha"
+  }
+}

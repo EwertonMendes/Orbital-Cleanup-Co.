@@ -1,0 +1,180 @@
+{
+  "id": "fleet_rules",
+  "default_ship_id": "pioneer_01",
+  "mastery": {
+    "contract_xp": 40,
+    "perfect_cleanup_bonus": 10,
+    "levels": [0, 120, 280, 500, 780, 1120, 1540, 2040, 2620, 3280]
+  },
+  "upgrade_tracks": [
+    {
+      "id": "propulsion_core",
+      "display_name_key": "UPGRADE_PROPULSION_CORE",
+      "description_key": "UPGRADE_PROPULSION_CORE_DESC",
+      "max_level": 5,
+      "base_cost": 210,
+      "cost_multiplier": 1.56,
+      "effects": {
+        "max_speed_add": 12.0,
+        "acceleration_add": 18.0
+      }
+    },
+    {
+      "id": "maneuvering_thrusters",
+      "display_name_key": "UPGRADE_MANEUVERING_THRUSTERS",
+      "description_key": "UPGRADE_MANEUVERING_THRUSTERS_DESC",
+      "max_level": 5,
+      "base_cost": 190,
+      "cost_multiplier": 1.54,
+      "effects": {
+        "turn_response_add": 0.35,
+        "cargo_inertia_factor_add": -0.012
+      }
+    },
+    {
+      "id": "recovery_array",
+      "display_name_key": "UPGRADE_RECOVERY_ARRAY",
+      "description_key": "UPGRADE_RECOVERY_ARRAY_DESC",
+      "max_level": 5,
+      "base_cost": 220,
+      "cost_multiplier": 1.58,
+      "effects": {
+        "scan_range_add": 45.0,
+        "collection_speed_multiplier_add": 0.1,
+        "pull_speed_add": 18.0
+      }
+    },
+    {
+      "id": "cargo_frame",
+      "display_name_key": "UPGRADE_CARGO_FRAME",
+      "description_key": "UPGRADE_CARGO_FRAME_DESC",
+      "max_level": 5,
+      "base_cost": 205,
+      "cost_multiplier": 1.57,
+      "effects": {
+        "cargo_capacity_add": 2.0,
+        "cargo_inertia_factor_add": -0.015
+      }
+    },
+    {
+      "id": "pulse_system",
+      "display_name_key": "UPGRADE_PULSE_SYSTEM",
+      "description_key": "UPGRADE_PULSE_SYSTEM_DESC",
+      "max_level": 5,
+      "base_cost": 255,
+      "cost_multiplier": 1.62,
+      "effects": {
+        "boost_recharge_rate_add": 0.07,
+        "boost_duration_bonus_add": 0.018
+      },
+      "milestones": [
+        {
+          "level": 5,
+          "effects": {
+            "boost_charge_capacity_add": 1.0
+          }
+        }
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "id": "balanced_drive",
+      "slot": "propulsion",
+      "display_name_key": "MODULE_BALANCED_DRIVE",
+      "description_key": "MODULE_BALANCED_DRIVE_DESC",
+      "unlock_rank": "trainee",
+      "price": 0,
+      "effects": {}
+    },
+    {
+      "id": "high_output_drive",
+      "slot": "propulsion",
+      "display_name_key": "MODULE_HIGH_OUTPUT_DRIVE",
+      "description_key": "MODULE_HIGH_OUTPUT_DRIVE_DESC",
+      "unlock_rank": "orbital_cleaner",
+      "price": 1300,
+      "effects": {
+        "max_speed_add": 28.0,
+        "acceleration_add": 42.0,
+        "cargo_inertia_factor_add": 0.04
+      }
+    },
+    {
+      "id": "standard_recovery",
+      "slot": "recovery",
+      "display_name_key": "MODULE_STANDARD_RECOVERY",
+      "description_key": "MODULE_STANDARD_RECOVERY_DESC",
+      "unlock_rank": "trainee",
+      "price": 0,
+      "effects": {}
+    },
+    {
+      "id": "precision_tractor",
+      "slot": "recovery",
+      "display_name_key": "MODULE_PRECISION_TRACTOR",
+      "description_key": "MODULE_PRECISION_TRACTOR_DESC",
+      "unlock_rank": "junior_cleaner",
+      "price": 900,
+      "effects": {
+        "collection_speed_multiplier_add": 0.2,
+        "pull_speed_add": 55.0,
+        "scan_range_add": -35.0
+      }
+    },
+    {
+      "id": "standard_cargo",
+      "slot": "cargo",
+      "display_name_key": "MODULE_STANDARD_CARGO",
+      "description_key": "MODULE_STANDARD_CARGO_DESC",
+      "unlock_rank": "trainee",
+      "price": 0,
+      "effects": {}
+    },
+    {
+      "id": "expanded_cargo_rack",
+      "slot": "cargo",
+      "display_name_key": "MODULE_EXPANDED_CARGO_RACK",
+      "description_key": "MODULE_EXPANDED_CARGO_RACK_DESC",
+      "unlock_rank": "junior_cleaner",
+      "price": 850,
+      "effects": {
+        "cargo_capacity_add": 5.0,
+        "cargo_inertia_factor_add": 0.06
+      }
+    },
+    {
+      "id": "standard_utility",
+      "slot": "utility",
+      "display_name_key": "MODULE_STANDARD_UTILITY",
+      "description_key": "MODULE_STANDARD_UTILITY_DESC",
+      "unlock_rank": "trainee",
+      "price": 0,
+      "effects": {}
+    },
+    {
+      "id": "inertial_dampener",
+      "slot": "utility",
+      "display_name_key": "MODULE_INERTIAL_DAMPENER",
+      "description_key": "MODULE_INERTIAL_DAMPENER_DESC",
+      "unlock_rank": "senior_cleaner",
+      "price": 1700,
+      "effects": {
+        "cargo_inertia_factor_add": -0.09,
+        "acceleration_add": -18.0
+      }
+    },
+    {
+      "id": "field_stabilizer",
+      "slot": "utility",
+      "display_name_key": "MODULE_FIELD_STABILIZER",
+      "description_key": "MODULE_FIELD_STABILIZER_DESC",
+      "unlock_rank": "sector_specialist",
+      "price": 2400,
+      "effects": {
+        "environment_force_response_add": -0.22,
+        "environment_drag_response_add": -0.18
+      }
+    }
+  ]
+}

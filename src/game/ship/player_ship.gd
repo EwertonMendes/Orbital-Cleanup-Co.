@@ -27,10 +27,13 @@ var _bump_feedback_cooldown := 0.0
 var _smoothed_intent := Vector2.ZERO
 var _facing_rotation := 0.0
 var _pending_cosmetics: Dictionary = {}
+var _pending_ship_build: Dictionary = {}
 var _environment_acceleration := Vector2.ZERO
 var _environment_force := Vector2.ZERO
 var _environment_linear_drag := 0.0
 var _environment_thrust_multiplier := 1.0
+var _environment_force_response := 1.0
+var _environment_drag_response := 1.0
 var _controls_enabled := true
 var _travel_mode := false
 var _travel_visual_intensity := 0.0
@@ -53,31 +56,105 @@ func configure(
 	input_service: InputService,
 	world_bounds: Rect2 = Rect2(),
 	ship_modifiers: Dictionary = {},
-	ship_cosmetics: Dictionary = {}
+	ship_cosmetics: Dictionary = {},
+	ship_build: Dictionary = {}
 ) -> void:
 	assert(input_service != null, "PlayerShip requires InputService.")
 	_input_service = input_service
 	if not _input_service.boost_requested.is_connected(_on_boost_requested):
 		_input_service.boost_requested.connect(_on_boost_requested)
 	_world_bounds = world_bounds
+	_pending_ship_build = ship_build.duplicate(true)
 	_pending_cosmetics = ship_cosmetics.duplicate(true)
 
-	if not ship_modifiers.is_empty():
+	var resolved_modifiers := ship_modifiers
+	if not _pending_ship_build.is_empty():
+		resolved_modifiers = (_pending_ship_build.get("stats", {}) as Dictionary).duplicate(true)
+		_pending_cosmetics = (_pending_ship_build.get("cosmetics", {}) as Dictionary).duplicate(true)
+
+	_apply_resolved_build_state(resolved_modifiers, true)
+	_apply_tractor_socket_from_build(_pending_ship_build)
+
+func apply_ship_build(ship_build: Dictionary) -> void:
+	assert(is_node_ready(), "Live ship builds can only be applied after PlayerShip is ready.")
+	assert(not ship_build.is_empty(), "Live ship build cannot be empty.")
+	assert(ship_build.has("stats") and ship_build.has("cosmetics") and ship_build.has("visual"), "Live ship build requires stats, cosmetics and visual data.")
+
+	_pending_ship_build = ship_build.duplicate(true)
+	_pending_cosmetics = (_pending_ship_build.get("cosmetics", {}) as Dictionary).duplicate(true)
+	_apply_resolved_build_state(_pending_ship_build.get("stats", {}) as Dictionary, false)
+	_apply_tractor_socket_from_build(_pending_ship_build)
+	_apply_pending_visual_build()
+	ship_camera.configure(tuning)
+	tuning.validate()
+	velocity = velocity.limit_length(tuning.absolute_speed_limit)
+	cargo_changed.emit(cargo_hold.used_units, cargo_hold.capacity)
+	print("[Ship] LIVE_BUILD_APPLIED ship=%s" % String(_pending_ship_build.get("ship_id", "")))
+
+func _apply_resolved_build_state(resolved_modifiers: Dictionary, initial_configuration: bool) -> void:
+	if not resolved_modifiers.is_empty():
+		_apply_runtime_tuning(resolved_modifiers)
 		var cargo := get_node("CargoHold") as CargoHold
 		var beam := get_node("TractorBeam") as TractorBeam
-		assert(cargo != null and beam != null, "PlayerShip upgrade targets must exist.")
-		cargo.capacity = maxi(int(round(float(ship_modifiers.get("cargo_capacity", cargo.capacity)))), 1)
-		beam.scan_range = maxf(float(ship_modifiers.get("scan_range", beam.scan_range)), 80.0)
-		beam.collection_speed_multiplier = maxf(
-			float(ship_modifiers.get("collection_speed_multiplier", beam.collection_speed_multiplier)),
-			0.1
+		assert(cargo != null and beam != null, "PlayerShip build targets must exist.")
+		var target_capacity := maxi(int(round(float(resolved_modifiers.get("cargo_capacity", cargo.capacity)))), 1)
+		if cargo.used_units > target_capacity:
+			push_warning("Ship build cargo capacity is below the currently carried load; preserving occupied units until unload.")
+			target_capacity = cargo.used_units
+		cargo.capacity = target_capacity
+		beam.apply_runtime_profile(
+			float(resolved_modifiers.get("scan_range", beam.scan_range)),
+			float(resolved_modifiers.get("capture_distance", beam.capture_distance)),
+			float(resolved_modifiers.get("pull_speed", beam.pull_speed)),
+			float(resolved_modifiers.get("collection_speed_multiplier", beam.collection_speed_multiplier))
 		)
+		_environment_force_response = clampf(float(resolved_modifiers.get("environment_force_response", 1.0)), 0.45, 1.4)
+		_environment_drag_response = clampf(float(resolved_modifiers.get("environment_drag_response", 1.0)), 0.45, 1.4)
 
-	_boost_recharge_rate = maxf(float(ship_modifiers.get("boost_recharge_rate", 1.0)), 0.5)
-	_boost_duration_bonus = maxf(float(ship_modifiers.get("boost_duration_bonus", 0.0)), 0.0)
-	_boost_charge_capacity = clampi(int(round(float(ship_modifiers.get("boost_charge_capacity", 1.0)))), 1, 2)
-	_boost_charges = _boost_charge_capacity
-	_boost_recharge_elapsed = 0.0
+	_boost_recharge_rate = maxf(float(resolved_modifiers.get("boost_recharge_rate", 1.0)), 0.5)
+	_boost_duration_bonus = maxf(float(resolved_modifiers.get("boost_duration_bonus", 0.0)), 0.0)
+	var previous_charges := _boost_charges
+	_boost_charge_capacity = clampi(int(round(float(resolved_modifiers.get("boost_charge_capacity", 1.0)))), 1, 2)
+	_boost_charges = _boost_charge_capacity if initial_configuration else clampi(previous_charges, 0, _boost_charge_capacity)
+	if _boost_charges >= _boost_charge_capacity:
+		_boost_recharge_elapsed = 0.0
+	else:
+		_boost_recharge_elapsed = minf(_boost_recharge_elapsed, tuning.boost_recharge_seconds)
+
+func _apply_tractor_socket_from_build(ship_build: Dictionary) -> void:
+	if ship_build.is_empty():
+		return
+	var visual := ship_build.get("visual", {}) as Dictionary
+	var socket_values := visual.get("tractor_socket", [0.0, -2.0]) as Array
+	assert(socket_values.size() == 2, "Ship tractor socket requires two values.")
+	var collect_anchor := get_node("TractorBeam/CollectAnchor") as Marker2D
+	collect_anchor.position = Vector2(float(socket_values[0]), float(socket_values[1]))
+
+func _apply_pending_visual_build() -> void:
+	if not _pending_ship_build.is_empty():
+		visuals.apply_ship_build(_pending_ship_build)
+	elif not _pending_cosmetics.is_empty():
+		visuals.apply_cosmetics(_pending_cosmetics)
+
+	if not _pending_cosmetics.is_empty():
+		tractor_beam.apply_style(_pending_cosmetics["beam"] as Dictionary)
+
+	var hull_collision_radius := CollisionGeometry2D.build_dynamic_solid(self, visuals.ship_sprite)
+	assert(hull_collision_radius > 0.0, "PlayerShip hull alpha must generate collision geometry.")
+	_sync_hull_collision_rotation()
+
+func _apply_runtime_tuning(stats: Dictionary) -> void:
+	assert(tuning != null, "PlayerShip requires ShipMovementTuning before build configuration.")
+	tuning = tuning.duplicate(true) as ShipMovementTuning
+	tuning.max_speed = maxf(float(stats.get("max_speed", tuning.max_speed)), 80.0)
+	tuning.acceleration = maxf(float(stats.get("acceleration", tuning.acceleration)), 80.0)
+	tuning.dry_mass = maxf(float(stats.get("dry_mass", tuning.dry_mass)), 2.0)
+	tuning.cargo_inertia_factor = clampf(float(stats.get("cargo_inertia_factor", tuning.cargo_inertia_factor)), 0.05, 1.0)
+	tuning.turn_response = maxf(float(stats.get("turn_response", tuning.turn_response)), 1.0)
+	tuning.boost_acceleration = maxf(float(stats.get("boost_acceleration", tuning.boost_acceleration)), 40.0)
+	tuning.boost_duration = clampf(float(stats.get("boost_duration", tuning.boost_duration)), 0.2, 1.5)
+	tuning.boost_recharge_seconds = maxf(float(stats.get("boost_recharge_seconds", tuning.boost_recharge_seconds)), tuning.boost_duration + 0.2)
+	tuning.boost_turn_authority = clampf(float(stats.get("boost_turn_authority", tuning.boost_turn_authority)), 0.2, 1.0)
 
 func _ready() -> void:
 	assert(tuning != null, "PlayerShip requires ShipMovementTuning.")
@@ -87,19 +164,14 @@ func _ready() -> void:
 	assert(_input_service != null, "PlayerShip must be configured with InputService before entering the tree.")
 	ship_camera.configure(tuning)
 
+	_apply_pending_visual_build()
 	if not _pending_cosmetics.is_empty():
-		visuals.apply_cosmetics(_pending_cosmetics)
-		tractor_beam.apply_style(_pending_cosmetics["beam"] as Dictionary)
-		print("[Ship] COSMETICS hull=%s paint=%s trail=%s beam=%s" % [
-			String((_pending_cosmetics["hull"] as Dictionary).get("id", "")),
+		print("[Ship] BUILD ship=%s paint=%s trail=%s beam=%s" % [
+			String(_pending_ship_build.get("ship_id", (_pending_cosmetics.get("hull", {}) as Dictionary).get("id", ""))),
 			String((_pending_cosmetics["paint"] as Dictionary).get("id", "")),
 			String((_pending_cosmetics["trail"] as Dictionary).get("id", "")),
 			String((_pending_cosmetics["beam"] as Dictionary).get("id", "")),
 		])
-
-	var hull_collision_radius := CollisionGeometry2D.build_dynamic_solid(self, visuals.ship_sprite)
-	assert(hull_collision_radius > 0.0, "PlayerShip hull alpha must generate collision geometry.")
-	_sync_hull_collision_rotation()
 
 	cargo_hold.cargo_changed.connect(_on_cargo_changed)
 	tractor_beam.target_changed.connect(_on_tractor_target_changed)
@@ -117,8 +189,8 @@ func set_environment_physics(
 	thrust_multiplier: float = 1.0
 ) -> void:
 	_environment_acceleration = linear_acceleration.limit_length(460.0)
-	_environment_force = external_force.limit_length(360.0)
-	_environment_linear_drag = clampf(linear_drag, 0.0, 1.8)
+	_environment_force = (external_force * _environment_force_response).limit_length(360.0)
+	_environment_linear_drag = clampf(linear_drag * _environment_drag_response, 0.0, 1.8)
 	_environment_thrust_multiplier = clampf(thrust_multiplier, 0.65, 1.15)
 
 func unload_cargo() -> Array[SalvageDefinition]:

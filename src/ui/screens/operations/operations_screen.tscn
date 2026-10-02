@@ -442,6 +442,79 @@ custom_minimum_size = Vector2(180, 145)
 layout_mode = 2
 size_flags_vertical = 3
 texture = ExtResource("4")
+material = SubResource("ShipPaintPreviewMaterial")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContractShipDetailsPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractHero/ContractShipCard/ShipCardMargin/ShipCardLayout/ShipArt"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContractShipLiveryPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractHero/ContractShipCard/ShipCardMargin/ShipCardLayout/ShipArt"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContractShipDecalPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractHero/ContractShipCard/ShipCardMargin/ShipCardLayout/ShipArt"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContractShipCanopyPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractHero/ContractShipCard/ShipCardMargin/ShipCardLayout/ShipArt"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContractShipEmissivePreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractHero/ContractShipCard/ShipCardMargin/ShipCardLayout/ShipArt"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContractShipBodyKitPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractHero/ContractShipCard/ShipCardMargin/ShipCardLayout/ShipArt"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
@@ -639,16 +712,18 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="ShipTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_type_variation = &"ScreenTitle"
 text = "SHIP"
 
 [node name="ShipSubtitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
@@ -658,12 +733,12 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 4
+theme_override_constants/v_separation = 6
+columns = 5
 
 [node name="HullCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -671,15 +746,63 @@ text = "HULL"
 
 [node name="PaintCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
 text = "PAINT"
 
+[node name="LiveryCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "LIVERY"
+
+[node name="DecalCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "DECAL"
+
+[node name="CanopyCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "CANOPY"
+
+[node name="BodyKitCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "BODY KIT"
+
+[node name="EngineCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "ENGINE"
+
+[node name="ModulesCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "MODULES"
+
 [node name="TrailCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -687,7 +810,7 @@ text = "TRAIL"
 
 [node name="BeamCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -697,21 +820,23 @@ text = "BEAM"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 10
 vertical = false
 
 [node name="ShipPreviewCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 300)
+custom_minimum_size = Vector2(245, 0)
 layout_mode = 2
+size_flags_vertical = 3
 theme_type_variation = &"CardPanel"
 
 [node name="PreviewMargin" type="MarginContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
 [node name="PreviewLayout" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin"]
 layout_mode = 2
@@ -726,10 +851,82 @@ horizontal_alignment = 1
 
 [node name="ShipPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(250, 210)
+custom_minimum_size = Vector2(205, 160)
 layout_mode = 2
 texture = ExtResource("4")
 material = SubResource("ShipPaintPreviewMaterial")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShipDetailsPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShipLiveryPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShipDecalPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShipCanopyPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShipEmissivePreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ShipBodyKitPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
@@ -741,20 +938,25 @@ horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="LoadoutCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
+clip_contents = true
 theme_type_variation = &"CardPanel"
 
 [node name="LoadoutMargin" type="MarginContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
 [node name="LoadoutLayout" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 6
+size_flags_vertical = 3
+theme_override_constants/separation = 4
 
 [node name="LoadoutTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
 unique_name_in_owner = true
@@ -793,6 +995,105 @@ theme_type_variation = &"UiBody"
 unique_name_in_owner = true
 layout_mode = 2
 columns = 2
+
+[node name="LiveryHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "LIVERY"
+
+[node name="LiveryValue" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UiBody"
+
+[node name="LiveryOptions" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="DecalHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "DECAL"
+
+[node name="DecalValue" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UiBody"
+
+[node name="DecalOptions" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="CanopyHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "CANOPY"
+
+[node name="CanopyValue" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UiBody"
+
+[node name="CanopyOptions" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="BodyKitHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "BODY KIT"
+
+[node name="BodyKitValue" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UiBody"
+
+[node name="BodyKitOptions" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="EngineHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "ENGINE"
+
+[node name="EngineValue" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UiBody"
+
+[node name="EngineOptions" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="ModulesHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "MODULES"
+
+[node name="ModulesValue" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UiBody"
+autowrap_mode = 2
+
+[node name="ModulesOptions" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/v_separation = 6
+columns = 1
 
 [node name="TrailHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
 unique_name_in_owner = true
@@ -864,6 +1165,7 @@ text = ">"
 
 [node name="WorkshopStatus" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
