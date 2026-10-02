@@ -38,12 +38,26 @@ func configure(style: Dictionary, palette: Dictionary, visual_scale: float = 1.0
 			phase = TAU * float(index) / float(strand_count)
 		var centered_index := float(index) - float(strand_count - 1) * 0.5
 		var offset := 0.0 if mode == "dual_helix" else centered_index * spread
+		var width_scale := 1.0
+		var alpha_scale := 1.0
+		if mode == "dual_helix":
+			width_scale = 1.0
+			alpha_scale = 1.0
+		elif is_zero_approx(spread) and strand_count == 2:
+			# Concentric styles use a broad body plus a bright inner core.
+			width_scale = 1.0 if index == 0 else width_decay
+			alpha_scale = 1.0 if index == 0 else alpha_decay
+		else:
+			# Spatial multi-strands remain symmetric around the socket.
+			var distance_from_center := absf(centered_index)
+			width_scale = pow(width_decay, distance_from_center)
+			alpha_scale = pow(alpha_decay, distance_from_center)
 		trail.apply_style(
 			trail_style,
 			palette,
 			phase,
-			pow(alpha_decay, float(index)),
-			pow(width_decay, float(index)),
+			alpha_scale,
+			width_scale,
 			offset,
 			visual_scale
 		)
