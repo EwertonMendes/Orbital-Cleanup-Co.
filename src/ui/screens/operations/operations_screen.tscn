@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_backdrop.gd" id="2"]
@@ -9,6 +9,10 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/squareGreen.png" id="7"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/squareBlue.png" id="8"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/squareRed.png" id="9"]
+[ext_resource type="Script" path="res://src/ui/components/selectable_asset_option.gd" id="10"]
+[ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_us.webp" id="11"]
+[ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_br.webp" id="12"]
+[ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_es.webp" id="13"]
 
 [sub_resource type="ShaderMaterial" id="ShipPaintPreviewMaterial"]
 resource_local_to_scene = true
@@ -870,28 +874,42 @@ text = "LANGUAGE"
 
 [node name="LanguageGroup" type="HBoxContainer" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout"]
 layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+alignment = 1
 
-[node name="EnglishButton" type="Button" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout/LanguageGroup"]
+[node name="EnglishButton" type="TextureButton" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout/LanguageGroup"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 48)
+custom_minimum_size = Vector2(112, 112)
 layout_mode = 2
-theme_type_variation = &"SecondaryButton"
-text = "EN"
+texture_normal = ExtResource("11")
+ignore_texture_size = true
+stretch_mode = 5
+tooltip_text = "English · United States"
+script = ExtResource("10")
+value_id = "en"
 
-[node name="PortugueseButton" type="Button" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout/LanguageGroup"]
+[node name="PortugueseButton" type="TextureButton" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout/LanguageGroup"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 48)
+custom_minimum_size = Vector2(112, 112)
 layout_mode = 2
-theme_type_variation = &"SecondaryButton"
-text = "PT"
+texture_normal = ExtResource("12")
+ignore_texture_size = true
+stretch_mode = 5
+tooltip_text = "Português · Brasil"
+script = ExtResource("10")
+value_id = "pt_BR"
 
-[node name="SpanishButton" type="Button" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout/LanguageGroup"]
+[node name="SpanishButton" type="TextureButton" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout/LanguageGroup"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(100, 48)
+custom_minimum_size = Vector2(112, 112)
 layout_mode = 2
-theme_type_variation = &"SecondaryButton"
-text = "ES"
+texture_normal = ExtResource("13")
+ignore_texture_size = true
+stretch_mode = 5
+tooltip_text = "Español · España"
+script = ExtResource("10")
+value_id = "es_ES"
 
 [node name="AudioLabel" type="Label" parent="SettingsLayer/SettingsCenter/SettingsModal/SettingsMargin/SettingsLayout"]
 unique_name_in_owner = true
