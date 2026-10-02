@@ -231,11 +231,14 @@ func _validate_operations_screen() -> void:
 	_expect("menu_warp_fx" not in operations_source, "Operations tab changes must not use the removed blue warp-particle overlay.")
 	_expect('event.is_action_pressed("ui_cancel")' in operations_source, "Operations overlay must close from ESC / ui_cancel.")
 	var operations_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.tscn")
+	var player_ship_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.gd")
 	var app_root_source := FileAccess.get_file_as_string("res://src/core/app/app_root.gd")
 	var progression_source := FileAccess.get_file_as_string("res://src/game/progression/progression_service.gd")
 	_expect("LiveryCategory" in operations_scene_source and "DecalCategory" in operations_scene_source and "CanopyCategory" in operations_scene_source and "BodyKitCategory" in operations_scene_source and "EngineCategory" in operations_scene_source, "Fleet scene must provide selectors for every layered customization category.")
 	_expect("ModulesCategory" in operations_scene_source and "ModulesOptions" in operations_scene_source, "Fleet scene must expose reusable module bays.")
 	_expect("ContractShipLiveryPreview" in operations_scene_source and "ContractShipBodyKitPreview" in operations_scene_source, "Contract ship card must render the same layered cosmetics as Fleet preview.")
+	_expect("columns = 1" in operations_scene_source and "ModulesOptions" in operations_scene_source, "Fleet modules must use a full-width single-column selector.")
+	_expect("LIVE_SHIP_SYNC" in flight_source and "apply_ship_build" in player_ship_source, "Free Flight must reapply Fleet changes without redeployment.")
 	_expect("_apply_composed_ship_preview" in operations_source and "contract_ship_art" in operations_source, "Operations previews must share one cosmetic composition path.")
 	_expect("unlock_customization" in app_root_source and "debug_unlock_all_customization" in progression_source, "Debug provider must expose persistent save-local customization QA unlock.")
 	_expect("_progression.purchase_module" in operations_source and "_progression.equip_module" in operations_source and "_module_option_entries" in operations_source, "Fleet UI must purchase and equip compatible reusable modules through ProgressionService.")
@@ -978,8 +981,12 @@ func _validate_progression_service() -> void:
 
 	var ship_build := progression.get_active_ship_build()
 	_expect(String(ship_build["ship_id"]) == "pioneer_01", "Resolved build must identify the active model.")
-	_expect(String((ship_build["visual"] as Dictionary)["base_texture"]) == "res://assets/original/ships/pioneer_01_hd.webp", "Pioneer must retain its pre-fleet production model.")
+	_expect(String((ship_build["visual"] as Dictionary)["base_texture"]) == "res://assets/original/ships/pioneer_01/base.webp", "Pioneer must use the unified fleet artwork.")
 	_expect((ship_build["modules"] as Dictionary).size() == 4, "Resolved ship build must include the four module families.")
+
+	var cosmetic_catalog := ContentRegistry.new().get_cosmetic("ship_customization")
+	_expect(((cosmetic_catalog["categories"] as Dictionary)["paint"] as Array).size() == 20, "Paint catalog must expose 20 authored choices.")
+	_expect(((cosmetic_catalog["categories"] as Dictionary)["beam"] as Array).size() == 15, "Tractor Beam catalog must expose 15 authored choices.")
 
 	var default_cosmetics := progression.get_equipped_cosmetic_ids()
 	_expect(String(default_cosmetics["hull"]) == "pioneer_01", "Hull compatibility adapter must expose the active ship model.")
@@ -997,12 +1004,8 @@ func _validate_progression_service() -> void:
 		var ship_definition := registry.get_ship(ship_id)
 		var ship_visual := ship_definition["visual"] as Dictionary
 		_expect(FileAccess.file_exists(String(ship_visual["base_texture"])), "Fleet base artwork must exist: %s" % ship_id)
-		var paint_mode := String(ship_visual.get("paint_mode", "legacy_blue_bias"))
-		var paint_mask := String(ship_visual.get("paint_mask", ""))
-		if paint_mode == "rgb_mask":
-			_expect(FileAccess.file_exists(paint_mask), "RGB fleet paint mask must exist: %s" % ship_id)
-		else:
-			_expect(ship_id == "pioneer_01" and paint_mask.is_empty(), "Only legacy Pioneer may use maskless blue-bias painting.")
+		_expect(String(ship_visual.get("paint_mode", "")) == "rgb_mask", "Every live fleet ship must use RGB-mask painting: %s" % ship_id)
+		_expect(FileAccess.file_exists(String(ship_visual["paint_mask"])), "Fleet paint mask must exist: %s" % ship_id)
 		_expect((ship_visual["engine_sockets"] as Array).size() >= 1, "Every fleet ship needs at least one engine socket: %s" % ship_id)
 	var rare_salvage := registry.get_salvage_definition("navigation_core")
 	var common_salvage := registry.get_salvage_definition("scrap_fragment")
@@ -1071,6 +1074,8 @@ func _validate_progression_service() -> void:
 	_expect(progression.get_rank_id() == rank_before_qa, "QA customization unlock must never alter Career rank.")
 	_expect(progression.get_credits() == credits_before_qa, "QA customization unlock must never alter Credits.")
 	_expect(progression.is_cosmetic_owned("paint", "safety_amber"), "QA customization unlock must own every authored cosmetic.")
+	_expect(progression.is_cosmetic_owned("paint", "neon_magenta"), "QA customization unlock must include newly authored paints.")
+	_expect(progression.is_cosmetic_owned("beam", "ultraviolet"), "QA customization unlock must include newly authored Tractor Beam styles.")
 	_expect(progression.is_module_owned("field_stabilizer"), "QA customization unlock must own every authored module.")
 	_expect(progression.is_ship_owned("horizon_m5"), "QA customization unlock must own every fleet model for customization testing.")
 	var qa_reloaded := ProgressionService.new()
