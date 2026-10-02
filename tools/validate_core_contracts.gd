@@ -226,7 +226,6 @@ func _validate_operations_screen() -> void:
 	var operations_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.tscn")
 	_expect('text = "-"' in operations_scene_source, "Settings volume-down must use an ASCII minus glyph supported by the display font.")
 
-	var operations_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.tscn")
 	_expect("theme_override_constants/separation = 4" in operations_scene_source and "UpgradePagerSpacer" in operations_scene_source, "Upgrades page must reserve enough vertical room to keep pagination fully inside the fixed stage.")
 	var upgrade_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_upgrade_card.tscn")
 	_expect("Vector2(250, 168)" in upgrade_card_scene_source and "max_lines_visible = 2" in upgrade_card_scene_source, "Upgrade cards must use compact bounded geometry for zero-scroll pages.")
