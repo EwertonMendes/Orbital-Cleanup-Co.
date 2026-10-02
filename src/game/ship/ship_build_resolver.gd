@@ -36,14 +36,18 @@ static func resolve(
 
 	var equipped_modules := ship_state.get("modules", {}) as Dictionary
 	for slot_variant in equipped_modules.keys():
-		var module_id := String(equipped_modules[slot_variant])
-		if module_id.is_empty():
-			continue
-		var module := _find_by_id(fleet_rules.get("modules", []) as Array, module_id)
-		if module.is_empty():
-			continue
-		assert(String(module.get("slot", "")) == String(slot_variant), "Equipped module slot mismatch: %s" % module_id)
-		_apply_effects(stats, module.get("effects", {}) as Dictionary, 1)
+		var slot := String(slot_variant)
+		var slot_modules = equipped_modules[slot_variant]
+		var module_ids: Array = slot_modules as Array if slot_modules is Array else [slot_modules]
+		for module_id_variant in module_ids:
+			var module_id := String(module_id_variant)
+			if module_id.is_empty():
+				continue
+			var module := _find_by_id(fleet_rules.get("modules", []) as Array, module_id)
+			if module.is_empty():
+				continue
+			assert(String(module.get("slot", "")) == slot, "Equipped module slot mismatch: %s" % module_id)
+			_apply_effects(stats, module.get("effects", {}) as Dictionary, 1)
 
 	_sanitize_stats(stats)
 
