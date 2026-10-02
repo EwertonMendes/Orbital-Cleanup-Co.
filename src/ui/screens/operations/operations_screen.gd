@@ -1325,7 +1325,7 @@ func _refresh_ship_category_options() -> void:
 		var selected := cosmetic_id == equipped
 		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
 		assert(button != null, "Cosmetic option must use OccChromeButton.")
-		button.custom_minimum_size = Vector2(0, 46)
+		button.custom_minimum_size = Vector2(0, 50)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
 		button.set_meta(&"occ_focus_restore_key", "ship:%s:%s" % [_ship_category, cosmetic_id])
@@ -1427,6 +1427,8 @@ func _ship_container(category: String) -> GridContainer:
 
 func _ship_option_page_size() -> int:
 	var profile := ResponsiveUiProfile.current()
+	if _ship_category == "modules":
+		return 2 if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT else 3
 	if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT:
 		return 2
 	return 4
@@ -1468,6 +1470,7 @@ func _module_option_entries() -> Array[Dictionary]:
 					"slot_index": slot_index,
 					"module_id": module_id,
 					"display_name_key": String(module_definition["display_name_key"]),
+					"description_key": String(module_definition.get("description_key", "")),
 					"selected": current_id == module_id,
 				})
 	return output
@@ -1497,7 +1500,11 @@ func _refresh_module_options() -> void:
 		button.set_meta(&"occ_module_slot_index", slot_index)
 		button.set_meta(&"occ_module_id", module_id)
 		button.set_meta(&"occ_module_name_key", String(entry["display_name_key"]))
-		button.text = _module_button_text(slot, slot_index, module_id, tr(String(entry["display_name_key"])), selected)
+		var module_name := tr(String(entry["display_name_key"]))
+		button.text = _module_button_text(slot, slot_index, module_id, module_name, selected)
+		var description_key := String(entry.get("description_key", ""))
+		if not description_key.is_empty():
+			button.tooltip_text = tr(description_key)
 		var owned := _progression.is_module_owned(module_id)
 		button.disabled = not owned and not _progression.can_purchase_module(module_id)
 		if button.disabled and not owned:
@@ -1523,7 +1530,6 @@ func _equip_module(slot: String, slot_index: int, module_id: String) -> void:
 		return
 
 	_refresh_header()
-	_refresh_header()
 	_refresh_ship(false)
 	if focus_owner != null and is_instance_valid(focus_owner) and focus_owner.is_inside_tree():
 		if _input_service != null and _input_service.prefers_gamepad():
@@ -1541,10 +1547,10 @@ func _module_button_text(slot: String, slot_index: int, module_id: String, displ
 	var slot_key := "MODULE_SLOT_%s" % slot.to_upper()
 	var state_text := display_name
 	if selected:
-		state_text = tr("HQ_COSMETIC_EQUIPPED_FMT") % display_name
+		state_text = tr("HQ_FLEET_MODULE_ACTIVE_FMT") % display_name
 	elif not _progression.is_module_owned(module_id):
-		state_text = tr("HQ_FLEET_BUY_FMT") % [display_name, _progression.get_module_cost(module_id)]
-	return tr("HQ_FLEET_MODULE_SLOT_FMT") % [tr(slot_key), slot_index + 1, state_text]
+		state_text = tr("HQ_FLEET_MODULE_BUY_FMT") % [display_name, _progression.get_module_cost(module_id)]
+	return "%s %d - %s" % [tr(slot_key), slot_index + 1, state_text]
 
 func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 	# Ship-model selection and cosmetic purchases share the existing zero-scroll
