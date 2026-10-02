@@ -257,7 +257,7 @@
         "unlock_rank": "trainee",
         "price": 0,
         "core": {
-          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "texture": "res://assets/original/vfx/engine_core_plume.svg",
           "scale_x": 0.06,
           "scale_y": 0.088,
           "alpha": 0.9,
@@ -320,7 +320,7 @@
         "unlock_rank": "trainee",
         "price": 320,
         "core": {
-          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "texture": "res://assets/original/vfx/engine_core_plume.svg",
           "scale_x": 0.08,
           "scale_y": 0.1,
           "alpha": 0.94,
@@ -342,7 +342,7 @@
           "boost_lifetime_bonus": 0.1
         },
         "primary_particles": {
-          "texture": "res://assets/original/vfx/particle_cloud.png",
+          "texture": "res://assets/original/vfx/particle_cloud.svg",
           "amount": 14,
           "lifetime": 0.42,
           "randomness": 0.48,
@@ -383,7 +383,7 @@
         "unlock_rank": "junior_cleaner",
         "price": 480,
         "core": {
-          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "texture": "res://assets/original/vfx/engine_core_plume.svg",
           "scale_x": 0.052,
           "scale_y": 0.082,
           "alpha": 0.92,
@@ -420,7 +420,7 @@
           "alpha": 0.66
         },
         "secondary_particles": {
-          "texture": "res://assets/original/vfx/particle_ring.png",
+          "texture": "res://assets/original/vfx/particle_ring.svg",
           "amount": 6,
           "lifetime": 0.58,
           "randomness": 0.12,
@@ -446,7 +446,7 @@
         "unlock_rank": "junior_cleaner",
         "price": 520,
         "core": {
-          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "texture": "res://assets/original/vfx/engine_core_plume.svg",
           "scale_x": 0.048,
           "scale_y": 0.074,
           "alpha": 0.92,
@@ -509,7 +509,7 @@
         "unlock_rank": "orbital_cleaner",
         "price": 680,
         "core": {
-          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "texture": "res://assets/original/vfx/engine_core_plume.svg",
           "scale_x": 0.057,
           "scale_y": 0.098,
           "alpha": 0.91,
@@ -572,7 +572,7 @@
         "unlock_rank": "orbital_cleaner",
         "price": 740,
         "core": {
-          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "texture": "res://assets/original/vfx/engine_core_plume.svg",
           "scale_x": 0.054,
           "scale_y": 0.084,
           "alpha": 0.93,
@@ -635,7 +635,7 @@
         "unlock_rank": "senior_cleaner",
         "price": 920,
         "core": {
-          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "texture": "res://assets/original/vfx/engine_core_plume.svg",
           "scale_x": 0.072,
           "scale_y": 0.09,
           "alpha": 0.82,
@@ -657,7 +657,7 @@
           "boost_lifetime_bonus": 0.18
         },
         "primary_particles": {
-          "texture": "res://assets/original/vfx/particle_cloud.png",
+          "texture": "res://assets/original/vfx/particle_cloud.svg",
           "amount": 18,
           "lifetime": 0.78,
           "randomness": 0.66,
@@ -698,7 +698,7 @@
         "unlock_rank": "deep_space_operator",
         "price": 1260,
         "core": {
-          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "texture": "res://assets/original/vfx/engine_core_plume.svg",
           "scale_x": 0.05,
           "scale_y": 0.086,
           "alpha": 0.94,
