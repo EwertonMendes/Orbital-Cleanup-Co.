@@ -955,10 +955,12 @@ func _sanitize_fleet() -> void:
 	for ship_id_variant in ships.keys():
 		var ship_id := String(ship_id_variant)
 		var definition := _registry.get_ship(ship_id)
-		for module_id_variant in (definition.get("default_modules", {}) as Dictionary).values():
-			var module_id := String(module_id_variant)
-			if not module_id.is_empty() and not owned_modules.has(module_id):
-				owned_modules.append(module_id)
+		for slot_modules_variant in (definition.get("default_modules", {}) as Dictionary).values():
+			var slot_modules: Array = slot_modules_variant as Array if slot_modules_variant is Array else [slot_modules_variant]
+			for module_id_variant in slot_modules:
+				var module_id := String(module_id_variant)
+				if not module_id.is_empty() and not owned_modules.has(module_id):
+					owned_modules.append(module_id)
 	owned_modules.sort()
 	fleet["owned_modules"] = owned_modules
 
@@ -992,11 +994,11 @@ func _sanitize_fleet() -> void:
 
 		var ship_definition := _registry.get_ship(ship_id)
 		var modules := _normalize_module_loadout(ship_definition, ship_state.get("modules", {}) as Dictionary)
-		var defaults := _default_module_loadout(ship_definition)
+		var module_defaults := _default_module_loadout(ship_definition)
 		for slot_variant in modules.keys():
 			var slot := String(slot_variant)
 			var equipped := modules[slot] as Array
-			var fallback := defaults[slot] as Array
+			var fallback := module_defaults[slot] as Array
 			for index in range(equipped.size()):
 				var module_id := String(equipped[index])
 				var module := _find_module(module_id)
@@ -1010,10 +1012,12 @@ func _ensure_default_assets_owned(ship_id: String) -> void:
 	var definition := _registry.get_ship(ship_id)
 	var fleet := (_state["fleet"] as Dictionary).duplicate(true)
 	var owned_modules := fleet.get("owned_modules", []) as Array
-	for value in (definition.get("default_modules", {}) as Dictionary).values():
-		var module_id := String(value)
-		if not module_id.is_empty() and not owned_modules.has(module_id):
-			owned_modules.append(module_id)
+	for slot_modules_variant in (definition.get("default_modules", {}) as Dictionary).values():
+		var slot_modules: Array = slot_modules_variant as Array if slot_modules_variant is Array else [slot_modules_variant]
+		for value in slot_modules:
+			var module_id := String(value)
+			if not module_id.is_empty() and not owned_modules.has(module_id):
+				owned_modules.append(module_id)
 	owned_modules.sort()
 	fleet["owned_modules"] = owned_modules
 
