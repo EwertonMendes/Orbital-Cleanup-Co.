@@ -428,7 +428,7 @@ msgid "HQ_CUSTOMIZE_PAINT"
 msgstr "PINTURA"
 
 msgid "HQ_CUSTOMIZE_TRAIL"
-msgstr "RASTRO DO MOTOR"
+msgstr "COR DO RASTRO"
 
 msgid "HQ_CUSTOMIZE_BEAM"
 msgstr "FEIXE TRATOR"
@@ -440,7 +440,7 @@ msgid "HQ_SHIP_TAB_PAINT"
 msgstr "PINTURA"
 
 msgid "HQ_SHIP_TAB_TRAIL"
-msgstr "RASTRO"
+msgstr "COR DO RASTRO"
 
 msgid "HQ_SHIP_TAB_BEAM"
 msgstr "FEIXE"
@@ -452,7 +452,7 @@ msgid "HQ_SHIP_PAINT_FMT"
 msgstr "Pintura · %s"
 
 msgid "HQ_SHIP_TRAIL_FMT"
-msgstr "Rastro · %s"
+msgstr "Cor do Rastro · %s"
 
 msgid "HQ_SHIP_BEAM_FMT"
 msgstr "Feixe · %s"
@@ -479,13 +479,13 @@ msgid "COSMETIC_PAINT_SAFETY_AMBER"
 msgstr "Âmbar de Segurança"
 
 msgid "COSMETIC_TRAIL_ION_CYAN"
-msgstr "Íon Ciano"
+msgstr "Ciano de Serviço"
 
 msgid "COSMETIC_TRAIL_MINT_STREAM"
 msgstr "Fluxo Menta"
 
 msgid "COSMETIC_TRAIL_AMBER_COMET"
-msgstr "Cometa Âmbar"
+msgstr "Âmbar de Segurança"
 
 msgid "COSMETIC_BEAM_STANDARD_CYAN"
 msgstr "Ciano Padrão"
@@ -1343,7 +1343,7 @@ msgid "COSMETIC_BODY_KIT_STOCK"
 msgstr "Carroceria Padrão"
 
 msgid "COSMETIC_ENGINE_ION_CYAN"
-msgstr "Íon Ciano"
+msgstr "Fluxo Iônico"
 
 msgid "HQ_FLEET_MASTERY_FMT"
 msgstr "Domínio %d/%d · %d XP"
@@ -1379,7 +1379,7 @@ msgid "HQ_SHIP_TAB_BODY_KIT"
 msgstr "KIT EXTERNO"
 
 msgid "HQ_SHIP_TAB_ENGINE"
-msgstr "FX MOTOR"
+msgstr "EFEITO"
 
 msgid "HQ_CUSTOMIZE_LIVERY"
 msgstr "Grafismo"
@@ -1394,7 +1394,7 @@ msgid "HQ_CUSTOMIZE_BODY_KIT"
 msgstr "Kit externo"
 
 msgid "HQ_CUSTOMIZE_ENGINE"
-msgstr "Efeito do motor"
+msgstr "EFEITO DO MOTOR"
 
 msgid "HQ_FLEET_MODULES"
 msgstr "MÓDULOS"
@@ -1679,4 +1679,52 @@ msgid "COSMETIC_BEAM_GOLDEN_FLUX"
 msgstr "Fluxo Dourado"
 
 msgid "COSMETIC_BEAM_ULTRAVIOLET"
+msgstr "Ultravioleta"
+
+msgid "COSMETIC_ENGINE_PLASMA_BLOOM"
+msgstr "Flor de Plasma"
+
+msgid "COSMETIC_ENGINE_PULSE_WAVE"
+msgstr "Onda Pulsante"
+
+msgid "COSMETIC_ENGINE_SPARK_JET"
+msgstr "Jato de Faíscas"
+
+msgid "COSMETIC_ENGINE_COMET_RIBBON"
+msgstr "Faixa de Cometa"
+
+msgid "COSMETIC_ENGINE_SHARD_DRIVE"
+msgstr "Propulsão Fragmentada"
+
+msgid "COSMETIC_ENGINE_NEBULA_MIST"
+msgstr "Névoa Nebular"
+
+msgid "COSMETIC_ENGINE_TWIN_HELIX"
+msgstr "Hélice Dupla"
+
+msgid "COSMETIC_TRAIL_COBALT_FLUX"
+msgstr "Fluxo Cobalto"
+
+msgid "COSMETIC_TRAIL_VIOLET_PULSE"
+msgstr "Pulso Violeta"
+
+msgid "COSMETIC_TRAIL_CRIMSON_DRIVE"
+msgstr "Impulso Carmesim"
+
+msgid "COSMETIC_TRAIL_EMERALD_STREAM"
+msgstr "Fluxo Esmeralda"
+
+msgid "COSMETIC_TRAIL_MAGENTA_WAVE"
+msgstr "Onda Magenta"
+
+msgid "COSMETIC_TRAIL_WHITE_PRISM"
+msgstr "Prisma Branco"
+
+msgid "COSMETIC_TRAIL_ROSE_VECTOR"
+msgstr "Vetor Rosa"
+
+msgid "COSMETIC_TRAIL_GOLDEN_FLUX"
+msgstr "Fluxo Dourado"
+
+msgid "COSMETIC_TRAIL_ULTRAVIOLET"
 msgstr "Ultravioleta"
