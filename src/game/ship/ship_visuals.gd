@@ -6,7 +6,7 @@ class_name ShipVisuals
 @onready var engine_glow: Sprite2D = %EngineGlow
 @onready var engine_trail: EngineTrail = %EngineTrail
 @onready var engine_particles: CPUParticles2D = %EngineParticles
-@onready var engine_anchor: Marker2D = %EngineAnchor
+@onready var engine_anchor: Marker2D = $SteeringVisual/EngineAnchor
 @onready var bump_particles: CPUParticles2D = %BumpParticles
 
 var _impact_tween: Tween
