@@ -1728,3 +1728,21 @@ msgstr "Golden Flux"
 
 msgid "COSMETIC_TRAIL_ULTRAVIOLET"
 msgstr "Ultraviolet"
+
+msgid "HQ_SHIP_TAB_PROPULSION"
+msgstr "PROPULSION"
+
+msgid "HQ_CUSTOMIZE_PROPULSION"
+msgstr "PROPULSION"
+
+msgid "HQ_PROPULSION_STYLE"
+msgstr "STYLE"
+
+msgid "HQ_PROPULSION_COLOR"
+msgstr "COLOR"
+
+msgid "HQ_SHIP_PROPULSION_STYLE_FMT"
+msgstr "Style · %s"
+
+msgid "HQ_SHIP_PROPULSION_COLOR_FMT"
+msgstr "Color · %s"
