@@ -1365,3 +1365,33 @@ msgstr "+%d escáner · +%d%% recuperación"
 
 msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
 msgstr "+%d carga · -%d%% inercia de carga"
+
+msgid "HQ_SHIP_TAB_LIVERY"
+msgstr "LIBREA"
+
+msgid "HQ_SHIP_TAB_DECAL"
+msgstr "CALCA"
+
+msgid "HQ_SHIP_TAB_CANOPY"
+msgstr "CABINA"
+
+msgid "HQ_SHIP_TAB_BODY_KIT"
+msgstr "KIT EXTERIOR"
+
+msgid "HQ_SHIP_TAB_ENGINE"
+msgstr "FX MOTOR"
+
+msgid "HQ_CUSTOMIZE_LIVERY"
+msgstr "Librea"
+
+msgid "HQ_CUSTOMIZE_DECAL"
+msgstr "Calcomanía"
+
+msgid "HQ_CUSTOMIZE_CANOPY"
+msgstr "Cabina"
+
+msgid "HQ_CUSTOMIZE_BODY_KIT"
+msgstr "Kit exterior"
+
+msgid "HQ_CUSTOMIZE_ENGINE"
+msgstr "Efecto del motor"
