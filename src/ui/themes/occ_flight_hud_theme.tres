@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=21 format=3]
+[gd_resource type="Theme" load_steps=22 format=3]
 
 [ext_resource type="FontFile" path="res://assets/third_party/neuropol/NEUROPOL.ttf" id="1"]
 [ext_resource type="FontFile" path="res://assets/third_party/inter/Inter[opsz,wght].ttf" id="2"]
@@ -126,7 +126,21 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxEmpty" id="EmptyFocus"]
+[sub_resource type="StyleBoxFlat" id="GamepadFocus"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.48, 0.93, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
 
 [resource]
 default_font = ExtResource("2")
@@ -185,7 +199,7 @@ HudActionButton/styles/normal = SubResource("HudButtonAction")
 HudActionButton/styles/hover = SubResource("HudButtonActionHover")
 HudActionButton/styles/pressed = SubResource("HudButtonAction")
 HudActionButton/styles/hover_pressed = SubResource("HudButtonAction")
-HudActionButton/styles/focus = SubResource("EmptyFocus")
+HudActionButton/styles/focus = SubResource("GamepadFocus")
 
 HudDangerButton/base_type = &"Button"
 HudDangerButton/fonts/font = ExtResource("1")
@@ -199,7 +213,7 @@ HudDangerButton/styles/normal = SubResource("HudButtonDanger")
 HudDangerButton/styles/hover = SubResource("HudButtonDangerHover")
 HudDangerButton/styles/pressed = SubResource("HudButtonDanger")
 HudDangerButton/styles/hover_pressed = SubResource("HudButtonDanger")
-HudDangerButton/styles/focus = SubResource("EmptyFocus")
+HudDangerButton/styles/focus = SubResource("GamepadFocus")
 
 HudSuccessButton/base_type = &"Button"
 HudSuccessButton/fonts/font = ExtResource("1")
@@ -213,4 +227,4 @@ HudSuccessButton/styles/normal = SubResource("HudButtonSuccess")
 HudSuccessButton/styles/hover = SubResource("HudButtonSuccessHover")
 HudSuccessButton/styles/pressed = SubResource("HudButtonSuccess")
 HudSuccessButton/styles/hover_pressed = SubResource("HudButtonSuccess")
-HudSuccessButton/styles/focus = SubResource("EmptyFocus")
+HudSuccessButton/styles/focus = SubResource("GamepadFocus")
