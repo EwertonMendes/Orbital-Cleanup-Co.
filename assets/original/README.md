@@ -12,7 +12,7 @@ The original launch SVGs remain in the repository as editable/fallback artwork. 
 
 ## Player ships
 
-`assets/original/ships/` contains the complete 20-model fleet. The 19 newly authored models use normalized 1024×1024 `base.webp` + pixel-aligned `paint_mask.png`. Pioneer-01 intentionally continues to use the established `pioneer_01_hd.webp` production model so the starter ship remains visually identical to the pre-fleet game.
+`assets/original/ships/` contains the complete 20-model fleet. All live models, including Pioneer-01, use the unified production structure with normalized `base.webp` artwork and a pixel-aligned RGB `paint_mask.png`.
 
 Ship identity is authored in `content/ships/`. Resolution, gameplay footprint, engine/tractor sockets and collision source are model data rather than assumptions baked into `PlayerShip.tscn`. Each model has an intentionally authored runtime scale and engine/tractor socket layout while sharing the same generic `PlayerShip` runtime.
 
