@@ -112,3 +112,16 @@ The professional UI pass adds editable SVG accents under `assets/original/ui/`. 
 ## Project-owned salvage artwork
 
 The salvage pass adds **25 editable SVG silhouettes** under `assets/original/salvage/`, one for every current recoverable item. The art uses a shared OCC material language with category accents while rarity animation remains runtime-driven. This replaces the previous state where most salvage definitions reused the same two satellite sprites and makes each salvage table visually diverse without creating per-item scenes.
+
+
+## Project-owned propulsion VFX artwork
+
+The ship-engine customization pass adds three original transparent grayscale runtime primitives under `assets/original/vfx/`:
+
+- `engine_core_plume.png` — tapered nozzle plume;
+- `particle_ring.png` — expanding energy-ring particle;
+- `particle_cloud.png` — diffuse plasma/nebula particle.
+
+They were authored specifically for Orbital Cleanup Co. and introduce no third-party dependency. Color is deliberately absent from the source images: the runtime engine/trail cosmetic data applies the equipped palette so the same three textures can support many combinations without shipping recolored duplicates.
+
+The existing project-owned `particle_glow.svg`, `particle_streak.svg` and `particle_shard.svg` are reused by the same propulsion system. The legacy Kenney `engine_speed.png` is no longer part of live player-engine rendering; it remains only inside the curated third-party source set for provenance/rollback.
