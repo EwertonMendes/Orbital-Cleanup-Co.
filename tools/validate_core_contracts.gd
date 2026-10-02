@@ -108,6 +108,7 @@ func _validate_responsive_ui() -> void:
 	var profile_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_ui_profile.gd")
 	_expect("FONT_MINIMUMS" in profile_source and "build_theme" in profile_source, "Responsive UI must centralize semantic typography density.")
 	_expect("apply_minimum_touch_targets" in profile_source, "Responsive UI must centralize minimum touch-target sizing.")
+	_expect("\"BaseButton\"" in profile_source, "Responsive touch targets must cover Button and TextureButton controls.")
 
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
@@ -150,7 +151,8 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Operations requires contract ship preview.")
 	_expect(screen.find_child("UpgradeGrid", true, false) is GridContainer, "Operations requires upgrade grid.")
 	_expect(screen.find_child("CareerList", true, false) is VBoxContainer, "Operations requires focused career milestones.")
-	_expect(screen.find_child("ContentScroll", true, false) is ScrollContainer, "Operations content must degrade gracefully on compact screens.")
+	_expect(screen.find_child("ContentStage", true, false) is MarginContainer, "Operations requires a fixed no-scroll content stage.")
+	_expect(screen.find_children("*", "ScrollContainer", true, false).is_empty(), "Operations must not depend on ScrollContainer at any breakpoint.")
 	_expect(screen.find_child("PreviousContract", true, false) is Button, "Operations requires previous unlocked contract action.")
 	_expect(screen.find_child("NextContract", true, false) is Button, "Operations requires next unlocked contract action.")
 	_expect(screen.find_child("ContractPosition", true, false) is Label, "Operations requires contract position feedback.")
@@ -1384,7 +1386,9 @@ func _validate_debrief_screen() -> void:
 		return
 	var screen := packed.instantiate()
 	_expect(screen is ContractDebriefScreen, "Contract Debrief root must use ContractDebriefScreen.")
-	_expect(screen.find_child("Scroll", true, false) is ScrollContainer, "Debrief must remain scrollable on compact screens.")
+	_expect(screen.find_child("Stage", true, false) is MarginContainer, "Debrief requires a fixed no-scroll stage.")
+	_expect(screen.find_children("*", "ScrollContainer", true, false).is_empty(), "Debrief must not depend on ScrollContainer at any breakpoint.")
+	_expect(screen.find_child("SummaryPage", true, false) is VBoxContainer and screen.find_child("ProgressPage", true, false) is VBoxContainer, "Debrief must split variable content into fixed pages.")
 	_expect(screen.find_child("ContentGrid", true, false) is GridContainer, "Debrief requires responsive mission summary.")
 	_expect(screen.find_child("RewardGrid", true, false) is GridContainer, "Debrief requires reward breakdown.")
 	_expect(screen.find_child("XpProgress", true, false) is ProgressBar, "Debrief requires animated career XP progress.")

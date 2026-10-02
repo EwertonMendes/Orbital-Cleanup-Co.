@@ -125,8 +125,9 @@ The baseline viewport is 1280×720, but the UI must remain usable on Web/mobile.
 - `ResponsiveCanvas` owns orientation/reference-canvas behavior. `ResponsiveUiProfile` owns shared desktop, compact, phone-landscape and phone-portrait density decisions.
 - Desktop and large landscape keep the authored 1.0 density. Small screens may increase semantic theme font sizes and minimum control heights while preserving the same visual language.
 - Phone landscape should preserve as much live gameplay space as possible. Reflow only the surfaces that need it; do not blindly stack the entire Flight HUD.
-- Operations and Debrief may use more vertical scroll on phones rather than shrinking text or controls below comfortable reading/touch sizes.
+- Operations and Debrief are **zero-scroll decision surfaces**. When content does not fit comfortably, split it into explicit pages/categories with visible navigation instead of shrinking text, hiding overflow or introducing a ScrollContainer.
 - Phone touch targets use the shared profile instead of screen-local magic numbers. Reusable buttons must honor that profile automatically.
+- Phone landscape remains horizontally composed whenever the reference canvas has room; touch density alone must never force the whole console into a vertical document.
 - Desktop and landscape: favor side-by-side structure when it improves comparison.
 - Below approximately 820 px width, or on short phone-height displays, major panels may stack vertically.
 - Portrait must degrade gracefully and remain readable even when landscape is preferred.

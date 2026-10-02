@@ -50,97 +50,125 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 28
 theme_override_constants/margin_bottom = 20
 
-[node name="Scroll" type="ScrollContainer" parent="SafeArea"]
+[node name="Stage" type="MarginContainer" parent="SafeArea"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-horizontal_scroll_mode = 0
 
-[node name="Center" type="CenterContainer" parent="SafeArea/Scroll"]
+[node name="Center" type="CenterContainer" parent="SafeArea/Stage"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="DebriefCard" type="PanelContainer" parent="SafeArea/Scroll/Center"]
+[node name="DebriefCard" type="PanelContainer" parent="SafeArea/Stage/Center"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(930, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_type_variation = &"ConsolePanel"
 
-[node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard"]
+[node name="Margin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 22
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 22
 
-[node name="Content" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin"]
+[node name="Content" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="HeaderCopy" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow"]
+[node name="HeaderCopy" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/HeaderRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="EyebrowLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
+[node name="EyebrowLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "SHIFT REPORT"
 
-[node name="TitleLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
+[node name="TitleLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"DisplayLabel"
 text = "CONTRACT COMPLETE"
 autowrap_mode = 2
 
-[node name="SubtitleLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
+[node name="SubtitleLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/HeaderRow/HeaderCopy"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 text = "Recovery logged. Company records updated."
 autowrap_mode = 2
 
-[node name="StatusBlock" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow"]
+[node name="StatusBlock" type="HBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/HeaderRow"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="StatusIcon" type="TextureRect" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/StatusBlock"]
+[node name="StatusIcon" type="TextureRect" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/HeaderRow/StatusBlock"]
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("5")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="ResultBadge" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/HeaderRow/StatusBlock"]
+[node name="ResultBadge" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/HeaderRow/StatusBlock"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"SuccessValue"
 text = "COMPLETE"
 vertical_alignment = 1
 
-[node name="MissionCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="PageHost" type="Control" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+clip_contents = true
+
+[node name="SummaryPage" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="ProgressPage" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="MissionCard" type="PanelContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage"]
 layout_mode = 2
 theme_type_variation = &"CardPanel"
 
-[node name="MissionMargin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/MissionCard"]
+[node name="MissionMargin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/MissionCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 12
 
-[node name="MissionRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/MissionCard/MissionMargin"]
+[node name="MissionRow" type="HBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/MissionCard/MissionMargin"]
 layout_mode = 2
 
-[node name="MissionLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/MissionCard/MissionMargin/MissionRow"]
+[node name="MissionLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/MissionCard/MissionMargin/MissionRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -148,325 +176,355 @@ theme_type_variation = &"SectionTitle"
 text = "Low Orbit Orientation"
 autowrap_mode = 2
 
-[node name="ContentGrid" type="GridContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="ContentGrid" type="GridContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 3
 
-[node name="ObjectiveCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid"]
+[node name="ObjectiveCard" type="PanelContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"CardPanel"
 
-[node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/ObjectiveCard"]
+[node name="Margin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/ObjectiveCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 12
 
-[node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/ObjectiveCard/Margin"]
+[node name="Stack" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/ObjectiveCard/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="ObjectiveLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/ObjectiveCard/Margin/Stack"]
+[node name="ObjectiveLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/ObjectiveCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "OBJECTIVE"
 
-[node name="ObjectiveValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/ObjectiveCard/Margin/Stack"]
+[node name="ObjectiveValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/ObjectiveCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"SuccessValue"
 text = "COMPLETE"
 
-[node name="CleanupCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid"]
+[node name="CleanupCard" type="PanelContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"CardPanel"
 
-[node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/CleanupCard"]
+[node name="Margin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/CleanupCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 12
 
-[node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/CleanupCard/Margin"]
+[node name="Stack" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/CleanupCard/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="CleanupLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/CleanupCard/Margin/Stack"]
+[node name="CleanupLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/CleanupCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "CLEANUP"
 
-[node name="CleanupValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/CleanupCard/Margin/Stack"]
+[node name="CleanupValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/CleanupCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ValueLabel"
 text = "100%"
 
-[node name="RecoveredCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid"]
+[node name="RecoveredCard" type="PanelContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"CardPanel"
 
-[node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/RecoveredCard"]
+[node name="Margin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/RecoveredCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 12
 
-[node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/RecoveredCard/Margin"]
+[node name="Stack" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/RecoveredCard/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="RecoveredLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/RecoveredCard/Margin/Stack"]
+[node name="RecoveredLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/RecoveredCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "RECOVERED"
 
-[node name="RecoveredValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/ContentGrid/RecoveredCard/Margin/Stack"]
+[node name="RecoveredValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/ContentGrid/RecoveredCard/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ValueLabel"
 text = "12 OBJECTS"
 
-[node name="RewardCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="RewardCard" type="PanelContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage"]
 layout_mode = 2
 theme_type_variation = &"CardPanel"
 
-[node name="RewardMargin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard"]
+[node name="RewardMargin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 13
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 13
 
-[node name="RewardLayout" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin"]
+[node name="RewardLayout" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="RewardsTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout"]
+[node name="RewardsTitle" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ScreenTitle"
 text = "PAYOUT"
 
-[node name="RewardGrid" type="GridContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout"]
+[node name="RewardGrid" type="GridContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 18
 theme_override_constants/v_separation = 8
 columns = 4
 
-[node name="BasePay" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
+[node name="BasePay" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="BasePayLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/BasePay"]
+[node name="BasePayLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid/BasePay"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "BASE PAY"
 
-[node name="BasePayValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/BasePay"]
+[node name="BasePayValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid/BasePay"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"RewardValue"
 text = "+240 C"
 
-[node name="Salvage" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
+[node name="Salvage" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="SalvageLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/Salvage"]
+[node name="SalvageLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid/Salvage"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "SALVAGE"
 
-[node name="SalvageValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/Salvage"]
+[node name="SalvageValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid/Salvage"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"RewardValue"
 text = "+310 C"
 
-[node name="PerfectBonus" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
+[node name="PerfectBonus" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="PerfectBonusLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/PerfectBonus"]
+[node name="PerfectBonusLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid/PerfectBonus"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "PERFECT BONUS"
 
-[node name="PerfectBonusValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/PerfectBonus"]
+[node name="PerfectBonusValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid/PerfectBonus"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"SuccessValue"
 text = "+160 C"
 
-[node name="Total" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
+[node name="Total" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="TotalLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/Total"]
+[node name="TotalLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid/Total"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "TOTAL"
 
-[node name="RewardTotalValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/RewardGrid/Total"]
+[node name="RewardTotalValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/RewardGrid/Total"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"RewardValue"
 text = "+710 C"
 
-[node name="BalanceRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout"]
+[node name="BalanceRow" type="HBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout"]
 layout_mode = 2
 
-[node name="BalanceLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/BalanceRow"]
+[node name="BalanceLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/BalanceRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"UiBodyMuted"
 text = "COMPANY ACCOUNT"
 
-[node name="BalanceValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/RewardCard/RewardMargin/RewardLayout/BalanceRow"]
+[node name="BalanceValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/SummaryPage/RewardCard/RewardMargin/RewardLayout/BalanceRow"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"RewardValue"
 text = "710 CREDITS"
 
-[node name="CareerCard" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="CareerCard" type="PanelContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage"]
 layout_mode = 2
 theme_type_variation = &"CardPanel"
 
-[node name="CareerMargin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard"]
+[node name="CareerMargin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/CareerCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 13
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 13
 
-[node name="CareerLayout" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin"]
+[node name="CareerLayout" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/CareerCard/CareerMargin"]
 layout_mode = 2
 theme_override_constants/separation = 7
 
-[node name="CareerTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout"]
+[node name="CareerTitle" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/CareerCard/CareerMargin/CareerLayout"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ScreenTitle"
 text = "CAREER PROGRESS"
 
-[node name="CareerRow" type="HBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout"]
+[node name="CareerRow" type="HBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/CareerCard/CareerMargin/CareerLayout"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="RankValue" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout/CareerRow"]
+[node name="RankValue" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/CareerCard/CareerMargin/CareerLayout/CareerRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SectionTitle"
 text = "Trainee"
 
-[node name="XpGainLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout/CareerRow"]
+[node name="XpGainLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/CareerCard/CareerMargin/CareerLayout/CareerRow"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"SuccessValue"
 text = "+120 XP"
 
-[node name="XpProgress" type="ProgressBar" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout"]
+[node name="XpProgress" type="ProgressBar" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/CareerCard/CareerMargin/CareerLayout"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 show_percentage = false
 
-[node name="XpProgressLabel" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/CareerCard/CareerMargin/CareerLayout"]
+[node name="XpProgressLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/CareerCard/CareerMargin/CareerLayout"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "330 / 400 XP"
 horizontal_alignment = 2
 
-[node name="PromotionPanel" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="PromotionPanel" type="PanelContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_type_variation = &"CardPanel"
 
-[node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel"]
+[node name="Margin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/PromotionPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 12
 
-[node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin"]
+[node name="Stack" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/PromotionPanel/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="PromotionTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin/Stack"]
+[node name="PromotionTitle" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/PromotionPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"RewardValue"
 text = "PROMOTED"
 
-[node name="PromotionRank" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin/Stack"]
+[node name="PromotionRank" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/PromotionPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"ScreenTitle"
 text = "Junior Cleaner"
 
-[node name="UnlocksTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin/Stack"]
+[node name="UnlocksTitle" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/PromotionPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "NEW UNLOCKS"
 
-[node name="UnlocksList" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/PromotionPanel/Margin/Stack"]
+[node name="UnlocksList" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/PromotionPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="DiscoveriesPanel" type="PanelContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="DiscoveriesPanel" type="PanelContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_type_variation = &"CardPanel"
 
-[node name="Margin" type="MarginContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/DiscoveriesPanel"]
+[node name="Margin" type="MarginContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/DiscoveriesPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 12
 
-[node name="Stack" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/DiscoveriesPanel/Margin"]
+[node name="Stack" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/DiscoveriesPanel/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="DiscoveriesTitle" type="Label" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/DiscoveriesPanel/Margin/Stack"]
+[node name="DiscoveriesTitle" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/DiscoveriesPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"AccentValue"
 text = "NEW DISCOVERIES"
 
-[node name="DiscoveriesList" type="VBoxContainer" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content/DiscoveriesPanel/Margin/Stack"]
+[node name="DiscoveriesList" type="VBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageHost/ProgressPage/DiscoveriesPanel/Margin/Stack"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="ContinueButton" type="Button" parent="SafeArea/Scroll/Center/DebriefCard/Margin/Content"]
+[node name="PageNav" type="HBoxContainer" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="PreviousPage" type="Button" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageNav"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 48)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+text = "<"
+
+[node name="PageLabel" type="Label" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageNav"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "1 / 2"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NextPage" type="Button" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content/PageNav"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 48)
+layout_mode = 2
+theme_type_variation = &"SecondaryButton"
+text = ">"
+
+[node name="ContinueButton" type="Button" parent="SafeArea/Stage/Center/DebriefCard/Margin/Content"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
