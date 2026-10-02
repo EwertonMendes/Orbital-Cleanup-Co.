@@ -1400,7 +1400,7 @@ msgid "HQ_FLEET_MODULES"
 msgstr "MÓDULOS"
 
 msgid "HQ_FLEET_MODULES_HELP"
-msgstr "Módulos de hardware reutilizables. Una vez comprados, permanecen en el inventario de la empresa y pueden equiparse en bahías compatibles."
+msgstr "Elige una bahía y equipa un módulo compatible."
 
 msgid "HQ_FLEET_MODULE_SLOT_FMT"
 msgstr "%s %d - %s"
