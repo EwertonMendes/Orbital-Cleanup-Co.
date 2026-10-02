@@ -132,6 +132,7 @@ func _validate_responsive_ui() -> void:
 	)
 	_expect("ResponsiveUiProfile.current()" in flight_source, "Flight must consume the shared responsive UI profile.")
 	_expect("ResponsiveUiProfile.current()" in operations_source, "Operations must consume the shared responsive UI profile.")
+	_expect("GamepadUiNavigation.grab(contracts_tab, self)" in operations_source and "GamepadUiNavigation.grab(primary_action, self)" not in operations_source, "Operations gamepad entry focus must start on Contracts instead of the deploy action.")
 	_expect("available_width if phone" in operations_source, "Phone Operations must use the available viewport instead of the desktop console width cap.")
 	_expect("ResponsiveUiProfile.current()" in debrief_source, "Debrief must consume the shared responsive UI profile.")
 	_expect("_configure_page_focus_graph" in debrief_source and "previous_page if _page == 1 else next_page" in debrief_source, "Debrief pager must keep gamepad focus on the active page arrow instead of falling through to Continue.")
