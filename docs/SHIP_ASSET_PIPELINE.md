@@ -133,3 +133,51 @@ Before a ship can be enabled:
 - body-kit overlays do not change the base silhouette used for collision;
 - desktop and mobile Web preview remain readable;
 - content/core contracts are green.
+
+
+## Engine VFX customization
+
+Ship propulsion presentation is composed from two existing save-facing cosmetic categories:
+
+- `engine` selects the reusable effect behavior/style;
+- `trail` selects the tint palette shared by the plume, particles and world-space trail.
+
+Keeping these category IDs preserves existing saves while allowing style and color to combine independently. A normal engine style is authored in `content/cosmetics/ship_customization.json`; adding one must not require ship-specific GDScript.
+
+Runtime composition is:
+
+```
+Ship engine_sockets[]
+  -> EngineFxRig per socket
+     -> neutral core plume
+     -> primary CPU particles
+     -> optional secondary CPU particles
+     -> primary world-space EngineTrail
+     -> optional secondary EngineTrail
+```
+
+`EngineFxRig` is the single propulsion-VFX runtime component. The same rig is used in flight and for animated Fleet workshop previews. Engine effect styles own motion/shape parameters; trail palettes own colors. Neither may modify collision, physics or ship stats.
+
+The ship-wide particle budget is bounded and divided across authored engine sockets, so a multi-engine hull gains more emitters rather than multiplying total particle cost without limit. CPU particles are intentional for the project's GL Compatibility/Web/mobile baseline and 2D physics-interpolation behavior.
+
+Engine sockets may optionally author:
+
+- `fx_scale` for nozzle-specific visual size;
+- `rotation_degrees` for visually angled/vectorable nozzles.
+
+Omitted values resolve to `1.0` and `0.0`, keeping all existing ship definitions compatible.
+
+### Engine VFX art rules
+
+Engine VFX textures under `assets/original/vfx/` are neutral white/grayscale primitives with true alpha. Runtime palettes provide color; do not create separate raster files for every color.
+
+The propulsion set includes:
+
+- `engine_core_plume.png` — reusable tapered nozzle plume;
+- `particle_ring.png` — expanding pulse-wave ring;
+- `particle_cloud.png` — diffuse plasma/nebula particle;
+- `particle_glow.svg` — soft ion/glow mote;
+- `particle_streak.svg` — fast spark/energy streak;
+- `particle_shard.svg` — geometric energized fragment.
+
+Do not bake a full exhaust trail into ship artwork. Trails are generated from the ship's real world-space motion history so inertia, turning and boost remain visually truthful.
