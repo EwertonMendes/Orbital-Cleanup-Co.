@@ -165,6 +165,9 @@ func get_ship_access(ship_id: String) -> Dictionary:
 	var definition := _registry.get_ship(ship_id)
 	var unlock := definition.get("unlock", {}) as Dictionary
 	var requirement := get_rank_requirement(String(unlock.get("rank", "trainee")))
+	if _qa_all_customization_unlocked():
+		requirement["unlocked"] = true
+		requirement["xp_remaining"] = 0
 	requirement["type"] = "ship"
 	requirement["ship_id"] = ship_id
 	requirement["content_display_name_key"] = String(definition["display_name_key"])
@@ -211,6 +214,53 @@ func debug_select_ship(ship_id: String) -> bool:
 	state_changed.emit(get_snapshot())
 	print("[Fleet][QA] ACTIVE ship=%s transient=true" % ship_id)
 	return true
+
+func debug_unlock_all_customization() -> void:
+	var fleet := (_state["fleet"] as Dictionary).duplicate(true)
+	fleet["qa_all_customization_unlocked"] = true
+
+	var ships := fleet.get("ships", {}) as Dictionary
+	for ship_id_variant in _registry.list_ship_ids():
+		var ship_id := String(ship_id_variant)
+		if not ships.has(ship_id):
+			ships[ship_id] = _default_ship_state(ship_id)
+	fleet["ships"] = ships
+
+	var owned_modules: Array[String] = []
+	for value in _fleet_rules.get("modules", []) as Array:
+		var module := value as Dictionary
+		var module_id := String(module.get("id", ""))
+		if not module_id.is_empty() and not owned_modules.has(module_id):
+			owned_modules.append(module_id)
+	owned_modules.sort()
+	fleet["owned_modules"] = owned_modules
+
+	var owned_cosmetics := _empty_owned_cosmetics()
+	var categories := _cosmetic_config.get("categories", {}) as Dictionary
+	for category_variant in categories.keys():
+		var category := String(category_variant)
+		var ids: Array[String] = []
+		for value in categories[category] as Array:
+			var option := value as Dictionary
+			var cosmetic_id := String(option.get("id", ""))
+			if not cosmetic_id.is_empty() and not ids.has(cosmetic_id):
+				ids.append(cosmetic_id)
+		ids.sort()
+		owned_cosmetics[category] = ids
+	fleet["owned_cosmetics"] = owned_cosmetics
+
+	_state["fleet"] = fleet
+	_sanitize_fleet()
+	_persist()
+	state_changed.emit(get_snapshot())
+	print("[Fleet][QA] ALL_CUSTOMIZATION_UNLOCKED persisted=true ships=%d modules=%d" % [
+		ships.size(),
+		owned_modules.size(),
+	])
+
+func _qa_all_customization_unlocked() -> bool:
+	var fleet := _state.get("fleet", {}) as Dictionary
+	return bool(fleet.get("qa_all_customization_unlocked", false))
 
 func select_ship(ship_id: String) -> bool:
 	if not is_ship_owned(ship_id):
@@ -313,6 +363,8 @@ func is_module_unlocked(module_id: String) -> bool:
 	var definition := _find_module(module_id)
 	if definition.is_empty():
 		return false
+	if _qa_all_customization_unlocked():
+		return true
 	return meets_rank_requirement(String(definition.get("unlock_rank", "trainee")))
 
 func is_module_owned(module_id: String) -> bool:
@@ -451,6 +503,10 @@ func get_ship_cosmetics() -> Dictionary:
 	return output
 
 func is_cosmetic_unlocked(category: String, cosmetic_id: String) -> bool:
+	if _qa_all_customization_unlocked():
+		if category == "hull":
+			return _registry.has_ship(cosmetic_id)
+		return not _find_cosmetic_option(category, cosmetic_id).is_empty()
 	if category == "hull":
 		var access := get_ship_access(cosmetic_id)
 		return not access.is_empty() and bool(access["unlocked"])
@@ -696,6 +752,7 @@ func _normalize_state(persisted: Dictionary, source_schema: int) -> Dictionary:
 				ids.sort()
 				owned_cosmetics[category] = ids
 		fleet["owned_cosmetics"] = owned_cosmetics
+		fleet["qa_all_customization_unlocked"] = bool((saved_fleet as Dictionary).get("qa_all_customization_unlocked", false))
 		defaults["fleet"] = fleet
 	return defaults
 
@@ -784,6 +841,7 @@ func _default_state() -> Dictionary:
 			"ships": ships,
 			"owned_modules": _default_owned_modules(default_ship_id),
 			"owned_cosmetics": _default_owned_cosmetics(),
+			"qa_all_customization_unlocked": false,
 		},
 	}
 
