@@ -1018,8 +1018,10 @@ func _refresh_ship_category_options() -> void:
 	for option_variant in _progression.get_cosmetic_options(_ship_category):
 		var option := option_variant as Dictionary
 		var cosmetic_id := String(option["id"])
-		if _progression.is_cosmetic_unlocked(_ship_category, cosmetic_id):
-			available.append(option)
+		var unlocked := _progression.is_cosmetic_unlocked(_ship_category, cosmetic_id)
+		if not unlocked:
+			continue
+		available.append(option)
 
 	var page_size := _ship_option_page_size()
 	var page_count := maxi(1, int(ceil(float(available.size()) / float(page_size))))
