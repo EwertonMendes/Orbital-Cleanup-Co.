@@ -50,24 +50,38 @@
     ]
   },
   "visual": {
-    "base_texture": "res://assets/original/ships/pioneer_01_hd.webp",
-    "render_scale": 0.14,
-    "paint_mode": "legacy_blue_bias",
-    "paint_mask": "",
+    "base_texture": "res://assets/original/ships/pioneer_01/base.webp",
+    "render_scale": 0.085,
+    "paint_mode": "rgb_mask",
+    "paint_mask": "res://assets/original/ships/pioneer_01/paint_mask.png",
     "details_texture": "",
     "emissive_texture": "",
     "engine_sockets": [
       {
-        "id": "main",
+        "id": "engine_1",
         "position": [
-          0,
-          41
+          -16.1,
+          36.4
+        ]
+      },
+      {
+        "id": "engine_2",
+        "position": [
+          -0.2,
+          36.9
+        ]
+      },
+      {
+        "id": "engine_3",
+        "position": [
+          15.8,
+          36.5
         ]
       }
     ],
     "tractor_socket": [
       0,
-      -2
+      -27
     ],
     "collision_mode": "base_alpha"
   }
