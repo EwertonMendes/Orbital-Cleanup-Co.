@@ -12,11 +12,11 @@ The original launch SVGs remain in the repository as editable/fallback artwork. 
 
 ## Player ships
 
-`assets/original/ships/pioneer_01_hd.webp` remains the project-owned HD Pioneer-01 base model while the fleet architecture is introduced. The previous Kenney player ship remains in `assets/third_party/` for rollback/reference.
+`assets/original/ships/` now contains the complete 20-model production fleet. Every active model owns a normalized 1024×1024 `base.webp` plus an exact pixel-aligned `paint_mask.png`; the older `pioneer_01_hd.webp` is retained only as rollback/reference artwork.
 
-Ship identity is now authored in `content/ships/`. Resolution, gameplay footprint, engine/tractor sockets and collision source are model data rather than assumptions baked into `PlayerShip.tscn`. Pioneer intentionally keeps its current 0.14 render scale and legacy paint treatment so the architecture change does not alter shipped handling or appearance before its layered art package is produced.
+Ship identity is authored in `content/ships/`. Resolution, gameplay footprint, engine/tractor sockets and collision source are model data rather than assumptions baked into `PlayerShip.tscn`. Each model has an intentionally authored runtime scale and engine/tractor socket layout while sharing the same generic `PlayerShip` runtime.
 
-New fleet art follows `docs/SHIP_ASSET_PIPELINE.md`: approved master geometry first, then pixel-aligned RGB paint mask, detail/emissive layers and optional cosmetic overlays. Cosmetic layers never define player collision.
+Fleet art follows `docs/SHIP_ASSET_PIPELINE.md`: approved master geometry first, then a paint mask derived from that exact bitmap, followed by optional detail/emissive and cosmetic overlay layers. Cosmetic layers never define player collision.
 
 ## Orbital landmarks
 

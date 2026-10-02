@@ -48,7 +48,7 @@ assets/original/ships/<ship_id>/
     ...
 ```
 
-The currently shipped Pioneer-01 remains on its single legacy HD WebP until its layered replacement is authored. Its ship definition declares `paint_mode=legacy_blue_bias`. New production-ready ship art should use `paint_mode=rgb_mask`.
+The complete 20-ship fleet now uses normalized 1024×1024 production masters under `assets/original/ships/<ship_id>/`. Every live ship definition declares `paint_mode=rgb_mask` and references a pixel-aligned RGB paint mask derived from the exact approved master geometry.
 
 ## RGB paint mask
 
