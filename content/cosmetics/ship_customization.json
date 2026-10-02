@@ -20,7 +20,7 @@
         "color": "#39B6E8",
         "secondary_color": "#1B3345",
         "accent_color": "#E7F8FF",
-        "strength": 0.0
+        "strength": 0
       },
       {
         "id": "mint_service",
@@ -41,6 +41,176 @@
         "secondary_color": "#3A2D18",
         "accent_color": "#FFF0BC",
         "strength": 0.92
+      },
+      {
+        "id": "arctic_white",
+        "display_name_key": "COSMETIC_PAINT_ARCTIC_WHITE",
+        "unlock_rank": "trainee",
+        "price": 180,
+        "color": "#E8EDF2",
+        "secondary_color": "#6E7B86",
+        "accent_color": "#9DEBFF",
+        "strength": 0.94
+      },
+      {
+        "id": "graphite_black",
+        "display_name_key": "COSMETIC_PAINT_GRAPHITE_BLACK",
+        "unlock_rank": "trainee",
+        "price": 260,
+        "color": "#252B31",
+        "secondary_color": "#11161B",
+        "accent_color": "#8FDFFF",
+        "strength": 0.94
+      },
+      {
+        "id": "ocean_blue",
+        "display_name_key": "COSMETIC_PAINT_OCEAN_BLUE",
+        "unlock_rank": "trainee",
+        "price": 300,
+        "color": "#2D72E8",
+        "secondary_color": "#102846",
+        "accent_color": "#A9E8FF",
+        "strength": 0.94
+      },
+      {
+        "id": "rescue_red",
+        "display_name_key": "COSMETIC_PAINT_RESCUE_RED",
+        "unlock_rank": "junior_cleaner",
+        "price": 380,
+        "color": "#E24444",
+        "secondary_color": "#4A161A",
+        "accent_color": "#FFF1E5",
+        "strength": 0.94
+      },
+      {
+        "id": "emerald_green",
+        "display_name_key": "COSMETIC_PAINT_EMERALD_GREEN",
+        "unlock_rank": "junior_cleaner",
+        "price": 400,
+        "color": "#35B870",
+        "secondary_color": "#153829",
+        "accent_color": "#BFFFD7",
+        "strength": 0.94
+      },
+      {
+        "id": "royal_purple",
+        "display_name_key": "COSMETIC_PAINT_ROYAL_PURPLE",
+        "unlock_rank": "junior_cleaner",
+        "price": 420,
+        "color": "#8657D9",
+        "secondary_color": "#24183E",
+        "accent_color": "#E8D6FF",
+        "strength": 0.94
+      },
+      {
+        "id": "orange_burst",
+        "display_name_key": "COSMETIC_PAINT_ORANGE_BURST",
+        "unlock_rank": "orbital_cleaner",
+        "price": 520,
+        "color": "#F28C3C",
+        "secondary_color": "#4A2615",
+        "accent_color": "#FFF0C9",
+        "strength": 0.94
+      },
+      {
+        "id": "teal_horizon",
+        "display_name_key": "COSMETIC_PAINT_TEAL_HORIZON",
+        "unlock_rank": "orbital_cleaner",
+        "price": 540,
+        "color": "#25B7B0",
+        "secondary_color": "#123536",
+        "accent_color": "#C7FFF8",
+        "strength": 0.94
+      },
+      {
+        "id": "steel_silver",
+        "display_name_key": "COSMETIC_PAINT_STEEL_SILVER",
+        "unlock_rank": "orbital_cleaner",
+        "price": 560,
+        "color": "#A7B2BD",
+        "secondary_color": "#38434D",
+        "accent_color": "#EAF8FF",
+        "strength": 0.94
+      },
+      {
+        "id": "crimson_night",
+        "display_name_key": "COSMETIC_PAINT_CRIMSON_NIGHT",
+        "unlock_rank": "senior_cleaner",
+        "price": 700,
+        "color": "#B8243D",
+        "secondary_color": "#1B1117",
+        "accent_color": "#FFB7C2",
+        "strength": 0.94
+      },
+      {
+        "id": "violet_storm",
+        "display_name_key": "COSMETIC_PAINT_VIOLET_STORM",
+        "unlock_rank": "senior_cleaner",
+        "price": 720,
+        "color": "#6D4BD1",
+        "secondary_color": "#1B1733",
+        "accent_color": "#CFC4FF",
+        "strength": 0.94
+      },
+      {
+        "id": "neon_magenta",
+        "display_name_key": "COSMETIC_PAINT_NEON_MAGENTA",
+        "unlock_rank": "senior_cleaner",
+        "price": 740,
+        "color": "#D93FB4",
+        "secondary_color": "#3A1832",
+        "accent_color": "#FFD0F4",
+        "strength": 0.94
+      },
+      {
+        "id": "solar_gold",
+        "display_name_key": "COSMETIC_PAINT_SOLAR_GOLD",
+        "unlock_rank": "sector_specialist",
+        "price": 900,
+        "color": "#D9A72E",
+        "secondary_color": "#463615",
+        "accent_color": "#FFF1B8",
+        "strength": 0.94
+      },
+      {
+        "id": "rose_quartz",
+        "display_name_key": "COSMETIC_PAINT_ROSE_QUARTZ",
+        "unlock_rank": "sector_specialist",
+        "price": 920,
+        "color": "#D983A3",
+        "secondary_color": "#4A2434",
+        "accent_color": "#FFE3ED",
+        "strength": 0.94
+      },
+      {
+        "id": "ice_blue",
+        "display_name_key": "COSMETIC_PAINT_ICE_BLUE",
+        "unlock_rank": "sector_specialist",
+        "price": 940,
+        "color": "#7FBFEA",
+        "secondary_color": "#203A4A",
+        "accent_color": "#E3F7FF",
+        "strength": 0.94
+      },
+      {
+        "id": "copper_industrial",
+        "display_name_key": "COSMETIC_PAINT_COPPER_INDUSTRIAL",
+        "unlock_rank": "deep_space_operator",
+        "price": 1120,
+        "color": "#B66A3C",
+        "secondary_color": "#3D2518",
+        "accent_color": "#FFD8B0",
+        "strength": 0.94
+      },
+      {
+        "id": "lime_signal",
+        "display_name_key": "COSMETIC_PAINT_LIME_SIGNAL",
+        "unlock_rank": "deep_space_operator",
+        "price": 1180,
+        "color": "#8ACF3D",
+        "secondary_color": "#263A16",
+        "accent_color": "#ECFFC6",
+        "strength": 0.94
       }
     ],
     "livery": [
@@ -99,7 +269,7 @@
         "tail_color": "#199FDF",
         "head_color": "#B0F8FF",
         "glow_color": "#55DFFF",
-        "width": 11.0,
+        "width": 11,
         "lifetime": 0.52
       },
       {
@@ -110,7 +280,7 @@
         "tail_color": "#35BFA2",
         "head_color": "#C7FFE8",
         "glow_color": "#79E6C4",
-        "width": 9.0,
+        "width": 9,
         "lifetime": 0.62
       },
       {
@@ -121,7 +291,7 @@
         "tail_color": "#D58A1F",
         "head_color": "#FFE6A3",
         "glow_color": "#FFC857",
-        "width": 12.0,
+        "width": 12,
         "lifetime": 0.46
       }
     ],
@@ -133,10 +303,10 @@
         "price": 0,
         "glow_color": "#2ED1FF",
         "core_color": "#9EFFE6",
-        "glow_width": 9.0,
+        "glow_width": 9,
         "core_width": 2.2,
         "pulse_width": 1.5,
-        "pulse_speed": 10.0
+        "pulse_speed": 10
       },
       {
         "id": "mint_recovery",
@@ -145,7 +315,7 @@
         "price": 260,
         "glow_color": "#62E5C2",
         "core_color": "#E1FFF5",
-        "glow_width": 8.0,
+        "glow_width": 8,
         "core_width": 2.5,
         "pulse_width": 1.1,
         "pulse_speed": 8.2
@@ -160,7 +330,151 @@
         "glow_width": 7.2,
         "core_width": 1.8,
         "pulse_width": 0.8,
-        "pulse_speed": 12.0
+        "pulse_speed": 12
+      },
+      {
+        "id": "cobalt_arc",
+        "display_name_key": "COSMETIC_BEAM_COBALT_ARC",
+        "unlock_rank": "trainee",
+        "price": 220,
+        "glow_color": "#3478FF",
+        "core_color": "#C7DAFF",
+        "glow_width": 8.4,
+        "core_width": 2.1,
+        "pulse_width": 1.1,
+        "pulse_speed": 9.4
+      },
+      {
+        "id": "violet_pulse",
+        "display_name_key": "COSMETIC_BEAM_VIOLET_PULSE",
+        "unlock_rank": "trainee",
+        "price": 260,
+        "glow_color": "#875CFF",
+        "core_color": "#E5D8FF",
+        "glow_width": 8.6,
+        "core_width": 2,
+        "pulse_width": 1.4,
+        "pulse_speed": 10.8
+      },
+      {
+        "id": "crimson_lock",
+        "display_name_key": "COSMETIC_BEAM_CRIMSON_LOCK",
+        "unlock_rank": "junior_cleaner",
+        "price": 360,
+        "glow_color": "#E7485C",
+        "core_color": "#FFD5DA",
+        "glow_width": 7.8,
+        "core_width": 2,
+        "pulse_width": 1,
+        "pulse_speed": 11.8
+      },
+      {
+        "id": "emerald_lattice",
+        "display_name_key": "COSMETIC_BEAM_EMERALD_LATTICE",
+        "unlock_rank": "junior_cleaner",
+        "price": 380,
+        "glow_color": "#39D47A",
+        "core_color": "#D2FFE4",
+        "glow_width": 8.2,
+        "core_width": 2.3,
+        "pulse_width": 1.2,
+        "pulse_speed": 8.8
+      },
+      {
+        "id": "white_prism",
+        "display_name_key": "COSMETIC_BEAM_WHITE_PRISM",
+        "unlock_rank": "junior_cleaner",
+        "price": 420,
+        "glow_color": "#CDEFFF",
+        "core_color": "#FFFFFF",
+        "glow_width": 7,
+        "core_width": 2.6,
+        "pulse_width": 0.7,
+        "pulse_speed": 12.6
+      },
+      {
+        "id": "magenta_wave",
+        "display_name_key": "COSMETIC_BEAM_MAGENTA_WAVE",
+        "unlock_rank": "orbital_cleaner",
+        "price": 520,
+        "glow_color": "#E950C4",
+        "core_color": "#FFD6F5",
+        "glow_width": 9,
+        "core_width": 2.2,
+        "pulse_width": 1.5,
+        "pulse_speed": 9.8
+      },
+      {
+        "id": "orange_tow",
+        "display_name_key": "COSMETIC_BEAM_ORANGE_TOW",
+        "unlock_rank": "orbital_cleaner",
+        "price": 540,
+        "glow_color": "#F38B35",
+        "core_color": "#FFE2C2",
+        "glow_width": 9.4,
+        "core_width": 2.4,
+        "pulse_width": 1.3,
+        "pulse_speed": 8
+      },
+      {
+        "id": "deep_blue",
+        "display_name_key": "COSMETIC_BEAM_DEEP_BLUE",
+        "unlock_rank": "orbital_cleaner",
+        "price": 560,
+        "glow_color": "#2453D6",
+        "core_color": "#AFC4FF",
+        "glow_width": 8.8,
+        "core_width": 2,
+        "pulse_width": 1,
+        "pulse_speed": 10
+      },
+      {
+        "id": "lime_signal",
+        "display_name_key": "COSMETIC_BEAM_LIME_SIGNAL",
+        "unlock_rank": "senior_cleaner",
+        "price": 700,
+        "glow_color": "#8DE34A",
+        "core_color": "#EEFFD8",
+        "glow_width": 7.6,
+        "core_width": 2.1,
+        "pulse_width": 0.9,
+        "pulse_speed": 12.2
+      },
+      {
+        "id": "rose_vector",
+        "display_name_key": "COSMETIC_BEAM_ROSE_VECTOR",
+        "unlock_rank": "senior_cleaner",
+        "price": 720,
+        "glow_color": "#E781A8",
+        "core_color": "#FFE0EB",
+        "glow_width": 8,
+        "core_width": 2.2,
+        "pulse_width": 1.1,
+        "pulse_speed": 10.6
+      },
+      {
+        "id": "golden_flux",
+        "display_name_key": "COSMETIC_BEAM_GOLDEN_FLUX",
+        "unlock_rank": "sector_specialist",
+        "price": 900,
+        "glow_color": "#DDB73D",
+        "core_color": "#FFF0A8",
+        "glow_width": 9.2,
+        "core_width": 2.5,
+        "pulse_width": 1.4,
+        "pulse_speed": 8.6
+      },
+      {
+        "id": "ultraviolet",
+        "display_name_key": "COSMETIC_BEAM_ULTRAVIOLET",
+        "unlock_rank": "deep_space_operator",
+        "price": 1180,
+        "glow_color": "#6235E8",
+        "core_color": "#D8C8FF",
+        "glow_width": 10,
+        "core_width": 1.9,
+        "pulse_width": 1.8,
+        "pulse_speed": 13
       }
     ]
   }
