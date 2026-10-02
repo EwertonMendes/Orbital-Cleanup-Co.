@@ -94,6 +94,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 
 var _context: Dictionary = {}
 var _settings: SettingsService
+var _input_service: InputService
 var _audio: AudioService
 var _platform: PlatformService
 var _router: SceneRouter
@@ -120,6 +121,7 @@ func configure(context: Dictionary) -> void:
 	_context = context
 	_overlay_mode = bool(context.get("operations_overlay", false))
 	_settings = context.get("settings") as SettingsService
+	_input_service = context.get("input") as InputService
 	_audio = context.get("audio") as AudioService
 	_platform = context.get("platform") as PlatformService
 	_router = context.get("router") as SceneRouter
@@ -167,12 +169,16 @@ func _ready() -> void:
 		_settings.audio_changed.connect(_on_audio_changed)
 	if not _progression.state_changed.is_connected(_on_progression_changed):
 		_progression.state_changed.connect(_on_progression_changed)
+	if _input_service != null and not _input_service.input_mode_changed.is_connected(_on_input_mode_changed):
+		_input_service.input_mode_changed.connect(_on_input_mode_changed)
 
 	_apply_overlay_presentation()
 	_apply_responsive_layout()
 	_refresh_all()
 	_wire_button_feedback(self)
 	_show_tab(Tab.CONTRACTS, true)
+	if _input_service != null and _input_service.prefers_gamepad():
+		call_deferred("_focus_default_for_gamepad")
 	print("[HQ] READY tab=contracts mode=%s" % ("overlay" if _overlay_mode else "screen"))
 
 func _validate_contracts() -> void:
@@ -471,19 +477,66 @@ func _deploy_training() -> void:
 	_router.show_screen(scene, flight_context)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(InputService.TAB_PREVIOUS):
+		if not settings_layer.visible:
+			_cycle_tab(-1)
+		get_viewport().set_input_as_handled()
+		return
+
+	if event.is_action_pressed(InputService.TAB_NEXT):
+		if not settings_layer.visible:
+			_cycle_tab(1)
+		get_viewport().set_input_as_handled()
+		return
+
+	if event.is_action_pressed(InputService.OPERATIONS):
+		if _overlay_mode:
+			get_viewport().set_input_as_handled()
+			_request_close()
+		return
+
 	if not event.is_action_pressed("ui_cancel"):
 		return
 
-	# Consume Escape before changing/removing the overlay. Closing the Operations
-	# node synchronously can otherwise let the same unhandled event fall through
-	# to FlightScreen, which interprets Escape as "open Operations" and immediately
-	# recreates the overlay.
+	# Consume Back/Escape before changing/removing the overlay. Closing the
+	# Operations node synchronously can otherwise let the same event fall
+	# through to FlightScreen and immediately recreate it.
 	get_viewport().set_input_as_handled()
 
 	if settings_layer.visible:
 		_close_settings()
 	elif _overlay_mode:
 		_request_close()
+
+func _cycle_tab(delta: int) -> void:
+	if _tab_transitioning:
+		return
+	var tabs := [
+		{"button": contracts_tab, "tab": Tab.CONTRACTS},
+		{"button": upgrades_tab, "tab": Tab.UPGRADES},
+		{"button": career_tab, "tab": Tab.CAREER},
+		{"button": ship_tab, "tab": Tab.SHIP},
+		{"button": discovery_tab, "tab": Tab.DISCOVERY},
+	]
+	var visible_tabs: Array[Dictionary] = []
+	for entry_variant in tabs:
+		var entry := entry_variant as Dictionary
+		var button := entry["button"] as Button
+		if button.visible:
+			visible_tabs.append(entry)
+	if visible_tabs.is_empty():
+		return
+
+	var current_index := 0
+	for index in range(visible_tabs.size()):
+		if int(visible_tabs[index]["tab"]) == _active_tab:
+			current_index = index
+			break
+	var next_index := posmod(current_index + delta, visible_tabs.size())
+	var next_entry := visible_tabs[next_index]
+	_show_tab(int(next_entry["tab"]))
+	var button := next_entry["button"] as Button
+	button.call_deferred("grab_focus")
 
 func _request_close() -> void:
 	if not _overlay_mode:
@@ -990,7 +1043,9 @@ func _open_settings() -> void:
 	settings_layer.visible = true
 	settings_layer.modulate.a = 0.0
 	_update_volume_value()
-	settings_close.grab_focus()
+	GamepadUiNavigation.set_focus_enabled(self, false, settings_layer)
+	GamepadUiNavigation.prepare_tree(settings_layer)
+	GamepadUiNavigation.grab(volume_down, settings_layer)
 	var tween := create_tween()
 	tween.tween_property(settings_layer, "modulate:a", 1.0, 0.14).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
@@ -1002,7 +1057,8 @@ func _close_settings() -> void:
 	tween.tween_callback(func() -> void:
 		settings_layer.visible = false
 		settings_layer.modulate.a = 1.0
-		settings_button.grab_focus()
+		GamepadUiNavigation.set_focus_enabled(self, true)
+		GamepadUiNavigation.grab(settings_button, self)
 	)
 
 func _adjust_volume(delta: float) -> void:
@@ -1026,10 +1082,12 @@ func _wire_button_feedback(root: Node) -> void:
 			buttons.append(node as Button)
 	for button in buttons:
 		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		GamepadUiNavigation.prepare_button(button)
 		if button.has_meta("occ_feedback_wired"):
 			continue
 		button.set_meta("occ_feedback_wired", true)
 		button.mouse_entered.connect(_play_ui_hover)
+		button.focus_entered.connect(_on_ui_button_focus_entered.bind(button))
 		if button != close_overlay and button != settings_close:
 			button.pressed.connect(_play_ui_click)
 		button.button_down.connect(_on_ui_button_down.bind(button))
@@ -1049,3 +1107,40 @@ func _on_ui_button_down(_button: Button) -> void:
 
 func _on_ui_button_up(_button: Button) -> void:
 	OccCursorSkin.set_pointing()
+
+
+func _on_ui_button_focus_entered(button: Button) -> void:
+	GamepadUiNavigation.ensure_visible(button)
+	_play_ui_hover()
+
+func _on_input_mode_changed(mode: InputService.InputMode) -> void:
+	if mode == InputService.InputMode.GAMEPAD:
+		call_deferred("_focus_default_for_gamepad")
+	elif mode == InputService.InputMode.POINTER:
+		var focus_owner := get_viewport().gui_get_focus_owner()
+		if focus_owner != null and (focus_owner == self or is_ancestor_of(focus_owner)):
+			focus_owner.release_focus()
+
+func _focus_default_for_gamepad() -> void:
+	if not is_inside_tree():
+		return
+	if settings_layer.visible:
+		GamepadUiNavigation.grab(volume_down, settings_layer)
+		return
+	var current := get_viewport().gui_get_focus_owner()
+	if current != null and (current == self or is_ancestor_of(current)):
+		return
+	if _active_tab == Tab.CONTRACTS and primary_action.visible and not primary_action.disabled:
+		GamepadUiNavigation.grab(primary_action, self)
+	else:
+		var active_button: Button = contracts_tab
+		match _active_tab:
+			Tab.UPGRADES:
+				active_button = upgrades_tab
+			Tab.CAREER:
+				active_button = career_tab
+			Tab.SHIP:
+				active_button = ship_tab
+			Tab.DISCOVERY:
+				active_button = discovery_tab
+		GamepadUiNavigation.grab(active_button, self)
