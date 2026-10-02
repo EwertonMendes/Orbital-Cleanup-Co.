@@ -76,6 +76,12 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var ship_body_kit_preview: TextureRect = %ShipBodyKitPreview
 @onready var ship_preview_card: PanelContainer = %ShipPreviewCard
 @onready var contract_ship_art: TextureRect = %ShipArt
+@onready var contract_ship_details_preview: TextureRect = %ContractShipDetailsPreview
+@onready var contract_ship_livery_preview: TextureRect = %ContractShipLiveryPreview
+@onready var contract_ship_decal_preview: TextureRect = %ContractShipDecalPreview
+@onready var contract_ship_canopy_preview: TextureRect = %ContractShipCanopyPreview
+@onready var contract_ship_emissive_preview: TextureRect = %ContractShipEmissivePreview
+@onready var contract_ship_body_kit_preview: TextureRect = %ContractShipBodyKitPreview
 @onready var contract_ship_card: PanelContainer = %ContractShipCard
 @onready var ship_category_bar: GridContainer = %ShipCategoryBar
 @onready var hull_category: Button = %HullCategory
@@ -1189,34 +1195,32 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 	%TrailValue.text = tr("HQ_SHIP_TRAIL_FMT") % tr(String(trail["display_name_key"]))
 	%BeamStyleValue.text = tr("HQ_SHIP_BEAM_FMT") % tr(String(beam["display_name_key"]))
 
-	var texture := load(String(hull["texture"])) as Texture2D
-	assert(texture != null, "HQ hull preview texture must load.")
-	ship_preview.texture = texture
-	contract_ship_art.texture = texture
-	var preview_material := ship_preview.material as ShaderMaterial
-	assert(preview_material != null, "HQ ship preview requires paint ShaderMaterial.")
-	preview_material.set_shader_parameter("paint_color", Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0)))
-	preview_material.set_shader_parameter("secondary_color", Color.from_string(String(paint.get("secondary_color", "#1B3345")), Color(0.106, 0.200, 0.271, 1.0)))
-	preview_material.set_shader_parameter("accent_color", Color.from_string(String(paint.get("accent_color", "#E7F8FF")), Color(0.906, 0.973, 1.0, 1.0)))
-	preview_material.set_shader_parameter("paint_strength", float(paint["strength"]))
 	var active_definition := _progression.get_active_ship_definition()
 	var active_visual := active_definition.get("visual", {}) as Dictionary
-	var mask_path := String(active_visual.get("paint_mask", ""))
-	var use_mask := String(active_visual.get("paint_mode", "legacy_blue_bias")) == "rgb_mask" and not mask_path.is_empty()
-	preview_material.set_shader_parameter("use_rgb_mask", use_mask)
-	if use_mask:
-		preview_material.set_shader_parameter("paint_mask", load(mask_path) as Texture2D)
-
-	_set_ship_preview_layer(ship_details_preview, String(active_visual.get("details_texture", "")))
-	_set_ship_preview_layer(ship_livery_preview, String(livery.get("texture", "")))
-	_set_ship_preview_layer(ship_decal_preview, String(decal.get("texture", "")))
-	_set_ship_preview_layer(
-		ship_canopy_preview,
-		String(canopy.get("texture", "")),
-		Color.from_string(String(canopy.get("color", "#FFFFFF")), Color.WHITE)
+	_apply_composed_ship_preview(
+		ship_preview,
+		{
+			"details": ship_details_preview,
+			"livery": ship_livery_preview,
+			"decal": ship_decal_preview,
+			"canopy": ship_canopy_preview,
+			"emissive": ship_emissive_preview,
+			"body_kit": ship_body_kit_preview,
+		},
+		hull, paint, livery, decal, canopy, body_kit, active_visual
 	)
-	_set_ship_preview_layer(ship_emissive_preview, String(active_visual.get("emissive_texture", "")))
-	_set_ship_preview_layer(ship_body_kit_preview, String(body_kit.get("texture", "")))
+	_apply_composed_ship_preview(
+		contract_ship_art,
+		{
+			"details": contract_ship_details_preview,
+			"livery": contract_ship_livery_preview,
+			"decal": contract_ship_decal_preview,
+			"canopy": contract_ship_canopy_preview,
+			"emissive": contract_ship_emissive_preview,
+			"body_kit": contract_ship_body_kit_preview,
+		},
+		hull, paint, livery, decal, canopy, body_kit, active_visual
+	)
 
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
@@ -1225,6 +1229,46 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 		_refresh_ship_category_options()
 	else:
 		_refresh_ship_option_selection_visuals()
+
+func _apply_composed_ship_preview(
+	base_target: TextureRect,
+	layers: Dictionary,
+	hull: Dictionary,
+	paint: Dictionary,
+	livery: Dictionary,
+	decal: Dictionary,
+	canopy: Dictionary,
+	body_kit: Dictionary,
+	visual: Dictionary
+) -> void:
+	var texture := load(String(hull["texture"])) as Texture2D
+	assert(texture != null, "HQ hull preview texture must load.")
+	base_target.texture = texture
+
+	var preview_material := base_target.material as ShaderMaterial
+	assert(preview_material != null, "Every HQ ship preview requires the paint ShaderMaterial.")
+	preview_material.set_shader_parameter("paint_color", Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0)))
+	preview_material.set_shader_parameter("secondary_color", Color.from_string(String(paint.get("secondary_color", "#1B3345")), Color(0.106, 0.200, 0.271, 1.0)))
+	preview_material.set_shader_parameter("accent_color", Color.from_string(String(paint.get("accent_color", "#E7F8FF")), Color(0.906, 0.973, 1.0, 1.0)))
+	preview_material.set_shader_parameter("paint_strength", float(paint["strength"]))
+	var mask_path := String(visual.get("paint_mask", ""))
+	var use_mask := String(visual.get("paint_mode", "legacy_blue_bias")) == "rgb_mask" and not mask_path.is_empty()
+	preview_material.set_shader_parameter("use_rgb_mask", use_mask)
+	if use_mask:
+		var mask := load(mask_path) as Texture2D
+		assert(mask != null, "HQ ship paint mask must load: %s" % mask_path)
+		preview_material.set_shader_parameter("paint_mask", mask)
+
+	_set_ship_preview_layer(layers["details"] as TextureRect, String(visual.get("details_texture", "")))
+	_set_ship_preview_layer(layers["livery"] as TextureRect, String(livery.get("texture", "")))
+	_set_ship_preview_layer(layers["decal"] as TextureRect, String(decal.get("texture", "")))
+	_set_ship_preview_layer(
+		layers["canopy"] as TextureRect,
+		String(canopy.get("texture", "")),
+		Color.from_string(String(canopy.get("color", "#FFFFFF")), Color.WHITE)
+	)
+	_set_ship_preview_layer(layers["emissive"] as TextureRect, String(visual.get("emissive_texture", "")))
+	_set_ship_preview_layer(layers["body_kit"] as TextureRect, String(body_kit.get("texture", "")))
 
 func _set_ship_preview_layer(target: TextureRect, texture_path: String, tint: Color = Color.WHITE) -> void:
 	target.modulate = tint
