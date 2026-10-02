@@ -30,6 +30,28 @@ static func grab(preferred: Control, fallback_root: Node = null) -> void:
 		fallback.grab_focus()
 		ensure_visible(fallback)
 
+static func grab_by_meta(root: Node, meta_key: StringName, meta_value: Variant) -> bool:
+	if root == null:
+		return false
+	if root is Control:
+		var root_control := root as Control
+		if root_control.has_meta(meta_key) and root_control.get_meta(meta_key) == meta_value and _can_focus(root_control):
+			root_control.grab_focus()
+			ensure_visible(root_control)
+			return true
+	for node in root.find_children("*", "Control", true, false):
+		if not node is Control:
+			continue
+		var control := node as Control
+		if not control.has_meta(meta_key) or control.get_meta(meta_key) != meta_value:
+			continue
+		if not _can_focus(control):
+			continue
+		control.grab_focus()
+		ensure_visible(control)
+		return true
+	return false
+
 static func first_focusable(root: Node) -> Control:
 	if root == null:
 		return null

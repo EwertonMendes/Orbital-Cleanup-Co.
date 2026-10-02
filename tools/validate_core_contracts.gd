@@ -112,6 +112,9 @@ func _validate_responsive_ui() -> void:
 
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
+	var gamepad_navigation_source := FileAccess.get_file_as_string("res://src/ui/navigation/gamepad_ui_navigation.gd")
+	_expect("grab_by_meta" in gamepad_navigation_source, "Gamepad navigation must support semantic focus restoration for rebuilt option lists.")
+
 	var debrief_source := FileAccess.get_file_as_string("res://src/ui/screens/debrief/contract_debrief_screen.gd")
 	var touch_source := FileAccess.get_file_as_string("res://src/ui/components/touch_flight_controls.gd")
 	var collected_handler_start := flight_source.find("func _on_salvage_collected")
@@ -152,6 +155,8 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("UpgradeGrid", true, false) is GridContainer, "Operations requires upgrade grid.")
 	_expect(screen.find_child("CareerList", true, false) is VBoxContainer, "Operations requires focused career milestones.")
 	_expect(screen.find_child("ContentStage", true, false) is MarginContainer, "Operations requires a fixed no-scroll content stage.")
+	_expect(screen.find_child("ContentShell", true, false) is Control and not (screen.find_child("ContentShell", true, false) is Container), "Operations content panels must overlay a fixed stage instead of resizing their parent.")
+	_expect(screen.find_child("DiscoveryPagerSpacer", true, false) is Control, "Discovery pagination requires a flexible spacer that pins controls to the bottom.")
 	_expect(screen.find_children("*", "ScrollContainer", true, false).is_empty(), "Operations must not depend on ScrollContainer at any breakpoint.")
 	_expect(screen.find_child("PreviousContract", true, false) is Button, "Operations requires previous unlocked contract action.")
 	_expect(screen.find_child("NextContract", true, false) is Button, "Operations requires next unlocked contract action.")
@@ -205,6 +210,8 @@ func _validate_operations_screen() -> void:
 	_expect("discovery_tab.visible = _progression.get_discovery_count() > 0" in operations_source, "Discovery navigation must stay hidden before first discovery.")
 	_expect("if not unlocked:" in operations_source and "continue" in operations_source, "Locked cosmetics must stay absent instead of cluttering the workshop.")
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
+	_expect("primary_action.visible = tab == Tab.CONTRACTS" in operations_source and "footer.visible = true" in operations_source, "Operations must reserve the same footer height on every tab.")
+	_expect("occ_focus_restore_key" in operations_source and "grab_by_meta" in operations_source, "Dynamic Operations lists must restore gamepad focus after selection-driven refreshes.")
 	_expect("ResponsiveUiProfile.viewport_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use the shared real viewport source and a tall portrait console to prevent clipping.")
 	_expect("settings_modal.custom_minimum_size" in operations_source and "footer_spacer.visible = not portrait" in operations_source, "Operations must protect compact Settings and portrait deployment layouts from overflow.")
 	_expect("position:x" in operations_source and "_update_tab_visuals" in operations_source, "Operations tab changes require smooth directional panel motion and explicit selected-tab styling.")

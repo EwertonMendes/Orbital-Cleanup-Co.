@@ -339,7 +339,8 @@ func _sync_tab_selection() -> void:
 		tabs[index].button_pressed = index == _active_tab
 
 func _refresh_tab_content(tab: int) -> void:
-	footer.visible = tab == Tab.CONTRACTS
+	footer.visible = true
+	primary_action.visible = tab == Tab.CONTRACTS
 	match tab:
 		Tab.UPGRADES:
 			_refresh_upgrades()
@@ -716,7 +717,21 @@ func _on_audio_changed(_master_linear: float) -> void:
 	_update_volume_value()
 
 func _on_progression_changed(_snapshot: Dictionary) -> void:
+	var restore_key := ""
+	if _input_service != null and _input_service.prefers_gamepad():
+		var focus_owner := get_viewport().gui_get_focus_owner()
+		if focus_owner != null and focus_owner.has_meta(&"occ_focus_restore_key"):
+			restore_key = String(focus_owner.get_meta(&"occ_focus_restore_key"))
 	_refresh_all()
+	if not restore_key.is_empty():
+		call_deferred("_restore_gamepad_focus_key", restore_key)
+
+func _restore_gamepad_focus_key(restore_key: String) -> void:
+	if _input_service == null or not _input_service.prefers_gamepad():
+		return
+	if GamepadUiNavigation.grab_by_meta(self, &"occ_focus_restore_key", restore_key):
+		return
+	_focus_default_for_gamepad()
 
 func _refresh_all() -> void:
 	if not is_node_ready():
@@ -1039,6 +1054,7 @@ func _refresh_ship_category_options() -> void:
 		button.custom_minimum_size = Vector2(0, 46)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
+		button.set_meta(&"occ_focus_restore_key", "ship:%s:%s" % [_ship_category, cosmetic_id])
 		var name := tr(String(option["display_name_key"]))
 		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % name if selected else name
 		button.pressed.connect(_equip_cosmetic.bind(_ship_category, cosmetic_id))
