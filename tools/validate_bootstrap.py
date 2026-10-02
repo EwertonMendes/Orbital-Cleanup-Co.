@@ -302,8 +302,8 @@ def validate_visual_foundation() -> None:
         fail("Operations console must not cover the original Kenney kit with generic teal particles")
     if "MenuWarpFX" in operations or "menu_warp_fx" in operations_source:
         fail("Operations tab changes must not use the blue warp-particle overlay")
-    if "position:x" not in operations_source:
-        fail("Operations tab changes must keep the smooth directional slide transition")
+    if '"modulate:a"' not in operations_source or "position:x" in operations_source:
+        fail("Operations tab transitions must fade without mutating fixed page geometry")
     if "button_square_header_blade_rectangle" in operations_theme:
         fail("Operations buttons must use neutral Kenney chrome; colored header blades are not allowed")
     if 'Button/styles/pressed = SubResource("ButtonDark")' not in operations_theme:
