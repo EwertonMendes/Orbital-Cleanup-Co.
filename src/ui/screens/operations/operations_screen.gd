@@ -1307,6 +1307,7 @@ func _apply_ship_category_visibility() -> void:
 		canopy_options,
 		body_kit_options,
 		engine_options,
+		modules_options,
 		trail_options,
 		beam_options,
 	]
