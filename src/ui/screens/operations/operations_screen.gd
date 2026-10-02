@@ -68,6 +68,12 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var last_result: Label = %LastResult
 @onready var ship_stats: Label = %ShipStats
 @onready var ship_preview: TextureRect = %ShipPreview
+@onready var ship_details_preview: TextureRect = %ShipDetailsPreview
+@onready var ship_livery_preview: TextureRect = %ShipLiveryPreview
+@onready var ship_decal_preview: TextureRect = %ShipDecalPreview
+@onready var ship_canopy_preview: TextureRect = %ShipCanopyPreview
+@onready var ship_emissive_preview: TextureRect = %ShipEmissivePreview
+@onready var ship_body_kit_preview: TextureRect = %ShipBodyKitPreview
 @onready var ship_preview_card: PanelContainer = %ShipPreviewCard
 @onready var contract_ship_art: TextureRect = %ShipArt
 @onready var contract_ship_card: PanelContainer = %ContractShipCard
@@ -1201,6 +1207,17 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 	if use_mask:
 		preview_material.set_shader_parameter("paint_mask", load(mask_path) as Texture2D)
 
+	_set_ship_preview_layer(ship_details_preview, String(active_visual.get("details_texture", "")))
+	_set_ship_preview_layer(ship_livery_preview, String(livery.get("texture", "")))
+	_set_ship_preview_layer(ship_decal_preview, String(decal.get("texture", "")))
+	_set_ship_preview_layer(
+		ship_canopy_preview,
+		String(canopy.get("texture", "")),
+		Color.from_string(String(canopy.get("color", "#FFFFFF")), Color.WHITE)
+	)
+	_set_ship_preview_layer(ship_emissive_preview, String(active_visual.get("emissive_texture", "")))
+	_set_ship_preview_layer(ship_body_kit_preview, String(body_kit.get("texture", "")))
+
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
 	ship_stats.text = tr("HQ_SHIP_STATS_FMT") % [int(round(float(ship["scan_range"]))), int(round(float(ship["cargo_capacity"]))), recovery_percent]
@@ -1208,6 +1225,17 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 		_refresh_ship_category_options()
 	else:
 		_refresh_ship_option_selection_visuals()
+
+func _set_ship_preview_layer(target: TextureRect, texture_path: String, tint: Color = Color.WHITE) -> void:
+	target.modulate = tint
+	if texture_path.is_empty():
+		target.texture = null
+		target.visible = false
+		return
+	var texture := load(texture_path) as Texture2D
+	assert(texture != null, "Fleet preview layer must load: %s" % texture_path)
+	target.texture = texture
+	target.visible = true
 
 func _refresh_ship_category_options() -> void:
 	for container in [
