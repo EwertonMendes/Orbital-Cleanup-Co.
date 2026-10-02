@@ -74,10 +74,20 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var ship_category_bar: GridContainer = %ShipCategoryBar
 @onready var hull_category: Button = %HullCategory
 @onready var paint_category: Button = %PaintCategory
+@onready var livery_category: Button = %LiveryCategory
+@onready var decal_category: Button = %DecalCategory
+@onready var canopy_category: Button = %CanopyCategory
+@onready var body_kit_category: Button = %BodyKitCategory
+@onready var engine_category: Button = %EngineCategory
 @onready var trail_category: Button = %TrailCategory
 @onready var beam_category: Button = %BeamCategory
 @onready var hull_options: GridContainer = %HullOptions
 @onready var paint_options: GridContainer = %PaintOptions
+@onready var livery_options: GridContainer = %LiveryOptions
+@onready var decal_options: GridContainer = %DecalOptions
+@onready var canopy_options: GridContainer = %CanopyOptions
+@onready var body_kit_options: GridContainer = %BodyKitOptions
+@onready var engine_options: GridContainer = %EngineOptions
 @onready var trail_options: GridContainer = %TrailOptions
 @onready var beam_options: GridContainer = %BeamOptions
 @onready var ship_options_pager: HBoxContainer = %ShipOptionsPager
@@ -1071,6 +1081,11 @@ func _setup_ship_categories() -> void:
 	var categories := [
 		{"button": hull_category, "id": "hull"},
 		{"button": paint_category, "id": "paint"},
+		{"button": livery_category, "id": "livery"},
+		{"button": decal_category, "id": "decal"},
+		{"button": canopy_category, "id": "canopy"},
+		{"button": body_kit_category, "id": "body_kit"},
+		{"button": engine_category, "id": "engine"},
 		{"button": trail_category, "id": "trail"},
 		{"button": beam_category, "id": "beam"},
 	]
@@ -1094,6 +1109,11 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 	%LoadoutTitle.text = tr("HQ_SHIP_LOADOUT")
 	%HullHeading.text = tr("HQ_CUSTOMIZE_HULL")
 	%PaintHeading.text = tr("HQ_CUSTOMIZE_PAINT")
+	%LiveryHeading.text = tr("HQ_CUSTOMIZE_LIVERY")
+	%DecalHeading.text = tr("HQ_CUSTOMIZE_DECAL")
+	%CanopyHeading.text = tr("HQ_CUSTOMIZE_CANOPY")
+	%BodyKitHeading.text = tr("HQ_CUSTOMIZE_BODY_KIT")
+	%EngineHeading.text = tr("HQ_CUSTOMIZE_ENGINE")
 	%TrailHeading.text = tr("HQ_CUSTOMIZE_TRAIL")
 	%BeamHeading.text = tr("HQ_CUSTOMIZE_BEAM")
 	var mastery := _progression.get_active_ship_mastery()
@@ -1104,18 +1124,33 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 	]
 	hull_category.text = tr("HQ_SHIP_TAB_HULL")
 	paint_category.text = tr("HQ_SHIP_TAB_PAINT")
+	livery_category.text = tr("HQ_SHIP_TAB_LIVERY")
+	decal_category.text = tr("HQ_SHIP_TAB_DECAL")
+	canopy_category.text = tr("HQ_SHIP_TAB_CANOPY")
+	body_kit_category.text = tr("HQ_SHIP_TAB_BODY_KIT")
+	engine_category.text = tr("HQ_SHIP_TAB_ENGINE")
 	trail_category.text = tr("HQ_SHIP_TAB_TRAIL")
 	beam_category.text = tr("HQ_SHIP_TAB_BEAM")
 
 	var loadout := _progression.get_ship_cosmetics()
 	var hull := loadout["hull"] as Dictionary
 	var paint := loadout["paint"] as Dictionary
+	var livery := loadout["livery"] as Dictionary
+	var decal := loadout["decal"] as Dictionary
+	var canopy := loadout["canopy"] as Dictionary
+	var body_kit := loadout["body_kit"] as Dictionary
+	var engine := loadout["engine"] as Dictionary
 	var trail := loadout["trail"] as Dictionary
 	var beam := loadout["beam"] as Dictionary
 	%ShipName.text = tr(String(hull["display_name_key"]))
 	%ContractShipName.text = tr(String(hull["display_name_key"]))
 	%HullValue.text = tr("HQ_SHIP_HULL_FMT") % tr(String(hull["display_name_key"]))
 	%PaintValue.text = tr("HQ_SHIP_PAINT_FMT") % tr(String(paint["display_name_key"]))
+	%LiveryValue.text = tr(String(livery["display_name_key"]))
+	%DecalValue.text = tr(String(decal["display_name_key"]))
+	%CanopyValue.text = tr(String(canopy["display_name_key"]))
+	%BodyKitValue.text = tr(String(body_kit["display_name_key"]))
+	%EngineValue.text = tr(String(engine["display_name_key"]))
 	%TrailValue.text = tr("HQ_SHIP_TRAIL_FMT") % tr(String(trail["display_name_key"]))
 	%BeamStyleValue.text = tr("HQ_SHIP_BEAM_FMT") % tr(String(beam["display_name_key"]))
 
@@ -1146,7 +1181,17 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 		_refresh_ship_option_selection_visuals()
 
 func _refresh_ship_category_options() -> void:
-	for container in [hull_options, paint_options, trail_options, beam_options]:
+	for container in [
+		hull_options,
+		paint_options,
+		livery_options,
+		decal_options,
+		canopy_options,
+		body_kit_options,
+		engine_options,
+		trail_options,
+		beam_options,
+	]:
 		for child in container.get_children():
 			child.queue_free()
 	_apply_ship_category_visibility()
@@ -1195,11 +1240,51 @@ func _refresh_ship_category_options() -> void:
 	_configure_ship_option_focus_graph(option_buttons)
 
 func _apply_ship_category_visibility() -> void:
-	var categories := ["hull", "paint", "trail", "beam"]
-	var headings := [%HullHeading, %PaintHeading, %TrailHeading, %BeamHeading]
-	var values := [%HullValue, %PaintValue, %TrailValue, %BeamStyleValue]
-	var grids := [hull_options, paint_options, trail_options, beam_options]
-	var buttons := [hull_category, paint_category, trail_category, beam_category]
+	var categories := ["hull", "paint", "livery", "decal", "canopy", "body_kit", "engine", "trail", "beam"]
+	var headings := [
+		%HullHeading,
+		%PaintHeading,
+		%LiveryHeading,
+		%DecalHeading,
+		%CanopyHeading,
+		%BodyKitHeading,
+		%EngineHeading,
+		%TrailHeading,
+		%BeamHeading,
+	]
+	var values := [
+		%HullValue,
+		%PaintValue,
+		%LiveryValue,
+		%DecalValue,
+		%CanopyValue,
+		%BodyKitValue,
+		%EngineValue,
+		%TrailValue,
+		%BeamStyleValue,
+	]
+	var grids := [
+		hull_options,
+		paint_options,
+		livery_options,
+		decal_options,
+		canopy_options,
+		body_kit_options,
+		engine_options,
+		trail_options,
+		beam_options,
+	]
+	var buttons := [
+		hull_category,
+		paint_category,
+		livery_category,
+		decal_category,
+		canopy_category,
+		body_kit_category,
+		engine_category,
+		trail_category,
+		beam_category,
+	]
 	for index in range(categories.size()):
 		var active: bool = String(categories[index]) == _ship_category
 		(headings[index] as Control).visible = active
@@ -1211,6 +1296,16 @@ func _ship_container(category: String) -> GridContainer:
 	match category:
 		"paint":
 			return paint_options
+		"livery":
+			return livery_options
+		"decal":
+			return decal_options
+		"canopy":
+			return canopy_options
+		"body_kit":
+			return body_kit_options
+		"engine":
+			return engine_options
 		"trail":
 			return trail_options
 		"beam":
@@ -1338,6 +1433,16 @@ func _ship_category_button(category: String) -> Button:
 	match category:
 		"paint":
 			return paint_category
+		"livery":
+			return livery_category
+		"decal":
+			return decal_category
+		"canopy":
+			return canopy_category
+		"body_kit":
+			return body_kit_category
+		"engine":
+			return engine_category
 		"trail":
 			return trail_category
 		"beam":
