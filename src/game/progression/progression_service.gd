@@ -640,7 +640,7 @@ func _normalize_state(persisted: Dictionary, source_schema: int) -> Dictionary:
 	var saved_fleet = persisted.get("fleet", {})
 	if saved_fleet is Dictionary:
 		var fleet := defaults["fleet"] as Dictionary
-		var saved_ships := (saved_fleet as Dictionary).get("ships", {})
+		var saved_ships: Variant = (saved_fleet as Dictionary).get("ships", {})
 		var ships: Dictionary = {}
 		if saved_ships is Dictionary:
 			for ship_id_variant in (saved_ships as Dictionary).keys():
@@ -670,7 +670,7 @@ func _normalize_state(persisted: Dictionary, source_schema: int) -> Dictionary:
 		if saved_owned is Dictionary:
 			for category_variant in owned_cosmetics.keys():
 				var category := String(category_variant)
-				var values := (saved_owned as Dictionary).get(category, [])
+				var values: Variant = (saved_owned as Dictionary).get(category, [])
 				if not values is Array:
 					continue
 				var ids := owned_cosmetics[category] as Array
