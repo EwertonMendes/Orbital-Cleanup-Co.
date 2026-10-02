@@ -224,14 +224,14 @@ func _style_offset(progress: float, index: int) -> float:
 		"pulse":
 			return _strand_offset + sin(wave) * _wave_amplitude * 0.22
 		"spark":
-			var tick := floor(_animation_time * maxf(_animation_speed, 1.0) * 2.5)
-			var jitter := sin(float(index) * 12.9898 + tick * 2.41 + _phase * 5.3)
+			var tick: float = floor(_animation_time * maxf(_animation_speed, 1.0) * 2.5)
+			var jitter: float = sin(float(index) * 12.9898 + tick * 2.41 + _phase * 5.3)
 			return _strand_offset + jitter * _jitter_amplitude
 		"comet":
 			return _strand_offset + sin(wave) * _wave_amplitude * (0.20 + (1.0 - progress) * 0.80)
 		"shard":
 			var alternating := -1.0 if index % 2 == 0 else 1.0
-			var stepped := round(sin(wave) * 2.0) * 0.5
+			var stepped: float = round(sin(wave) * 2.0) * 0.5
 			return _strand_offset + alternating * _jitter_amplitude * (0.45 + _angularity * 0.55) + stepped * _wave_amplitude
 		"mist":
 			return _strand_offset + sin(wave) * _wave_amplitude + sin(wave * 1.73 + 0.9) * _wave_amplitude * 0.42
