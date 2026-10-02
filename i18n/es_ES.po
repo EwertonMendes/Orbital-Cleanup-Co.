@@ -1728,3 +1728,21 @@ msgstr "Flujo Dorado"
 
 msgid "COSMETIC_TRAIL_ULTRAVIOLET"
 msgstr "Ultravioleta"
+
+msgid "HQ_SHIP_TAB_PROPULSION"
+msgstr "PROPULSIÓN"
+
+msgid "HQ_CUSTOMIZE_PROPULSION"
+msgstr "PROPULSIÓN"
+
+msgid "HQ_PROPULSION_STYLE"
+msgstr "ESTILO"
+
+msgid "HQ_PROPULSION_COLOR"
+msgstr "COLOR"
+
+msgid "HQ_SHIP_PROPULSION_STYLE_FMT"
+msgstr "Estilo · %s"
+
+msgid "HQ_SHIP_PROPULSION_COLOR_FMT"
+msgstr "Color · %s"
