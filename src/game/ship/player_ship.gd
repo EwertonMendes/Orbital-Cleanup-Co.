@@ -44,7 +44,6 @@ var _boost_remaining := 0.0
 var _boost_direction := Vector2.UP
 var _boundary_warning_intensity := 0.0
 var _boundary_warning_direction := Vector2.ZERO
-var _boundary_warning_elapsed := 0.0
 var _boundary_return_direction := Vector2.ZERO
 var _boundary_return_target := Vector2.ZERO
 var _boundary_return_elapsed := 0.0
@@ -304,7 +303,7 @@ func _update_facing(intent: Vector2, delta: float) -> float:
 	_facing_rotation = lerp_angle(_facing_rotation, target_rotation, weight)
 	return clampf(difference / (PI * 0.5), -1.0, 1.0)
 
-func _update_operational_boundary(delta: float) -> void:
+func _update_operational_boundary(_delta: float) -> void:
 	if _world_bounds.size == Vector2.ZERO:
 		_reset_operational_warning()
 		return
@@ -321,30 +320,28 @@ func _update_operational_boundary(delta: float) -> void:
 	)
 	var outside_offset := global_position - closest_inside_point
 
-	# The full authored play_bounds remain valid gameplay space. Warning time starts
-	# only after the ship has physically crossed the real sector boundary.
+	# Every point inside play_bounds is normal gameplay. Crossing that authored
+	# edge only enters the warning/tolerance band; player control is preserved.
 	if outside_offset.length_squared() <= 0.0001:
 		_reset_operational_warning()
 		return
 
 	var outward_direction := outside_offset.normalized()
-	if (
-		_boundary_warning_direction.length_squared() > 0.001
-		and _boundary_warning_direction.dot(outward_direction) < 0.35
-	):
-		_boundary_warning_elapsed = 0.0
-
-	_boundary_warning_elapsed += maxf(delta, 0.0)
-	var progress := clampf(
-		_boundary_warning_elapsed / maxf(tuning.boundary_warning_seconds, 0.001),
-		0.0,
-		1.0
-	)
+	var trigger_margin := maxf(tuning.boundary_return_trigger_margin, 1.0)
+	var outside_depth := maxf(absf(outside_offset.x), absf(outside_offset.y))
+	var progress := clampf(outside_depth / trigger_margin, 0.0, 1.0)
 	var warning_intensity := lerpf(0.62, 1.0, smoothstep(0.0, 1.0, progress))
 	_set_operational_boundary_state(warning_intensity, outward_direction)
 
-	if _boundary_warning_elapsed >= tuning.boundary_warning_seconds:
+	# This state is spatial, never timed. The player may remain in the warning
+	# band indefinitely and can always fly back manually. Forced return starts
+	# only after the ship physically crosses the invisible outer perimeter.
+	if not _boundary_return_trigger_rect().has_point(global_position):
 		_apply_boundary_repel(-outward_direction)
+
+func _boundary_return_trigger_rect() -> Rect2:
+	var margin := maxf(tuning.boundary_return_trigger_margin, 1.0)
+	return _world_bounds.grow(margin)
 
 func _apply_boundary_repel(return_direction: Vector2) -> void:
 	var fallback_inward := return_direction.normalized()
@@ -434,7 +431,6 @@ func _finish_boundary_return() -> void:
 	_reset_operational_warning()
 
 func _reset_operational_warning() -> void:
-	_boundary_warning_elapsed = 0.0
 	_set_operational_boundary_state(0.0, Vector2.ZERO)
 
 func _set_operational_boundary_state(intensity: float, outward_direction: Vector2) -> void:
@@ -469,9 +465,12 @@ func _enforce_hard_world_bounds() -> void:
 	if _world_bounds.size == Vector2.ZERO:
 		return
 
-	var escape_margin := maxf(
-		tuning.boundary_hard_escape_margin,
-		tuning.absolute_speed_limit * tuning.boundary_warning_seconds + 240.0
+	# Numerical fail-safe only. The gameplay return trigger is the invisible
+	# perimeter at boundary_return_trigger_margin; this clamp sits farther out
+	# and exists only for extreme teleports or single-frame escapes.
+	var escape_margin := (
+		tuning.boundary_return_trigger_margin
+		+ tuning.boundary_hard_escape_margin
 	)
 	var left := _world_bounds.position.x - escape_margin
 	var right := _world_bounds.end.x + escape_margin
@@ -479,8 +478,6 @@ func _enforce_hard_world_bounds() -> void:
 	var bottom := _world_bounds.end.y + escape_margin
 	var return_direction := Vector2.ZERO
 
-	# Last-resort numerical containment only. The normal path is the timed
-	# operational warning followed by the physical auto-return.
 	if global_position.x < left:
 		global_position.x = left
 		return_direction.x += 1.0

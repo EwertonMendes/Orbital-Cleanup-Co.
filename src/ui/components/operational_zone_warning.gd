@@ -3,7 +3,6 @@ class_name OperationalZoneWarning
 
 const EDGE_COLOR := Color(1.0, 0.64, 0.22, 1.0)
 const PULSE_SPEED := 2.6
-const RETURN_MESSAGE_SECONDS := 0.9
 
 @onready var warning_panel: PanelContainer = %WarningPanel
 @onready var warning_label: Label = %WarningLabel
@@ -13,7 +12,6 @@ var _target_intensity := 0.0
 var _display_intensity := 0.0
 var _outward_direction := Vector2.ZERO
 var _impact_flash := 0.0
-var _return_message_time := 0.0
 var _phase := 0.0
 
 func _ready() -> void:
@@ -27,11 +25,7 @@ func _ready() -> void:
 func refresh_locale() -> void:
 	if not is_node_ready():
 		return
-	warning_label.text = (
-		tr("FLIGHT_OPERATIONAL_RETURN_ACTIVE")
-		if _return_message_time > 0.0
-		else tr("FLIGHT_OPERATIONAL_LIMIT_WARNING")
-	)
+	warning_label.text = tr("FLIGHT_OPERATIONAL_LIMIT_WARNING")
 
 func bind(ship: PlayerShip) -> void:
 	assert(ship != null, "OperationalZoneWarning requires PlayerShip.")
@@ -49,9 +43,6 @@ func _process(delta: float) -> void:
 	var response := 1.0 - exp(-10.0 * maxf(delta, 0.0))
 	_display_intensity = lerpf(_display_intensity, _target_intensity, response)
 	_impact_flash = move_toward(_impact_flash, 0.0, maxf(delta, 0.0) * 2.8)
-	_return_message_time = maxf(_return_message_time - delta, 0.0)
-	if _return_message_time <= 0.0:
-		warning_label.text = tr("FLIGHT_OPERATIONAL_LIMIT_WARNING")
 
 	var pulse := 0.5 + 0.5 * sin(_phase * TAU)
 	var presentation_strength := maxf(_display_intensity, _impact_flash)
@@ -75,8 +66,9 @@ func _on_boundary_changed(intensity: float, outward_direction: Vector2) -> void:
 func _on_boundary_repelled(return_direction: Vector2) -> void:
 	_outward_direction = -return_direction.normalized()
 	_impact_flash = 1.0
-	_return_message_time = RETURN_MESSAGE_SECONDS
-	warning_label.text = tr("FLIGHT_OPERATIONAL_RETURN_ACTIVE")
+	# Keep one persistent, readable message throughout the entire boundary
+	# interaction. The impact flash still communicates that forced return began.
+	warning_label.text = tr("FLIGHT_OPERATIONAL_LIMIT_WARNING")
 	visible = true
 	set_process(true)
 	queue_redraw()
