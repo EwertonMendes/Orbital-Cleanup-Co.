@@ -717,6 +717,14 @@ size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
 text = "ENGINE"
 
+[node name="ModulesCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "MODULES"
+
 [node name="TrailCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
@@ -910,6 +918,23 @@ layout_mode = 2
 theme_type_variation = &"UiBody"
 
 [node name="EngineOptions" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="ModulesHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "MODULES"
+
+[node name="ModulesValue" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UiBody"
+autowrap_mode = 2
+
+[node name="ModulesOptions" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
 unique_name_in_owner = true
 layout_mode = 2
 columns = 2
