@@ -9,7 +9,7 @@
 [ext_resource type="Script" path="res://src/game/salvage/cargo_hold.gd" id="9"]
 [ext_resource type="Script" path="res://src/game/salvage/tractor_beam.gd" id="10"]
 [ext_resource type="Shader" path="res://src/game/customization/ship_paint.gdshader" id="11"]
-[ext_resource type="PackedScene" path="res://src/game/ship/engine_fx_rig.tscn" id="12"]
+[ext_resource type="PackedScene" path="res://src/game/ship/propulsion_trail_rig.tscn" id="12"]
 
 [sub_resource type="ShaderMaterial" id="ShipPaintMaterial"]
 resource_local_to_scene = true
@@ -85,7 +85,7 @@ script = ExtResource("6")
 [node name="SteeringVisual" type="Node2D" parent="FeedbackRoot"]
 unique_name_in_owner = true
 
-[node name="EngineFxRig" parent="FeedbackRoot/SteeringVisual" instance=ExtResource("12")]
+[node name="PropulsionTrailRig" parent="FeedbackRoot/SteeringVisual" instance=ExtResource("12")]
 unique_name_in_owner = true
 position = Vector2(-16.1, 36.4)
 
