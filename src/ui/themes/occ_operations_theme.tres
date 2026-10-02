@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=19 format=3]
+[gd_resource type="Theme" load_steps=20 format=3]
 
 [ext_resource type="FontFile" path="res://assets/third_party/neuropol/NEUROPOL.ttf" id="1"]
 [ext_resource type="FontFile" path="res://assets/third_party/inter/Inter[opsz,wght].ttf" id="2"]
@@ -109,7 +109,21 @@ texture_margin_top = 14.0
 texture_margin_right = 22.0
 texture_margin_bottom = 14.0
 
-[sub_resource type="StyleBoxEmpty" id="EmptyFocus"]
+[sub_resource type="StyleBoxFlat" id="GamepadFocus"]
+draw_center = false
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.48, 0.93, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
 
 [resource]
 default_font = ExtResource("2")
@@ -130,7 +144,7 @@ Button/styles/hover = SubResource("ButtonDarkHover")
 Button/styles/pressed = SubResource("ButtonDark")
 Button/styles/hover_pressed = SubResource("ButtonDark")
 Button/styles/disabled = SubResource("ButtonDark")
-Button/styles/focus = SubResource("EmptyFocus")
+Button/styles/focus = SubResource("GamepadFocus")
 
 PanelContainer/styles/panel = SubResource("ConsolePanel")
 ProgressBar/styles/background = SubResource("ProgressBackground")
@@ -189,7 +203,7 @@ PrimaryButton/styles/hover = SubResource("ButtonYellowHover")
 PrimaryButton/styles/pressed = SubResource("ButtonYellow")
 PrimaryButton/styles/hover_pressed = SubResource("ButtonYellow")
 PrimaryButton/styles/disabled = SubResource("ButtonDark")
-PrimaryButton/styles/focus = SubResource("EmptyFocus")
+PrimaryButton/styles/focus = SubResource("GamepadFocus")
 
 SecondaryButton/base_type = &"Button"
 SecondaryButton/fonts/font = ExtResource("1")
@@ -204,7 +218,7 @@ SecondaryButton/styles/hover = SubResource("ButtonDarkHover")
 SecondaryButton/styles/pressed = SubResource("ButtonDark")
 SecondaryButton/styles/hover_pressed = SubResource("ButtonDark")
 SecondaryButton/styles/disabled = SubResource("ButtonDark")
-SecondaryButton/styles/focus = SubResource("EmptyFocus")
+SecondaryButton/styles/focus = SubResource("GamepadFocus")
 
 TabButton/base_type = &"Button"
 TabButton/fonts/font = ExtResource("1")
@@ -219,7 +233,7 @@ TabButton/styles/hover = SubResource("ButtonDarkHover")
 TabButton/styles/pressed = SubResource("ButtonYellow")
 TabButton/styles/hover_pressed = SubResource("ButtonYellowHover")
 TabButton/styles/disabled = SubResource("ButtonDark")
-TabButton/styles/focus = SubResource("EmptyFocus")
+TabButton/styles/focus = SubResource("GamepadFocus")
 
 UtilityButton/base_type = &"Button"
 UtilityButton/fonts/font = ExtResource("1")
@@ -234,7 +248,7 @@ UtilityButton/styles/hover = SubResource("ButtonDarkHover")
 UtilityButton/styles/pressed = SubResource("ButtonDark")
 UtilityButton/styles/hover_pressed = SubResource("ButtonDark")
 UtilityButton/styles/disabled = SubResource("ButtonDark")
-UtilityButton/styles/focus = SubResource("EmptyFocus")
+UtilityButton/styles/focus = SubResource("GamepadFocus")
 
 DangerButton/base_type = &"Button"
 DangerButton/fonts/font = ExtResource("1")
@@ -249,7 +263,7 @@ DangerButton/styles/hover = SubResource("ButtonDarkHover")
 DangerButton/styles/pressed = SubResource("ButtonDark")
 DangerButton/styles/hover_pressed = SubResource("ButtonDark")
 DangerButton/styles/disabled = SubResource("ButtonDark")
-DangerButton/styles/focus = SubResource("EmptyFocus")
+DangerButton/styles/focus = SubResource("GamepadFocus")
 
 SettingsButton/base_type = &"Button"
 SettingsButton/fonts/font = ExtResource("1")
@@ -264,7 +278,7 @@ SettingsButton/styles/hover = SubResource("ButtonDarkHover")
 SettingsButton/styles/pressed = SubResource("ButtonDark")
 SettingsButton/styles/hover_pressed = SubResource("ButtonDark")
 SettingsButton/styles/disabled = SubResource("ButtonDark")
-SettingsButton/styles/focus = SubResource("EmptyFocus")
+SettingsButton/styles/focus = SubResource("GamepadFocus")
 
 ConsolePanel/base_type = &"PanelContainer"
 ConsolePanel/styles/panel = SubResource("ConsolePanel")
