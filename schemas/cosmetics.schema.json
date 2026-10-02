@@ -115,11 +115,7 @@
         "display_name_key",
         "unlock_rank",
         "price",
-        "core",
-        "trail",
-        "primary_particles",
-        "secondary_particles",
-        "boost"
+        "trail"
       ],
       "properties": {
         "id": {
@@ -138,25 +134,8 @@
           "type": "integer",
           "minimum": 0
         },
-        "core": {
-          "type": "object",
-          "minProperties": 6
-        },
         "trail": {
-          "type": "object",
-          "minProperties": 10
-        },
-        "primary_particles": {
-          "type": "object",
-          "minProperties": 10
-        },
-        "secondary_particles": {
-          "type": "object",
-          "minProperties": 10
-        },
-        "boost": {
-          "type": "object",
-          "minProperties": 3
+          "$ref": "#/$defs/propulsionTrailStyle"
         }
       },
       "additionalProperties": false
@@ -190,40 +169,171 @@
         "palette": {
           "type": "object",
           "required": [
-            "core",
-            "primary",
-            "secondary",
-            "accent",
             "trail_tail",
-            "trail_head"
+            "trail_mid",
+            "trail_head",
+            "accent"
           ],
           "properties": {
-            "core": {
-              "type": "string",
-              "pattern": "^#[0-9A-Fa-f]{6}$"
-            },
-            "primary": {
-              "type": "string",
-              "pattern": "^#[0-9A-Fa-f]{6}$"
-            },
-            "secondary": {
-              "type": "string",
-              "pattern": "^#[0-9A-Fa-f]{6}$"
-            },
-            "accent": {
-              "type": "string",
-              "pattern": "^#[0-9A-Fa-f]{6}$"
-            },
             "trail_tail": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "trail_mid": {
               "type": "string",
               "pattern": "^#[0-9A-Fa-f]{6}$"
             },
             "trail_head": {
               "type": "string",
               "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "accent": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
             }
           },
           "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "propulsionTrailStyle": {
+      "type": "object",
+      "required": [
+        "mode",
+        "width",
+        "lifetime",
+        "sample_interval",
+        "minimum_sample_distance",
+        "max_samples",
+        "opacity",
+        "preview_length",
+        "preview_points",
+        "boost_width_bonus",
+        "boost_lifetime_bonus",
+        "strand_count",
+        "strand_spread",
+        "strand_width_decay",
+        "strand_alpha_decay",
+        "wave_amplitude",
+        "wave_frequency",
+        "animation_speed",
+        "pulse_count",
+        "jitter_amplitude",
+        "angularity"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "ribbon",
+            "plasma",
+            "pulse",
+            "spark",
+            "comet",
+            "shard",
+            "mist",
+            "dual_helix"
+          ]
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0.75,
+          "maximum": 72
+        },
+        "lifetime": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 2
+        },
+        "sample_interval": {
+          "type": "number",
+          "minimum": 0.005,
+          "maximum": 0.2
+        },
+        "minimum_sample_distance": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 20
+        },
+        "max_samples": {
+          "type": "integer",
+          "minimum": 8,
+          "maximum": 120
+        },
+        "opacity": {
+          "type": "number",
+          "minimum": 0.05,
+          "maximum": 1
+        },
+        "preview_length": {
+          "type": "number",
+          "minimum": 12,
+          "maximum": 520
+        },
+        "preview_points": {
+          "type": "integer",
+          "minimum": 8,
+          "maximum": 64
+        },
+        "boost_width_bonus": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "boost_lifetime_bonus": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "strand_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "strand_spread": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 24
+        },
+        "strand_width_decay": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 1
+        },
+        "strand_alpha_decay": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 1
+        },
+        "wave_amplitude": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 24
+        },
+        "wave_frequency": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "animation_speed": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "pulse_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "jitter_amplitude": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 24
+        },
+        "angularity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
         }
       },
       "additionalProperties": false
