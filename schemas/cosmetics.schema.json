@@ -2,39 +2,231 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Orbital Cleanup Co. ship customization",
   "type": "object",
-  "required": ["id", "default_loadout", "categories"],
+  "required": [
+    "id",
+    "default_loadout",
+    "categories"
+  ],
   "properties": {
-    "id": {"const": "ship_customization"},
+    "id": {
+      "const": "ship_customization"
+    },
     "default_loadout": {
       "type": "object",
-      "required": ["paint", "livery", "decal", "canopy", "body_kit", "engine", "trail", "beam"],
+      "required": [
+        "paint",
+        "livery",
+        "decal",
+        "canopy",
+        "body_kit",
+        "engine",
+        "trail",
+        "beam"
+      ],
       "properties": {
-        "paint": {"type": "string"},
-        "livery": {"type": "string"},
-        "decal": {"type": "string"},
-        "canopy": {"type": "string"},
-        "body_kit": {"type": "string"},
-        "engine": {"type": "string"},
-        "trail": {"type": "string"},
-        "beam": {"type": "string"}
+        "paint": {
+          "type": "string"
+        },
+        "livery": {
+          "type": "string"
+        },
+        "decal": {
+          "type": "string"
+        },
+        "canopy": {
+          "type": "string"
+        },
+        "body_kit": {
+          "type": "string"
+        },
+        "engine": {
+          "type": "string"
+        },
+        "trail": {
+          "type": "string"
+        },
+        "beam": {
+          "type": "string"
+        }
       },
       "additionalProperties": false
     },
     "categories": {
       "type": "object",
-      "required": ["paint", "livery", "decal", "canopy", "body_kit", "engine", "trail", "beam"],
+      "required": [
+        "paint",
+        "livery",
+        "decal",
+        "canopy",
+        "body_kit",
+        "engine",
+        "trail",
+        "beam"
+      ],
       "properties": {
-        "paint": {"type": "array", "minItems": 1},
-        "livery": {"type": "array", "minItems": 1},
-        "decal": {"type": "array", "minItems": 1},
-        "canopy": {"type": "array", "minItems": 1},
-        "body_kit": {"type": "array", "minItems": 1},
-        "engine": {"type": "array", "minItems": 1},
-        "trail": {"type": "array", "minItems": 1},
-        "beam": {"type": "array", "minItems": 1}
+        "paint": {
+          "type": "array",
+          "minItems": 1
+        },
+        "livery": {
+          "type": "array",
+          "minItems": 1
+        },
+        "decal": {
+          "type": "array",
+          "minItems": 1
+        },
+        "canopy": {
+          "type": "array",
+          "minItems": 1
+        },
+        "body_kit": {
+          "type": "array",
+          "minItems": 1
+        },
+        "engine": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/engineEffect"
+          }
+        },
+        "trail": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/trailPalette"
+          }
+        },
+        "beam": {
+          "type": "array",
+          "minItems": 1
+        }
       },
       "additionalProperties": false
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "engineEffect": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name_key",
+        "unlock_rank",
+        "price",
+        "core",
+        "trail",
+        "primary_particles",
+        "secondary_particles",
+        "boost"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "display_name_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unlock_rank": {
+          "type": "string",
+          "minLength": 1
+        },
+        "price": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "core": {
+          "type": "object",
+          "minProperties": 6
+        },
+        "trail": {
+          "type": "object",
+          "minProperties": 10
+        },
+        "primary_particles": {
+          "type": "object",
+          "minProperties": 10
+        },
+        "secondary_particles": {
+          "type": "object",
+          "minProperties": 10
+        },
+        "boost": {
+          "type": "object",
+          "minProperties": 3
+        }
+      },
+      "additionalProperties": false
+    },
+    "trailPalette": {
+      "type": "object",
+      "required": [
+        "id",
+        "display_name_key",
+        "unlock_rank",
+        "price",
+        "palette"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "display_name_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unlock_rank": {
+          "type": "string",
+          "minLength": 1
+        },
+        "price": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "palette": {
+          "type": "object",
+          "required": [
+            "core",
+            "primary",
+            "secondary",
+            "accent",
+            "trail_tail",
+            "trail_head"
+          ],
+          "properties": {
+            "core": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "primary": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "secondary": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "accent": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "trail_tail": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            },
+            "trail_head": {
+              "type": "string",
+              "pattern": "^#[0-9A-Fa-f]{6}$"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }
