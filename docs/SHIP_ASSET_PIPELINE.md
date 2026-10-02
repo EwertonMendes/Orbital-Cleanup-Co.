@@ -48,7 +48,7 @@ assets/original/ships/<ship_id>/
     ...
 ```
 
-The complete 20-ship fleet now uses normalized 1024×1024 production masters under `assets/original/ships/<ship_id>/`. Every live ship definition declares `paint_mode=rgb_mask` and references a pixel-aligned RGB paint mask derived from the exact approved master geometry.
+The 19 newly authored fleet models use normalized 1024×1024 production masters under `assets/original/ships/<ship_id>/` with pixel-aligned RGB paint masks. Pioneer-01 deliberately retains its pre-fleet `pioneer_01_hd.webp` model, 0.14 runtime scale and legacy blue-bias paint path so the starter ship keeps its established silhouette and presentation.
 
 ## RGB paint mask
 
