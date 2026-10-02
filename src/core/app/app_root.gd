@@ -71,6 +71,11 @@ func _resolve_startup_route() -> Dictionary:
 	var boost_click_qa := platform_service.get_query_parameter("boost_click_qa").to_lower()
 	var endless_text := platform_service.get_query_parameter("endless")
 	var seed_text := platform_service.get_query_parameter("seed")
+	var unlock_customization := platform_service.get_query_parameter("unlock_customization").to_lower()
+
+	if unlock_customization in ["1", "true", "yes", "all"]:
+		progression_service.debug_unlock_all_customization()
+		print("[QA] CUSTOMIZATION_UNLOCK persisted=true")
 
 	var requested_ship := platform_service.get_query_parameter("ship")
 	if not requested_ship.is_empty():
