@@ -1395,3 +1395,24 @@ msgstr "Kit exterior"
 
 msgid "HQ_CUSTOMIZE_ENGINE"
 msgstr "Efecto del motor"
+
+msgid "HQ_FLEET_MODULES"
+msgstr "MÓDULOS"
+
+msgid "HQ_FLEET_MODULES_HELP"
+msgstr "Módulos de hardware reutilizables. Una vez comprados, permanecen en el inventario de la empresa y pueden equiparse en bahías compatibles."
+
+msgid "HQ_FLEET_MODULE_SLOT_FMT"
+msgstr "%s %d · %s"
+
+msgid "MODULE_SLOT_PROPULSION"
+msgstr "Propulsión"
+
+msgid "MODULE_SLOT_RECOVERY"
+msgstr "Recuperación"
+
+msgid "MODULE_SLOT_CARGO"
+msgstr "Carga"
+
+msgid "MODULE_SLOT_UTILITY"
+msgstr "Utilidad"
