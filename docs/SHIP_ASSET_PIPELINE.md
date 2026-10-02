@@ -173,9 +173,9 @@ Engine VFX textures under `assets/original/vfx/` are neutral white/grayscale pri
 
 The propulsion set includes:
 
-- `engine_core_plume.png` — reusable tapered nozzle plume;
-- `particle_ring.png` — expanding pulse-wave ring;
-- `particle_cloud.png` — diffuse plasma/nebula particle;
+- `engine_core_plume.svg` — reusable tapered nozzle plume;
+- `particle_ring.svg` — expanding pulse-wave ring;
+- `particle_cloud.svg` — diffuse plasma/nebula particle;
 - `particle_glow.svg` — soft ion/glow mote;
 - `particle_streak.svg` — fast spark/energy streak;
 - `particle_shard.svg` — geometric energized fragment.
