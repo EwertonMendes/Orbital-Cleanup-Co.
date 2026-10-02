@@ -85,8 +85,8 @@ The project-owned neutral VFX library under `vfx/` is shared by environmental ef
 - `particle_glow.svg` — ions, plasma and soft luminous dust;
 - `particle_streak.svg` — solar wind, sparks and fast energy motion;
 - `particle_shard.svg` — mineral dust, energized fragments and near-field debris;
-- `engine_core_plume.png` — tapered white/grayscale engine plume used immediately behind a nozzle;
-- `particle_ring.png` — hollow energy ring used by pulse-style propulsion;
-- `particle_cloud.png` — soft irregular plasma/nebula puff used by bloom and mist propulsion.
+- `engine_core_plume.svg` — tapered white/grayscale engine plume used immediately behind a nozzle;
+- `particle_ring.svg` — hollow energy ring used by pulse-style propulsion;
+- `particle_cloud.svg` — soft irregular plasma/nebula puff used by bloom and mist propulsion.
 
 All primitives are intentionally neutral white/grayscale with transparent backgrounds. Runtime profiles provide color, lifetime, scale, velocity and depth behavior so one source texture can support many biomes, engine styles and trail palettes without duplicate recolored files.
