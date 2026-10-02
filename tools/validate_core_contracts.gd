@@ -239,6 +239,7 @@ func _validate_operations_screen() -> void:
 	_expect("ModulesCategory" in operations_scene_source and "ModulesOptions" in operations_scene_source, "Fleet scene must expose reusable module bays.")
 	_expect("ContractShipLiveryPreview" in operations_scene_source and "ContractShipBodyKitPreview" in operations_scene_source, "Contract ship card must render the same layered cosmetics as Fleet preview.")
 	_expect("columns = 1" in operations_scene_source and "ModulesOptions" in operations_scene_source, "Fleet modules must use a full-width single-column selector.")
+	_expect("modules_options.columns = 1" in operations_source and "ModuleRow_" in operations_source and "OVERRUN_TRIM_ELLIPSIS" in operations_source, "Fleet module bays must stay bounded at runtime and trim safely on narrow widths.")
 	_expect("LIVE_SHIP_SYNC" in flight_source and "apply_ship_build" in player_ship_source, "Free Flight must reapply Fleet changes without redeployment.")
 	_expect("_apply_composed_ship_preview" in operations_source and "contract_ship_art" in operations_source, "Operations previews must share one cosmetic composition path.")
 	_expect("unlock_customization" in app_root_source and "debug_unlock_all_customization" in progression_source, "Debug provider must expose persistent save-local customization QA unlock.")
@@ -250,6 +251,9 @@ func _validate_operations_screen() -> void:
 	_expect("Vector2(250, 168)" in upgrade_card_scene_source and "max_lines_visible = 2" in upgrade_card_scene_source, "Upgrade cards must use compact bounded geometry for zero-scroll pages.")
 	var discovery_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_discovery_card.tscn")
 	_expect("Vector2(286, 132)" in discovery_card_scene_source and "Vector2(102, 102)" in discovery_card_scene_source, "Discovery cards must use compact geometry that keeps a 2x2 page inside the fixed stage.")
+
+	var paint_shader_source := FileAccess.get_file_as_string("res://src/game/customization/ship_paint.gdshader")
+	_expect("protected_non_hull_factor" in paint_shader_source and "hull_material" in paint_shader_source, "Fleet painting must protect canopy glass and emissive cyan materials even if an RGB mask contains stray pixels.")
 
 	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_operations_theme.tres")
 	_expect("StyleBoxTexture" in theme_source, "Operations must skin controls with original Kenney textures.")
