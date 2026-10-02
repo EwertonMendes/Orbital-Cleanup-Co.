@@ -102,12 +102,11 @@ func _apply_resolved_build_state(resolved_modifiers: Dictionary, initial_configu
 			push_warning("Ship build cargo capacity is below the currently carried load; preserving occupied units until unload.")
 			target_capacity = cargo.used_units
 		cargo.capacity = target_capacity
-		beam.scan_range = maxf(float(resolved_modifiers.get("scan_range", beam.scan_range)), 80.0)
-		beam.capture_distance = maxf(float(resolved_modifiers.get("capture_distance", beam.capture_distance)), 20.0)
-		beam.pull_speed = maxf(float(resolved_modifiers.get("pull_speed", beam.pull_speed)), 80.0)
-		beam.collection_speed_multiplier = maxf(
-			float(resolved_modifiers.get("collection_speed_multiplier", beam.collection_speed_multiplier)),
-			0.1
+		beam.apply_runtime_profile(
+			float(resolved_modifiers.get("scan_range", beam.scan_range)),
+			float(resolved_modifiers.get("capture_distance", beam.capture_distance)),
+			float(resolved_modifiers.get("pull_speed", beam.pull_speed)),
+			float(resolved_modifiers.get("collection_speed_multiplier", beam.collection_speed_multiplier))
 		)
 		_environment_force_response = clampf(float(resolved_modifiers.get("environment_force_response", 1.0)), 0.45, 1.4)
 		_environment_drag_response = clampf(float(resolved_modifiers.get("environment_drag_response", 1.0)), 0.45, 1.4)
