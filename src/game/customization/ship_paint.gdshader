@@ -12,6 +12,15 @@ vec3 preserve_luminance(vec3 source, vec3 target) {
 	return target * (0.42 + luminance * 0.92);
 }
 
+// Fleet source art uses cyan/teal glass and emissive service lights as a
+// consistent non-hull material language. Some early RGB masks inherited thin
+// reflective highlights from those regions. Paint must never recolor canopy
+// glass or emissive hardware, even when a mask pixel was authored incorrectly.
+float protected_non_hull_factor(vec3 source) {
+	float cyan_bias = min(source.g, source.b) - source.r;
+	return smoothstep(0.035, 0.115, cyan_bias);
+}
+
 void fragment() {
 	vec4 tex = texture(TEXTURE, UV);
 	vec3 rgb = tex.rgb;
@@ -21,9 +30,10 @@ void fragment() {
 		vec3 primary = preserve_luminance(tex.rgb, paint_color.rgb);
 		vec3 secondary = preserve_luminance(tex.rgb, secondary_color.rgb);
 		vec3 accent = preserve_luminance(tex.rgb, accent_color.rgb);
-		float primary_weight = clamp(mask.r * paint_strength, 0.0, 1.0);
-		float secondary_weight = clamp(mask.g * paint_strength, 0.0, 1.0);
-		float accent_weight = clamp(mask.b * paint_strength, 0.0, 1.0);
+		float hull_material = 1.0 - protected_non_hull_factor(tex.rgb);
+		float primary_weight = clamp(mask.r * paint_strength * hull_material, 0.0, 1.0);
+		float secondary_weight = clamp(mask.g * paint_strength * hull_material, 0.0, 1.0);
+		float accent_weight = clamp(mask.b * paint_strength * hull_material, 0.0, 1.0);
 		rgb = mix(rgb, primary, primary_weight);
 		rgb = mix(rgb, secondary, secondary_weight);
 		rgb = mix(rgb, accent, accent_weight);
