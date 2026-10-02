@@ -1,41 +1,93 @@
 {
   "id": "ship_customization",
   "default_loadout": {
-    "hull": "pioneer_01",
     "paint": "company_blue",
+    "livery": "standard_service",
+    "decal": "none",
+    "canopy": "cyan_glass",
+    "body_kit": "stock",
+    "engine": "ion_cyan",
     "trail": "ion_cyan",
     "beam": "standard_cyan"
   },
   "categories": {
-    "hull": [
-      {
-        "id": "pioneer_01",
-        "display_name_key": "COSMETIC_HULL_PIONEER_01",
-        "unlock_rank": "trainee",
-        "texture": "res://assets/original/ships/pioneer_01_hd.webp"
-      }
-    ],
     "paint": [
       {
         "id": "company_blue",
         "display_name_key": "COSMETIC_PAINT_COMPANY_BLUE",
         "unlock_rank": "trainee",
+        "price": 0,
         "color": "#39B6E8",
+        "secondary_color": "#1B3345",
+        "accent_color": "#E7F8FF",
         "strength": 0.0
       },
       {
         "id": "mint_service",
         "display_name_key": "COSMETIC_PAINT_MINT_SERVICE",
         "unlock_rank": "trainee",
+        "price": 240,
         "color": "#79E6C4",
+        "secondary_color": "#173A37",
+        "accent_color": "#E5FFF7",
         "strength": 0.92
       },
       {
         "id": "safety_amber",
         "display_name_key": "COSMETIC_PAINT_SAFETY_AMBER",
         "unlock_rank": "junior_cleaner",
+        "price": 420,
         "color": "#FFC857",
+        "secondary_color": "#3A2D18",
+        "accent_color": "#FFF0BC",
         "strength": 0.92
+      }
+    ],
+    "livery": [
+      {
+        "id": "standard_service",
+        "display_name_key": "COSMETIC_LIVERY_STANDARD_SERVICE",
+        "unlock_rank": "trainee",
+        "price": 0,
+        "texture": ""
+      }
+    ],
+    "decal": [
+      {
+        "id": "none",
+        "display_name_key": "COSMETIC_DECAL_NONE",
+        "unlock_rank": "trainee",
+        "price": 0,
+        "texture": ""
+      }
+    ],
+    "canopy": [
+      {
+        "id": "cyan_glass",
+        "display_name_key": "COSMETIC_CANOPY_CYAN_GLASS",
+        "unlock_rank": "trainee",
+        "price": 0,
+        "color": "#78E8FF",
+        "texture": ""
+      }
+    ],
+    "body_kit": [
+      {
+        "id": "stock",
+        "display_name_key": "COSMETIC_BODY_KIT_STOCK",
+        "unlock_rank": "trainee",
+        "price": 0,
+        "texture": ""
+      }
+    ],
+    "engine": [
+      {
+        "id": "ion_cyan",
+        "display_name_key": "COSMETIC_ENGINE_ION_CYAN",
+        "unlock_rank": "trainee",
+        "price": 0,
+        "glow_color": "#55DFFF",
+        "particle_color": "#55DFFF"
       }
     ],
     "trail": [
@@ -43,6 +95,7 @@
         "id": "ion_cyan",
         "display_name_key": "COSMETIC_TRAIL_ION_CYAN",
         "unlock_rank": "trainee",
+        "price": 0,
         "tail_color": "#199FDF",
         "head_color": "#B0F8FF",
         "glow_color": "#55DFFF",
@@ -53,6 +106,7 @@
         "id": "mint_stream",
         "display_name_key": "COSMETIC_TRAIL_MINT_STREAM",
         "unlock_rank": "trainee",
+        "price": 260,
         "tail_color": "#35BFA2",
         "head_color": "#C7FFE8",
         "glow_color": "#79E6C4",
@@ -63,6 +117,7 @@
         "id": "amber_comet",
         "display_name_key": "COSMETIC_TRAIL_AMBER_COMET",
         "unlock_rank": "junior_cleaner",
+        "price": 440,
         "tail_color": "#D58A1F",
         "head_color": "#FFE6A3",
         "glow_color": "#FFC857",
@@ -75,6 +130,7 @@
         "id": "standard_cyan",
         "display_name_key": "COSMETIC_BEAM_STANDARD_CYAN",
         "unlock_rank": "trainee",
+        "price": 0,
         "glow_color": "#2ED1FF",
         "core_color": "#9EFFE6",
         "glow_width": 9.0,
@@ -86,6 +142,7 @@
         "id": "mint_recovery",
         "display_name_key": "COSMETIC_BEAM_MINT_RECOVERY",
         "unlock_rank": "trainee",
+        "price": 260,
         "glow_color": "#62E5C2",
         "core_color": "#E1FFF5",
         "glow_width": 8.0,
@@ -97,6 +154,7 @@
         "id": "amber_precision",
         "display_name_key": "COSMETIC_BEAM_AMBER_PRECISION",
         "unlock_rank": "junior_cleaner",
+        "price": 440,
         "glow_color": "#FFC857",
         "core_color": "#FFF0BC",
         "glow_width": 7.2,
