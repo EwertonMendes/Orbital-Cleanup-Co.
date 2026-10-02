@@ -176,6 +176,7 @@ func _ready() -> void:
 	_apply_responsive_layout()
 	_refresh_all()
 	_wire_button_feedback(self)
+	_configure_settings_focus_graph()
 	_show_tab(Tab.CONTRACTS, true)
 	if _input_service != null and _input_service.prefers_gamepad():
 		call_deferred("_focus_default_for_gamepad")
@@ -1144,3 +1145,33 @@ func _focus_default_for_gamepad() -> void:
 			Tab.DISCOVERY:
 				active_button = discovery_tab
 		GamepadUiNavigation.grab(active_button, self)
+
+
+func _configure_settings_focus_graph() -> void:
+	# Settings is a small modal with a stable semantic layout. Define the
+	# directional graph explicitly instead of relying on Godot's geometric
+	# nearest-control heuristic, which can jump diagonally to the wide Done
+	# button when moving horizontally across the volume row.
+	english_button.focus_neighbor_left = NodePath()
+	english_button.focus_neighbor_right = english_button.get_path_to(portuguese_button)
+	english_button.focus_neighbor_down = english_button.get_path_to(volume_down)
+
+	portuguese_button.focus_neighbor_left = portuguese_button.get_path_to(english_button)
+	portuguese_button.focus_neighbor_right = portuguese_button.get_path_to(spanish_button)
+	portuguese_button.focus_neighbor_down = portuguese_button.get_path_to(volume_down)
+
+	spanish_button.focus_neighbor_left = spanish_button.get_path_to(portuguese_button)
+	spanish_button.focus_neighbor_right = NodePath()
+	spanish_button.focus_neighbor_down = spanish_button.get_path_to(volume_up)
+
+	volume_down.focus_neighbor_left = NodePath()
+	volume_down.focus_neighbor_right = volume_down.get_path_to(volume_up)
+	volume_down.focus_neighbor_up = volume_down.get_path_to(english_button)
+	volume_down.focus_neighbor_down = volume_down.get_path_to(settings_close)
+
+	volume_up.focus_neighbor_left = volume_up.get_path_to(volume_down)
+	volume_up.focus_neighbor_right = NodePath()
+	volume_up.focus_neighbor_up = volume_up.get_path_to(spanish_button)
+	volume_up.focus_neighbor_down = volume_up.get_path_to(settings_close)
+
+	settings_close.focus_neighbor_up = settings_close.get_path_to(volume_down)
