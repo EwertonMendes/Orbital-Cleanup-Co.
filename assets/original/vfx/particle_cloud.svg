@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <radialGradient id="g1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".82"/>
+      <stop offset=".35" stop-color="#fff" stop-opacity=".40"/>
+      <stop offset=".72" stop-color="#fff" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2">
+      <stop offset="0" stop-color="#fff" stop-opacity=".56"/>
+      <stop offset=".46" stop-color="#fff" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="core">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".28" stop-color="#fff" stop-opacity=".72"/>
+      <stop offset=".70" stop-color="#fff" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="91" cy="88" rx="69" ry="62" fill="url(#g2)"/>
+  <ellipse cx="155" cy="82" rx="67" ry="65" fill="url(#g1)"/>
+  <ellipse cx="183" cy="133" rx="61" ry="62" fill="url(#g2)"/>
+  <ellipse cx="153" cy="176" rx="67" ry="60" fill="url(#g1)"/>
+  <ellipse cx="91" cy="174" rx="65" ry="58" fill="url(#g2)"/>
+  <ellipse cx="68" cy="127" rx="57" ry="62" fill="url(#g1)"/>
+  <ellipse cx="126" cy="129" rx="76" ry="72" fill="url(#core)"/>
+  <path d="M54 119 C79 87 100 103 111 123 C122 145 143 151 164 132 C180 118 190 120 202 137" fill="none" stroke="#fff" stroke-opacity=".36" stroke-width="5" stroke-linecap="round"/>
+  <path d="M78 77 C104 66 119 84 119 103 C119 123 136 129 151 115 C165 102 177 92 191 102" fill="none" stroke="#fff" stroke-opacity=".31" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M80 178 C95 151 116 151 128 169 C141 188 160 189 177 170" fill="none" stroke="#fff" stroke-opacity=".30" stroke-width="4" stroke-linecap="round"/>
+  <path d="M113 45 C125 69 143 72 156 60" fill="none" stroke="#fff" stroke-opacity=".26" stroke-width="3" stroke-linecap="round"/>
+</svg>
