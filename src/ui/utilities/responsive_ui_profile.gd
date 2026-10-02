@@ -135,8 +135,8 @@ static func build_theme(base_theme: Theme, profile: Profile) -> Theme:
 static func apply_minimum_touch_targets(root: Node, profile: Profile) -> void:
 	assert(root != null, "ResponsiveUiProfile requires a UI root.")
 	var target_height := touch_target_height(profile)
-	for candidate in root.find_children("*", "Button", true, false):
-		var button := candidate as Button
+	for candidate in root.find_children("*", "BaseButton", true, false):
+		var button := candidate as BaseButton
 		if button == null:
 			continue
 		if not button.has_meta("responsive_base_min_height"):

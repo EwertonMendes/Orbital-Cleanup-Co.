@@ -32,6 +32,7 @@ func configure(
 ) -> void:
 	assert(not upgrade_id.is_empty(), "HqUpgradeCard requires upgrade id.")
 	_upgrade_id = upgrade_id
+	purchase_button.set_meta(&"occ_focus_restore_key", "upgrade:%s" % upgrade_id)
 	title_label.text = title
 	description_label.text = description
 	level_label.text = "%d / %d" % [level, max_level]
@@ -50,3 +51,10 @@ func _on_purchase_pressed() -> void:
 	if _upgrade_id.is_empty():
 		return
 	purchase_requested.emit(_upgrade_id)
+
+
+func get_upgrade_id() -> String:
+	return _upgrade_id
+
+func get_purchase_button() -> Button:
+	return purchase_button

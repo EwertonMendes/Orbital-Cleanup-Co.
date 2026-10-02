@@ -108,9 +108,13 @@ func _validate_responsive_ui() -> void:
 	var profile_source := FileAccess.get_file_as_string("res://src/ui/utilities/responsive_ui_profile.gd")
 	_expect("FONT_MINIMUMS" in profile_source and "build_theme" in profile_source, "Responsive UI must centralize semantic typography density.")
 	_expect("apply_minimum_touch_targets" in profile_source, "Responsive UI must centralize minimum touch-target sizing.")
+	_expect("\"BaseButton\"" in profile_source, "Responsive touch targets must cover Button and TextureButton controls.")
 
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
+	var gamepad_navigation_source := FileAccess.get_file_as_string("res://src/ui/navigation/gamepad_ui_navigation.gd")
+	_expect("grab_by_meta" in gamepad_navigation_source, "Gamepad navigation must support semantic focus restoration for rebuilt option lists.")
+
 	var debrief_source := FileAccess.get_file_as_string("res://src/ui/screens/debrief/contract_debrief_screen.gd")
 	var touch_source := FileAccess.get_file_as_string("res://src/ui/components/touch_flight_controls.gd")
 	var collected_handler_start := flight_source.find("func _on_salvage_collected")
@@ -128,8 +132,10 @@ func _validate_responsive_ui() -> void:
 	)
 	_expect("ResponsiveUiProfile.current()" in flight_source, "Flight must consume the shared responsive UI profile.")
 	_expect("ResponsiveUiProfile.current()" in operations_source, "Operations must consume the shared responsive UI profile.")
+	_expect("GamepadUiNavigation.grab(contracts_tab, self)" in operations_source and "GamepadUiNavigation.grab(primary_action, self)" not in operations_source, "Operations gamepad entry focus must start on Contracts instead of the deploy action.")
 	_expect("available_width if phone" in operations_source, "Phone Operations must use the available viewport instead of the desktop console width cap.")
 	_expect("ResponsiveUiProfile.current()" in debrief_source, "Debrief must consume the shared responsive UI profile.")
+	_expect("_configure_page_focus_graph" in debrief_source and "previous_page if _page == 1 else next_page" in debrief_source, "Debrief pager must keep gamepad focus on the active page arrow instead of falling through to Continue.")
 	_expect("touch_target_height" in touch_source, "Touch flight controls must size from the shared UI profile.")
 	_expect("visible = _controls_enabled" in touch_source, "Boost HUD must remain visible on desktop as well as touch devices.")
 	_expect("steering_area.visible = touch_steering" in touch_source, "Only the floating steering surface should be touch-specific.")
@@ -150,7 +156,10 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Operations requires contract ship preview.")
 	_expect(screen.find_child("UpgradeGrid", true, false) is GridContainer, "Operations requires upgrade grid.")
 	_expect(screen.find_child("CareerList", true, false) is VBoxContainer, "Operations requires focused career milestones.")
-	_expect(screen.find_child("ContentScroll", true, false) is ScrollContainer, "Operations content must degrade gracefully on compact screens.")
+	_expect(screen.find_child("ContentStage", true, false) is MarginContainer, "Operations requires a fixed no-scroll content stage.")
+	_expect(screen.find_child("ContentShell", true, false) is Control and not (screen.find_child("ContentShell", true, false) is Container), "Operations content panels must overlay a fixed stage instead of resizing their parent.")
+	_expect(screen.find_child("DiscoveryPagerSpacer", true, false) is Control, "Discovery pagination requires a flexible spacer that pins controls to the bottom.")
+	_expect(screen.find_children("*", "ScrollContainer", true, false).is_empty(), "Operations must not depend on ScrollContainer at any breakpoint.")
 	_expect(screen.find_child("PreviousContract", true, false) is Button, "Operations requires previous unlocked contract action.")
 	_expect(screen.find_child("NextContract", true, false) is Button, "Operations requires next unlocked contract action.")
 	_expect(screen.find_child("ContractPosition", true, false) is Label, "Operations requires contract position feedback.")
@@ -172,7 +181,7 @@ func _validate_operations_screen() -> void:
 		_expect(screen.find_child(panel_name, true, false) is VBoxContainer, "Operations requires panel: %s" % panel_name)
 
 	var unique_refs := [
-		"SafeArea", "Header", "MainRow", "TabGrid", "ContentScroll", "ContentShell",
+		"SafeArea", "Header", "MainRow", "TabGrid", "ContentStage", "ContentShell",
 		"ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel",
 		"ContractHero", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
 		"CreditsLabel", "RankLabel", "XpLabel", "CareerRankValue", "CareerXpLabel", "CareerXpBar",
@@ -203,13 +212,25 @@ func _validate_operations_screen() -> void:
 	_expect("discovery_tab.visible = _progression.get_discovery_count() > 0" in operations_source, "Discovery navigation must stay hidden before first discovery.")
 	_expect("if not unlocked:" in operations_source and "continue" in operations_source, "Locked cosmetics must stay absent instead of cluttering the workshop.")
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
+	_expect("footer.visible = tab == Tab.CONTRACTS" in operations_source, "Non-contract tabs must use the full fixed content stage without resizing the outer console.")
+	_expect("occ_focus_restore_key" in operations_source and "grab_by_meta" in operations_source, "Dynamic Operations lists must restore gamepad focus after selection-driven refreshes.")
+	_expect("_suppress_progression_refresh" in operations_source and "_refresh_ship(false)" in operations_source, "Cosmetic selection must update in place so controller focus is never destroyed.")
+	_expect("_configure_ship_option_focus_graph" in operations_source, "Ship option lists require explicit controller neighbors after dynamic construction.")
+	_expect("_refresh_visible_upgrade_cards" in operations_source and "_configure_upgrade_focus_graph" in operations_source, "Upgrade purchases must update existing cards in place and preserve controller navigation.")
+	_expect("upgrade_grid.columns = 1 if portrait else 2" in operations_source and "return 4" in operations_source, "Desktop upgrades must use a bounded 2x2 page that fits the fixed content stage.")
 	_expect("ResponsiveUiProfile.viewport_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use the shared real viewport source and a tall portrait console to prevent clipping.")
 	_expect("settings_modal.custom_minimum_size" in operations_source and "footer_spacer.visible = not portrait" in operations_source, "Operations must protect compact Settings and portrait deployment layouts from overflow.")
-	_expect("position:x" in operations_source and "_update_tab_visuals" in operations_source, "Operations tab changes require smooth directional panel motion and explicit selected-tab styling.")
+	_expect('"modulate:a"' in operations_source and "position:x" not in operations_source and "_update_tab_visuals" in operations_source, "Operations tab transitions must animate opacity without mutating fixed page geometry.")
 	_expect("menu_warp_fx" not in operations_source, "Operations tab changes must not use the removed blue warp-particle overlay.")
 	_expect('event.is_action_pressed("ui_cancel")' in operations_source, "Operations overlay must close from ESC / ui_cancel.")
 	var operations_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.tscn")
 	_expect('text = "-"' in operations_scene_source, "Settings volume-down must use an ASCII minus glyph supported by the display font.")
+
+	_expect("theme_override_constants/separation = 4" in operations_scene_source and "UpgradePagerSpacer" in operations_scene_source, "Upgrades page must reserve enough vertical room to keep pagination fully inside the fixed stage.")
+	var upgrade_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_upgrade_card.tscn")
+	_expect("Vector2(250, 168)" in upgrade_card_scene_source and "max_lines_visible = 2" in upgrade_card_scene_source, "Upgrade cards must use compact bounded geometry for zero-scroll pages.")
+	var discovery_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_discovery_card.tscn")
+	_expect("Vector2(286, 132)" in discovery_card_scene_source and "Vector2(102, 102)" in discovery_card_scene_source, "Discovery cards must use compact geometry that keeps a 2x2 page inside the fixed stage.")
 
 	var theme_source := FileAccess.get_file_as_string("res://src/ui/themes/occ_operations_theme.tres")
 	_expect("StyleBoxTexture" in theme_source, "Operations must skin controls with original Kenney textures.")
@@ -1384,7 +1405,9 @@ func _validate_debrief_screen() -> void:
 		return
 	var screen := packed.instantiate()
 	_expect(screen is ContractDebriefScreen, "Contract Debrief root must use ContractDebriefScreen.")
-	_expect(screen.find_child("Scroll", true, false) is ScrollContainer, "Debrief must remain scrollable on compact screens.")
+	_expect(screen.find_child("Stage", true, false) is MarginContainer, "Debrief requires a fixed no-scroll stage.")
+	_expect(screen.find_children("*", "ScrollContainer", true, false).is_empty(), "Debrief must not depend on ScrollContainer at any breakpoint.")
+	_expect(screen.find_child("SummaryPage", true, false) is VBoxContainer and screen.find_child("ProgressPage", true, false) is VBoxContainer, "Debrief must split variable content into fixed pages.")
 	_expect(screen.find_child("ContentGrid", true, false) is GridContainer, "Debrief requires responsive mission summary.")
 	_expect(screen.find_child("RewardGrid", true, false) is GridContainer, "Debrief requires reward breakdown.")
 	_expect(screen.find_child("XpProgress", true, false) is ProgressBar, "Debrief requires animated career XP progress.")

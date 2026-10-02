@@ -433,6 +433,18 @@ msgstr "ENGINE TRAIL"
 msgid "HQ_CUSTOMIZE_BEAM"
 msgstr "TRACTOR BEAM"
 
+msgid "HQ_SHIP_TAB_HULL"
+msgstr "HULL"
+
+msgid "HQ_SHIP_TAB_PAINT"
+msgstr "PAINT"
+
+msgid "HQ_SHIP_TAB_TRAIL"
+msgstr "TRAIL"
+
+msgid "HQ_SHIP_TAB_BEAM"
+msgstr "BEAM"
+
 msgid "HQ_SHIP_HULL_FMT"
 msgstr "Hull · %s"
 

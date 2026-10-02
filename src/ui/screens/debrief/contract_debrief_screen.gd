@@ -5,6 +5,11 @@ const OPERATIONS_SCREEN_PATH := "res://src/ui/screens/operations/operations_scre
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var debrief_card: PanelContainer = %DebriefCard
+@onready var summary_page: VBoxContainer = %SummaryPage
+@onready var progress_page: VBoxContainer = %ProgressPage
+@onready var previous_page: Button = %PreviousPage
+@onready var page_label: Label = %PageLabel
+@onready var next_page: Button = %NextPage
 @onready var content_grid: GridContainer = %ContentGrid
 @onready var reward_grid: GridContainer = %RewardGrid
 @onready var title_label: Label = %TitleLabel
@@ -46,6 +51,7 @@ var _reward_player: AudioStreamPlayer
 var _animation_finished := false
 var _base_theme: Theme
 var _ui_density_key := -1
+var _page := 0
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -65,8 +71,12 @@ func _ready() -> void:
 	_base_theme = theme
 	_validate_contracts()
 	continue_button.pressed.connect(_continue_to_hq)
+	previous_page.pressed.connect(_change_page.bind(-1))
+	next_page.pressed.connect(_change_page.bind(1))
 	continue_button.mouse_entered.connect(_play_ui_hover)
 	continue_button.focus_entered.connect(_play_ui_hover)
+	GamepadUiNavigation.prepare_button(previous_page)
+	GamepadUiNavigation.prepare_button(next_page)
 	GamepadUiNavigation.prepare_button(continue_button)
 	if _input_service != null and not _input_service.input_mode_changed.is_connected(_on_input_mode_changed):
 		_input_service.input_mode_changed.connect(_on_input_mode_changed)
@@ -77,11 +87,12 @@ func _ready() -> void:
 
 	_apply_responsive_layout()
 	_refresh_copy()
+	_set_page(0)
 	_prepare_animation_state()
 
 	await get_tree().process_frame
 	if _input_service != null and _input_service.prefers_gamepad():
-		GamepadUiNavigation.grab(continue_button, self)
+		GamepadUiNavigation.grab(next_page, self)
 	_play_sequence()
 
 	if _platform != null:
@@ -97,6 +108,7 @@ func _ready() -> void:
 
 func _validate_contracts() -> void:
 	assert(safe_area != null, "Debrief requires responsive SafeArea.")
+	assert(summary_page != null and progress_page != null and previous_page != null and next_page != null, "Debrief requires fixed paged content.")
 	assert(content_grid != null and reward_grid != null, "Debrief requires responsive grids.")
 	assert(xp_progress != null, "Debrief requires career XP progress.")
 	assert(promotion_panel != null and unlocks_list != null, "Debrief requires promotion reveal.")
@@ -108,7 +120,7 @@ func _apply_responsive_layout() -> void:
 	var portrait := ResponsiveCanvas.apply_reference(get_tree().root)
 	var profile := ResponsiveUiProfile.current()
 	var phone := ResponsiveUiProfile.is_phone(profile)
-	var compact := ResponsiveUiProfile.is_compact(profile) or portrait
+	var compact := ResponsiveUiProfile.is_compact(profile)
 
 	var density_key := ResponsiveUiProfile.density_key(profile)
 	if _ui_density_key != density_key:
@@ -122,16 +134,55 @@ func _apply_responsive_layout() -> void:
 		])
 	ResponsiveUiProfile.apply_minimum_touch_targets(self, profile)
 
-	content_grid.columns = 1 if compact else 3
-	reward_grid.columns = 2 if compact else 4
+	content_grid.columns = 1 if portrait else 3
+	reward_grid.columns = 2 if portrait else 4
 	var horizontal_margin := 12 if phone else (14 if compact else 30)
 	var vertical_margin := 10 if compact else 18
 	var available_width := maxf(size.x - float(horizontal_margin * 2), 280.0)
-	debrief_card.custom_minimum_size.x = available_width if phone else minf(900.0, available_width)
+	var available_height := maxf(size.y - float(vertical_margin * 2), 360.0)
+	debrief_card.custom_minimum_size = Vector2(
+		available_width if phone else minf(980.0, available_width),
+		available_height
+	)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
+
+func _change_page(delta: int) -> void:
+	var target_page := clampi(_page + delta, 0, 1)
+	if target_page == _page:
+		return
+	_set_page(target_page)
+	# The arrow that triggered the transition becomes disabled at the new edge.
+	# Move focus to the valid opposite arrow instead of falling back to Continue.
+	GamepadUiNavigation.grab(previous_page if _page == 1 else next_page, self)
+
+func _set_page(page: int) -> void:
+	_page = clampi(page, 0, 1)
+	summary_page.visible = _page == 0
+	progress_page.visible = _page == 1
+	page_label.text = "%d / 2" % (_page + 1)
+	previous_page.disabled = _page == 0
+	next_page.disabled = _page == 1
+	_configure_page_focus_graph()
+
+func _configure_page_focus_graph() -> void:
+	# Pager navigation is semantic, not geometric. This prevents the very wide
+	# Continue button from stealing left/right focus from the page controls.
+	previous_page.focus_neighbor_left = previous_page.get_path_to(previous_page)
+	previous_page.focus_neighbor_right = previous_page.get_path_to(next_page)
+	previous_page.focus_neighbor_down = previous_page.get_path_to(continue_button)
+
+	next_page.focus_neighbor_left = next_page.get_path_to(previous_page)
+	next_page.focus_neighbor_right = next_page.get_path_to(next_page)
+	next_page.focus_neighbor_down = next_page.get_path_to(continue_button)
+
+	continue_button.focus_neighbor_up = continue_button.get_path_to(
+		previous_page if _page == 1 else next_page
+	)
+	continue_button.focus_neighbor_left = continue_button.get_path_to(previous_page)
+	continue_button.focus_neighbor_right = continue_button.get_path_to(next_page)
 
 func _refresh_copy() -> void:
 	var perfect := bool(_result.get("perfect_cleanup", false))
@@ -393,6 +444,8 @@ func _create_player(stream: AudioStream, volume_db: float) -> AudioStreamPlayer:
 func _on_input_mode_changed(mode: InputService.InputMode) -> void:
 	_refresh_copy()
 	if mode == InputService.InputMode.GAMEPAD:
-		GamepadUiNavigation.grab(continue_button, self)
-	elif mode == InputService.InputMode.POINTER and continue_button.has_focus():
-		continue_button.release_focus()
+		GamepadUiNavigation.grab(previous_page if _page == 1 else next_page, self)
+	elif mode == InputService.InputMode.POINTER:
+		var focus_owner := get_viewport().gui_get_focus_owner()
+		if focus_owner != null and (focus_owner == continue_button or focus_owner == previous_page or focus_owner == next_page):
+			focus_owner.release_focus()
