@@ -240,7 +240,7 @@ Ship definition
 
 The five permanent upgrade tracks are Propulsion, Maneuvering, Recovery, Cargo and Pulse. Upgrade levels and Mastery belong to one owned ship. Modules are reusable inventory items in propulsion/recovery/cargo/utility families and are applied by the same build resolver.
 
-Cosmetics remain presentation-only and are authored in `content/cosmetics/ship_customization.json`. The persistent cosmetic surface supports paint, livery, decal, canopy, body kit, engine FX, trail and beam FX. The current Operations UI exposes models/paint/trail/beam while the remaining layered categories are already supported by domain/runtime data for the upcoming art pass.
+Cosmetics remain presentation-only and are authored in `content/cosmetics/ship_customization.json`. The persistent cosmetic surface supports paint, livery, decal, canopy, body kit, engine FX, trail and beam FX. The Fleet page exposes all of those categories through the same paged, zero-scroll purchase/equip surface; categories with only their stock/default option remain intentionally minimal until approved art is added.
 
 The `hull` category exposed by `ProgressionService` is a compatibility adapter for the existing zero-scroll Operations surface: its ids are real ship models and selection changes `active_ship_id`. It is not persisted as a cosmetic category.
 
