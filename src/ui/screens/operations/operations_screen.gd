@@ -1054,7 +1054,7 @@ func _apply_ship_category_visibility() -> void:
 	var grids := [hull_options, paint_options, trail_options, beam_options]
 	var buttons := [hull_category, paint_category, trail_category, beam_category]
 	for index in range(categories.size()):
-		var active := categories[index] == _ship_category
+		var active: bool = String(categories[index]) == _ship_category
 		(headings[index] as Control).visible = active
 		(values[index] as Control).visible = active
 		(grids[index] as Control).visible = active
