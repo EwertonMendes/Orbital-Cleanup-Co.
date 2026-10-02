@@ -1400,7 +1400,7 @@ msgid "HQ_FLEET_MODULES"
 msgstr "MODULES"
 
 msgid "HQ_FLEET_MODULES_HELP"
-msgstr "Reusable hardware modules. Purchased modules stay in company inventory and can be equipped on compatible ship bays."
+msgstr "Choose a bay, then equip a compatible module."
 
 msgid "HQ_FLEET_MODULE_SLOT_FMT"
 msgstr "%s %d - %s"
