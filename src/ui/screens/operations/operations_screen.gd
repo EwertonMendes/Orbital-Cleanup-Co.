@@ -1339,6 +1339,7 @@ func _refresh_ship_category_options() -> void:
 		beam_options,
 	]:
 		for child in container.get_children():
+			container.remove_child(child)
 			child.queue_free()
 	_apply_ship_category_visibility()
 
