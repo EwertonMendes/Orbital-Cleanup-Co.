@@ -1325,7 +1325,7 @@ func _refresh_ship_category_options() -> void:
 		var selected := cosmetic_id == equipped
 		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
 		assert(button != null, "Cosmetic option must use OccChromeButton.")
-		button.custom_minimum_size = Vector2(0, 50)
+		button.custom_minimum_size = Vector2(0, 46)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
 		button.set_meta(&"occ_focus_restore_key", "ship:%s:%s" % [_ship_category, cosmetic_id])
@@ -1492,7 +1492,7 @@ func _refresh_module_options() -> void:
 		var selected := bool(entry["selected"])
 		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
 		assert(button != null, "Module option must use OccChromeButton.")
-		button.custom_minimum_size = Vector2(0, 46)
+		button.custom_minimum_size = Vector2(0, 50)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
 		button.set_meta(&"occ_focus_restore_key", "module:%s:%d:%s" % [slot, slot_index, module_id])
