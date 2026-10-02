@@ -66,21 +66,23 @@ func apply_style(
 	style: Dictionary,
 	palette: Dictionary = {},
 	phase: float = 0.0,
-	alpha_scale: float = 1.0
+	alpha_scale: float = 1.0,
+	visual_scale: float = 1.0
 ) -> void:
 	assert(not style.is_empty(), "EngineTrail style cannot be empty.")
 	_mode = String(style.get("mode", "ribbon"))
-	_base_width = clampf(float(style.get("width", width)), 2.0, 24.0)
+	var safe_visual_scale := clampf(visual_scale, 0.25, 4.0)
+	_base_width = clampf(float(style.get("width", width)) * safe_visual_scale, 1.0, 64.0)
 	_base_lifetime = clampf(float(style.get("lifetime", sample_lifetime)), 0.10, 2.0)
 	sample_interval = clampf(float(style.get("sample_interval", sample_interval)), 0.005, 0.20)
 	minimum_sample_distance = clampf(float(style.get("minimum_sample_distance", minimum_sample_distance)), 0.1, 20.0)
 	max_samples = clampi(int(style.get("max_samples", max_samples)), 8, 96)
-	_wave_amplitude = clampf(float(style.get("wave_amplitude", 0.0)), 0.0, 16.0)
+	_wave_amplitude = clampf(float(style.get("wave_amplitude", 0.0)) * safe_visual_scale, 0.0, 48.0)
 	_wave_frequency = clampf(float(style.get("wave_frequency", 0.0)), 0.0, 8.0)
 	_phase = phase
 	_opacity = clampf(float(style.get("opacity", 1.0)), 0.05, 1.0)
 	_alpha_scale = clampf(alpha_scale, 0.05, 1.0)
-	_preview_length = clampf(float(style.get("preview_length", 72.0)), 24.0, 180.0)
+	_preview_length = clampf(float(style.get("preview_length", 72.0)) * safe_visual_scale, 12.0, 480.0)
 	_preview_points = clampi(int(style.get("preview_points", 20)), 8, 48)
 	_boost_width_bonus = clampf(float(style.get("boost_width_bonus", 0.20)), 0.0, 1.0)
 	_boost_lifetime_bonus = clampf(float(style.get("boost_lifetime_bonus", 0.12)), 0.0, 1.0)
