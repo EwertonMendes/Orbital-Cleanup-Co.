@@ -64,6 +64,18 @@ func _ready() -> void:
 		_apply_visual_style()
 	_hide_beam()
 
+func apply_runtime_profile(
+	next_scan_range: float,
+	next_capture_distance: float,
+	next_pull_speed: float,
+	next_collection_speed_multiplier: float
+) -> void:
+	scan_range = maxf(next_scan_range, 80.0)
+	capture_distance = maxf(next_capture_distance, 20.0)
+	pull_speed = maxf(next_pull_speed, 80.0)
+	collection_speed_multiplier = maxf(next_collection_speed_multiplier, 0.1)
+	_sync_scan_shape()
+
 func set_interaction_enabled(enabled: bool) -> void:
 	_interaction_enabled = enabled
 	visible = enabled
