@@ -78,15 +78,12 @@ All eight authored gameplay landmarks now use project-owned raster artwork at ru
 
 `texture_reference_size` keeps each new 768px raster asset at the visual footprint of its previous authored SVG dimensions, so artwork resolution remains independent from gameplay geometry.
 
-## Reusable VFX primitives
+## Reusable environmental VFX primitives
 
-The project-owned neutral VFX library under `vfx/` is shared by environmental effects and ship propulsion:
+The project-owned neutral VFX library under `vfx/` is used by environmental effects:
 
 - `particle_glow.svg` — ions, plasma and soft luminous dust;
-- `particle_streak.svg` — solar wind, sparks and fast energy motion;
-- `particle_shard.svg` — mineral dust, energized fragments and near-field debris;
-- `engine_core_plume.svg` — tapered white/grayscale engine plume used immediately behind a nozzle;
-- `particle_ring.svg` — hollow energy ring used by pulse-style propulsion;
-- `particle_cloud.svg` — soft irregular plasma/nebula puff used by bloom and mist propulsion.
+- `particle_streak.svg` — solar wind and fast energy motion;
+- `particle_shard.svg` — mineral dust and near-field debris.
 
-All primitives are intentionally neutral white/grayscale with transparent backgrounds. Runtime profiles provide color, lifetime, scale, velocity and depth behavior so one source texture can support many biomes, engine styles and trail palettes without duplicate recolored files.
+Ship propulsion no longer uses texture primitives or particle emitters. Propulsion is rendered procedurally from world-space trail history so visual direction always agrees with inertial motion.
