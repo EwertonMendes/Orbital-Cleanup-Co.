@@ -370,7 +370,7 @@ func _validate_world_visual_language() -> void:
 	var ship_scene_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.tscn")
 	var ship_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.gd")
 	_expect('id="ShipCollision"' not in ship_scene_source, "Player ship must not retain the primitive circle hull collider.")
-	_expect("CollisionGeometry2D.build_dynamic_solid(self, visuals.ship_sprite)" in ship_source, "Player ship hull collision must remain solid and come from active hull texture alpha.")
+	_expect("CollisionGeometry2D.build_dynamic_solid(self, visuals.ship_sprite)" in ship_source, "Player ship collision must remain solid and come only from the active model base sprite alpha.")
 	_expect("_sync_hull_collision_rotation()" in ship_source, "Player ship alpha collision must rotate with the visible hull.")
 
 	for asset_path in [
@@ -942,57 +942,46 @@ func _validate_progression_service() -> void:
 
 	_expect(progression.get_credits() == 0, "New progression must start with zero Credits.")
 	_expect(progression.get_rank_id() == "trainee", "New progression must start at Trainee.")
+	_expect(progression.get_active_ship_id() == "pioneer_01", "Fresh fleet must start on Pioneer-01.")
+	_expect(progression.is_ship_owned("pioneer_01"), "Pioneer-01 must be owned from a fresh save.")
 	_expect(progression.is_sector_unlocked("earth_training_01"), "Trainee must have first training contract.")
 	_expect(progression.is_sector_unlocked("earth_training_02"), "Trainee must have second training contract.")
 	_expect(not progression.is_sector_unlocked("earth_orbit_03"), "Advanced Earth contract must wait for Junior Cleaner.")
 	_expect(not progression.is_endless_unlocked(), "Endless Contracts must be a late-career unlock.")
+
 	var first_unlock := progression.get_next_content_unlock()
-	_expect(String(first_unlock["sector_id"]) == "earth_orbit_03", "First career unlock must be Earth Orbit 03.")
+	_expect(String(first_unlock["sector_id"]) == "earth_orbit_03", "First career unlock must remain Earth Orbit 03.")
 	_expect(int(first_unlock["min_xp"]) == 300, "Junior Cleaner unlock threshold must match balanced career pacing.")
+
 	var base_ship := progression.get_ship_modifiers()
-	_expect(is_equal_approx(float(base_ship["scan_range"]), 320.0), "Base Tractor Beam range must come from progression data.")
-	_expect(int(round(float(base_ship["cargo_capacity"]))) == 12, "Base cargo capacity must come from progression data.")
-	_expect(is_equal_approx(float(base_ship["boost_recharge_rate"]), 1.0), "Base boost recharge must come from progression data.")
-	_expect(int(round(float(base_ship["boost_charge_capacity"]))) == 1, "Base ship must start with one boost charge.")
+	_expect(is_equal_approx(float(base_ship["max_speed"]), 300.0), "Pioneer cruise speed must come from ship content.")
+	_expect(is_equal_approx(float(base_ship["acceleration"]), 420.0), "Pioneer acceleration must come from ship content.")
+	_expect(is_equal_approx(float(base_ship["scan_range"]), 320.0), "Pioneer Tractor Beam range must come from ship content.")
+	_expect(int(round(float(base_ship["cargo_capacity"]))) == 12, "Pioneer cargo capacity must come from ship content.")
+	_expect(is_equal_approx(float(base_ship["boost_recharge_rate"]), 1.0), "Pioneer boost recharge must come from ship content.")
+	_expect(int(round(float(base_ship["boost_charge_capacity"]))) == 1, "Pioneer must start with one boost charge.")
+
+	var ship_build := progression.get_active_ship_build()
+	_expect(String(ship_build["ship_id"]) == "pioneer_01", "Resolved build must identify the active model.")
+	_expect(String((ship_build["visual"] as Dictionary)["base_texture"]) == "res://assets/original/ships/pioneer_01_hd.webp", "Pioneer model content must own the staged HD runtime artwork.")
+	_expect((ship_build["modules"] as Dictionary).size() == 4, "Resolved ship build must include the four module families.")
+
 	var default_cosmetics := progression.get_equipped_cosmetic_ids()
-	_expect(String(default_cosmetics["hull"]) == "pioneer_01", "Default hull must come from cosmetic content.")
-	var cosmetics_source := FileAccess.get_file_as_string("res://content/cosmetics/ship_customization.json")
-	_expect(
-		"res://assets/original/ships/pioneer_01_hd.webp" in cosmetics_source,
-		"Pioneer-01 cosmetic content must use the staged HD runtime artwork."
-	)
-	var ship_scene_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.tscn")
-	_expect(
-		"res://assets/original/ships/pioneer_01_hd.webp" in ship_scene_source,
-		"PlayerShip scene must render the staged HD Pioneer-01."
-	)
-	_expect(
-		"scale = Vector2(0.14, 0.14)" in ship_scene_source,
-		"HD Pioneer-01 normalization must preserve gameplay footprint and engine alignment."
-	)
-	_expect(
-		FileAccess.file_exists("res://assets/third_party/kenney_space_shooter/ships/player_ship_01_blue.png"),
-		"Previous Kenney ship must remain available while HD art is under evaluation."
-	)
+	_expect(String(default_cosmetics["hull"]) == "pioneer_01", "Hull compatibility adapter must expose the active ship model.")
 	_expect(String(default_cosmetics["paint"]) == "company_blue", "Default paint must come from cosmetic content.")
-	_expect(progression.is_cosmetic_unlocked("paint", "mint_service"), "Starting-rank cosmetic must be unlocked.")
-	_expect(not progression.is_cosmetic_unlocked("paint", "safety_amber"), "Junior cosmetic must stay locked for Trainee.")
-	_expect(progression.equip_cosmetic("paint", "mint_service"), "Unlocked cosmetic must equip.")
-	_expect(progression.get_equipped_cosmetic_id("paint") == "mint_service", "Equipped cosmetic must update persistent state.")
+	_expect(progression.is_cosmetic_unlocked("paint", "mint_service"), "Starting-rank cosmetic must be rank-accessible.")
+	_expect(not progression.is_cosmetic_owned("paint", "mint_service"), "Purchasable cosmetics must not be granted on a fresh save.")
+	_expect(not progression.is_cosmetic_unlocked("paint", "safety_amber"), "Junior cosmetic must stay rank-locked for Trainee.")
 
 	var registry := ContentRegistry.new()
+	_expect(registry.has_ship("pioneer_01"), "ContentRegistry must expose ship definitions.")
+	_expect(registry.list_ship_ids().has("pioneer_01"), "Ship catalog enumeration must include Pioneer-01.")
 	var rare_salvage := registry.get_salvage_definition("navigation_core")
 	var common_salvage := registry.get_salvage_definition("scrap_fragment")
 	_expect(not progression.register_discovery(common_salvage), "Common salvage must not enter the special Discovery catalog.")
 	_expect(progression.register_discovery(rare_salvage), "First rare recovery must register a Discovery.")
 	_expect(not progression.register_discovery(rare_salvage), "Repeated rare recovery must not duplicate a Discovery.")
 	_expect(progression.get_discovery_count() == 1, "Discovery count must remain unique.")
-
-	var restored := ProgressionService.new()
-	restored.initialize(save)
-	_expect(restored.get_equipped_cosmetic_id("paint") == "mint_service", "Equipped cosmetic must survive save reload.")
-	_expect(restored.get_discovery_ids().has("navigation_core"), "Discovery catalog must survive save reload.")
-	restored.free()
 
 	var payout_transition := progression.apply_contract_result({
 		"completed": true,
@@ -1006,28 +995,90 @@ func _validate_progression_service() -> void:
 	_expect(bool(payout_transition["promoted"]), "Debrief transition must report career promotion.")
 	_expect(String(payout_transition["rank_before_id"]) == "trainee", "Debrief transition must preserve previous rank.")
 	_expect(String(payout_transition["rank_after_id"]) == "junior_cleaner", "Debrief transition must preserve promoted rank.")
+	_expect(int(payout_transition["mastery_xp_awarded"]) > 0, "Completed contracts must grant active-ship Mastery XP.")
+	_expect(int((payout_transition["mastery_after"] as Dictionary)["xp"]) > 0, "Ship Mastery must persist in the fleet state.")
+
 	var unlocked_safety_amber := false
 	var unlocked_earth_orbit := false
+	var unlocked_precision_tractor := false
 	for value in payout_transition["unlocks"] as Array:
 		var unlock := value as Dictionary
 		if String(unlock.get("id", "")) == "safety_amber":
 			unlocked_safety_amber = true
 		if String(unlock.get("id", "")) == "earth_orbit_03":
 			unlocked_earth_orbit = true
-	_expect(unlocked_safety_amber, "Promotion transition must expose newly unlocked cosmetics.")
+		if String(unlock.get("id", "")) == "precision_tractor":
+			unlocked_precision_tractor = true
+	_expect(unlocked_safety_amber, "Promotion transition must expose newly rank-accessible cosmetics.")
 	_expect(unlocked_earth_orbit, "Promotion transition must expose newly unlocked authored contracts.")
-	_expect(progression.get_credits() == 500, "Contract payout must persist Credits.")
-	_expect(progression.get_rank_id() == "junior_cleaner", "Company XP must promote career rank.")
-	_expect(progression.is_cosmetic_unlocked("paint", "safety_amber"), "Rank promotion must unlock configured cosmetics.")
+	_expect(unlocked_precision_tractor, "Promotion transition must expose newly accessible fleet modules.")
+	_expect(progression.is_module_unlocked("precision_tractor"), "Junior Cleaner must unlock Precision Tractor.")
+	_expect(progression.is_cosmetic_unlocked("paint", "safety_amber"), "Rank promotion must unlock configured cosmetic access.")
 	_expect(progression.is_sector_unlocked("earth_orbit_03"), "Junior Cleaner promotion must unlock advanced Earth contracts.")
-	_expect(not progression.is_sector_unlocked("lunar_belt_01"), "Lunar Belt must remain gated until Orbital Cleaner.")
 
-	var cost := progression.get_upgrade_cost("tractor_range")
-	_expect(progression.purchase_upgrade("tractor_range"), "Affordable upgrade purchase must succeed.")
-	_expect(progression.get_credits() == 500 - cost, "Upgrade purchase must deduct Credits.")
-	_expect(progression.get_upgrade_level("tractor_range") == 1, "Upgrade level must increment.")
-	var upgraded_ship := progression.get_ship_modifiers()
-	_expect(float(upgraded_ship["scan_range"]) > float(base_ship["scan_range"]), "Tractor upgrade must change gameplay modifier.")
+	var cosmetic_cost := progression.get_cosmetic_cost("paint", "mint_service")
+	_expect(progression.purchase_cosmetic("paint", "mint_service"), "Affordable cosmetic purchase must succeed.")
+	_expect(progression.get_credits() == 500 - cosmetic_cost, "Cosmetic purchase must deduct Credits.")
+	_expect(progression.equip_cosmetic("paint", "mint_service"), "Owned cosmetic must equip.")
+	_expect(progression.get_equipped_cosmetic_id("paint") == "mint_service", "Equipped cosmetic must update per-ship loadout.")
+
+	var upgrade_cost := progression.get_upgrade_cost("propulsion_core")
+	var speed_before := float(progression.get_ship_modifiers()["max_speed"])
+	_expect(progression.purchase_upgrade("propulsion_core"), "Affordable per-ship upgrade purchase must succeed.")
+	_expect(progression.get_upgrade_level("propulsion_core") == 1, "Per-ship upgrade level must increment.")
+	_expect(float(progression.get_ship_modifiers()["max_speed"]) > speed_before, "Propulsion upgrade must change the active ship build.")
+	_expect(progression.get_credits() == 500 - cosmetic_cost - upgrade_cost, "Upgrade purchase must deduct Credits after cosmetic purchase.")
+
+	var restored := ProgressionService.new()
+	restored.initialize(save)
+	_expect(restored.get_active_ship_id() == "pioneer_01", "Active ship must survive save reload.")
+	_expect(restored.get_upgrade_level("propulsion_core") == 1, "Per-ship upgrades must survive save reload.")
+	_expect(restored.get_equipped_cosmetic_id("paint") == "mint_service", "Per-ship cosmetics must survive save reload.")
+	_expect(restored.get_discovery_ids().has("navigation_core"), "Discovery catalog must survive save reload.")
+	restored.free()
+
+	# Explicit V1 -> V2 migration contract. The legacy file remains intact as a
+	# rollback source while ProgressionService writes the migrated V2 envelope.
+	save.delete_save()
+	var legacy_file := FileAccess.open(SaveService.LEGACY_SAVE_PATH, FileAccess.WRITE)
+	_expect(legacy_file != null, "QA must be able to create a legacy save fixture.")
+	if legacy_file != null:
+		legacy_file.store_string(JSON.stringify({
+			"schema_version": 1,
+			"payload": {
+				"credits": 900,
+				"company_xp": 450,
+				"rank": "junior_cleaner",
+				"upgrades": {
+					"tractor_range": 2,
+					"collection_speed": 1,
+					"cargo_capacity": 1,
+					"pulse_boost": 1,
+					"boost_capacitor": 0,
+				},
+				"discoveries": ["navigation_core"],
+				"completed_contracts": {"earth_training_01": 2},
+				"cosmetics": {
+					"hull": "pioneer_01",
+					"paint": "mint_service",
+					"trail": "mint_stream",
+					"beam": "mint_recovery",
+				},
+				"last_contract_result": {},
+			},
+		}))
+		legacy_file.close()
+
+	var migrated := ProgressionService.new()
+	migrated.initialize(save)
+	_expect(save.was_legacy_save_loaded(), "SaveService must report a legacy source during V1 migration.")
+	_expect(FileAccess.file_exists(SaveService.SAVE_PATH), "Legacy load must produce a V2 save envelope.")
+	_expect(FileAccess.file_exists(SaveService.LEGACY_SAVE_PATH), "V1 backup must remain intact after migration.")
+	_expect(migrated.get_active_ship_id() == "pioneer_01", "Legacy hull must migrate to Pioneer fleet ownership.")
+	_expect(float(migrated.get_ship_modifiers()["scan_range"]) > 320.0, "Legacy Tractor upgrades must survive as Pioneer legacy effects.")
+	_expect(int(round(float(migrated.get_ship_modifiers()["cargo_capacity"]))) > 12, "Legacy cargo upgrades must survive migration.")
+	_expect(migrated.get_equipped_cosmetic_id("paint") == "mint_service", "Legacy equipped paint must migrate into Pioneer loadout.")
+	migrated.free()
 
 	save.delete_save()
 	progression.free()
