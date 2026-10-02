@@ -10,7 +10,7 @@
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/squareBlue.png" id="8"]
 [ext_resource type="Texture2D" path="res://assets/third_party/kenney_ui_sci_fi/ui/squareRed.png" id="9"]
 [ext_resource type="Script" path="res://src/ui/components/selectable_asset_option.gd" id="10"]
-[ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_us.webp" id="11"]
+[ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_en.webp" id="11"]
 [ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_br.webp" id="12"]
 [ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_es.webp" id="13"]
 
