@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Orbital Cleanup Co. ship definition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "display_name_key", "description_key", "role_key", "unlock", "base_stats", "upgrade_profile", "module_slots", "default_modules", "visual"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "display_name_key": {"type": "string", "minLength": 1},
+    "description_key": {"type": "string", "minLength": 1},
+    "role_key": {"type": "string", "minLength": 1},
+    "unlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rank", "price"],
+      "properties": {
+        "rank": {"type": "string", "minLength": 1},
+        "price": {"type": "integer", "minimum": 0}
+      }
+    },
+    "base_stats": {"type": "object", "minProperties": 10},
+    "upgrade_profile": {"type": "string", "minLength": 1},
+    "module_slots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["propulsion", "recovery", "cargo", "utility"],
+      "properties": {
+        "propulsion": {"type": "integer", "minimum": 0, "maximum": 2},
+        "recovery": {"type": "integer", "minimum": 0, "maximum": 2},
+        "cargo": {"type": "integer", "minimum": 0, "maximum": 2},
+        "utility": {"type": "integer", "minimum": 0, "maximum": 3}
+      }
+    },
+    "default_modules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["propulsion", "recovery", "cargo", "utility"],
+      "properties": {
+        "propulsion": {"type": "string"},
+        "recovery": {"type": "string"},
+        "cargo": {"type": "string"},
+        "utility": {"type": "string"}
+      }
+    },
+    "visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base_texture", "render_scale", "paint_mode", "paint_mask", "details_texture", "emissive_texture", "engine_sockets", "tractor_socket", "collision_mode"],
+      "properties": {
+        "base_texture": {"type": "string", "minLength": 1},
+        "render_scale": {"type": "number", "exclusiveMinimum": 0},
+        "paint_mode": {"enum": ["legacy_blue_bias", "rgb_mask"]},
+        "paint_mask": {"type": "string"},
+        "details_texture": {"type": "string"},
+        "emissive_texture": {"type": "string"},
+        "engine_sockets": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "position"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+              "position": {
+                "type": "array",
+                "prefixItems": [{"type": "number"}, {"type": "number"}],
+                "minItems": 2,
+                "maxItems": 2
+              }
+            }
+          }
+        },
+        "tractor_socket": {
+          "type": "array",
+          "prefixItems": [{"type": "number"}, {"type": "number"}],
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "collision_mode": {"const": "base_alpha"}
+      }
+    }
+  }
+}
