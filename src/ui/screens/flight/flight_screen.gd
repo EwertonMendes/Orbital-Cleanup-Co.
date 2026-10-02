@@ -186,6 +186,8 @@ func _ready() -> void:
 	operations_button.pressed.connect(_open_operations)
 	if _settings != null and not _settings.locale_changed.is_connected(_on_locale_changed):
 		_settings.locale_changed.connect(_on_locale_changed)
+	if _input_service != null and not _input_service.input_mode_changed.is_connected(_on_input_mode_changed):
+		_input_service.input_mode_changed.connect(_on_input_mode_changed)
 	_wire_hud_button_feedback(return_button)
 	_wire_hud_button_feedback(operations_button)
 	player_ship.cargo_changed.connect(_on_cargo_changed)
@@ -304,7 +306,23 @@ func _input(event: InputEvent) -> void:
 			print("[QA] WORLD_CLICK_BOOST_REJECTED position=%s" % str(mouse_event.position))
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(InputService.CONTRACT_ACTION):
+		if _contract_active and not _travel_in_progress:
+			get_viewport().set_input_as_handled()
+			_return_to_operations()
+		return
+
+	if event.is_action_pressed(InputService.OPERATIONS):
+		if _operations_overlay != null and is_instance_valid(_operations_overlay):
+			return
+		if not _contract_active and not _travel_in_progress:
+			get_viewport().set_input_as_handled()
+			_open_operations()
+		return
+
 	if not event.is_action_pressed("ui_cancel"):
+		return
+	if not event is InputEventKey:
 		return
 	if _operations_overlay != null and is_instance_valid(_operations_overlay):
 		return
@@ -578,6 +596,7 @@ func _on_operations_deployment_requested(target_context: Dictionary) -> void:
 	_router.show_screen(scene, target_context)
 
 func _wire_hud_button_feedback(button: Button) -> void:
+	button.focus_mode = Control.FOCUS_ALL
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.mouse_entered.connect(_play_hud_hover)
 	button.pressed.connect(_play_hud_click)
@@ -613,7 +632,12 @@ func _refresh_copy() -> void:
 	if not is_node_ready():
 		return
 
-	operations_button.text = "%s >" % tr("FLIGHT_OPERATIONS")
+	var gamepad := _input_service != null and _input_service.prefers_gamepad()
+	operations_button.text = (
+		"[START] %s >" % tr("FLIGHT_OPERATIONS")
+		if gamepad
+		else "%s >" % tr("FLIGHT_OPERATIONS")
+	)
 	operations_button.visible = not _contract_active
 	return_button.visible = _contract_active
 	cargo_card.visible = _contract_active
@@ -697,6 +721,9 @@ func _refresh_return_button() -> void:
 		return_button.text = tr("FLIGHT_COMPLETE_CONTRACT")
 	else:
 		return_button.text = tr("FLIGHT_ABORT_CONTRACT")
+
+	if _input_service != null and _input_service.prefers_gamepad():
+		return_button.text = "[Y] %s" % return_button.text
 
 	return_button.theme_type_variation = (
 		&"HudSuccessButton" if completed else &"HudDangerButton"
@@ -802,3 +829,7 @@ func _show_toast(message: String) -> void:
 	_toast_tween.tween_interval(1.65)
 	_toast_tween.tween_property(toast_panel, "modulate:a", 0.0, 0.32)
 
+
+
+func _on_input_mode_changed(_mode: InputService.InputMode) -> void:
+	_refresh_copy()
