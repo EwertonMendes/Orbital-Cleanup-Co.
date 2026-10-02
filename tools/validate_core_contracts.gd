@@ -1117,7 +1117,7 @@ func _validate_player_ship() -> void:
 	if tuning != null:
 		_expect(tuning.pointer_deadzone >= 70.0, "Pointer deadzone should prevent twitchy center steering.")
 		_expect(tuning.pointer_full_thrust_distance >= 360.0, "Pointer full-thrust distance should preserve fine control.")
-		_expect(tuning.boundary_return_trigger_margin >= 600.0, "Operational warning band must leave meaningful space for the player to recover manually.")
+		_expect(tuning.boundary_return_trigger_margin >= 1400.0, "Operational warning band must leave a generous manual-recovery distance before forced return.")
 		_expect(tuning.boundary_hard_escape_margin > 0.0, "Numerical containment must stay behind the spatial operational return trigger.")
 		_expect(tuning.boundary_return_speed > tuning.absolute_speed_limit, "Operational boundary return must be visibly faster than ordinary ship containment speed.")
 		_expect(tuning.boundary_return_max_speed >= 5200.0, "Emergency return needs enough headroom to recover distant exits in about one second.")
@@ -1211,6 +1211,8 @@ func _validate_flight_screen() -> void:
 	_expect("_operations_overlay != null" in flight_input_source and "_travel_in_progress" in flight_input_source, "World-click boost must be disabled while menus or travel own input.")
 	_expect(screen.find_child("AmbientSpace", true, false) is SectorBackdrop, "Flight screen requires data-configurable SectorBackdrop.")
 	_expect(screen.find_child("OperationalZoneWarning", true, false) is OperationalZoneWarning, "Flight HUD requires reusable operational-zone warning feedback.")
+	var operational_warning_source := FileAccess.get_file_as_string("res://src/ui/components/operational_zone_warning.gd")
+	_expect("FLIGHT_OPERATIONAL_RETURN_ACTIVE" not in operational_warning_source and "RETURN_MESSAGE_SECONDS" not in operational_warning_source, "Operational HUD must keep only the persistent work-zone-limit message during forced return.")
 	var flight_backdrop_source := FileAccess.get_file_as_string("res://src/game/sector/sector_backdrop.gd")
 	_expect("MultiMeshInstance2D" in flight_backdrop_source, "SectorBackdrop must batch the starfield through MultiMeshInstance2D.")
 	_expect("multimesh.mesh = quad" in flight_backdrop_source, "SectorBackdrop MultiMesh must own an explicit QuadMesh for GLES3/Web rendering.")
