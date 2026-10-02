@@ -256,8 +256,509 @@
         "display_name_key": "COSMETIC_ENGINE_ION_CYAN",
         "unlock_rank": "trainee",
         "price": 0,
-        "glow_color": "#55DFFF",
-        "particle_color": "#55DFFF"
+        "core": {
+          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "scale_x": 0.06,
+          "scale_y": 0.088,
+          "alpha": 0.9,
+          "pulse": 0.035,
+          "stretch": 0.24,
+          "anchor_offset": -1.5
+        },
+        "trail": {
+          "mode": "ribbon",
+          "width": 10,
+          "lifetime": 0.5,
+          "sample_interval": 0.025,
+          "minimum_sample_distance": 1.25,
+          "max_samples": 54,
+          "opacity": 1,
+          "preview_length": 74,
+          "preview_points": 20,
+          "boost_width_bonus": 0.2,
+          "boost_lifetime_bonus": 0.14
+        },
+        "primary_particles": {
+          "texture": "res://assets/original/vfx/particle_glow.svg",
+          "amount": 18,
+          "lifetime": 0.34,
+          "randomness": 0.32,
+          "spread": 13,
+          "velocity_min": 58,
+          "velocity_max": 122,
+          "damping_min": 34,
+          "damping_max": 70,
+          "scale_min": 0.045,
+          "scale_max": 0.095,
+          "scale_end": 0.65,
+          "alpha": 0.72
+        },
+        "secondary_particles": {
+          "texture": "res://assets/original/vfx/particle_streak.svg",
+          "amount": 4,
+          "lifetime": 0.26,
+          "randomness": 0.4,
+          "spread": 10,
+          "velocity_min": 95,
+          "velocity_max": 165,
+          "damping_min": 48,
+          "damping_max": 88,
+          "scale_min": 0.02,
+          "scale_max": 0.04,
+          "scale_end": 0.75,
+          "alpha": 0.46
+        },
+        "boost": {
+          "core_scale_bonus": 0.24,
+          "core_alpha_bonus": 0.08,
+          "particle_speed_bonus": 0.78
+        }
+      },
+      {
+        "id": "plasma_bloom",
+        "display_name_key": "COSMETIC_ENGINE_PLASMA_BLOOM",
+        "unlock_rank": "trainee",
+        "price": 320,
+        "core": {
+          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "scale_x": 0.08,
+          "scale_y": 0.1,
+          "alpha": 0.94,
+          "pulse": 0.095,
+          "stretch": 0.34,
+          "anchor_offset": -1.5
+        },
+        "trail": {
+          "mode": "plasma",
+          "width": 16,
+          "lifetime": 0.36,
+          "sample_interval": 0.025,
+          "minimum_sample_distance": 1.2,
+          "max_samples": 44,
+          "opacity": 0.86,
+          "preview_length": 64,
+          "preview_points": 18,
+          "boost_width_bonus": 0.34,
+          "boost_lifetime_bonus": 0.1
+        },
+        "primary_particles": {
+          "texture": "res://assets/original/vfx/particle_cloud.png",
+          "amount": 14,
+          "lifetime": 0.42,
+          "randomness": 0.48,
+          "spread": 24,
+          "velocity_min": 34,
+          "velocity_max": 86,
+          "damping_min": 28,
+          "damping_max": 58,
+          "scale_min": 0.075,
+          "scale_max": 0.155,
+          "scale_end": 1.45,
+          "alpha": 0.48
+        },
+        "secondary_particles": {
+          "texture": "res://assets/original/vfx/particle_glow.svg",
+          "amount": 9,
+          "lifetime": 0.3,
+          "randomness": 0.42,
+          "spread": 20,
+          "velocity_min": 48,
+          "velocity_max": 102,
+          "damping_min": 32,
+          "damping_max": 64,
+          "scale_min": 0.045,
+          "scale_max": 0.105,
+          "scale_end": 0.82,
+          "alpha": 0.58
+        },
+        "boost": {
+          "core_scale_bonus": 0.38,
+          "core_alpha_bonus": 0.06,
+          "particle_speed_bonus": 0.52
+        }
+      },
+      {
+        "id": "pulse_wave",
+        "display_name_key": "COSMETIC_ENGINE_PULSE_WAVE",
+        "unlock_rank": "junior_cleaner",
+        "price": 480,
+        "core": {
+          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "scale_x": 0.052,
+          "scale_y": 0.082,
+          "alpha": 0.92,
+          "pulse": 0.16,
+          "stretch": 0.18,
+          "anchor_offset": -1.5
+        },
+        "trail": {
+          "mode": "pulse",
+          "width": 8,
+          "lifetime": 0.44,
+          "sample_interval": 0.022,
+          "minimum_sample_distance": 1.1,
+          "max_samples": 52,
+          "opacity": 0.9,
+          "preview_length": 70,
+          "preview_points": 22,
+          "boost_width_bonus": 0.16,
+          "boost_lifetime_bonus": 0.18
+        },
+        "primary_particles": {
+          "texture": "res://assets/original/vfx/particle_glow.svg",
+          "amount": 12,
+          "lifetime": 0.3,
+          "randomness": 0.28,
+          "spread": 10,
+          "velocity_min": 62,
+          "velocity_max": 112,
+          "damping_min": 36,
+          "damping_max": 70,
+          "scale_min": 0.035,
+          "scale_max": 0.075,
+          "scale_end": 0.7,
+          "alpha": 0.66
+        },
+        "secondary_particles": {
+          "texture": "res://assets/original/vfx/particle_ring.png",
+          "amount": 6,
+          "lifetime": 0.58,
+          "randomness": 0.12,
+          "spread": 4,
+          "velocity_min": 52,
+          "velocity_max": 72,
+          "damping_min": 16,
+          "damping_max": 28,
+          "scale_min": 0.03,
+          "scale_max": 0.05,
+          "scale_end": 2.4,
+          "alpha": 0.58
+        },
+        "boost": {
+          "core_scale_bonus": 0.18,
+          "core_alpha_bonus": 0.12,
+          "particle_speed_bonus": 1.05
+        }
+      },
+      {
+        "id": "spark_jet",
+        "display_name_key": "COSMETIC_ENGINE_SPARK_JET",
+        "unlock_rank": "junior_cleaner",
+        "price": 520,
+        "core": {
+          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "scale_x": 0.048,
+          "scale_y": 0.074,
+          "alpha": 0.92,
+          "pulse": 0.025,
+          "stretch": 0.28,
+          "anchor_offset": -1.5
+        },
+        "trail": {
+          "mode": "spark",
+          "width": 6,
+          "lifetime": 0.29,
+          "sample_interval": 0.018,
+          "minimum_sample_distance": 0.9,
+          "max_samples": 40,
+          "opacity": 0.94,
+          "preview_length": 54,
+          "preview_points": 18,
+          "boost_width_bonus": 0.12,
+          "boost_lifetime_bonus": 0.08
+        },
+        "primary_particles": {
+          "texture": "res://assets/original/vfx/particle_streak.svg",
+          "amount": 19,
+          "lifetime": 0.28,
+          "randomness": 0.58,
+          "spread": 25,
+          "velocity_min": 112,
+          "velocity_max": 215,
+          "damping_min": 55,
+          "damping_max": 102,
+          "scale_min": 0.018,
+          "scale_max": 0.045,
+          "scale_end": 0.48,
+          "alpha": 0.72
+        },
+        "secondary_particles": {
+          "texture": "res://assets/original/vfx/particle_glow.svg",
+          "amount": 6,
+          "lifetime": 0.24,
+          "randomness": 0.38,
+          "spread": 18,
+          "velocity_min": 58,
+          "velocity_max": 115,
+          "damping_min": 40,
+          "damping_max": 75,
+          "scale_min": 0.028,
+          "scale_max": 0.06,
+          "scale_end": 0.55,
+          "alpha": 0.46
+        },
+        "boost": {
+          "core_scale_bonus": 0.28,
+          "core_alpha_bonus": 0.08,
+          "particle_speed_bonus": 1.18
+        }
+      },
+      {
+        "id": "comet_ribbon",
+        "display_name_key": "COSMETIC_ENGINE_COMET_RIBBON",
+        "unlock_rank": "orbital_cleaner",
+        "price": 680,
+        "core": {
+          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "scale_x": 0.057,
+          "scale_y": 0.098,
+          "alpha": 0.91,
+          "pulse": 0.035,
+          "stretch": 0.3,
+          "anchor_offset": -1.5
+        },
+        "trail": {
+          "mode": "comet",
+          "width": 13,
+          "lifetime": 0.88,
+          "sample_interval": 0.024,
+          "minimum_sample_distance": 1.15,
+          "max_samples": 84,
+          "opacity": 0.86,
+          "preview_length": 126,
+          "preview_points": 32,
+          "boost_width_bonus": 0.18,
+          "boost_lifetime_bonus": 0.34
+        },
+        "primary_particles": {
+          "texture": "res://assets/original/vfx/particle_glow.svg",
+          "amount": 10,
+          "lifetime": 0.55,
+          "randomness": 0.3,
+          "spread": 9,
+          "velocity_min": 48,
+          "velocity_max": 92,
+          "damping_min": 24,
+          "damping_max": 48,
+          "scale_min": 0.04,
+          "scale_max": 0.085,
+          "scale_end": 0.52,
+          "alpha": 0.54
+        },
+        "secondary_particles": {
+          "texture": "res://assets/original/vfx/particle_streak.svg",
+          "amount": 4,
+          "lifetime": 0.42,
+          "randomness": 0.36,
+          "spread": 7,
+          "velocity_min": 82,
+          "velocity_max": 145,
+          "damping_min": 36,
+          "damping_max": 68,
+          "scale_min": 0.018,
+          "scale_max": 0.038,
+          "scale_end": 0.55,
+          "alpha": 0.42
+        },
+        "boost": {
+          "core_scale_bonus": 0.2,
+          "core_alpha_bonus": 0.08,
+          "particle_speed_bonus": 0.72
+        }
+      },
+      {
+        "id": "shard_drive",
+        "display_name_key": "COSMETIC_ENGINE_SHARD_DRIVE",
+        "unlock_rank": "orbital_cleaner",
+        "price": 740,
+        "core": {
+          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "scale_x": 0.054,
+          "scale_y": 0.084,
+          "alpha": 0.93,
+          "pulse": 0.05,
+          "stretch": 0.22,
+          "anchor_offset": -1.5
+        },
+        "trail": {
+          "mode": "shard",
+          "width": 7,
+          "lifetime": 0.46,
+          "sample_interval": 0.022,
+          "minimum_sample_distance": 1.05,
+          "max_samples": 56,
+          "opacity": 0.9,
+          "preview_length": 72,
+          "preview_points": 22,
+          "boost_width_bonus": 0.14,
+          "boost_lifetime_bonus": 0.12
+        },
+        "primary_particles": {
+          "texture": "res://assets/original/vfx/particle_shard.svg",
+          "amount": 13,
+          "lifetime": 0.44,
+          "randomness": 0.62,
+          "spread": 30,
+          "velocity_min": 64,
+          "velocity_max": 138,
+          "damping_min": 34,
+          "damping_max": 68,
+          "scale_min": 0.026,
+          "scale_max": 0.06,
+          "scale_end": 0.56,
+          "alpha": 0.68
+        },
+        "secondary_particles": {
+          "texture": "res://assets/original/vfx/particle_streak.svg",
+          "amount": 5,
+          "lifetime": 0.31,
+          "randomness": 0.44,
+          "spread": 18,
+          "velocity_min": 96,
+          "velocity_max": 172,
+          "damping_min": 48,
+          "damping_max": 90,
+          "scale_min": 0.016,
+          "scale_max": 0.034,
+          "scale_end": 0.5,
+          "alpha": 0.48
+        },
+        "boost": {
+          "core_scale_bonus": 0.22,
+          "core_alpha_bonus": 0.1,
+          "particle_speed_bonus": 1
+        }
+      },
+      {
+        "id": "nebula_mist",
+        "display_name_key": "COSMETIC_ENGINE_NEBULA_MIST",
+        "unlock_rank": "senior_cleaner",
+        "price": 920,
+        "core": {
+          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "scale_x": 0.072,
+          "scale_y": 0.09,
+          "alpha": 0.82,
+          "pulse": 0.075,
+          "stretch": 0.18,
+          "anchor_offset": -1.5
+        },
+        "trail": {
+          "mode": "mist",
+          "width": 20,
+          "lifetime": 0.78,
+          "sample_interval": 0.03,
+          "minimum_sample_distance": 1.45,
+          "max_samples": 62,
+          "opacity": 0.56,
+          "preview_length": 92,
+          "preview_points": 24,
+          "boost_width_bonus": 0.24,
+          "boost_lifetime_bonus": 0.18
+        },
+        "primary_particles": {
+          "texture": "res://assets/original/vfx/particle_cloud.png",
+          "amount": 18,
+          "lifetime": 0.78,
+          "randomness": 0.66,
+          "spread": 36,
+          "velocity_min": 24,
+          "velocity_max": 68,
+          "damping_min": 22,
+          "damping_max": 52,
+          "scale_min": 0.095,
+          "scale_max": 0.22,
+          "scale_end": 1.7,
+          "alpha": 0.36
+        },
+        "secondary_particles": {
+          "texture": "res://assets/original/vfx/particle_glow.svg",
+          "amount": 8,
+          "lifetime": 0.6,
+          "randomness": 0.52,
+          "spread": 28,
+          "velocity_min": 34,
+          "velocity_max": 76,
+          "damping_min": 24,
+          "damping_max": 48,
+          "scale_min": 0.042,
+          "scale_max": 0.105,
+          "scale_end": 1.15,
+          "alpha": 0.38
+        },
+        "boost": {
+          "core_scale_bonus": 0.26,
+          "core_alpha_bonus": 0.14,
+          "particle_speed_bonus": 0.44
+        }
+      },
+      {
+        "id": "twin_helix",
+        "display_name_key": "COSMETIC_ENGINE_TWIN_HELIX",
+        "unlock_rank": "deep_space_operator",
+        "price": 1260,
+        "core": {
+          "texture": "res://assets/original/vfx/engine_core_plume.png",
+          "scale_x": 0.05,
+          "scale_y": 0.086,
+          "alpha": 0.94,
+          "pulse": 0.055,
+          "stretch": 0.22,
+          "anchor_offset": -1.5
+        },
+        "trail": {
+          "mode": "dual_helix",
+          "width": 4.5,
+          "lifetime": 0.64,
+          "sample_interval": 0.02,
+          "minimum_sample_distance": 0.9,
+          "max_samples": 72,
+          "opacity": 0.96,
+          "preview_length": 94,
+          "preview_points": 32,
+          "wave_amplitude": 5.4,
+          "wave_frequency": 2,
+          "secondary_trail": true,
+          "secondary_phase": 3.141593,
+          "secondary_alpha_scale": 0.82,
+          "boost_width_bonus": 0.1,
+          "boost_lifetime_bonus": 0.22
+        },
+        "primary_particles": {
+          "texture": "res://assets/original/vfx/particle_glow.svg",
+          "amount": 10,
+          "lifetime": 0.38,
+          "randomness": 0.3,
+          "spread": 12,
+          "velocity_min": 56,
+          "velocity_max": 108,
+          "damping_min": 30,
+          "damping_max": 60,
+          "scale_min": 0.03,
+          "scale_max": 0.065,
+          "scale_end": 0.72,
+          "alpha": 0.58
+        },
+        "secondary_particles": {
+          "texture": "res://assets/original/vfx/particle_streak.svg",
+          "amount": 6,
+          "lifetime": 0.34,
+          "randomness": 0.4,
+          "spread": 14,
+          "velocity_min": 82,
+          "velocity_max": 152,
+          "damping_min": 42,
+          "damping_max": 82,
+          "scale_min": 0.015,
+          "scale_max": 0.032,
+          "scale_end": 0.6,
+          "alpha": 0.44
+        },
+        "boost": {
+          "core_scale_bonus": 0.18,
+          "core_alpha_bonus": 0.12,
+          "particle_speed_bonus": 0.92
+        }
       }
     ],
     "trail": [
@@ -266,33 +767,168 @@
         "display_name_key": "COSMETIC_TRAIL_ION_CYAN",
         "unlock_rank": "trainee",
         "price": 0,
-        "tail_color": "#199FDF",
-        "head_color": "#B0F8FF",
-        "glow_color": "#55DFFF",
-        "width": 11,
-        "lifetime": 0.52
+        "palette": {
+          "core": "#E9FDFF",
+          "primary": "#55DFFF",
+          "secondary": "#199FDF",
+          "accent": "#B0F8FF",
+          "trail_tail": "#199FDF",
+          "trail_head": "#B0F8FF"
+        }
       },
       {
         "id": "mint_stream",
         "display_name_key": "COSMETIC_TRAIL_MINT_STREAM",
         "unlock_rank": "trainee",
         "price": 260,
-        "tail_color": "#35BFA2",
-        "head_color": "#C7FFE8",
-        "glow_color": "#79E6C4",
-        "width": 9,
-        "lifetime": 0.62
+        "palette": {
+          "core": "#F0FFF9",
+          "primary": "#79E6C4",
+          "secondary": "#35BFA2",
+          "accent": "#C7FFE8",
+          "trail_tail": "#35BFA2",
+          "trail_head": "#C7FFE8"
+        }
       },
       {
         "id": "amber_comet",
         "display_name_key": "COSMETIC_TRAIL_AMBER_COMET",
         "unlock_rank": "junior_cleaner",
         "price": 440,
-        "tail_color": "#D58A1F",
-        "head_color": "#FFE6A3",
-        "glow_color": "#FFC857",
-        "width": 12,
-        "lifetime": 0.46
+        "palette": {
+          "core": "#FFF9E8",
+          "primary": "#FFC857",
+          "secondary": "#D58A1F",
+          "accent": "#FFE6A3",
+          "trail_tail": "#D58A1F",
+          "trail_head": "#FFE6A3"
+        }
+      },
+      {
+        "id": "cobalt_flux",
+        "display_name_key": "COSMETIC_TRAIL_COBALT_FLUX",
+        "unlock_rank": "junior_cleaner",
+        "price": 460,
+        "palette": {
+          "core": "#EFF4FF",
+          "primary": "#7198FF",
+          "secondary": "#3159DB",
+          "accent": "#B9CAFF",
+          "trail_tail": "#3159DB",
+          "trail_head": "#D4E0FF"
+        }
+      },
+      {
+        "id": "violet_pulse",
+        "display_name_key": "COSMETIC_TRAIL_VIOLET_PULSE",
+        "unlock_rank": "junior_cleaner",
+        "price": 480,
+        "palette": {
+          "core": "#F2EBFF",
+          "primary": "#A277FF",
+          "secondary": "#6E45E2",
+          "accent": "#D9C3FF",
+          "trail_tail": "#6E45E2",
+          "trail_head": "#E7D8FF"
+        }
+      },
+      {
+        "id": "crimson_drive",
+        "display_name_key": "COSMETIC_TRAIL_CRIMSON_DRIVE",
+        "unlock_rank": "orbital_cleaner",
+        "price": 560,
+        "palette": {
+          "core": "#FFECEF",
+          "primary": "#FF6078",
+          "secondary": "#C8324C",
+          "accent": "#FFC1CB",
+          "trail_tail": "#C8324C",
+          "trail_head": "#FFD5DC"
+        }
+      },
+      {
+        "id": "emerald_stream",
+        "display_name_key": "COSMETIC_TRAIL_EMERALD_STREAM",
+        "unlock_rank": "orbital_cleaner",
+        "price": 580,
+        "palette": {
+          "core": "#EBFFF3",
+          "primary": "#51E58B",
+          "secondary": "#1CA45C",
+          "accent": "#B9FFD1",
+          "trail_tail": "#1CA45C",
+          "trail_head": "#D1FFE1"
+        }
+      },
+      {
+        "id": "magenta_wave",
+        "display_name_key": "COSMETIC_TRAIL_MAGENTA_WAVE",
+        "unlock_rank": "orbital_cleaner",
+        "price": 620,
+        "palette": {
+          "core": "#FFF0FB",
+          "primary": "#FF64D1",
+          "secondary": "#C72A96",
+          "accent": "#FFC2EC",
+          "trail_tail": "#C72A96",
+          "trail_head": "#FFD8F4"
+        }
+      },
+      {
+        "id": "white_prism",
+        "display_name_key": "COSMETIC_TRAIL_WHITE_PRISM",
+        "unlock_rank": "senior_cleaner",
+        "price": 760,
+        "palette": {
+          "core": "#FFFFFF",
+          "primary": "#DDF7FF",
+          "secondary": "#96B5C9",
+          "accent": "#FFFFFF",
+          "trail_tail": "#96B5C9",
+          "trail_head": "#FFFFFF"
+        }
+      },
+      {
+        "id": "rose_vector",
+        "display_name_key": "COSMETIC_TRAIL_ROSE_VECTOR",
+        "unlock_rank": "senior_cleaner",
+        "price": 780,
+        "palette": {
+          "core": "#FFF3F7",
+          "primary": "#F59AB8",
+          "secondary": "#C85F83",
+          "accent": "#FFD0DF",
+          "trail_tail": "#C85F83",
+          "trail_head": "#FFE1EA"
+        }
+      },
+      {
+        "id": "golden_flux",
+        "display_name_key": "COSMETIC_TRAIL_GOLDEN_FLUX",
+        "unlock_rank": "sector_specialist",
+        "price": 980,
+        "palette": {
+          "core": "#FFFBE8",
+          "primary": "#FFD85A",
+          "secondary": "#C99722",
+          "accent": "#FFF0A6",
+          "trail_tail": "#C99722",
+          "trail_head": "#FFF3B8"
+        }
+      },
+      {
+        "id": "ultraviolet",
+        "display_name_key": "COSMETIC_TRAIL_ULTRAVIOLET",
+        "unlock_rank": "deep_space_operator",
+        "price": 1240,
+        "palette": {
+          "core": "#F2EDFF",
+          "primary": "#8A5BFF",
+          "secondary": "#4B2ACB",
+          "accent": "#C7B2FF",
+          "trail_tail": "#4B2ACB",
+          "trail_head": "#D8CAFF"
+        }
       }
     ],
     "beam": [
