@@ -231,6 +231,8 @@ func _validate_operations_screen() -> void:
 	_expect("menu_warp_fx" not in operations_source, "Operations tab changes must not use the removed blue warp-particle overlay.")
 	_expect('event.is_action_pressed("ui_cancel")' in operations_source, "Operations overlay must close from ESC / ui_cancel.")
 	var operations_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.tscn")
+	var app_root_source := FileAccess.get_file_as_string("res://src/core/app/app_root.gd")
+	var progression_source := FileAccess.get_file_as_string("res://src/game/progression/progression_service.gd")
 	_expect("LiveryCategory" in operations_scene_source and "DecalCategory" in operations_scene_source and "CanopyCategory" in operations_scene_source and "BodyKitCategory" in operations_scene_source and "EngineCategory" in operations_scene_source, "Fleet scene must provide selectors for every layered customization category.")
 	_expect("ModulesCategory" in operations_scene_source and "ModulesOptions" in operations_scene_source, "Fleet scene must expose reusable module bays.")
 	_expect("ContractShipLiveryPreview" in operations_scene_source and "ContractShipBodyKitPreview" in operations_scene_source, "Contract ship card must render the same layered cosmetics as Fleet preview.")
