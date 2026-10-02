@@ -1349,7 +1349,7 @@ msgid "HQ_FLEET_MASTERY_FMT"
 msgstr "Mastery %d/%d · %d XP"
 
 msgid "HQ_FLEET_BUY_FMT"
-msgstr "%s · BUY %d"
+msgstr "%s - BUY %d"
 
 msgid "HQ_FLEET_NEED_CREDITS"
 msgstr "Not enough Credits."
@@ -1403,7 +1403,7 @@ msgid "HQ_FLEET_MODULES_HELP"
 msgstr "Reusable hardware modules. Purchased modules stay in company inventory and can be equipped on compatible ship bays."
 
 msgid "HQ_FLEET_MODULE_SLOT_FMT"
-msgstr "%s %d · %s"
+msgstr "%s %d - %s"
 
 msgid "MODULE_SLOT_PROPULSION"
 msgstr "Propulsion"
@@ -1587,3 +1587,96 @@ msgstr "Mega hauler"
 
 msgid "SHIP_ROLE_MODULAR_FLAGSHIP"
 msgstr "Modular flagship"
+
+msgid "HQ_FLEET_MODULE_ACTIVE_FMT"
+msgstr "%s [ACTIVE]"
+
+msgid "HQ_FLEET_MODULE_BUY_FMT"
+msgstr "%s - %d cr"
+
+msgid "COSMETIC_PAINT_ARCTIC_WHITE"
+msgstr "Arctic White"
+
+msgid "COSMETIC_PAINT_GRAPHITE_BLACK"
+msgstr "Graphite Black"
+
+msgid "COSMETIC_PAINT_OCEAN_BLUE"
+msgstr "Ocean Blue"
+
+msgid "COSMETIC_PAINT_RESCUE_RED"
+msgstr "Rescue Red"
+
+msgid "COSMETIC_PAINT_EMERALD_GREEN"
+msgstr "Emerald Green"
+
+msgid "COSMETIC_PAINT_ROYAL_PURPLE"
+msgstr "Royal Purple"
+
+msgid "COSMETIC_PAINT_ORANGE_BURST"
+msgstr "Orange Burst"
+
+msgid "COSMETIC_PAINT_TEAL_HORIZON"
+msgstr "Teal Horizon"
+
+msgid "COSMETIC_PAINT_STEEL_SILVER"
+msgstr "Steel Silver"
+
+msgid "COSMETIC_PAINT_CRIMSON_NIGHT"
+msgstr "Crimson Night"
+
+msgid "COSMETIC_PAINT_VIOLET_STORM"
+msgstr "Violet Storm"
+
+msgid "COSMETIC_PAINT_NEON_MAGENTA"
+msgstr "Neon Magenta"
+
+msgid "COSMETIC_PAINT_SOLAR_GOLD"
+msgstr "Solar Gold"
+
+msgid "COSMETIC_PAINT_ROSE_QUARTZ"
+msgstr "Rose Quartz"
+
+msgid "COSMETIC_PAINT_ICE_BLUE"
+msgstr "Ice Blue"
+
+msgid "COSMETIC_PAINT_COPPER_INDUSTRIAL"
+msgstr "Industrial Copper"
+
+msgid "COSMETIC_PAINT_LIME_SIGNAL"
+msgstr "Signal Lime"
+
+msgid "COSMETIC_BEAM_COBALT_ARC"
+msgstr "Cobalt Arc"
+
+msgid "COSMETIC_BEAM_VIOLET_PULSE"
+msgstr "Violet Pulse"
+
+msgid "COSMETIC_BEAM_CRIMSON_LOCK"
+msgstr "Crimson Lock"
+
+msgid "COSMETIC_BEAM_EMERALD_LATTICE"
+msgstr "Emerald Lattice"
+
+msgid "COSMETIC_BEAM_WHITE_PRISM"
+msgstr "White Prism"
+
+msgid "COSMETIC_BEAM_MAGENTA_WAVE"
+msgstr "Magenta Wave"
+
+msgid "COSMETIC_BEAM_ORANGE_TOW"
+msgstr "Orange Tow"
+
+msgid "COSMETIC_BEAM_DEEP_BLUE"
+msgstr "Deep Blue"
+
+msgid "COSMETIC_BEAM_LIME_SIGNAL"
+msgstr "Lime Signal"
+
+msgid "COSMETIC_BEAM_ROSE_VECTOR"
+msgstr "Rose Vector"
+
+msgid "COSMETIC_BEAM_GOLDEN_FLUX"
+msgstr "Golden Flux"
+
+msgid "COSMETIC_BEAM_ULTRAVIOLET"
+msgstr "Ultraviolet"
