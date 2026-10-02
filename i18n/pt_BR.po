@@ -433,6 +433,18 @@ msgstr "RASTRO DO MOTOR"
 msgid "HQ_CUSTOMIZE_BEAM"
 msgstr "FEIXE TRATOR"
 
+msgid "HQ_SHIP_TAB_HULL"
+msgstr "CASCO"
+
+msgid "HQ_SHIP_TAB_PAINT"
+msgstr "PINTURA"
+
+msgid "HQ_SHIP_TAB_TRAIL"
+msgstr "RASTRO"
+
+msgid "HQ_SHIP_TAB_BEAM"
+msgstr "FEIXE"
+
 msgid "HQ_SHIP_HULL_FMT"
 msgstr "Casco · %s"
 

@@ -26,7 +26,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var header: BoxContainer = %Header
 @onready var main_row: BoxContainer = %MainRow
 @onready var tab_grid: GridContainer = %TabGrid
-@onready var content_scroll: ScrollContainer = %ContentScroll
+@onready var content_stage: MarginContainer = %ContentStage
 @onready var content_shell: Control = %ContentShell
 @onready var contracts_panel: VBoxContainer = %ContractsPanel
 @onready var upgrades_panel: VBoxContainer = %UpgradesPanel
@@ -38,6 +38,10 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var primary_action: Button = %PrimaryAction
 @onready var footer: Control = %Footer
 @onready var upgrade_grid: GridContainer = %UpgradeGrid
+@onready var upgrade_pager: HBoxContainer = %UpgradePager
+@onready var upgrade_previous_page: Button = %UpgradePreviousPage
+@onready var upgrade_page_label: Label = %UpgradePageLabel
+@onready var upgrade_next_page: Button = %UpgradeNextPage
 @onready var career_list: VBoxContainer = %CareerList
 @onready var credits_label: Label = %CreditsLabel
 @onready var career_rank_value: Label = %CareerRankValue
@@ -64,15 +68,30 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var last_result: Label = %LastResult
 @onready var ship_stats: Label = %ShipStats
 @onready var ship_preview: TextureRect = %ShipPreview
+@onready var ship_preview_card: PanelContainer = %ShipPreviewCard
 @onready var contract_ship_art: TextureRect = %ShipArt
+@onready var contract_ship_card: PanelContainer = %ContractShipCard
+@onready var ship_category_bar: GridContainer = %ShipCategoryBar
+@onready var hull_category: Button = %HullCategory
+@onready var paint_category: Button = %PaintCategory
+@onready var trail_category: Button = %TrailCategory
+@onready var beam_category: Button = %BeamCategory
 @onready var hull_options: GridContainer = %HullOptions
 @onready var paint_options: GridContainer = %PaintOptions
 @onready var trail_options: GridContainer = %TrailOptions
 @onready var beam_options: GridContainer = %BeamOptions
+@onready var ship_options_pager: HBoxContainer = %ShipOptionsPager
+@onready var ship_options_previous_page: Button = %ShipOptionsPreviousPage
+@onready var ship_options_page_label: Label = %ShipOptionsPageLabel
+@onready var ship_options_next_page: Button = %ShipOptionsNextPage
 @onready var discovery_count: Label = %DiscoveryCount
 @onready var completed_contracts: Label = %CompletedContracts
 @onready var discovery_empty_card: PanelContainer = %DiscoveryEmptyCard
 @onready var discovery_list: GridContainer = %DiscoveryList
+@onready var discovery_pager: HBoxContainer = %DiscoveryPager
+@onready var discovery_previous_page: Button = %DiscoveryPreviousPage
+@onready var discovery_page_label: Label = %DiscoveryPageLabel
+@onready var discovery_next_page: Button = %DiscoveryNextPage
 @onready var english_button: SelectableAssetOption = %EnglishButton
 @onready var portuguese_button: SelectableAssetOption = %PortugueseButton
 @onready var spanish_button: SelectableAssetOption = %SpanishButton
@@ -116,6 +135,11 @@ var _tab_transitioning := false
 var _tab_pulse_tween: Tween
 var _base_theme: Theme
 var _ui_density_key := -1
+var _upgrade_page := 0
+var _discovery_page := 0
+var _ship_category := "hull"
+var _ship_option_page := 0
+var _ship_category_group := ButtonGroup.new()
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -157,8 +181,15 @@ func _ready() -> void:
 	previous_contract.pressed.connect(_select_relative_contract.bind(-1))
 	endless_contract.pressed.connect(_toggle_endless_mode)
 	next_contract.pressed.connect(_select_relative_contract.bind(1))
+	upgrade_previous_page.pressed.connect(_change_upgrade_page.bind(-1))
+	upgrade_next_page.pressed.connect(_change_upgrade_page.bind(1))
+	discovery_previous_page.pressed.connect(_change_discovery_page.bind(-1))
+	discovery_next_page.pressed.connect(_change_discovery_page.bind(1))
+	ship_options_previous_page.pressed.connect(_change_ship_option_page.bind(-1))
+	ship_options_next_page.pressed.connect(_change_ship_option_page.bind(1))
 
 	_setup_tabs()
+	_setup_ship_categories()
 	english_button.pressed.connect(_change_locale.bind("en"))
 	portuguese_button.pressed.connect(_change_locale.bind("pt_BR"))
 	spanish_button.pressed.connect(_change_locale.bind("es_ES"))
@@ -186,20 +217,21 @@ func _validate_contracts() -> void:
 	assert(safe_area != null, "Headquarters requires SafeArea.")
 	assert(header != null, "Headquarters requires responsive Header.")
 	assert(tab_grid != null, "Headquarters requires TabGrid.")
-	assert(content_scroll != null, "Headquarters requires ContentScroll.")
+	assert(content_stage != null, "Headquarters requires fixed ContentStage.")
 	assert(content_shell != null, "Headquarters requires ContentShell.")
 	assert(primary_action != null, "Headquarters requires PrimaryAction.")
 	assert(contract_selector != null, "Headquarters requires responsive ContractSelector.")
 	assert(previous_contract != null and endless_contract != null and next_contract != null and contract_position != null, "Headquarters requires contract navigation.")
 	assert(contract_requirement != null, "Headquarters requires active-contract access feedback.")
 	assert(next_unlock_panel != null and next_unlock_label != null and next_unlock_progress != null, "Headquarters requires next career unlock feedback.")
-	assert(upgrade_grid != null, "Headquarters requires UpgradeGrid.")
+	assert(upgrade_grid != null and upgrade_pager != null, "Headquarters requires paged UpgradeGrid.")
 	assert(career_list != null, "Headquarters requires CareerList.")
 	assert(ship_preview != null and contract_ship_art != null, "Headquarters requires cosmetic ship previews.")
+	assert(ship_category_bar != null and ship_options_pager != null, "Headquarters requires paged ship customization categories.")
 	assert(hull_options != null and paint_options != null and trail_options != null and beam_options != null, "Headquarters requires cosmetic option grids.")
 	assert(contracts_panel != null and upgrades_panel != null and career_panel != null, "Headquarters core panels are required.")
 	assert(ship_panel != null and discovery_panel != null, "Headquarters future-facing panels are required.")
-	assert(discovery_empty_card != null and discovery_list != null, "Headquarters discovery catalog containers are required.")
+	assert(discovery_empty_card != null and discovery_list != null and discovery_pager != null, "Headquarters discovery catalog containers are required.")
 	assert(close_overlay != null and overlay_scrim != null and floating_surface != null, "Operations overlay chrome is required.")
 	assert(settings_button != null and settings_layer != null and settings_modal != null and settings_close != null, "Operations requires a dedicated settings panel.")
 	assert(volume_down != null and volume_up != null and volume_value != null, "Operations settings controls are required.")
@@ -239,7 +271,6 @@ func _show_tab(tab: int, instant: bool = false) -> void:
 		_apply_panel_visibility(active_panel)
 		_sync_tab_selection()
 		_update_tab_visuals()
-		content_scroll.scroll_vertical = 0
 		return
 
 	_tab_transitioning = true
@@ -269,7 +300,6 @@ func _show_tab(tab: int, instant: bool = false) -> void:
 	_active_tab = tab
 	_refresh_tab_content(tab)
 	_apply_panel_visibility(active_panel)
-	content_scroll.scroll_vertical = 0
 	_sync_tab_selection()
 	_update_tab_visuals()
 
@@ -386,7 +416,6 @@ func _apply_responsive_layout() -> void:
 	var profile := ResponsiveUiProfile.current()
 	var phone := ResponsiveUiProfile.is_phone(profile)
 	var compact := ResponsiveUiProfile.is_compact(profile)
-	var narrow := portrait or phone or window_size.x < int(COMPACT_WIDTH)
 
 	var density_key := ResponsiveUiProfile.density_key(profile)
 	if _ui_density_key != density_key:
@@ -400,22 +429,30 @@ func _apply_responsive_layout() -> void:
 		])
 	ResponsiveUiProfile.apply_minimum_touch_targets(self, profile)
 
-	# On phones the console reflows instead of shrinking desktop geometry.
-	header.vertical = profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT
-	main_row.vertical = narrow
-	contract_hero.vertical = narrow
-	ship_body.vertical = narrow
-	tab_grid.columns = (
-		2 if portrait or window_size.x < 560
-		else (3 if compact else 1)
-	)
-	contract_selector.columns = 2 if portrait else (3 if narrow else 4)
-	upgrade_grid.columns = 1 if narrow else 3
-	discovery_list.columns = 1 if narrow else 2
+	header.vertical = portrait
+	main_row.vertical = portrait
+	contract_hero.vertical = portrait
+	ship_body.vertical = portrait
+	tab_grid.columns = 3 if portrait else 1
+	contract_selector.columns = 3 if portrait else 4
+	upgrade_grid.columns = 1 if portrait else (2 if compact else 3)
+	discovery_list.columns = 1 if portrait else 2
+	ship_category_bar.columns = 4
+	for option_grid in [hull_options, paint_options, trail_options, beam_options]:
+		option_grid.columns = 2 if portrait else 3
 
-	# ContentScroll owns overflow. Larger phone typography must scroll rather
-	# than be compressed to fit the old desktop density.
+	%DeskLabel.visible = not phone
+	contract_ship_card.visible = not portrait
+	%WorkshopStatus.visible = not portrait
+	if portrait:
+		ship_preview_card.custom_minimum_size = Vector2(0.0, 160.0)
+		ship_preview.custom_minimum_size = Vector2(150.0, 118.0)
+	else:
+		ship_preview_card.custom_minimum_size = Vector2(300.0, 300.0)
+		ship_preview.custom_minimum_size = Vector2(250.0, 210.0)
+
 	content_shell.custom_minimum_size.y = 0.0
+	content_shell.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 	var horizontal_margin := 12 if phone else (14 if compact else 22)
 	var vertical_margin := 10 if phone else (12 if compact else 20)
@@ -446,6 +483,12 @@ func _apply_responsive_layout() -> void:
 	primary_action.size_flags_horizontal = (
 		Control.SIZE_EXPAND_FILL if portrait or phone else Control.SIZE_SHRINK_BEGIN
 	)
+
+	if is_node_ready() and _progression != null and _active_tab >= 0:
+		_upgrade_page = 0
+		_discovery_page = 0
+		_ship_option_page = 0
+		_refresh_tab_content(_active_tab)
 
 func _deploy_training() -> void:
 	var access := _active_contract_access()
@@ -786,8 +829,14 @@ func _refresh_upgrades() -> void:
 	for child in upgrade_grid.get_children():
 		child.queue_free()
 
-	for definition_variant in _progression.get_upgrade_definitions():
-		var definition := definition_variant as Dictionary
+	var definitions := _progression.get_upgrade_definitions()
+	var page_size := _upgrade_page_size()
+	var page_count := maxi(1, int(ceil(float(definitions.size()) / float(page_size))))
+	_upgrade_page = clampi(_upgrade_page, 0, page_count - 1)
+	var first := _upgrade_page * page_size
+	var last := mini(first + page_size, definitions.size())
+	for index in range(first, last):
+		var definition := definitions[index] as Dictionary
 		var card := UPGRADE_CARD_SCENE.instantiate() as HqUpgradeCard
 		assert(card != null, "Upgrade card scene must instantiate.")
 		upgrade_grid.add_child(card)
@@ -797,17 +846,31 @@ func _refresh_upgrades() -> void:
 		var level := _progression.get_upgrade_level(id)
 		var max_level := int(definition["max_level"])
 		var cost := _progression.get_upgrade_cost(id)
-		card.configure(
-			id,
-			tr(String(definition["display_name_key"])),
-			tr(String(definition["description_key"])),
-			level,
-			max_level,
-			cost,
-			_upgrade_effect_text(definition, level),
-			_progression.can_purchase_upgrade(id)
-		)
+		card.configure(id, tr(String(definition["display_name_key"])), tr(String(definition["description_key"])), level, max_level, cost, _upgrade_effect_text(definition, level), _progression.can_purchase_upgrade(id))
 		card.purchase_requested.connect(_purchase_upgrade)
+
+	_set_pager_state(upgrade_pager, upgrade_previous_page, upgrade_page_label, upgrade_next_page, _upgrade_page, page_count)
+
+func _change_upgrade_page(delta: int) -> void:
+	var definitions := _progression.get_upgrade_definitions()
+	var page_count := maxi(1, int(ceil(float(definitions.size()) / float(_upgrade_page_size()))))
+	_upgrade_page = clampi(_upgrade_page + delta, 0, page_count - 1)
+	_refresh_upgrades()
+	GamepadUiNavigation.grab(upgrade_previous_page if delta < 0 else upgrade_next_page, upgrades_panel)
+
+func _upgrade_page_size() -> int:
+	var profile := ResponsiveUiProfile.current()
+	if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT:
+		return 1
+	if profile == ResponsiveUiProfile.Profile.PHONE_LANDSCAPE or profile == ResponsiveUiProfile.Profile.COMPACT:
+		return 2
+	return 6
+
+func _set_pager_state(pager: Control, previous_button: Button, page_label: Label, next_button: Button, page: int, page_count: int) -> void:
+	pager.visible = page_count > 1
+	page_label.text = "%d / %d" % [page + 1, page_count]
+	previous_button.disabled = page <= 0
+	next_button.disabled = page >= page_count - 1
 
 func _purchase_upgrade(upgrade_id: String) -> void:
 	if not _progression.purchase_upgrade(upgrade_id):
@@ -884,6 +947,27 @@ func _refresh_career() -> void:
 			String(rank["id"]) == current_rank
 		)
 
+func _setup_ship_categories() -> void:
+	var categories := [
+		{"button": hull_category, "id": "hull"},
+		{"button": paint_category, "id": "paint"},
+		{"button": trail_category, "id": "trail"},
+		{"button": beam_category, "id": "beam"},
+	]
+	for entry_variant in categories:
+		var entry := entry_variant as Dictionary
+		var button := entry["button"] as Button
+		var category := String(entry["id"])
+		button.toggle_mode = true
+		button.button_group = _ship_category_group
+		button.pressed.connect(_select_ship_category.bind(category))
+	hull_category.button_pressed = true
+
+func _select_ship_category(category: String) -> void:
+	_ship_category = category
+	_ship_option_page = 0
+	_refresh_ship()
+
 func _refresh_ship() -> void:
 	%ShipTitle.text = tr("HQ_SHIP_TITLE")
 	%ShipSubtitle.text = tr("HQ_SHIP_SUBTITLE")
@@ -893,13 +977,16 @@ func _refresh_ship() -> void:
 	%TrailHeading.text = tr("HQ_CUSTOMIZE_TRAIL")
 	%BeamHeading.text = tr("HQ_CUSTOMIZE_BEAM")
 	%WorkshopStatus.text = tr("HQ_SHIP_WORKSHOP_STATUS")
+	hull_category.text = tr("HQ_SHIP_TAB_HULL")
+	paint_category.text = tr("HQ_SHIP_TAB_PAINT")
+	trail_category.text = tr("HQ_SHIP_TAB_TRAIL")
+	beam_category.text = tr("HQ_SHIP_TAB_BEAM")
 
 	var loadout := _progression.get_ship_cosmetics()
 	var hull := loadout["hull"] as Dictionary
 	var paint := loadout["paint"] as Dictionary
 	var trail := loadout["trail"] as Dictionary
 	var beam := loadout["beam"] as Dictionary
-
 	%ShipName.text = tr(String(hull["display_name_key"]))
 	%ContractShipName.text = tr(String(hull["display_name_key"]))
 	%HullValue.text = tr("HQ_SHIP_HULL_FMT") % tr(String(hull["display_name_key"]))
@@ -913,47 +1000,93 @@ func _refresh_ship() -> void:
 	contract_ship_art.texture = texture
 	var preview_material := ship_preview.material as ShaderMaterial
 	assert(preview_material != null, "HQ ship preview requires paint ShaderMaterial.")
-	preview_material.set_shader_parameter(
-		"paint_color",
-		Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0))
-	)
+	preview_material.set_shader_parameter("paint_color", Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0)))
 	preview_material.set_shader_parameter("paint_strength", float(paint["strength"]))
 
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
-	ship_stats.text = tr("HQ_SHIP_STATS_FMT") % [
-		int(round(float(ship["scan_range"]))),
-		int(round(float(ship["cargo_capacity"]))),
-		recovery_percent,
-	]
+	ship_stats.text = tr("HQ_SHIP_STATS_FMT") % [int(round(float(ship["scan_range"]))), int(round(float(ship["cargo_capacity"]))), recovery_percent]
+	_refresh_ship_category_options()
 
-	_populate_cosmetic_options(hull_options, "hull")
-	_populate_cosmetic_options(paint_options, "paint")
-	_populate_cosmetic_options(trail_options, "trail")
-	_populate_cosmetic_options(beam_options, "beam")
+func _refresh_ship_category_options() -> void:
+	for container in [hull_options, paint_options, trail_options, beam_options]:
+		for child in container.get_children():
+			child.queue_free()
+	_apply_ship_category_visibility()
 
-func _populate_cosmetic_options(container: GridContainer, category: String) -> void:
-	for child in container.get_children():
-		child.queue_free()
-
-	var equipped := _progression.get_equipped_cosmetic_id(category)
-	for option in _progression.get_cosmetic_options(category):
+	var available: Array = []
+	for option_variant in _progression.get_cosmetic_options(_ship_category):
+		var option := option_variant as Dictionary
 		var cosmetic_id := String(option["id"])
-		var unlocked := _progression.is_cosmetic_unlocked(category, cosmetic_id)
-		if not unlocked:
-			continue
+		if _progression.is_cosmetic_unlocked(_ship_category, cosmetic_id):
+			available.append(option)
+
+	var page_size := _ship_option_page_size()
+	var page_count := maxi(1, int(ceil(float(available.size()) / float(page_size))))
+	_ship_option_page = clampi(_ship_option_page, 0, page_count - 1)
+	var first := _ship_option_page * page_size
+	var last := mini(first + page_size, available.size())
+	var container := _ship_container(_ship_category)
+	var equipped := _progression.get_equipped_cosmetic_id(_ship_category)
+	for index in range(first, last):
+		var option := available[index] as Dictionary
+		var cosmetic_id := String(option["id"])
 		var selected := cosmetic_id == equipped
 		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
 		assert(button != null, "Cosmetic option must use OccChromeButton.")
 		button.custom_minimum_size = Vector2(0, 46)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
-
 		var name := tr(String(option["display_name_key"]))
 		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % name if selected else name
-		button.pressed.connect(_equip_cosmetic.bind(category, cosmetic_id))
+		button.pressed.connect(_equip_cosmetic.bind(_ship_category, cosmetic_id))
 		container.add_child(button)
 		_wire_button_feedback(button)
+
+	_set_pager_state(ship_options_pager, ship_options_previous_page, ship_options_page_label, ship_options_next_page, _ship_option_page, page_count)
+
+func _apply_ship_category_visibility() -> void:
+	var categories := ["hull", "paint", "trail", "beam"]
+	var headings := [%HullHeading, %PaintHeading, %TrailHeading, %BeamHeading]
+	var values := [%HullValue, %PaintValue, %TrailValue, %BeamStyleValue]
+	var grids := [hull_options, paint_options, trail_options, beam_options]
+	var buttons := [hull_category, paint_category, trail_category, beam_category]
+	for index in range(categories.size()):
+		var active := categories[index] == _ship_category
+		(headings[index] as Control).visible = active
+		(values[index] as Control).visible = active
+		(grids[index] as Control).visible = active
+		(buttons[index] as Button).button_pressed = active
+
+func _ship_container(category: String) -> GridContainer:
+	match category:
+		"paint":
+			return paint_options
+		"trail":
+			return trail_options
+		"beam":
+			return beam_options
+		_:
+			return hull_options
+
+func _ship_option_page_size() -> int:
+	var profile := ResponsiveUiProfile.current()
+	if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT:
+		return 2
+	if profile == ResponsiveUiProfile.Profile.PHONE_LANDSCAPE or profile == ResponsiveUiProfile.Profile.COMPACT:
+		return 4
+	return 6
+
+func _change_ship_option_page(delta: int) -> void:
+	var unlocked_count := 0
+	for option_variant in _progression.get_cosmetic_options(_ship_category):
+		var option := option_variant as Dictionary
+		if _progression.is_cosmetic_unlocked(_ship_category, String(option["id"])):
+			unlocked_count += 1
+	var page_count := maxi(1, int(ceil(float(unlocked_count) / float(_ship_option_page_size()))))
+	_ship_option_page = clampi(_ship_option_page + delta, 0, page_count - 1)
+	_refresh_ship_category_options()
+	GamepadUiNavigation.grab(ship_options_previous_page if delta < 0 else ship_options_next_page, ship_panel)
 
 func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 	if not _progression.equip_cosmetic(category, cosmetic_id):
@@ -985,14 +1118,23 @@ func _refresh_discovery() -> void:
 		completed_total += int(value)
 	discovery_count.text = tr("HQ_DISCOVERY_COUNT_FMT") % discoveries.size()
 	completed_contracts.text = tr("HQ_COMPLETED_CONTRACTS_FMT") % completed_total
-
 	discovery_empty_card.visible = discoveries.is_empty()
 	discovery_list.visible = not discoveries.is_empty()
 	for child in discovery_list.get_children():
 		child.queue_free()
 
-	var discovery_index := 0
-	for salvage_id in discoveries:
+	if discoveries.is_empty():
+		discovery_pager.visible = false
+		return
+
+	var page_size := _discovery_page_size()
+	var page_count := maxi(1, int(ceil(float(discoveries.size()) / float(page_size))))
+	_discovery_page = clampi(_discovery_page, 0, page_count - 1)
+	var first := _discovery_page * page_size
+	var last := mini(first + page_size, discoveries.size())
+	var reveal_index := 0
+	for index in range(first, last):
+		var salvage_id := String(discoveries[index])
 		if not _registry.has_salvage(salvage_id):
 			continue
 		var definition := _registry.get_salvage_definition(salvage_id)
@@ -1001,16 +1143,21 @@ func _refresh_discovery() -> void:
 		discovery_list.add_child(card)
 		var rarity_key := _rarity_key(String(definition.rarity))
 		var category_key := _category_key(String(definition.category))
-		card.configure(
-			definition.sprite,
-			tr(String(definition.display_name_key)),
-			tr("HQ_DISCOVERY_META_FMT") % [tr(category_key), tr(rarity_key)],
-			tr("HQ_DISCOVERY_VALUE_FMT") % definition.base_value,
-			tr(rarity_key),
-			WorldVisualLanguage.salvage_rarity_color(definition.rarity)
-		)
-		card.call_deferred("reveal", minf(float(discovery_index) * 0.035, 0.24))
-		discovery_index += 1
+		card.configure(definition.sprite, tr(String(definition.display_name_key)), tr("HQ_DISCOVERY_META_FMT") % [tr(category_key), tr(rarity_key)], tr("HQ_DISCOVERY_VALUE_FMT") % definition.base_value, tr(rarity_key), WorldVisualLanguage.salvage_rarity_color(definition.rarity))
+		card.call_deferred("reveal", minf(float(reveal_index) * 0.035, 0.18))
+		reveal_index += 1
+
+	_set_pager_state(discovery_pager, discovery_previous_page, discovery_page_label, discovery_next_page, _discovery_page, page_count)
+
+func _change_discovery_page(delta: int) -> void:
+	var count := _progression.get_discovery_ids().size()
+	var page_count := maxi(1, int(ceil(float(count) / float(_discovery_page_size()))))
+	_discovery_page = clampi(_discovery_page + delta, 0, page_count - 1)
+	_refresh_discovery()
+	GamepadUiNavigation.grab(discovery_previous_page if delta < 0 else discovery_next_page, discovery_panel)
+
+func _discovery_page_size() -> int:
+	return 4 if ResponsiveUiProfile.current() == ResponsiveUiProfile.Profile.DESKTOP else 2
 
 func _rarity_key(rarity: String) -> String:
 	match rarity:

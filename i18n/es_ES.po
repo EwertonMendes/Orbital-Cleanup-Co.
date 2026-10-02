@@ -433,6 +433,18 @@ msgstr "ESTELA DEL MOTOR"
 msgid "HQ_CUSTOMIZE_BEAM"
 msgstr "HAZ TRACTOR"
 
+msgid "HQ_SHIP_TAB_HULL"
+msgstr "CASCO"
+
+msgid "HQ_SHIP_TAB_PAINT"
+msgstr "PINTURA"
+
+msgid "HQ_SHIP_TAB_TRAIL"
+msgstr "ESTELA"
+
+msgid "HQ_SHIP_TAB_BEAM"
+msgstr "HAZ"
+
 msgid "HQ_SHIP_HULL_FMT"
 msgstr "Casco · %s"
 
