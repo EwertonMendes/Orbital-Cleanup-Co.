@@ -444,6 +444,8 @@ func _create_player(stream: AudioStream, volume_db: float) -> AudioStreamPlayer:
 func _on_input_mode_changed(mode: InputService.InputMode) -> void:
 	_refresh_copy()
 	if mode == InputService.InputMode.GAMEPAD:
-		GamepadUiNavigation.grab(continue_button, self)
-	elif mode == InputService.InputMode.POINTER and continue_button.has_focus():
-		continue_button.release_focus()
+		GamepadUiNavigation.grab(previous_page if _page == 1 else next_page, self)
+	elif mode == InputService.InputMode.POINTER:
+		var focus_owner := get_viewport().gui_get_focus_owner()
+		if focus_owner != null and (focus_owner == continue_button or focus_owner == previous_page or focus_owner == next_page):
+			focus_owner.release_focus()
