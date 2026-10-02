@@ -1580,7 +1580,7 @@ func _refresh_module_options() -> void:
 	slot_bar.name = "ModuleSlotBar"
 	slot_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var profile := ResponsiveUiProfile.current()
-	slot_bar.columns = 2 if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT else mini(3, maxi(slots.size(), 1))
+	slot_bar.columns = 2 if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT else mini(4, maxi(slots.size(), 1))
 	slot_bar.add_theme_constant_override("h_separation", 6)
 	slot_bar.add_theme_constant_override("v_separation", 6)
 	modules_options.add_child(slot_bar)
