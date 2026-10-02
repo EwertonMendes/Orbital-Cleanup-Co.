@@ -17,6 +17,10 @@ const MOVE_RIGHT := &"occ_move_right"
 const MOVE_UP := &"occ_move_up"
 const MOVE_DOWN := &"occ_move_down"
 const BOOST := &"occ_boost"
+const OPERATIONS := &"occ_operations"
+const CONTRACT_ACTION := &"occ_contract_action"
+const TAB_PREVIOUS := &"occ_tab_previous"
+const TAB_NEXT := &"occ_tab_next"
 const TOUCH_MOUSE_SUPPRESSION_MS := 350
 const GAMEPAD_DEADZONE := 0.18
 const GAMEPAD_ACTIVATION_THRESHOLD := 0.24
@@ -34,6 +38,11 @@ func initialize() -> void:
 	_ensure_default_navigation_actions()
 	_ensure_key_action(BOOST, [KEY_SPACE])
 	_ensure_joy_button_action(BOOST, JOY_BUTTON_A)
+	_ensure_joy_button_action(OPERATIONS, JOY_BUTTON_START)
+	_ensure_joy_button_action(CONTRACT_ACTION, JOY_BUTTON_Y)
+	_ensure_joy_button_action(TAB_PREVIOUS, JOY_BUTTON_LEFT_SHOULDER)
+	_ensure_joy_button_action(TAB_NEXT, JOY_BUTTON_RIGHT_SHOULDER)
+	_ensure_default_ui_gamepad_actions()
 	_apply_pointer_visibility()
 	set_process_input(true)
 	set_process_unhandled_input(true)
@@ -65,7 +74,7 @@ func _input(event: InputEvent) -> void:
 
 	if event is InputEventKey:
 		var key := event as InputEventKey
-		if key.pressed and not key.echo and _is_flight_key(key):
+		if key.pressed and not key.echo:
 			_set_input_mode(InputMode.KEYBOARD)
 		return
 
@@ -224,6 +233,18 @@ func _ensure_default_navigation_actions() -> void:
 	_ensure_key_action(MOVE_UP, [KEY_W, KEY_UP])
 	_ensure_key_action(MOVE_DOWN, [KEY_S, KEY_DOWN])
 
+func _ensure_default_ui_gamepad_actions() -> void:
+	_ensure_joy_button_action(&"ui_accept", JOY_BUTTON_A)
+	_ensure_joy_button_action(&"ui_cancel", JOY_BUTTON_B)
+	_ensure_joy_button_action(&"ui_left", JOY_BUTTON_DPAD_LEFT)
+	_ensure_joy_button_action(&"ui_right", JOY_BUTTON_DPAD_RIGHT)
+	_ensure_joy_button_action(&"ui_up", JOY_BUTTON_DPAD_UP)
+	_ensure_joy_button_action(&"ui_down", JOY_BUTTON_DPAD_DOWN)
+	_ensure_joy_axis_action(&"ui_left", JOY_AXIS_LEFT_X, -1.0)
+	_ensure_joy_axis_action(&"ui_right", JOY_AXIS_LEFT_X, 1.0)
+	_ensure_joy_axis_action(&"ui_up", JOY_AXIS_LEFT_Y, -1.0)
+	_ensure_joy_axis_action(&"ui_down", JOY_AXIS_LEFT_Y, 1.0)
+
 func _ensure_key_action(action: StringName, keys: Array) -> void:
 	if not InputMap.has_action(action):
 		InputMap.add_action(action, GAMEPAD_DEADZONE)
@@ -239,5 +260,15 @@ func _ensure_joy_button_action(action: StringName, button_index: int) -> void:
 		InputMap.add_action(action, GAMEPAD_DEADZONE)
 	var input_event := InputEventJoypadButton.new()
 	input_event.button_index = button_index
+	if not InputMap.action_has_event(action, input_event):
+		InputMap.action_add_event(action, input_event)
+
+
+func _ensure_joy_axis_action(action: StringName, axis: int, axis_value: float) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action, GAMEPAD_DEADZONE)
+	var input_event := InputEventJoypadMotion.new()
+	input_event.axis = axis
+	input_event.axis_value = axis_value
 	if not InputMap.action_has_event(action, input_event):
 		InputMap.action_add_event(action, input_event)
