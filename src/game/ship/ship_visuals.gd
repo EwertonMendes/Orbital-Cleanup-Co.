@@ -1,23 +1,22 @@
 extends Node2D
 class_name ShipVisuals
 
-const ENGINE_FX_RIG_SCENE := preload("res://src/game/ship/engine_fx_rig.tscn")
-const ENGINE_PARTICLE_BUDGET := 84
+const PROPULSION_TRAIL_RIG_SCENE := preload("res://src/game/ship/propulsion_trail_rig.tscn")
 
 @onready var steering_visual: Node2D = %SteeringVisual
 @onready var ship_sprite: Sprite2D = %ShipSprite
-@onready var engine_fx_rig: EngineFxRig = %EngineFxRig
+@onready var propulsion_trail_rig: PropulsionTrailRig = %PropulsionTrailRig
 @onready var bump_particles: CPUParticles2D = %BumpParticles
 
 var _impact_tween: Tween
 var _drift_direction := Vector2.ZERO
 var _drift_intensity := 0.0
 var _layer_sprites: Dictionary = {}
-var _engine_fx_rigs: Array[EngineFxRig] = []
-var _extra_engine_fx_rigs: Array[EngineFxRig] = []
+var _propulsion_trail_rigs: Array[PropulsionTrailRig] = []
+var _extra_propulsion_trail_rigs: Array[PropulsionTrailRig] = []
 
 func _ready() -> void:
-	_engine_fx_rigs = [engine_fx_rig]
+	_propulsion_trail_rigs = [propulsion_trail_rig]
 
 func apply_ship_build(build: Dictionary) -> void:
 	assert(build.has("visual") and build.has("cosmetics"), "ShipVisuals requires resolved visual and cosmetic data.")
@@ -125,43 +124,36 @@ func _configure_layer(layer_id: String, texture_path: String, render_scale: floa
 
 func _configure_engine_sockets(sockets: Array, loadout: Dictionary) -> void:
 	_clear_extra_engines()
-	_engine_fx_rigs = [engine_fx_rig]
+	_propulsion_trail_rigs = [propulsion_trail_rig]
 
 	var socket_list := sockets
 	if socket_list.is_empty():
 		socket_list = [{"id": "main", "position": [0.0, 41.0]}]
 
-	var engine_style := loadout.get("engine", {}) as Dictionary
+	var propulsion_style := loadout.get("engine", {}) as Dictionary
 	var trail_palette := loadout.get("trail", {}) as Dictionary
-	assert(not engine_style.is_empty(), "Ship engine effect cosmetic is required.")
-	assert(not trail_palette.is_empty(), "Ship trail palette cosmetic is required.")
-
-	var per_engine_budget := clampi(
-		int(floor(float(ENGINE_PARTICLE_BUDGET) / float(maxi(socket_list.size(), 1)))),
-		10,
-		ENGINE_PARTICLE_BUDGET
-	)
+	assert(not propulsion_style.is_empty(), "Ship propulsion style cosmetic is required.")
+	assert(not trail_palette.is_empty(), "Ship propulsion palette cosmetic is required.")
 
 	for index in range(socket_list.size()):
 		var socket := socket_list[index] as Dictionary
-		var rig: EngineFxRig
+		var rig: PropulsionTrailRig
 		if index == 0:
-			rig = engine_fx_rig
+			rig = propulsion_trail_rig
 		else:
-			rig = ENGINE_FX_RIG_SCENE.instantiate() as EngineFxRig
-			assert(rig != null, "Engine VFX rig scene must instantiate.")
-			rig.name = "EngineFxRig_%d" % index
+			rig = PROPULSION_TRAIL_RIG_SCENE.instantiate() as PropulsionTrailRig
+			assert(rig != null, "Propulsion trail rig scene must instantiate.")
+			rig.name = "PropulsionTrailRig_%d" % index
 			steering_visual.add_child(rig)
-			_engine_fx_rigs.append(rig)
-			_extra_engine_fx_rigs.append(rig)
+			_propulsion_trail_rigs.append(rig)
+			_extra_propulsion_trail_rigs.append(rig)
 
 		rig.position = _socket_position(socket)
 		rig.rotation = deg_to_rad(float(socket.get("rotation_degrees", 0.0)))
 		rig.configure(
-			engine_style,
+			propulsion_style,
 			trail_palette,
-			clampf(float(socket.get("fx_scale", 1.0)), 0.25, 2.5),
-			per_engine_budget
+			clampf(float(socket.get("fx_scale", 1.0)), 0.25, 2.5)
 		)
 
 func _socket_position(socket: Dictionary) -> Vector2:
@@ -170,10 +162,10 @@ func _socket_position(socket: Dictionary) -> Vector2:
 	return Vector2(float(values[0]), float(values[1]))
 
 func _clear_extra_engines() -> void:
-	for rig in _extra_engine_fx_rigs:
+	for rig in _extra_propulsion_trail_rigs:
 		if is_instance_valid(rig):
 			rig.queue_free()
-	_extra_engine_fx_rigs.clear()
+	_extra_propulsion_trail_rigs.clear()
 
 func update_motion(
 	speed_ratio: float,
@@ -192,7 +184,7 @@ func update_motion(
 
 	var boost := clampf(boost_ratio, 0.0, 1.0)
 	var engine_strength := clampf(maxf(thrust_ratio, boost), 0.0, 1.0)
-	for rig in _engine_fx_rigs:
+	for rig in _propulsion_trail_rigs:
 		rig.set_motion(engine_strength, boost)
 
 	if motion_velocity.length_squared() > 64.0:
@@ -204,7 +196,7 @@ func update_motion(
 	queue_redraw()
 
 func play_boost() -> void:
-	for rig in _engine_fx_rigs:
+	for rig in _propulsion_trail_rigs:
 		rig.play_boost()
 
 func play_bump(intensity: float, normal: Vector2) -> void:
