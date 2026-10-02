@@ -79,6 +79,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var canopy_category: Button = %CanopyCategory
 @onready var body_kit_category: Button = %BodyKitCategory
 @onready var engine_category: Button = %EngineCategory
+@onready var modules_category: Button = %ModulesCategory
 @onready var trail_category: Button = %TrailCategory
 @onready var beam_category: Button = %BeamCategory
 @onready var hull_options: GridContainer = %HullOptions
@@ -88,6 +89,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var canopy_options: GridContainer = %CanopyOptions
 @onready var body_kit_options: GridContainer = %BodyKitOptions
 @onready var engine_options: GridContainer = %EngineOptions
+@onready var modules_options: GridContainer = %ModulesOptions
 @onready var trail_options: GridContainer = %TrailOptions
 @onready var beam_options: GridContainer = %BeamOptions
 @onready var ship_options_pager: HBoxContainer = %ShipOptionsPager
@@ -247,6 +249,7 @@ func _validate_contracts() -> void:
 		and canopy_options != null
 		and body_kit_options != null
 		and engine_options != null
+		and modules_options != null
 		and trail_options != null
 		and beam_options != null,
 		"Headquarters requires complete layered customization option grids."
@@ -455,6 +458,7 @@ func _apply_responsive_layout() -> void:
 		canopy_options,
 		body_kit_options,
 		engine_options,
+		modules_options,
 		trail_options,
 		beam_options,
 	]:
@@ -1107,6 +1111,7 @@ func _setup_ship_categories() -> void:
 		{"button": canopy_category, "id": "canopy"},
 		{"button": body_kit_category, "id": "body_kit"},
 		{"button": engine_category, "id": "engine"},
+		{"button": modules_category, "id": "modules"},
 		{"button": trail_category, "id": "trail"},
 		{"button": beam_category, "id": "beam"},
 	]
@@ -1135,6 +1140,8 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 	%CanopyHeading.text = tr("HQ_CUSTOMIZE_CANOPY")
 	%BodyKitHeading.text = tr("HQ_CUSTOMIZE_BODY_KIT")
 	%EngineHeading.text = tr("HQ_CUSTOMIZE_ENGINE")
+	%ModulesHeading.text = tr("HQ_FLEET_MODULES")
+	%ModulesValue.text = tr("HQ_FLEET_MODULES_HELP")
 	%TrailHeading.text = tr("HQ_CUSTOMIZE_TRAIL")
 	%BeamHeading.text = tr("HQ_CUSTOMIZE_BEAM")
 	var mastery := _progression.get_active_ship_mastery()
@@ -1150,6 +1157,7 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 	canopy_category.text = tr("HQ_SHIP_TAB_CANOPY")
 	body_kit_category.text = tr("HQ_SHIP_TAB_BODY_KIT")
 	engine_category.text = tr("HQ_SHIP_TAB_ENGINE")
+	modules_category.text = tr("HQ_FLEET_MODULES")
 	trail_category.text = tr("HQ_SHIP_TAB_TRAIL")
 	beam_category.text = tr("HQ_SHIP_TAB_BEAM")
 
@@ -1210,12 +1218,17 @@ func _refresh_ship_category_options() -> void:
 		canopy_options,
 		body_kit_options,
 		engine_options,
+		modules_options,
 		trail_options,
 		beam_options,
 	]:
 		for child in container.get_children():
 			child.queue_free()
 	_apply_ship_category_visibility()
+
+	if _ship_category == "modules":
+		_refresh_module_options()
+		return
 
 	var available: Array = []
 	for option_variant in _progression.get_cosmetic_options(_ship_category):
@@ -1261,7 +1274,7 @@ func _refresh_ship_category_options() -> void:
 	_configure_ship_option_focus_graph(option_buttons)
 
 func _apply_ship_category_visibility() -> void:
-	var categories := ["hull", "paint", "livery", "decal", "canopy", "body_kit", "engine", "trail", "beam"]
+	var categories := ["hull", "paint", "livery", "decal", "canopy", "body_kit", "engine", "modules", "trail", "beam"]
 	var headings := [
 		%HullHeading,
 		%PaintHeading,
@@ -1270,6 +1283,7 @@ func _apply_ship_category_visibility() -> void:
 		%CanopyHeading,
 		%BodyKitHeading,
 		%EngineHeading,
+		%ModulesHeading,
 		%TrailHeading,
 		%BeamHeading,
 	]
@@ -1281,6 +1295,7 @@ func _apply_ship_category_visibility() -> void:
 		%CanopyValue,
 		%BodyKitValue,
 		%EngineValue,
+		%ModulesValue,
 		%TrailValue,
 		%BeamStyleValue,
 	]
@@ -1303,6 +1318,7 @@ func _apply_ship_category_visibility() -> void:
 		canopy_category,
 		body_kit_category,
 		engine_category,
+		modules_category,
 		trail_category,
 		beam_category,
 	]
@@ -1327,6 +1343,8 @@ func _ship_container(category: String) -> GridContainer:
 			return body_kit_options
 		"engine":
 			return engine_options
+		"modules":
+			return modules_options
 		"trail":
 			return trail_options
 		"beam":
@@ -1342,14 +1360,116 @@ func _ship_option_page_size() -> int:
 
 func _change_ship_option_page(delta: int) -> void:
 	var unlocked_count := 0
-	for option_variant in _progression.get_cosmetic_options(_ship_category):
-		var option := option_variant as Dictionary
-		if _progression.is_cosmetic_unlocked(_ship_category, String(option["id"])):
-			unlocked_count += 1
+	if _ship_category == "modules":
+		unlocked_count = _module_option_entries().size()
+	else:
+		for option_variant in _progression.get_cosmetic_options(_ship_category):
+			var option := option_variant as Dictionary
+			if _progression.is_cosmetic_unlocked(_ship_category, String(option["id"])):
+				unlocked_count += 1
 	var page_count := maxi(1, int(ceil(float(unlocked_count) / float(_ship_option_page_size()))))
 	_ship_option_page = clampi(_ship_option_page + delta, 0, page_count - 1)
 	_refresh_ship_category_options()
 	GamepadUiNavigation.grab(ship_options_previous_page if delta < 0 else ship_options_next_page, ship_panel)
+
+func _module_option_entries() -> Array[Dictionary]:
+	var output: Array[Dictionary] = []
+	var definition := _progression.get_active_ship_definition()
+	var slot_counts := definition.get("module_slots", {}) as Dictionary
+	var equipped := _progression.get_equipped_modules()
+	for slot in ["propulsion", "recovery", "cargo", "utility"]:
+		var capacity := maxi(int(slot_counts.get(slot, 0)), 0)
+		if capacity <= 0:
+			continue
+		var slot_equipped_variant = equipped.get(slot, [])
+		var slot_equipped: Array = slot_equipped_variant as Array if slot_equipped_variant is Array else [slot_equipped_variant]
+		var definitions := _progression.get_module_definitions(slot)
+		for slot_index in range(capacity):
+			var current_id := String(slot_equipped[slot_index]) if slot_index < slot_equipped.size() else ""
+			for module_definition in definitions:
+				var module_id := String(module_definition["id"])
+				if not _progression.is_module_unlocked(module_id):
+					continue
+				output.append({
+					"slot": slot,
+					"slot_index": slot_index,
+					"module_id": module_id,
+					"display_name_key": String(module_definition["display_name_key"]),
+					"selected": current_id == module_id,
+				})
+	return output
+
+func _refresh_module_options() -> void:
+	var entries := _module_option_entries()
+	var page_size := _ship_option_page_size()
+	var page_count := maxi(1, int(ceil(float(entries.size()) / float(page_size))))
+	_ship_option_page = clampi(_ship_option_page, 0, page_count - 1)
+	var first := _ship_option_page * page_size
+	var last := mini(first + page_size, entries.size())
+	var option_buttons: Array[Button] = []
+
+	for index in range(first, last):
+		var entry := entries[index]
+		var slot := String(entry["slot"])
+		var slot_index := int(entry["slot_index"])
+		var module_id := String(entry["module_id"])
+		var selected := bool(entry["selected"])
+		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
+		assert(button != null, "Module option must use OccChromeButton.")
+		button.custom_minimum_size = Vector2(0, 46)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.emphasis = selected
+		button.set_meta(&"occ_focus_restore_key", "module:%s:%d:%s" % [slot, slot_index, module_id])
+		button.set_meta(&"occ_module_slot", slot)
+		button.set_meta(&"occ_module_slot_index", slot_index)
+		button.set_meta(&"occ_module_id", module_id)
+		button.set_meta(&"occ_module_name_key", String(entry["display_name_key"]))
+		button.text = _module_button_text(slot, slot_index, module_id, tr(String(entry["display_name_key"])), selected)
+		var owned := _progression.is_module_owned(module_id)
+		button.disabled = not owned and not _progression.can_purchase_module(module_id)
+		if button.disabled and not owned:
+			button.tooltip_text = tr("HQ_FLEET_NEED_CREDITS")
+		button.pressed.connect(_equip_module.bind(slot, slot_index, module_id))
+		modules_options.add_child(button)
+		option_buttons.append(button)
+		_wire_button_feedback(button)
+
+	_set_pager_state(ship_options_pager, ship_options_previous_page, ship_options_page_label, ship_options_next_page, _ship_option_page, page_count)
+	_configure_ship_option_focus_graph(option_buttons)
+
+func _equip_module(slot: String, slot_index: int, module_id: String) -> void:
+	var focus_owner := get_viewport().gui_get_focus_owner()
+	_suppress_progression_refresh = true
+	if not _progression.is_module_owned(module_id):
+		if not _progression.purchase_module(module_id):
+			_suppress_progression_refresh = false
+			return
+	var equipped_ok := _progression.equip_module(slot, module_id, slot_index)
+	_suppress_progression_refresh = false
+	if not equipped_ok:
+		return
+
+	_refresh_ship(false)
+	if focus_owner != null and is_instance_valid(focus_owner) and focus_owner.is_inside_tree():
+		if _input_service != null and _input_service.prefers_gamepad():
+			focus_owner.call_deferred("grab_focus")
+
+	if _platform != null:
+		_platform.track_event("fleet_module_equipped", {
+			"ship_id": _progression.get_active_ship_id(),
+			"slot": slot,
+			"slot_index": slot_index,
+			"module_id": module_id,
+		})
+
+func _module_button_text(slot: String, slot_index: int, module_id: String, display_name: String, selected: bool) -> String:
+	var slot_key := "MODULE_SLOT_%s" % slot.to_upper()
+	var state_text := display_name
+	if selected:
+		state_text = tr("HQ_COSMETIC_EQUIPPED_FMT") % display_name
+	elif not _progression.is_module_owned(module_id):
+		state_text = tr("HQ_FLEET_BUY_FMT") % [display_name, _progression.get_module_cost(module_id)]
+	return tr("HQ_FLEET_MODULE_SLOT_FMT") % [tr(slot_key), slot_index + 1, state_text]
 
 func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 	# Ship-model selection and cosmetic purchases share the existing zero-scroll
@@ -1378,6 +1498,9 @@ func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 		})
 
 func _refresh_ship_option_selection_visuals() -> void:
+	if _ship_category == "modules":
+		_refresh_module_selection_visuals()
+		return
 	var equipped := _progression.get_equipped_cosmetic_id(_ship_category)
 	var container := _ship_container(_ship_category)
 	for child in container.get_children():
@@ -1394,6 +1517,26 @@ func _refresh_ship_option_selection_visuals() -> void:
 		button.text = _ship_option_button_text(_ship_category, cosmetic_id, display_name, selected)
 		var owned := _progression.is_cosmetic_owned(_ship_category, cosmetic_id)
 		button.disabled = not owned and not _progression.can_purchase_cosmetic(_ship_category, cosmetic_id)
+
+func _refresh_module_selection_visuals() -> void:
+	var equipped := _progression.get_equipped_modules()
+	for child in modules_options.get_children():
+		if not child is OccChromeButton:
+			continue
+		var button := child as OccChromeButton
+		var slot := String(button.get_meta(&"occ_module_slot", ""))
+		var slot_index := int(button.get_meta(&"occ_module_slot_index", 0))
+		var module_id := String(button.get_meta(&"occ_module_id", ""))
+		var name_key := String(button.get_meta(&"occ_module_name_key", ""))
+		if slot.is_empty() or module_id.is_empty() or name_key.is_empty():
+			continue
+		var slot_values_variant = equipped.get(slot, [])
+		var slot_values: Array = slot_values_variant as Array if slot_values_variant is Array else [slot_values_variant]
+		var selected := slot_index < slot_values.size() and String(slot_values[slot_index]) == module_id
+		button.emphasis = selected
+		button.text = _module_button_text(slot, slot_index, module_id, tr(name_key), selected)
+		var owned := _progression.is_module_owned(module_id)
+		button.disabled = not owned and not _progression.can_purchase_module(module_id)
 
 func _ship_option_button_text(category: String, cosmetic_id: String, display_name: String, selected: bool) -> String:
 	if selected:
@@ -1464,6 +1607,8 @@ func _ship_category_button(category: String) -> Button:
 			return body_kit_category
 		"engine":
 			return engine_category
+		"modules":
+			return modules_category
 		"trail":
 			return trail_category
 		"beam":
