@@ -333,7 +333,7 @@ func purchase_module(module_id: String) -> bool:
 	print("[Fleet] MODULE_PURCHASE id=%s cost=%d" % [module_id, cost])
 	return true
 
-func equip_module(slot: String, module_id: String) -> bool:
+func equip_module(slot: String, module_id: String, slot_index: int = 0) -> bool:
 	var definition := _find_module(module_id)
 	if definition.is_empty() or String(definition.get("slot", "")) != slot:
 		return false
@@ -342,11 +342,16 @@ func equip_module(slot: String, module_id: String) -> bool:
 	var ship_id := get_active_ship_id()
 	var ship_definition := _registry.get_ship(ship_id)
 	var slots := ship_definition.get("module_slots", {}) as Dictionary
-	if int(slots.get(slot, 0)) <= 0:
+	var capacity := int(slots.get(slot, 0))
+	if capacity <= 0 or slot_index < 0 or slot_index >= capacity:
 		return false
 	var ship_state := _get_ship_state(ship_id).duplicate(true)
 	var modules := ship_state.get("modules", {}) as Dictionary
-	modules[slot] = module_id
+	var equipped := (modules.get(slot, []) as Array).duplicate()
+	while equipped.size() < capacity:
+		equipped.append("")
+	equipped[slot_index] = module_id
+	modules[slot] = equipped
 	ship_state["modules"] = modules
 	_store_ship_state(ship_id, ship_state)
 	_persist()
@@ -776,7 +781,7 @@ func _default_ship_state(ship_id: String) -> Dictionary:
 	return {
 		"mastery_xp": 0,
 		"upgrades": upgrades,
-		"modules": (definition.get("default_modules", {}) as Dictionary).duplicate(true),
+		"modules": _default_module_loadout(definition),
 		"cosmetics": (_cosmetic_config.get("default_loadout", {}) as Dictionary).duplicate(true),
 		"legacy_effects": {},
 	}
@@ -795,14 +800,8 @@ func _normalize_ship_state(ship_id: String, saved: Dictionary) -> Dictionary:
 
 	var saved_modules = saved.get("modules", {})
 	if saved_modules is Dictionary:
-		var modules := normalized["modules"] as Dictionary
-		for slot_variant in modules.keys():
-			var slot := String(slot_variant)
-			var module_id := String((saved_modules as Dictionary).get(slot, modules[slot]))
-			var module := _find_module(module_id)
-			if not module.is_empty() and String(module.get("slot", "")) == slot:
-				modules[slot] = module_id
-		normalized["modules"] = modules
+		var definition := _registry.get_ship(ship_id)
+		normalized["modules"] = _normalize_module_loadout(definition, saved_modules as Dictionary)
 
 	var saved_cosmetics = saved.get("cosmetics", {})
 	if saved_cosmetics is Dictionary:
@@ -991,15 +990,19 @@ func _sanitize_fleet() -> void:
 				cosmetics[category] = String(defaults[category])
 		ship_state["cosmetics"] = cosmetics
 
-		var modules := ship_state.get("modules", {}) as Dictionary
 		var ship_definition := _registry.get_ship(ship_id)
-		var default_modules := ship_definition.get("default_modules", {}) as Dictionary
-		for slot_variant in default_modules.keys():
+		var modules := _normalize_module_loadout(ship_definition, ship_state.get("modules", {}) as Dictionary)
+		var defaults := _default_module_loadout(ship_definition)
+		for slot_variant in modules.keys():
 			var slot := String(slot_variant)
-			var module_id := String(modules.get(slot, default_modules[slot]))
-			var module := _find_module(module_id)
-			if module.is_empty() or String(module.get("slot", "")) != slot or not owned_modules.has(module_id):
-				modules[slot] = String(default_modules[slot])
+			var equipped := modules[slot] as Array
+			var fallback := defaults[slot] as Array
+			for index in range(equipped.size()):
+				var module_id := String(equipped[index])
+				var module := _find_module(module_id)
+				if module.is_empty() or String(module.get("slot", "")) != slot or not owned_modules.has(module_id):
+					equipped[index] = String(fallback[index]) if index < fallback.size() else ""
+			modules[slot] = equipped
 		ship_state["modules"] = modules
 		_store_ship_state(ship_id, ship_state)
 
@@ -1026,13 +1029,47 @@ func _ensure_default_assets_owned(ship_id: String) -> void:
 	fleet["owned_cosmetics"] = owned_cosmetics
 	_state["fleet"] = fleet
 
+func _default_module_loadout(definition: Dictionary) -> Dictionary:
+	var slots := definition.get("module_slots", {}) as Dictionary
+	var authored_defaults := definition.get("default_modules", {}) as Dictionary
+	var output: Dictionary = {}
+	for slot_variant in slots.keys():
+		var slot := String(slot_variant)
+		var capacity := maxi(int(slots[slot_variant]), 0)
+		var values_variant = authored_defaults.get(slot, [])
+		var values: Array = values_variant as Array if values_variant is Array else [values_variant]
+		var equipped: Array[String] = []
+		for index in range(capacity):
+			equipped.append(String(values[index]) if index < values.size() else "")
+		output[slot] = equipped
+	return output
+
+func _normalize_module_loadout(definition: Dictionary, saved: Dictionary) -> Dictionary:
+	var output := _default_module_loadout(definition)
+	var slots := definition.get("module_slots", {}) as Dictionary
+	for slot_variant in slots.keys():
+		var slot := String(slot_variant)
+		var capacity := maxi(int(slots[slot_variant]), 0)
+		var saved_variant = saved.get(slot, [])
+		var saved_values: Array = saved_variant as Array if saved_variant is Array else [saved_variant]
+		var normalized := output.get(slot, []) as Array
+		for index in range(mini(capacity, saved_values.size())):
+			var module_id := String(saved_values[index])
+			var module := _find_module(module_id)
+			if not module.is_empty() and String(module.get("slot", "")) == slot:
+				normalized[index] = module_id
+		output[slot] = normalized
+	return output
+
 func _default_owned_modules(ship_id: String) -> Array[String]:
 	var output: Array[String] = []
 	var definition := _registry.get_ship(ship_id)
-	for value in (definition.get("default_modules", {}) as Dictionary).values():
-		var module_id := String(value)
-		if not module_id.is_empty() and not output.has(module_id):
-			output.append(module_id)
+	for slot_modules_variant in (definition.get("default_modules", {}) as Dictionary).values():
+		var slot_modules: Array = slot_modules_variant as Array if slot_modules_variant is Array else [slot_modules_variant]
+		for value in slot_modules:
+			var module_id := String(value)
+			if not module_id.is_empty() and not output.has(module_id):
+				output.append(module_id)
 	output.sort()
 	return output
 
