@@ -22,6 +22,7 @@ var _core_anchor_offset := -1.5
 var _boost_core_scale_bonus := 0.22
 var _boost_core_alpha_bonus := 0.08
 var _boost_particle_speed_bonus := 0.75
+var _visual_scale := 1.0
 var _configured := false
 
 func configure(
@@ -34,7 +35,8 @@ func configure(
 	assert(not palette.is_empty(), "EngineFxRig requires a trail palette.")
 	_style = style.duplicate(true)
 	_palette = palette.duplicate(true)
-	var safe_socket_scale := clampf(socket_scale, 0.25, 2.5)
+	var safe_socket_scale := clampf(socket_scale, 0.25, 4.0)
+	_visual_scale = safe_socket_scale
 
 	var core_profile := _style.get("core", {}) as Dictionary
 	var core_texture_path := String(core_profile.get("texture", ""))
@@ -58,7 +60,7 @@ func configure(
 
 	var trail_profile := _style.get("trail", {}) as Dictionary
 	assert(not trail_profile.is_empty(), "Engine effect trail profile is required.")
-	primary_trail.apply_style(trail_profile, _palette, 0.0, 1.0)
+	primary_trail.apply_style(trail_profile, _palette, 0.0, 1.0, _visual_scale)
 	var use_secondary_trail := bool(trail_profile.get("secondary_trail", false))
 	secondary_trail.set_enabled(use_secondary_trail)
 	if use_secondary_trail:
@@ -66,7 +68,8 @@ func configure(
 			trail_profile,
 			_palette,
 			float(trail_profile.get("secondary_phase", PI)),
-			clampf(float(trail_profile.get("secondary_alpha_scale", 0.82)), 0.05, 1.0)
+			clampf(float(trail_profile.get("secondary_alpha_scale", 0.82)), 0.05, 1.0),
+			_visual_scale
 		)
 
 	var primary_profile := _style.get("primary_particles", {}) as Dictionary
@@ -202,8 +205,8 @@ func _apply_particle_profile(
 	particles.initial_velocity_max = maxf(float(profile.get("velocity_max", 128.0)), particles.initial_velocity_min)
 	particles.damping_min = maxf(float(profile.get("damping_min", 35.0)), 0.0)
 	particles.damping_max = maxf(float(profile.get("damping_max", 72.0)), particles.damping_min)
-	particles.scale_amount_min = maxf(float(profile.get("scale_min", 0.045)), 0.001)
-	particles.scale_amount_max = maxf(float(profile.get("scale_max", 0.10)), particles.scale_amount_min)
+	particles.scale_amount_min = maxf(float(profile.get("scale_min", 0.045)) * _visual_scale, 0.001)
+	particles.scale_amount_max = maxf(float(profile.get("scale_max", 0.10)) * _visual_scale, particles.scale_amount_min)
 	var base_alpha := clampf(float(profile.get("alpha", 0.72)), 0.0, 1.0)
 	particles.set_meta(&"occ_base_alpha", base_alpha)
 
