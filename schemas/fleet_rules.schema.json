@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Orbital Cleanup Co. fleet rules",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "default_ship_id", "mastery", "upgrade_tracks", "modules"],
+  "properties": {
+    "id": {"const": "fleet_rules"},
+    "default_ship_id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+    "mastery": {
+      "type": "object",
+      "required": ["contract_xp", "perfect_cleanup_bonus", "levels"],
+      "properties": {
+        "contract_xp": {"type": "integer", "minimum": 0},
+        "perfect_cleanup_bonus": {"type": "integer", "minimum": 0},
+        "levels": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "upgrade_tracks": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["id", "display_name_key", "description_key", "max_level", "base_cost", "cost_multiplier", "effects"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+          "display_name_key": {"type": "string", "minLength": 1},
+          "description_key": {"type": "string", "minLength": 1},
+          "max_level": {"type": "integer", "minimum": 1},
+          "base_cost": {"type": "integer", "minimum": 1},
+          "cost_multiplier": {"type": "number", "minimum": 1},
+          "effects": {"type": "object"},
+          "milestones": {"type": "array"}
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["id", "slot", "display_name_key", "description_key", "unlock_rank", "price", "effects"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9_]+$"},
+          "slot": {"enum": ["propulsion", "recovery", "cargo", "utility"]},
+          "display_name_key": {"type": "string", "minLength": 1},
+          "description_key": {"type": "string", "minLength": 1},
+          "unlock_rank": {"type": "string", "minLength": 1},
+          "price": {"type": "integer", "minimum": 0},
+          "effects": {"type": "object"}
+        }
+      }
+    }
+  }
+}
