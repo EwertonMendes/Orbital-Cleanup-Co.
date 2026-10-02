@@ -174,7 +174,7 @@ func _validate_operations_screen() -> void:
 		_expect(screen.find_child(panel_name, true, false) is VBoxContainer, "Operations requires panel: %s" % panel_name)
 
 	var unique_refs := [
-		"SafeArea", "Header", "MainRow", "TabGrid", "ContentScroll", "ContentShell",
+		"SafeArea", "Header", "MainRow", "TabGrid", "ContentStage", "ContentShell",
 		"ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel",
 		"ContractHero", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
 		"CreditsLabel", "RankLabel", "XpLabel", "CareerRankValue", "CareerXpLabel", "CareerXpBar",
