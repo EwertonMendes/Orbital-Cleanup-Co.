@@ -1395,3 +1395,24 @@ msgstr "Body Kit"
 
 msgid "HQ_CUSTOMIZE_ENGINE"
 msgstr "Engine FX"
+
+msgid "HQ_FLEET_MODULES"
+msgstr "MODULES"
+
+msgid "HQ_FLEET_MODULES_HELP"
+msgstr "Reusable hardware modules. Purchased modules stay in company inventory and can be equipped on compatible ship bays."
+
+msgid "HQ_FLEET_MODULE_SLOT_FMT"
+msgstr "%s %d · %s"
+
+msgid "MODULE_SLOT_PROPULSION"
+msgstr "Propulsion"
+
+msgid "MODULE_SLOT_RECOVERY"
+msgstr "Recovery"
+
+msgid "MODULE_SLOT_CARGO"
+msgstr "Cargo"
+
+msgid "MODULE_SLOT_UTILITY"
+msgstr "Utility"
