@@ -140,6 +140,7 @@ var _discovery_page := 0
 var _ship_category := "hull"
 var _ship_option_page := 0
 var _ship_category_group := ButtonGroup.new()
+var _suppress_progression_refresh := false
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -274,28 +275,19 @@ func _show_tab(tab: int, instant: bool = false) -> void:
 		return
 
 	_tab_transitioning = true
-	var direction := 1.0 if tab > previous_tab else -1.0
-
 	if _tab_reveal_tween != null and _tab_reveal_tween.is_valid():
 		_tab_reveal_tween.kill()
 
-	var previous_origin := previous_panel.position
+	# Panels share one fixed viewport. Animate only opacity so transitions never
+	# mutate anchors/offsets and cannot leave content shifted outside the stage.
 	_tab_reveal_tween = create_tween()
-	_tab_reveal_tween.set_parallel(true)
-	_tab_reveal_tween.tween_property(
-		previous_panel,
-		"position:x",
-		previous_origin.x - direction * 84.0,
-		0.18
-	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
 	_tab_reveal_tween.tween_property(
 		previous_panel,
 		"modulate:a",
 		0.0,
-		0.14
+		0.10
 	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await _tab_reveal_tween.finished
-	previous_panel.position = previous_origin
 
 	_active_tab = tab
 	_refresh_tab_content(tab)
@@ -303,27 +295,15 @@ func _show_tab(tab: int, instant: bool = false) -> void:
 	_sync_tab_selection()
 	_update_tab_visuals()
 
-	await get_tree().process_frame
-	var active_origin := active_panel.position
-	active_panel.position = active_origin + Vector2(direction * 96.0, 0.0)
-	active_panel.modulate = Color(0.72, 0.90, 1.0, 0.0)
-
+	active_panel.modulate = Color(0.86, 0.94, 1.0, 0.0)
 	_tab_reveal_tween = create_tween()
-	_tab_reveal_tween.set_parallel(true)
-	_tab_reveal_tween.tween_property(
-		active_panel,
-		"position",
-		active_origin,
-		0.24
-	).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	_tab_reveal_tween.tween_property(
 		active_panel,
 		"modulate",
 		Color.WHITE,
-		0.22
+		0.16
 	).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	await _tab_reveal_tween.finished
-	active_panel.position = active_origin
 	active_panel.modulate = Color.WHITE
 	_tab_transitioning = false
 
@@ -339,8 +319,11 @@ func _sync_tab_selection() -> void:
 		tabs[index].button_pressed = index == _active_tab
 
 func _refresh_tab_content(tab: int) -> void:
-	footer.visible = true
-	primary_action.visible = tab == Tab.CONTRACTS
+	# Keep the outer console fixed, but let non-contract tabs use the full
+	# content height. Hiding this child does not affect FloatingSurface size
+	# because the content stage is isolated from panel minimum sizes.
+	footer.visible = tab == Tab.CONTRACTS
+	primary_action.visible = true
 	match tab:
 		Tab.UPGRADES:
 			_refresh_upgrades()
@@ -354,6 +337,10 @@ func _refresh_tab_content(tab: int) -> void:
 func _apply_panel_visibility(active_panel: Control) -> void:
 	var panels: Array[Control] = [contracts_panel, upgrades_panel, career_panel, ship_panel, discovery_panel]
 	for panel in panels:
+		# Every tab is a true overlay page inside ContentShell. Reset the rect
+		# whenever visibility changes so no transition/resize can accumulate
+		# stale offsets and clip the page on any edge.
+		panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		panel.visible = panel == active_panel
 		panel.modulate.a = 1.0
 
@@ -440,7 +427,10 @@ func _apply_responsive_layout() -> void:
 	discovery_list.columns = 1 if portrait else 2
 	ship_category_bar.columns = 4
 	for option_grid in [hull_options, paint_options, trail_options, beam_options]:
-		option_grid.columns = 2 if portrait else 3
+		# Cosmetic labels can be substantially wider than generic actions.
+		# Keep enough horizontal room for complete labels instead of allowing
+		# a third column to overflow the loadout card.
+		option_grid.columns = 1 if portrait else 2
 
 	%DeskLabel.visible = not phone
 	contract_ship_card.visible = not portrait
@@ -717,6 +707,8 @@ func _on_audio_changed(_master_linear: float) -> void:
 	_update_volume_value()
 
 func _on_progression_changed(_snapshot: Dictionary) -> void:
+	if _suppress_progression_refresh:
+		return
 	var restore_key := ""
 	if _input_service != null and _input_service.prefers_gamepad():
 		var focus_owner := get_viewport().gui_get_focus_owner()
@@ -983,7 +975,7 @@ func _select_ship_category(category: String) -> void:
 	_ship_option_page = 0
 	_refresh_ship()
 
-func _refresh_ship() -> void:
+func _refresh_ship(rebuild_options: bool = true) -> void:
 	%ShipTitle.text = tr("HQ_SHIP_TITLE")
 	%ShipSubtitle.text = tr("HQ_SHIP_SUBTITLE")
 	%LoadoutTitle.text = tr("HQ_SHIP_LOADOUT")
@@ -1021,7 +1013,10 @@ func _refresh_ship() -> void:
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
 	ship_stats.text = tr("HQ_SHIP_STATS_FMT") % [int(round(float(ship["scan_range"]))), int(round(float(ship["cargo_capacity"]))), recovery_percent]
-	_refresh_ship_category_options()
+	if rebuild_options:
+		_refresh_ship_category_options()
+	else:
+		_refresh_ship_option_selection_visuals()
 
 func _refresh_ship_category_options() -> void:
 	for container in [hull_options, paint_options, trail_options, beam_options]:
@@ -1045,6 +1040,7 @@ func _refresh_ship_category_options() -> void:
 	var last := mini(first + page_size, available.size())
 	var container := _ship_container(_ship_category)
 	var equipped := _progression.get_equipped_cosmetic_id(_ship_category)
+	var option_buttons: Array[Button] = []
 	for index in range(first, last):
 		var option := available[index] as Dictionary
 		var cosmetic_id := String(option["id"])
@@ -1055,13 +1051,17 @@ func _refresh_ship_category_options() -> void:
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
 		button.set_meta(&"occ_focus_restore_key", "ship:%s:%s" % [_ship_category, cosmetic_id])
+		button.set_meta(&"occ_cosmetic_id", cosmetic_id)
+		button.set_meta(&"occ_cosmetic_name_key", String(option["display_name_key"]))
 		var name := tr(String(option["display_name_key"]))
 		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % name if selected else name
 		button.pressed.connect(_equip_cosmetic.bind(_ship_category, cosmetic_id))
 		container.add_child(button)
+		option_buttons.append(button)
 		_wire_button_feedback(button)
 
 	_set_pager_state(ship_options_pager, ship_options_previous_page, ship_options_page_label, ship_options_next_page, _ship_option_page, page_count)
+	_configure_ship_option_focus_graph(option_buttons)
 
 func _apply_ship_category_visibility() -> void:
 	var categories := ["hull", "paint", "trail", "beam"]
@@ -1091,9 +1091,7 @@ func _ship_option_page_size() -> int:
 	var profile := ResponsiveUiProfile.current()
 	if profile == ResponsiveUiProfile.Profile.PHONE_PORTRAIT:
 		return 2
-	if profile == ResponsiveUiProfile.Profile.PHONE_LANDSCAPE or profile == ResponsiveUiProfile.Profile.COMPACT:
-		return 4
-	return 6
+	return 4
 
 func _change_ship_option_page(delta: int) -> void:
 	var unlocked_count := 0
@@ -1107,13 +1105,101 @@ func _change_ship_option_page(delta: int) -> void:
 	GamepadUiNavigation.grab(ship_options_previous_page if delta < 0 else ship_options_next_page, ship_panel)
 
 func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
-	if not _progression.equip_cosmetic(category, cosmetic_id):
+	# Equipping a cosmetic changes presentation only. Do not rebuild the
+	# focused option list: replacing the focused button during ui_accept is
+	# exactly what makes controller navigation appear to lock.
+	var focus_owner := get_viewport().gui_get_focus_owner()
+	_suppress_progression_refresh = true
+	var equipped_ok := _progression.equip_cosmetic(category, cosmetic_id)
+	_suppress_progression_refresh = false
+	if not equipped_ok:
 		return
+
+	_refresh_ship(false)
+	if focus_owner != null and is_instance_valid(focus_owner) and focus_owner.is_inside_tree():
+		if _input_service != null and _input_service.prefers_gamepad():
+			focus_owner.call_deferred("grab_focus")
+
 	if _platform != null:
 		_platform.track_event("cosmetic_equipped", {
 			"category": category,
 			"cosmetic_id": cosmetic_id,
 		})
+
+func _refresh_ship_option_selection_visuals() -> void:
+	var equipped := _progression.get_equipped_cosmetic_id(_ship_category)
+	var container := _ship_container(_ship_category)
+	for child in container.get_children():
+		if not child is OccChromeButton:
+			continue
+		var button := child as OccChromeButton
+		var cosmetic_id := String(button.get_meta(&"occ_cosmetic_id", ""))
+		var name_key := String(button.get_meta(&"occ_cosmetic_name_key", ""))
+		if cosmetic_id.is_empty() or name_key.is_empty():
+			continue
+		var selected := cosmetic_id == equipped
+		button.emphasis = selected
+		var display_name := tr(name_key)
+		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % display_name if selected else display_name
+
+func _configure_ship_option_focus_graph(option_buttons: Array[Button]) -> void:
+	var category_button := _ship_category_button(_ship_category)
+	category_button.focus_neighbor_down = NodePath()
+
+	if option_buttons.is_empty():
+		return
+
+	var columns := maxi(_ship_container(_ship_category).columns, 1)
+	category_button.focus_neighbor_down = category_button.get_path_to(option_buttons[0])
+
+	for index in range(option_buttons.size()):
+		var button := option_buttons[index]
+		button.focus_neighbor_left = NodePath()
+		button.focus_neighbor_right = NodePath()
+		button.focus_neighbor_up = NodePath()
+		button.focus_neighbor_down = NodePath()
+
+		var column := index % columns
+		var row := index / columns
+		if column > 0:
+			button.focus_neighbor_left = button.get_path_to(option_buttons[index - 1])
+		if column + 1 < columns and index + 1 < option_buttons.size():
+			button.focus_neighbor_right = button.get_path_to(option_buttons[index + 1])
+
+		var up_index := index - columns
+		if up_index >= 0:
+			button.focus_neighbor_up = button.get_path_to(option_buttons[up_index])
+		else:
+			button.focus_neighbor_up = button.get_path_to(category_button)
+
+		var down_index := index + columns
+		if down_index < option_buttons.size():
+			button.focus_neighbor_down = button.get_path_to(option_buttons[down_index])
+		elif ship_options_pager.visible:
+			var pager_target := ship_options_previous_page if column == 0 else ship_options_next_page
+			if not pager_target.disabled:
+				button.focus_neighbor_down = button.get_path_to(pager_target)
+
+	if ship_options_pager.visible:
+		ship_options_previous_page.focus_neighbor_left = NodePath()
+		ship_options_previous_page.focus_neighbor_right = ship_options_previous_page.get_path_to(ship_options_next_page)
+		ship_options_next_page.focus_neighbor_left = ship_options_next_page.get_path_to(ship_options_previous_page)
+		ship_options_next_page.focus_neighbor_right = NodePath()
+		var last_left := option_buttons[maxi(option_buttons.size() - mini(columns, option_buttons.size()), 0)]
+		var last_right := option_buttons[option_buttons.size() - 1]
+		ship_options_previous_page.focus_neighbor_up = ship_options_previous_page.get_path_to(last_left)
+		ship_options_next_page.focus_neighbor_up = ship_options_next_page.get_path_to(last_right)
+
+func _ship_category_button(category: String) -> Button:
+	match category:
+		"paint":
+			return paint_category
+		"trail":
+			return trail_category
+		"beam":
+			return beam_category
+		_:
+			return hull_category
 
 func _rank_display_key(rank_id: String) -> String:
 	for value in _registry.get_progression("career_ranks").get("ranks", []) as Array:
