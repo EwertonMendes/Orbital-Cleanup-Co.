@@ -752,9 +752,12 @@ def validate_ships(
         require(isinstance(slots, dict) and isinstance(defaults, dict), f"{ship_label}: module slots/defaults required")
         require(set(slots) == {"propulsion", "recovery", "cargo", "utility"}, f"{ship_label}: invalid module slot set")
         require(set(defaults) == set(slots), f"{ship_label}: every slot requires a default module")
-        for slot, module_id in defaults.items():
-            require(module_id in modules, f"{ship_label}: unknown default module {module_id}")
-            require(str(modules[module_id]["slot"]) == slot, f"{ship_label}: default module {module_id} does not match {slot}")
+        for slot, module_ids in defaults.items():
+            require(isinstance(module_ids, list), f"{ship_label}: default modules for {slot} must be an array")
+            require(len(module_ids) == int(slots[slot]), f"{ship_label}: {slot} defaults must match authored slot count")
+            for module_id in module_ids:
+                require(module_id in modules, f"{ship_label}: unknown default module {module_id}")
+                require(str(modules[module_id]["slot"]) == slot, f"{ship_label}: default module {module_id} does not match {slot}")
 
         visual = ship.get("visual")
         require(isinstance(visual, dict), f"{ship_label}.visual must be an object")
