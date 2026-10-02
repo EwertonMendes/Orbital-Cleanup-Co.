@@ -87,8 +87,9 @@ func apply_style(
 	width = _base_width
 	sample_lifetime = _base_lifetime
 
-	var tail_hex := String(palette.get("trail_tail", style.get("tail_color", "#199FDF")))
-	var head_hex := String(palette.get("trail_head", style.get("head_color", "#B0F8FF")))
+	var palette_values := palette.get("palette", palette) as Dictionary
+	var tail_hex := String(palette_values.get("trail_tail", style.get("tail_color", "#199FDF")))
+	var head_hex := String(palette_values.get("trail_head", style.get("head_color", "#B0F8FF")))
 	var tail := Color.from_string(tail_hex, Color(0.10, 0.62, 0.87, 1.0))
 	var head := Color.from_string(head_hex, Color(0.69, 0.97, 1.0, 1.0))
 	var next_gradient := Gradient.new()
