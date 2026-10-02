@@ -36,10 +36,10 @@
     "utility": 1
   },
   "default_modules": {
-    "propulsion": "balanced_drive",
-    "recovery": "standard_recovery",
-    "cargo": "standard_cargo",
-    "utility": "standard_utility"
+    "propulsion": ["balanced_drive"],
+    "recovery": ["standard_recovery"],
+    "cargo": ["standard_cargo"],
+    "utility": ["standard_utility"]
   },
   "visual": {
     "base_texture": "res://assets/original/ships/pioneer_01_hd.webp",
