@@ -779,6 +779,10 @@ def validate_ships(
             position = socket.get("position")
             require(isinstance(position, list) and len(position) == 2, f"{ship_label}.engine_sockets[{socket_index}].position must have two values")
             require(all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in position), f"{ship_label}.engine_sockets[{socket_index}].position must be numeric")
+            if "fx_scale" in socket:
+                require_number(socket["fx_scale"], f"{ship_label}.engine_sockets[{socket_index}].fx_scale", 0.25, 2.5)
+            if "rotation_degrees" in socket:
+                require_number(socket["rotation_degrees"], f"{ship_label}.engine_sockets[{socket_index}].rotation_degrees", -180, 180)
         tractor_socket = visual.get("tractor_socket")
         require(isinstance(tractor_socket, list) and len(tractor_socket) == 2, f"{ship_label}.tractor_socket must have two values")
         require(visual.get("collision_mode") == "base_alpha", f"{ship_label}: collision must come from the base model only")
@@ -837,13 +841,115 @@ def validate_cosmetics(
                 if path:
                     require_asset(path, f"{label}.{category}.{option_id}.texture")
             elif category == "engine":
-                for color_key in ("glow_color", "particle_color"):
-                    require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
+                core = option.get("core")
+                require(isinstance(core, dict), f"{label}.{category}.{option_id}.core must be an object")
+                require(
+                    set(core) == {"texture", "scale_x", "scale_y", "alpha", "pulse", "stretch", "anchor_offset"},
+                    f"{label}.{category}.{option_id}.core has unexpected fields",
+                )
+                require_asset(core.get("texture"), f"{label}.{category}.{option_id}.core.texture")
+                require(
+                    str(core.get("texture", "")).startswith("res://assets/original/vfx/"),
+                    f"{label}.{category}.{option_id}.core must use project-owned VFX artwork",
+                )
+                require_number(core.get("scale_x"), f"{label}.{category}.{option_id}.core.scale_x", 0.01, 0.30)
+                require_number(core.get("scale_y"), f"{label}.{category}.{option_id}.core.scale_y", 0.01, 0.30)
+                require_number(core.get("alpha"), f"{label}.{category}.{option_id}.core.alpha", 0.05, 1.0)
+                require_number(core.get("pulse"), f"{label}.{category}.{option_id}.core.pulse", 0, 0.35)
+                require_number(core.get("stretch"), f"{label}.{category}.{option_id}.core.stretch", 0, 0.8)
+                require_number(core.get("anchor_offset"), f"{label}.{category}.{option_id}.core.anchor_offset", -32, 32)
+
+                trail_profile = option.get("trail")
+                require(isinstance(trail_profile, dict), f"{label}.{category}.{option_id}.trail must be an object")
+                required_trail_fields = {
+                    "mode", "width", "lifetime", "sample_interval", "minimum_sample_distance",
+                    "max_samples", "opacity", "preview_length", "preview_points",
+                    "boost_width_bonus", "boost_lifetime_bonus",
+                }
+                optional_trail_fields = {
+                    "wave_amplitude", "wave_frequency", "secondary_trail",
+                    "secondary_phase", "secondary_alpha_scale",
+                }
+                require(
+                    required_trail_fields.issubset(trail_profile),
+                    f"{label}.{category}.{option_id}.trail is missing required fields",
+                )
+                require(
+                    set(trail_profile).issubset(required_trail_fields | optional_trail_fields),
+                    f"{label}.{category}.{option_id}.trail has unexpected fields",
+                )
+                require(
+                    trail_profile.get("mode") in {"ribbon", "plasma", "pulse", "spark", "comet", "shard", "mist", "dual_helix"},
+                    f"{label}.{category}.{option_id}.trail.mode is invalid",
+                )
+                require_number(trail_profile.get("width"), f"{label}.{category}.{option_id}.trail.width", 2, 24)
+                require_number(trail_profile.get("lifetime"), f"{label}.{category}.{option_id}.trail.lifetime", 0.1, 2.0)
+                require_number(trail_profile.get("sample_interval"), f"{label}.{category}.{option_id}.trail.sample_interval", 0.005, 0.2)
+                require_number(trail_profile.get("minimum_sample_distance"), f"{label}.{category}.{option_id}.trail.minimum_sample_distance", 0.1, 20)
+                require_number(trail_profile.get("max_samples"), f"{label}.{category}.{option_id}.trail.max_samples", 8, 96)
+                require_number(trail_profile.get("opacity"), f"{label}.{category}.{option_id}.trail.opacity", 0.05, 1)
+                require_number(trail_profile.get("preview_length"), f"{label}.{category}.{option_id}.trail.preview_length", 24, 180)
+                require_number(trail_profile.get("preview_points"), f"{label}.{category}.{option_id}.trail.preview_points", 8, 48)
+                require_number(trail_profile.get("boost_width_bonus"), f"{label}.{category}.{option_id}.trail.boost_width_bonus", 0, 1)
+                require_number(trail_profile.get("boost_lifetime_bonus"), f"{label}.{category}.{option_id}.trail.boost_lifetime_bonus", 0, 1)
+                if "wave_amplitude" in trail_profile:
+                    require_number(trail_profile["wave_amplitude"], f"{label}.{category}.{option_id}.trail.wave_amplitude", 0, 16)
+                if "wave_frequency" in trail_profile:
+                    require_number(trail_profile["wave_frequency"], f"{label}.{category}.{option_id}.trail.wave_frequency", 0, 8)
+                if bool(trail_profile.get("secondary_trail", False)):
+                    require(trail_profile.get("mode") == "dual_helix", f"{label}.{category}.{option_id}: secondary trail is reserved for dual_helix")
+                    require_number(trail_profile.get("secondary_phase"), f"{label}.{category}.{option_id}.trail.secondary_phase", 0, 6.4)
+                    require_number(trail_profile.get("secondary_alpha_scale"), f"{label}.{category}.{option_id}.trail.secondary_alpha_scale", 0.05, 1)
+
+                particle_fields = {
+                    "texture", "amount", "lifetime", "randomness", "spread",
+                    "velocity_min", "velocity_max", "damping_min", "damping_max",
+                    "scale_min", "scale_max", "scale_end", "alpha",
+                }
+                for particle_key in ("primary_particles", "secondary_particles"):
+                    particle = option.get(particle_key)
+                    require(isinstance(particle, dict), f"{label}.{category}.{option_id}.{particle_key} must be an object")
+                    require(set(particle) == particle_fields, f"{label}.{category}.{option_id}.{particle_key} has unexpected fields")
+                    require_asset(particle.get("texture"), f"{label}.{category}.{option_id}.{particle_key}.texture")
+                    require(
+                        str(particle.get("texture", "")).startswith("res://assets/original/vfx/"),
+                        f"{label}.{category}.{option_id}.{particle_key} must use project-owned VFX artwork",
+                    )
+                    require_number(particle.get("amount"), f"{label}.{category}.{option_id}.{particle_key}.amount", 0, 48)
+                    require_number(particle.get("lifetime"), f"{label}.{category}.{option_id}.{particle_key}.lifetime", 0.05, 2)
+                    require_number(particle.get("randomness"), f"{label}.{category}.{option_id}.{particle_key}.randomness", 0, 1)
+                    require_number(particle.get("spread"), f"{label}.{category}.{option_id}.{particle_key}.spread", 0, 180)
+                    velocity_min = require_number(particle.get("velocity_min"), f"{label}.{category}.{option_id}.{particle_key}.velocity_min", 0, 300)
+                    velocity_max = require_number(particle.get("velocity_max"), f"{label}.{category}.{option_id}.{particle_key}.velocity_max", 0, 300)
+                    require(velocity_min <= velocity_max, f"{label}.{category}.{option_id}.{particle_key}: velocity_min cannot exceed velocity_max")
+                    damping_min = require_number(particle.get("damping_min"), f"{label}.{category}.{option_id}.{particle_key}.damping_min", 0, 250)
+                    damping_max = require_number(particle.get("damping_max"), f"{label}.{category}.{option_id}.{particle_key}.damping_max", 0, 250)
+                    require(damping_min <= damping_max, f"{label}.{category}.{option_id}.{particle_key}: damping_min cannot exceed damping_max")
+                    scale_min = require_number(particle.get("scale_min"), f"{label}.{category}.{option_id}.{particle_key}.scale_min", 0.001, 1)
+                    scale_max = require_number(particle.get("scale_max"), f"{label}.{category}.{option_id}.{particle_key}.scale_max", 0.001, 1)
+                    require(scale_min <= scale_max, f"{label}.{category}.{option_id}.{particle_key}: scale_min cannot exceed scale_max")
+                    require_number(particle.get("scale_end"), f"{label}.{category}.{option_id}.{particle_key}.scale_end", 0.1, 4)
+                    require_number(particle.get("alpha"), f"{label}.{category}.{option_id}.{particle_key}.alpha", 0, 1)
+
+                boost = option.get("boost")
+                require(isinstance(boost, dict), f"{label}.{category}.{option_id}.boost must be an object")
+                require(
+                    set(boost) == {"core_scale_bonus", "core_alpha_bonus", "particle_speed_bonus"},
+                    f"{label}.{category}.{option_id}.boost has unexpected fields",
+                )
+                require_number(boost.get("core_scale_bonus"), f"{label}.{category}.{option_id}.boost.core_scale_bonus", 0, 1)
+                require_number(boost.get("core_alpha_bonus"), f"{label}.{category}.{option_id}.boost.core_alpha_bonus", 0, 0.5)
+                require_number(boost.get("particle_speed_bonus"), f"{label}.{category}.{option_id}.boost.particle_speed_bonus", 0, 2)
             elif category == "trail":
-                for color_key in ("tail_color", "head_color", "glow_color"):
-                    require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
-                require_number(option.get("width"), f"{label}.{category}.{option_id}.width", 2, 24)
-                require_number(option.get("lifetime"), f"{label}.{category}.{option_id}.lifetime", 0.1, 2.0)
+                palette = option.get("palette")
+                require(isinstance(palette, dict), f"{label}.{category}.{option_id}.palette must be an object")
+                expected_palette = {"core", "primary", "secondary", "accent", "trail_tail", "trail_head"}
+                require(set(palette) == expected_palette, f"{label}.{category}.{option_id}.palette must define exactly {sorted(expected_palette)}")
+                for color_key in sorted(expected_palette):
+                    require(
+                        HEX_COLOR_RE.fullmatch(str(palette.get(color_key, ""))) is not None,
+                        f"{label}.{category}.{option_id}.palette.{color_key}: expected #RRGGBB",
+                    )
             elif category == "beam":
                 for color_key in ("glow_color", "core_color"):
                     require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
