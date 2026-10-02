@@ -159,11 +159,13 @@ func configure(context: Dictionary) -> void:
 		ship.position += _context["debug_ship_offset"] as Vector2
 		print("[QA] DEPOT_NAV_PREVIEW ship_offset=%s" % str(_context["debug_ship_offset"]))
 
+	var ship_build := _progression.get_active_ship_build()
 	ship.configure(
 		_input_service,
 		runtime.get_play_bounds(),
-		_progression.get_ship_modifiers(),
-		_progression.get_ship_cosmetics()
+		ship_build["stats"] as Dictionary,
+		ship_build["cosmetics"] as Dictionary,
+		ship_build
 	)
 	assert(ship.tuning != null, "PlayerShip tuning must exist before operational-zone feedback binding.")
 	zone_warning.bind(ship)
