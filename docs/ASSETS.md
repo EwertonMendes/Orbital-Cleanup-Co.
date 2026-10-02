@@ -118,9 +118,9 @@ The salvage pass adds **25 editable SVG silhouettes** under `assets/original/sal
 
 The ship-engine customization pass adds three original transparent grayscale runtime primitives under `assets/original/vfx/`:
 
-- `engine_core_plume.png` — tapered nozzle plume;
-- `particle_ring.png` — expanding energy-ring particle;
-- `particle_cloud.png` — diffuse plasma/nebula particle.
+- `engine_core_plume.svg` — tapered nozzle plume;
+- `particle_ring.svg` — expanding energy-ring particle;
+- `particle_cloud.svg` — diffuse plasma/nebula particle.
 
 They were authored specifically for Orbital Cleanup Co. and introduce no third-party dependency. Color is deliberately absent from the source images: the runtime engine/trail cosmetic data applies the equipped palette so the same three textures can support many combinations without shipping recolored duplicates.
 
