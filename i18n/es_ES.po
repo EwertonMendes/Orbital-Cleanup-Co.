@@ -303,7 +303,7 @@ msgid "HQ_TAB_CAREER"
 msgstr "CARRERA"
 
 msgid "HQ_TAB_SHIP"
-msgstr "NAVE"
+msgstr "FLOTA"
 
 msgid "HQ_TAB_DISCOVERY"
 msgstr "DESCUBRIMIENTOS"
@@ -330,7 +330,7 @@ msgid "HQ_UPGRADES_TITLE"
 msgstr "MEJORAS DE EQUIPO"
 
 msgid "HQ_UPGRADES_SUBTITLE"
-msgstr "Mejoras permanentes compradas con Créditos. Los cambios se aplican al siguiente contrato."
+msgstr "Sistemas permanentes de la nave activa."
 
 msgid "HQ_UPGRADE_MAX"
 msgstr "NIVEL MÁX."
@@ -377,10 +377,10 @@ msgid "HQ_RANK_LOCKED"
 msgstr "BLOQUEADO"
 
 msgid "HQ_SHIP_TITLE"
-msgstr "NAVE"
+msgstr "FLOTA"
 
 msgid "HQ_SHIP_SUBTITLE"
-msgstr "Estado de Pioneer-01 y configuración visual estándar de la empresa."
+msgstr "Elige, mejora y personaliza la nave de limpieza activa."
 
 msgid "HQ_SHIP_LOADOUT"
 msgstr "CONFIGURACIÓN VISUAL"
@@ -422,7 +422,7 @@ msgid "HQ_COMPLETED_CONTRACTS_FMT"
 msgstr "CONTRATOS COMPLETADOS · %d"
 
 msgid "HQ_CUSTOMIZE_HULL"
-msgstr "CASCO"
+msgstr "Modelo de flota"
 
 msgid "HQ_CUSTOMIZE_PAINT"
 msgstr "PINTURA"
@@ -434,7 +434,7 @@ msgid "HQ_CUSTOMIZE_BEAM"
 msgstr "HAZ TRACTOR"
 
 msgid "HQ_SHIP_TAB_HULL"
-msgstr "CASCO"
+msgstr "MODELOS"
 
 msgid "HQ_SHIP_TAB_PAINT"
 msgstr "PINTURA"
@@ -1236,3 +1236,132 @@ msgstr "LÍMITE DE LA ZONA DE TRABAJO · VUELVE A LA OPERACIÓN"
 
 msgid "FLIGHT_OPERATIONAL_RETURN_ACTIVE"
 msgstr "RETORNO RCS · CORRECCIÓN DE RUMBO"
+
+msgid "SHIP_PIONEER_01"
+msgstr "Pioneer-01"
+
+msgid "SHIP_PIONEER_01_DESC"
+msgstr "Nave inicial equilibrada para trabajos fiables de limpieza orbital."
+
+msgid "SHIP_ROLE_GENERALIST"
+msgstr "Generalista"
+
+msgid "UPGRADE_PROPULSION_CORE"
+msgstr "Núcleo de Propulsión"
+
+msgid "UPGRADE_PROPULSION_CORE_DESC"
+msgstr "Mejora la velocidad de crucero y la fuerza de propulsión."
+
+msgid "UPGRADE_MANEUVERING_THRUSTERS"
+msgstr "Propulsores de Maniobra"
+
+msgid "UPGRADE_MANEUVERING_THRUSTERS_DESC"
+msgstr "Mejora el giro y el control con carga."
+
+msgid "UPGRADE_RECOVERY_ARRAY"
+msgstr "Matriz de Recuperación"
+
+msgid "UPGRADE_RECOVERY_ARRAY_DESC"
+msgstr "Amplía el escáner y acelera la recuperación."
+
+msgid "UPGRADE_CARGO_FRAME"
+msgstr "Estructura de Carga"
+
+msgid "UPGRADE_CARGO_FRAME_DESC"
+msgstr "Aumenta la capacidad y reduce la inercia de la carga."
+
+msgid "UPGRADE_PULSE_SYSTEM"
+msgstr "Sistema de Pulso"
+
+msgid "UPGRADE_PULSE_SYSTEM_DESC"
+msgstr "Mejora la recarga y la duración del impulso."
+
+msgid "MODULE_BALANCED_DRIVE"
+msgstr "Motor Equilibrado"
+
+msgid "MODULE_BALANCED_DRIVE_DESC"
+msgstr "Sistema de propulsión estándar y fiable de la empresa."
+
+msgid "MODULE_HIGH_OUTPUT_DRIVE"
+msgstr "Motor de Alto Rendimiento"
+
+msgid "MODULE_HIGH_OUTPUT_DRIVE_DESC"
+msgstr "Más velocidad y empuje a cambio de peor control con carga."
+
+msgid "MODULE_STANDARD_RECOVERY"
+msgstr "Recuperación Estándar"
+
+msgid "MODULE_STANDARD_RECOVERY_DESC"
+msgstr "Hardware estándar de recuperación de residuos."
+
+msgid "MODULE_PRECISION_TRACTOR"
+msgstr "Tractor de Precisión"
+
+msgid "MODULE_PRECISION_TRACTOR_DESC"
+msgstr "Recuperación más rápida y fuerte con algo menos de alcance."
+
+msgid "MODULE_STANDARD_CARGO"
+msgstr "Carga Estándar"
+
+msgid "MODULE_STANDARD_CARGO_DESC"
+msgstr "Montaje de carga estándar y equilibrado."
+
+msgid "MODULE_EXPANDED_CARGO_RACK"
+msgstr "Bastidor de Carga Ampliado"
+
+msgid "MODULE_EXPANDED_CARGO_RACK_DESC"
+msgstr "Más capacidad con mayor inercia transportada."
+
+msgid "MODULE_STANDARD_UTILITY"
+msgstr "Utilidad Estándar"
+
+msgid "MODULE_STANDARD_UTILITY_DESC"
+msgstr "Bahía de servicio general sin penalización de manejo."
+
+msgid "MODULE_INERTIAL_DAMPENER"
+msgstr "Amortiguador Inercial"
+
+msgid "MODULE_INERTIAL_DAMPENER_DESC"
+msgstr "Reduce la inercia de carga con una pequeña pérdida de aceleración."
+
+msgid "MODULE_FIELD_STABILIZER"
+msgstr "Estabilizador de Campo"
+
+msgid "MODULE_FIELD_STABILIZER_DESC"
+msgstr "Reduce el efecto de fuerzas ambientales y arrastre."
+
+msgid "COSMETIC_LIVERY_STANDARD_SERVICE"
+msgstr "Servicio Estándar"
+
+msgid "COSMETIC_DECAL_NONE"
+msgstr "Sin Calcomanía"
+
+msgid "COSMETIC_CANOPY_CYAN_GLASS"
+msgstr "Cristal Cian"
+
+msgid "COSMETIC_BODY_KIT_STOCK"
+msgstr "Carrocería Estándar"
+
+msgid "COSMETIC_ENGINE_ION_CYAN"
+msgstr "Ión Cian"
+
+msgid "HQ_FLEET_MASTERY_FMT"
+msgstr "Dominio %d/%d · %d XP"
+
+msgid "HQ_FLEET_BUY_FMT"
+msgstr "%s · COMPRAR %d"
+
+msgid "HQ_FLEET_NEED_CREDITS"
+msgstr "Créditos insuficientes."
+
+msgid "HQ_UPGRADE_EFFECT_PROPULSION_FMT"
+msgstr "+%d crucero · +%d empuje"
+
+msgid "HQ_UPGRADE_EFFECT_MANEUVERING_FMT"
+msgstr "+%d control · -%d%% inercia de carga"
+
+msgid "HQ_UPGRADE_EFFECT_RECOVERY_FMT"
+msgstr "+%d escáner · +%d%% recuperación"
+
+msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
+msgstr "+%d carga · -%d%% inercia de carga"
