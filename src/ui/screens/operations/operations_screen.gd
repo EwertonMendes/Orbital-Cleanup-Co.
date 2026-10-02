@@ -73,9 +73,9 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var completed_contracts: Label = %CompletedContracts
 @onready var discovery_empty_card: PanelContainer = %DiscoveryEmptyCard
 @onready var discovery_list: GridContainer = %DiscoveryList
-@onready var english_button: Button = %EnglishButton
-@onready var portuguese_button: Button = %PortugueseButton
-@onready var spanish_button: Button = %SpanishButton
+@onready var english_button: SelectableAssetOption = %EnglishButton
+@onready var portuguese_button: SelectableAssetOption = %PortugueseButton
+@onready var spanish_button: SelectableAssetOption = %SpanishButton
 @onready var contracts_tab: Button = %ContractsTab
 @onready var upgrades_tab: Button = %UpgradesTab
 @onready var career_tab: Button = %CareerTab
@@ -432,8 +432,8 @@ func _apply_responsive_layout() -> void:
 		available_height if phone else minf(console_height, available_height)
 	)
 
-	var settings_width := 620.0 if portrait else (720.0 if phone else 500.0)
-	var settings_height := 460.0 if phone else (390.0 if portrait else 330.0)
+	var settings_width := 620.0 if portrait else (720.0 if phone else 540.0)
+	var settings_height := 520.0 if phone else (470.0 if portrait else 410.0)
 	settings_modal.custom_minimum_size = Vector2(
 		minf(settings_width, maxf(size.x - 32.0, 300.0)),
 		minf(settings_height, maxf(size.y - 32.0, 260.0))
@@ -660,12 +660,14 @@ func _risk_key(difficulty: int) -> String:
 func _change_locale(locale: String) -> void:
 	if _settings != null:
 		_settings.set_locale(locale)
+		_refresh_language_selection()
 	else:
 		TranslationServer.set_locale(locale)
 		_refresh_all()
 
 func _on_locale_changed(_locale: String) -> void:
 	_refresh_all()
+	_refresh_language_selection()
 
 func _on_audio_changed(_master_linear: float) -> void:
 	_update_volume_value()
@@ -696,6 +698,7 @@ func _refresh_header() -> void:
 	credits_label.text = tr("HQ_CREDITS_FMT") % _progression.get_credits()
 	%LanguageLabel.text = tr("HQ_LANGUAGE")
 	_update_volume_value()
+	_refresh_language_selection()
 
 func _refresh_tabs() -> void:
 	contracts_tab.text = tr("HQ_TAB_CONTRACTS")
@@ -1044,6 +1047,7 @@ func _open_settings() -> void:
 	settings_layer.visible = true
 	settings_layer.modulate.a = 0.0
 	_update_volume_value()
+	_refresh_language_selection()
 	GamepadUiNavigation.set_focus_enabled(self, false, settings_layer)
 	GamepadUiNavigation.prepare_tree(settings_layer)
 	GamepadUiNavigation.grab(volume_down, settings_layer)
@@ -1075,12 +1079,12 @@ func _update_volume_value() -> void:
 	volume_value.text = "%d%%" % int(round(linear * 100.0))
 
 func _wire_button_feedback(root: Node) -> void:
-	var buttons: Array[Button] = []
-	if root is Button:
-		buttons.append(root as Button)
-	for node in root.find_children("*", "Button", true, false):
-		if node is Button:
-			buttons.append(node as Button)
+	var buttons: Array[BaseButton] = []
+	if root is BaseButton:
+		buttons.append(root as BaseButton)
+	for node in root.find_children("*", "Control", true, false):
+		if node is BaseButton:
+			buttons.append(node as BaseButton)
 	for button in buttons:
 		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		GamepadUiNavigation.prepare_button(button)
@@ -1103,14 +1107,14 @@ func _play_ui_click() -> void:
 	if _audio != null:
 		_audio.play_ui_click()
 
-func _on_ui_button_down(_button: Button) -> void:
+func _on_ui_button_down(_button: BaseButton) -> void:
 	OccCursorSkin.set_pressed()
 
-func _on_ui_button_up(_button: Button) -> void:
+func _on_ui_button_up(_button: BaseButton) -> void:
 	OccCursorSkin.set_pointing()
 
 
-func _on_ui_button_focus_entered(button: Button) -> void:
+func _on_ui_button_focus_entered(button: BaseButton) -> void:
 	GamepadUiNavigation.ensure_visible(button)
 	_play_ui_hover()
 
@@ -1175,3 +1179,12 @@ func _configure_settings_focus_graph() -> void:
 	volume_up.focus_neighbor_down = volume_up.get_path_to(settings_close)
 
 	settings_close.focus_neighbor_up = settings_close.get_path_to(volume_down)
+
+
+func _refresh_language_selection() -> void:
+	if not is_node_ready():
+		return
+	var locale := _settings.locale if _settings != null else TranslationServer.get_locale()
+	english_button.set_selected(locale == "en")
+	portuguese_button.set_selected(locale == "pt_BR")
+	spanish_button.set_selected(locale == "es_ES")
