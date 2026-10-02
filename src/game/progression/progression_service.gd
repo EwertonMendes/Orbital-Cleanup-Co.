@@ -218,13 +218,25 @@ func debug_select_ship(ship_id: String) -> bool:
 func debug_unlock_all_customization() -> void:
 	var fleet := (_state["fleet"] as Dictionary).duplicate(true)
 	fleet["qa_all_customization_unlocked"] = true
+	fleet = _grant_all_qa_inventory(fleet)
+	_state["fleet"] = fleet
+	_sanitize_fleet()
+	_persist()
+	state_changed.emit(get_snapshot())
+	print("[Fleet][QA] ALL_CUSTOMIZATION_UNLOCKED persisted=true ships=%d modules=%d" % [
+		(fleet.get("ships", {}) as Dictionary).size(),
+		(fleet.get("owned_modules", []) as Array).size(),
+	])
 
-	var ships := fleet.get("ships", {}) as Dictionary
+func _grant_all_qa_inventory(fleet: Dictionary) -> Dictionary:
+	var output := fleet.duplicate(true)
+
+	var ships := output.get("ships", {}) as Dictionary
 	for ship_id_variant in _registry.list_ship_ids():
 		var ship_id := String(ship_id_variant)
 		if not ships.has(ship_id):
 			ships[ship_id] = _default_ship_state(ship_id)
-	fleet["ships"] = ships
+	output["ships"] = ships
 
 	var owned_modules: Array[String] = []
 	for value in _fleet_rules.get("modules", []) as Array:
@@ -233,7 +245,7 @@ func debug_unlock_all_customization() -> void:
 		if not module_id.is_empty() and not owned_modules.has(module_id):
 			owned_modules.append(module_id)
 	owned_modules.sort()
-	fleet["owned_modules"] = owned_modules
+	output["owned_modules"] = owned_modules
 
 	var owned_cosmetics := _empty_owned_cosmetics()
 	var categories := _cosmetic_config.get("categories", {}) as Dictionary
@@ -247,16 +259,8 @@ func debug_unlock_all_customization() -> void:
 				ids.append(cosmetic_id)
 		ids.sort()
 		owned_cosmetics[category] = ids
-	fleet["owned_cosmetics"] = owned_cosmetics
-
-	_state["fleet"] = fleet
-	_sanitize_fleet()
-	_persist()
-	state_changed.emit(get_snapshot())
-	print("[Fleet][QA] ALL_CUSTOMIZATION_UNLOCKED persisted=true ships=%d modules=%d" % [
-		ships.size(),
-		owned_modules.size(),
-	])
+	output["owned_cosmetics"] = owned_cosmetics
+	return output
 
 func _qa_all_customization_unlocked() -> bool:
 	var fleet := _state.get("fleet", {}) as Dictionary
@@ -1013,6 +1017,8 @@ func _collect_unlocks_between_ranks(previous_rank: String, next_rank: String) ->
 
 func _sanitize_fleet() -> void:
 	var fleet := (_state.get("fleet", {}) as Dictionary).duplicate(true)
+	if bool(fleet.get("qa_all_customization_unlocked", false)):
+		fleet = _grant_all_qa_inventory(fleet)
 	var ships := fleet.get("ships", {}) as Dictionary
 	var default_ship_id := String(_fleet_rules.get("default_ship_id", "pioneer_01"))
 	if not ships.has(default_ship_id):
