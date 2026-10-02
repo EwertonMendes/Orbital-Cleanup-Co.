@@ -1349,7 +1349,7 @@ msgid "HQ_FLEET_MASTERY_FMT"
 msgstr "Domínio %d/%d · %d XP"
 
 msgid "HQ_FLEET_BUY_FMT"
-msgstr "%s · COMPRAR %d"
+msgstr "%s - COMPRAR %d"
 
 msgid "HQ_FLEET_NEED_CREDITS"
 msgstr "Créditos insuficientes."
@@ -1403,7 +1403,7 @@ msgid "HQ_FLEET_MODULES_HELP"
 msgstr "Módulos de hardware reutilizáveis. Depois de comprados, ficam no inventário da empresa e podem ser equipados em baias compatíveis."
 
 msgid "HQ_FLEET_MODULE_SLOT_FMT"
-msgstr "%s %d · %s"
+msgstr "%s %d - %s"
 
 msgid "MODULE_SLOT_PROPULSION"
 msgstr "Propulsão"
@@ -1587,3 +1587,96 @@ msgstr "Mega cargueiro"
 
 msgid "SHIP_ROLE_MODULAR_FLAGSHIP"
 msgstr "Flagship modular"
+
+msgid "HQ_FLEET_MODULE_ACTIVE_FMT"
+msgstr "%s [ATIVO]"
+
+msgid "HQ_FLEET_MODULE_BUY_FMT"
+msgstr "%s - %d cr"
+
+msgid "COSMETIC_PAINT_ARCTIC_WHITE"
+msgstr "Branco Ártico"
+
+msgid "COSMETIC_PAINT_GRAPHITE_BLACK"
+msgstr "Grafite"
+
+msgid "COSMETIC_PAINT_OCEAN_BLUE"
+msgstr "Azul Oceano"
+
+msgid "COSMETIC_PAINT_RESCUE_RED"
+msgstr "Vermelho Resgate"
+
+msgid "COSMETIC_PAINT_EMERALD_GREEN"
+msgstr "Verde Esmeralda"
+
+msgid "COSMETIC_PAINT_ROYAL_PURPLE"
+msgstr "Roxo Imperial"
+
+msgid "COSMETIC_PAINT_ORANGE_BURST"
+msgstr "Laranja Solar"
+
+msgid "COSMETIC_PAINT_TEAL_HORIZON"
+msgstr "Turquesa Horizonte"
+
+msgid "COSMETIC_PAINT_STEEL_SILVER"
+msgstr "Prata Aço"
+
+msgid "COSMETIC_PAINT_CRIMSON_NIGHT"
+msgstr "Carmesim Noturno"
+
+msgid "COSMETIC_PAINT_VIOLET_STORM"
+msgstr "Tempestade Violeta"
+
+msgid "COSMETIC_PAINT_NEON_MAGENTA"
+msgstr "Magenta Neon"
+
+msgid "COSMETIC_PAINT_SOLAR_GOLD"
+msgstr "Ouro Solar"
+
+msgid "COSMETIC_PAINT_ROSE_QUARTZ"
+msgstr "Quartzo Rosa"
+
+msgid "COSMETIC_PAINT_ICE_BLUE"
+msgstr "Azul Gelo"
+
+msgid "COSMETIC_PAINT_COPPER_INDUSTRIAL"
+msgstr "Cobre Industrial"
+
+msgid "COSMETIC_PAINT_LIME_SIGNAL"
+msgstr "Lima de Sinalização"
+
+msgid "COSMETIC_BEAM_COBALT_ARC"
+msgstr "Arco Cobalto"
+
+msgid "COSMETIC_BEAM_VIOLET_PULSE"
+msgstr "Pulso Violeta"
+
+msgid "COSMETIC_BEAM_CRIMSON_LOCK"
+msgstr "Trava Carmesim"
+
+msgid "COSMETIC_BEAM_EMERALD_LATTICE"
+msgstr "Malha Esmeralda"
+
+msgid "COSMETIC_BEAM_WHITE_PRISM"
+msgstr "Prisma Branco"
+
+msgid "COSMETIC_BEAM_MAGENTA_WAVE"
+msgstr "Onda Magenta"
+
+msgid "COSMETIC_BEAM_ORANGE_TOW"
+msgstr "Reboque Laranja"
+
+msgid "COSMETIC_BEAM_DEEP_BLUE"
+msgstr "Azul Profundo"
+
+msgid "COSMETIC_BEAM_LIME_SIGNAL"
+msgstr "Sinal Lima"
+
+msgid "COSMETIC_BEAM_ROSE_VECTOR"
+msgstr "Vetor Rosa"
+
+msgid "COSMETIC_BEAM_GOLDEN_FLUX"
+msgstr "Fluxo Dourado"
+
+msgid "COSMETIC_BEAM_ULTRAVIOLET"
+msgstr "Ultravioleta"
