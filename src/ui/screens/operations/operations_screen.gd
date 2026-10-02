@@ -996,24 +996,33 @@ func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 	var id := String(definition["id"])
 	var effects := definition.get("effects", {}) as Dictionary
 	match id:
-		"tractor_range":
-			var value := float(effects.get("scan_range_add", 0.0))
-			return tr("HQ_UPGRADE_EFFECT_RANGE_FMT") % int(round(value * float(level)))
-		"collection_speed":
-			var value := float(effects.get("collection_speed_multiplier_add", 0.0))
-			return tr("HQ_UPGRADE_EFFECT_SPEED_FMT") % int(round(value * 100.0 * float(level)))
-		"cargo_capacity":
-			var value := float(effects.get("cargo_capacity_add", 0.0))
-			return tr("HQ_UPGRADE_EFFECT_CARGO_FMT") % int(round(value * float(level)))
-		"pulse_boost":
+		"propulsion_core":
+			return tr("HQ_UPGRADE_EFFECT_PROPULSION_FMT") % [
+				int(round(float(effects.get("max_speed_add", 0.0)) * float(level))),
+				int(round(float(effects.get("acceleration_add", 0.0)) * float(level))),
+			]
+		"maneuvering_thrusters":
+			return tr("HQ_UPGRADE_EFFECT_MANEUVERING_FMT") % [
+				int(round(float(effects.get("turn_response_add", 0.0)) * 100.0 * float(level))),
+				int(round(absf(float(effects.get("cargo_inertia_factor_add", 0.0))) * 100.0 * float(level))),
+			]
+		"recovery_array":
+			return tr("HQ_UPGRADE_EFFECT_RECOVERY_FMT") % [
+				int(round(float(effects.get("scan_range_add", 0.0)) * float(level))),
+				int(round(float(effects.get("collection_speed_multiplier_add", 0.0)) * 100.0 * float(level))),
+			]
+		"cargo_frame":
+			return tr("HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT") % [
+				int(round(float(effects.get("cargo_capacity_add", 0.0)) * float(level))),
+				int(round(absf(float(effects.get("cargo_inertia_factor_add", 0.0))) * 100.0 * float(level))),
+			]
+		"pulse_system":
 			var recharge := float(effects.get("boost_recharge_rate_add", 0.0)) * float(level)
 			var duration := float(effects.get("boost_duration_bonus_add", 0.0)) * float(level)
 			return tr("HQ_UPGRADE_EFFECT_BOOST_FMT") % [
 				int(round(recharge * 100.0)),
 				int(round(duration * 1000.0)),
 			]
-		"boost_capacitor":
-			return tr("HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT") % (1 + level)
 	return ""
 
 func _refresh_career() -> void:
@@ -1087,7 +1096,12 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 	%PaintHeading.text = tr("HQ_CUSTOMIZE_PAINT")
 	%TrailHeading.text = tr("HQ_CUSTOMIZE_TRAIL")
 	%BeamHeading.text = tr("HQ_CUSTOMIZE_BEAM")
-	%WorkshopStatus.text = tr("HQ_SHIP_WORKSHOP_STATUS")
+	var mastery := _progression.get_active_ship_mastery()
+	%WorkshopStatus.text = tr("HQ_FLEET_MASTERY_FMT") % [
+		int(mastery["level"]),
+		int(mastery["max_level"]),
+		int(mastery["xp"]),
+	]
 	hull_category.text = tr("HQ_SHIP_TAB_HULL")
 	paint_category.text = tr("HQ_SHIP_TAB_PAINT")
 	trail_category.text = tr("HQ_SHIP_TAB_TRAIL")
@@ -1112,7 +1126,16 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 	var preview_material := ship_preview.material as ShaderMaterial
 	assert(preview_material != null, "HQ ship preview requires paint ShaderMaterial.")
 	preview_material.set_shader_parameter("paint_color", Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0)))
+	preview_material.set_shader_parameter("secondary_color", Color.from_string(String(paint.get("secondary_color", "#1B3345")), Color(0.106, 0.200, 0.271, 1.0)))
+	preview_material.set_shader_parameter("accent_color", Color.from_string(String(paint.get("accent_color", "#E7F8FF")), Color(0.906, 0.973, 1.0, 1.0)))
 	preview_material.set_shader_parameter("paint_strength", float(paint["strength"]))
+	var active_definition := _progression.get_active_ship_definition()
+	var active_visual := active_definition.get("visual", {}) as Dictionary
+	var mask_path := String(active_visual.get("paint_mask", ""))
+	var use_mask := String(active_visual.get("paint_mode", "legacy_blue_bias")) == "rgb_mask" and not mask_path.is_empty()
+	preview_material.set_shader_parameter("use_rgb_mask", use_mask)
+	if use_mask:
+		preview_material.set_shader_parameter("paint_mask", load(mask_path) as Texture2D)
 
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
@@ -1158,7 +1181,11 @@ func _refresh_ship_category_options() -> void:
 		button.set_meta(&"occ_cosmetic_id", cosmetic_id)
 		button.set_meta(&"occ_cosmetic_name_key", String(option["display_name_key"]))
 		var name := tr(String(option["display_name_key"]))
-		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % name if selected else name
+		button.text = _ship_option_button_text(_ship_category, cosmetic_id, name, selected)
+		var owned := _progression.is_cosmetic_owned(_ship_category, cosmetic_id)
+		button.disabled = not owned and not _progression.can_purchase_cosmetic(_ship_category, cosmetic_id)
+		if button.disabled and not owned:
+			button.tooltip_text = tr("HQ_FLEET_NEED_CREDITS")
 		button.pressed.connect(_equip_cosmetic.bind(_ship_category, cosmetic_id))
 		container.add_child(button)
 		option_buttons.append(button)
@@ -1209,11 +1236,14 @@ func _change_ship_option_page(delta: int) -> void:
 	GamepadUiNavigation.grab(ship_options_previous_page if delta < 0 else ship_options_next_page, ship_panel)
 
 func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
-	# Equipping a cosmetic changes presentation only. Do not rebuild the
-	# focused option list: replacing the focused button during ui_accept is
-	# exactly what makes controller navigation appear to lock.
+	# Ship-model selection and cosmetic purchases share the existing zero-scroll
+	# option surface. ProgressionService owns all economy/ownership rules.
 	var focus_owner := get_viewport().gui_get_focus_owner()
 	_suppress_progression_refresh = true
+	if not _progression.is_cosmetic_owned(category, cosmetic_id):
+		if not _progression.purchase_cosmetic(category, cosmetic_id):
+			_suppress_progression_refresh = false
+			return
 	var equipped_ok := _progression.equip_cosmetic(category, cosmetic_id)
 	_suppress_progression_refresh = false
 	if not equipped_ok:
@@ -1225,9 +1255,10 @@ func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 			focus_owner.call_deferred("grab_focus")
 
 	if _platform != null:
-		_platform.track_event("cosmetic_equipped", {
+		_platform.track_event("fleet_option_equipped", {
 			"category": category,
-			"cosmetic_id": cosmetic_id,
+			"option_id": cosmetic_id,
+			"ship_id": _progression.get_active_ship_id(),
 		})
 
 func _refresh_ship_option_selection_visuals() -> void:
@@ -1244,7 +1275,16 @@ func _refresh_ship_option_selection_visuals() -> void:
 		var selected := cosmetic_id == equipped
 		button.emphasis = selected
 		var display_name := tr(name_key)
-		button.text = tr("HQ_COSMETIC_EQUIPPED_FMT") % display_name if selected else display_name
+		button.text = _ship_option_button_text(_ship_category, cosmetic_id, display_name, selected)
+		var owned := _progression.is_cosmetic_owned(_ship_category, cosmetic_id)
+		button.disabled = not owned and not _progression.can_purchase_cosmetic(_ship_category, cosmetic_id)
+
+func _ship_option_button_text(category: String, cosmetic_id: String, display_name: String, selected: bool) -> String:
+	if selected:
+		return tr("HQ_COSMETIC_EQUIPPED_FMT") % display_name
+	if not _progression.is_cosmetic_owned(category, cosmetic_id):
+		return tr("HQ_FLEET_BUY_FMT") % [display_name, _progression.get_cosmetic_cost(category, cosmetic_id)]
+	return display_name
 
 func _configure_ship_option_focus_graph(option_buttons: Array[Button]) -> void:
 	var category_button := _ship_category_button(_ship_category)
