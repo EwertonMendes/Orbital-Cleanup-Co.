@@ -1487,23 +1487,16 @@ func _focus_default_for_gamepad() -> void:
 	if settings_layer.visible:
 		GamepadUiNavigation.grab(volume_down, settings_layer)
 		return
+
 	var current := get_viewport().gui_get_focus_owner()
 	if current != null and (current == self or is_ancestor_of(current)):
 		return
-	if _active_tab == Tab.CONTRACTS and primary_action.visible and not primary_action.disabled:
-		GamepadUiNavigation.grab(primary_action, self)
-	else:
-		var active_button: Button = contracts_tab
-		match _active_tab:
-			Tab.UPGRADES:
-				active_button = upgrades_tab
-			Tab.CAREER:
-				active_button = career_tab
-			Tab.SHIP:
-				active_button = ship_tab
-			Tab.DISCOVERY:
-				active_button = discovery_tab
-		GamepadUiNavigation.grab(active_button, self)
+
+	# Operations always starts controller navigation from the main tab rail.
+	# The primary contract action remains reachable from Contracts, but it must
+	# never be the entry focus because that makes the rest of the HQ harder to
+	# discover and navigate with a gamepad.
+	GamepadUiNavigation.grab(contracts_tab, self)
 
 
 func _configure_settings_focus_graph() -> void:
