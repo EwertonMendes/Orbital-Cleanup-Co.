@@ -88,7 +88,8 @@ func refresh_locale() -> void:
 		]
 
 func _refresh_copy() -> void:
-	boost_button.text = tr("FLIGHT_BOOST")
+	var label := tr("FLIGHT_BOOST")
+	boost_button.text = "[A] %s" % label if _input_service != null and _input_service.prefers_gamepad() else label
 
 func _uses_touch_steering() -> bool:
 	return (

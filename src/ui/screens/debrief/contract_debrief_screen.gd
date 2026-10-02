@@ -35,6 +35,7 @@ var _context: Dictionary = {}
 var _result: Dictionary = {}
 var _transition: Dictionary = {}
 var _router: SceneRouter
+var _input_service: InputService
 var _ads: AdService
 var _platform: PlatformService
 var _audio: AudioService
@@ -51,6 +52,7 @@ func configure(context: Dictionary) -> void:
 	_result = (context.get("debrief_result", {}) as Dictionary).duplicate(true)
 	_transition = (context.get("debrief_transition", {}) as Dictionary).duplicate(true)
 	_router = context.get("router") as SceneRouter
+	_input_service = context.get("input") as InputService
 	_ads = context.get("ads") as AdService
 	_platform = context.get("platform") as PlatformService
 	_audio = context.get("audio") as AudioService
@@ -64,6 +66,10 @@ func _ready() -> void:
 	_validate_contracts()
 	continue_button.pressed.connect(_continue_to_hq)
 	continue_button.mouse_entered.connect(_play_ui_hover)
+	continue_button.focus_entered.connect(_play_ui_hover)
+	GamepadUiNavigation.prepare_button(continue_button)
+	if _input_service != null and not _input_service.input_mode_changed.is_connected(_on_input_mode_changed):
+		_input_service.input_mode_changed.connect(_on_input_mode_changed)
 	resized.connect(_apply_responsive_layout)
 
 	_reward_player = _create_player(ProceduralSfx.unload(), -8.0)
@@ -74,6 +80,8 @@ func _ready() -> void:
 	_prepare_animation_state()
 
 	await get_tree().process_frame
+	if _input_service != null and _input_service.prefers_gamepad():
+		GamepadUiNavigation.grab(continue_button, self)
 	_play_sequence()
 
 	if _platform != null:
@@ -165,7 +173,12 @@ func _refresh_copy() -> void:
 	_refresh_unlocks()
 	_refresh_discoveries()
 
-	continue_button.text = tr("DEBRIEF_CONTINUE")
+	var continue_copy := tr("DEBRIEF_CONTINUE")
+	continue_button.text = (
+		"[A] %s" % continue_copy
+		if _input_service != null and _input_service.prefers_gamepad()
+		else continue_copy
+	)
 
 func _mission_title() -> String:
 	var mission := _context.get("debrief_mission", {}) as Dictionary
@@ -375,3 +388,11 @@ func _create_player(stream: AudioStream, volume_db: float) -> AudioStreamPlayer:
 	player.volume_db = volume_db
 	add_child(player)
 	return player
+
+
+func _on_input_mode_changed(mode: InputService.InputMode) -> void:
+	_refresh_copy()
+	if mode == InputService.InputMode.GAMEPAD:
+		GamepadUiNavigation.grab(continue_button, self)
+	elif mode == InputService.InputMode.POINTER and continue_button.has_focus():
+		continue_button.release_focus()
