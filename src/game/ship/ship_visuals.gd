@@ -1,27 +1,23 @@
 extends Node2D
 class_name ShipVisuals
 
+const ENGINE_FX_RIG_SCENE := preload("res://src/game/ship/engine_fx_rig.tscn")
+const ENGINE_PARTICLE_BUDGET := 84
+
 @onready var steering_visual: Node2D = %SteeringVisual
 @onready var ship_sprite: Sprite2D = %ShipSprite
-@onready var engine_glow: Sprite2D = %EngineGlow
-@onready var engine_trail: EngineTrail = %EngineTrail
-@onready var engine_particles: CPUParticles2D = %EngineParticles
-@onready var engine_anchor: Marker2D = $SteeringVisual/EngineAnchor
+@onready var engine_fx_rig: EngineFxRig = %EngineFxRig
 @onready var bump_particles: CPUParticles2D = %BumpParticles
 
 var _impact_tween: Tween
 var _drift_direction := Vector2.ZERO
 var _drift_intensity := 0.0
 var _layer_sprites: Dictionary = {}
-var _extra_engine_nodes: Array[Node] = []
-var _engine_glows: Array[Sprite2D] = []
-var _engine_particles: Array[CPUParticles2D] = []
-var _engine_trails: Array[EngineTrail] = []
+var _engine_fx_rigs: Array[EngineFxRig] = []
+var _extra_engine_fx_rigs: Array[EngineFxRig] = []
 
 func _ready() -> void:
-	_engine_glows = [engine_glow]
-	_engine_particles = [engine_particles]
-	_engine_trails = [engine_trail]
+	_engine_fx_rigs = [engine_fx_rig]
 
 func apply_ship_build(build: Dictionary) -> void:
 	assert(build.has("visual") and build.has("cosmetics"), "ShipVisuals requires resolved visual and cosmetic data.")
@@ -129,67 +125,44 @@ func _configure_layer(layer_id: String, texture_path: String, render_scale: floa
 
 func _configure_engine_sockets(sockets: Array, loadout: Dictionary) -> void:
 	_clear_extra_engines()
-	_engine_glows = [engine_glow]
-	_engine_particles = [engine_particles]
-	_engine_trails = [engine_trail]
+	_engine_fx_rigs = [engine_fx_rig]
 
 	var socket_list := sockets
 	if socket_list.is_empty():
 		socket_list = [{"id": "main", "position": [0.0, 41.0]}]
 
-	var trail := loadout.get("trail", {}) as Dictionary
-	var engine_style := loadout.get("engine", trail) as Dictionary
-	var glow_color := Color.from_string(
-		String(engine_style.get("glow_color", trail.get("glow_color", "#55DFFF"))),
-		Color(0.33, 0.87, 1.0, 1.0)
-	)
-	var particle_color := Color.from_string(
-		String(engine_style.get("particle_color", engine_style.get("glow_color", "#55DFFF"))),
-		glow_color
+	var engine_style := loadout.get("engine", {}) as Dictionary
+	var trail_palette := loadout.get("trail", {}) as Dictionary
+	assert(not engine_style.is_empty(), "Ship engine effect cosmetic is required.")
+	assert(not trail_palette.is_empty(), "Ship trail palette cosmetic is required.")
+
+	var per_engine_budget := clampi(
+		int(floor(float(ENGINE_PARTICLE_BUDGET) / float(maxi(socket_list.size(), 1)))),
+		10,
+		ENGINE_PARTICLE_BUDGET
 	)
 
-	var primary_position := _socket_position(socket_list[0] as Dictionary)
-	engine_anchor.position = primary_position
-	engine_glow.position = primary_position + Vector2(0.0, -2.0)
-	engine_particles.position = primary_position
-	engine_trail.apply_style(trail)
-	engine_glow.modulate = Color(glow_color.r, glow_color.g, glow_color.b, engine_glow.modulate.a)
-	engine_particles.color = Color(particle_color.r, particle_color.g, particle_color.b, 0.72)
-
-	for index in range(1, socket_list.size()):
+	for index in range(socket_list.size()):
 		var socket := socket_list[index] as Dictionary
-		var position := _socket_position(socket)
+		var rig: EngineFxRig
+		if index == 0:
+			rig = engine_fx_rig
+		else:
+			rig = ENGINE_FX_RIG_SCENE.instantiate() as EngineFxRig
+			assert(rig != null, "Engine VFX rig scene must instantiate.")
+			rig.name = "EngineFxRig_%d" % index
+			steering_visual.add_child(rig)
+			_engine_fx_rigs.append(rig)
+			_extra_engine_fx_rigs.append(rig)
 
-		var anchor := Marker2D.new()
-		anchor.name = "EngineAnchor_%d" % index
-		anchor.position = position
-		steering_visual.add_child(anchor)
-		_extra_engine_nodes.append(anchor)
-
-		var glow := engine_glow.duplicate() as Sprite2D
-		glow.unique_name_in_owner = false
-		glow.name = "EngineGlow_%d" % index
-		glow.position = position + Vector2(0.0, -2.0)
-		steering_visual.add_child(glow)
-		_engine_glows.append(glow)
-		_extra_engine_nodes.append(glow)
-
-		var particles := engine_particles.duplicate() as CPUParticles2D
-		particles.unique_name_in_owner = false
-		particles.name = "EngineParticles_%d" % index
-		particles.position = position
-		steering_visual.add_child(particles)
-		_engine_particles.append(particles)
-		_extra_engine_nodes.append(particles)
-
-		var trail_copy := engine_trail.duplicate() as EngineTrail
-		trail_copy.unique_name_in_owner = false
-		trail_copy.name = "EngineTrail_%d" % index
-		trail_copy.source_path = anchor.get_path()
-		get_parent().add_child(trail_copy)
-		trail_copy.apply_style(trail)
-		_engine_trails.append(trail_copy)
-		_extra_engine_nodes.append(trail_copy)
+		rig.position = _socket_position(socket)
+		rig.rotation = deg_to_rad(float(socket.get("rotation_degrees", 0.0)))
+		rig.configure(
+			engine_style,
+			trail_palette,
+			clampf(float(socket.get("fx_scale", 1.0)), 0.25, 2.5),
+			per_engine_budget
+		)
 
 func _socket_position(socket: Dictionary) -> Vector2:
 	var values := socket.get("position", [0.0, 41.0]) as Array
@@ -197,10 +170,10 @@ func _socket_position(socket: Dictionary) -> Vector2:
 	return Vector2(float(values[0]), float(values[1]))
 
 func _clear_extra_engines() -> void:
-	for node in _extra_engine_nodes:
-		if is_instance_valid(node):
-			node.queue_free()
-	_extra_engine_nodes.clear()
+	for rig in _extra_engine_fx_rigs:
+		if is_instance_valid(rig):
+			rig.queue_free()
+	_extra_engine_fx_rigs.clear()
 
 func update_motion(
 	speed_ratio: float,
@@ -219,18 +192,8 @@ func update_motion(
 
 	var boost := clampf(boost_ratio, 0.0, 1.0)
 	var engine_strength := clampf(maxf(thrust_ratio, boost), 0.0, 1.0)
-	for glow in _engine_glows:
-		glow.modulate.a = clampf(lerpf(0.08, 0.76, engine_strength) + boost * 0.18, 0.0, 1.0)
-		glow.scale = Vector2(
-			0.84 + engine_strength * 0.18 + boost * 0.10,
-			0.78 + engine_strength * 0.42 + boost * 0.34
-		)
-	for trail in _engine_trails:
-		trail.set_intensity(maxf(engine_strength, boost))
-	for particles in _engine_particles:
-		particles.emitting = engine_strength > 0.08
-		particles.speed_scale = 0.72 + engine_strength * 0.85 + boost * 0.62
-		particles.modulate.a = clampf(lerpf(0.20, 0.88, engine_strength) + boost * 0.10, 0.0, 1.0)
+	for rig in _engine_fx_rigs:
+		rig.set_motion(engine_strength, boost)
 
 	if motion_velocity.length_squared() > 64.0:
 		_drift_direction = motion_velocity.normalized()
@@ -241,10 +204,8 @@ func update_motion(
 	queue_redraw()
 
 func play_boost() -> void:
-	for trail in _engine_trails:
-		trail.set_intensity(1.0)
-	for particles in _engine_particles:
-		particles.restart()
+	for rig in _engine_fx_rigs:
+		rig.play_boost()
 
 func play_bump(intensity: float, normal: Vector2) -> void:
 	var strength := clampf(intensity, 0.0, 1.0)
