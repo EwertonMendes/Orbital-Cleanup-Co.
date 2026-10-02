@@ -790,7 +790,7 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
-text = "ENGINE"
+text = "PROPULSION"
 
 [node name="ModulesCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
 unique_name_in_owner = true
@@ -802,6 +802,7 @@ text = "MODULES"
 
 [node name="TrailCategory" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipCategoryBar"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -963,6 +964,29 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"SectionTitle"
 text = "LOADOUT"
+
+[node name="PropulsionModeBar" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="PropulsionStyleButton" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout/PropulsionModeBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "STYLE"
+
+[node name="PropulsionColorButton" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout/PropulsionModeBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TabButton"
+text = "COLOR"
 
 [node name="HullHeading" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/LoadoutCard/LoadoutMargin/LoadoutLayout"]
 unique_name_in_owner = true
