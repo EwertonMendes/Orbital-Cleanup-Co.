@@ -238,7 +238,7 @@ Ship definition
 
 `PlayerShip` remains one generic runtime. A normal new ship must not require a new scene, a new ship-specific GDScript branch or sector changes. Ship definitions own base movement/recovery/cargo/boost/environment-response stats, visual scale, engine sockets, Tractor Beam socket and the base model texture.
 
-The five permanent upgrade tracks are Propulsion, Maneuvering, Recovery, Cargo and Pulse. Upgrade levels and Mastery belong to one owned ship. Modules are reusable inventory items in propulsion/recovery/cargo/utility families and are applied by the same build resolver.
+The five permanent upgrade tracks are Propulsion, Maneuvering, Recovery, Cargo and Pulse. Upgrade levels and Mastery belong to one owned ship. Modules are reusable company-inventory items in propulsion/recovery/cargo/utility families and are applied by the same build resolver. The Fleet page exposes compatible module bays, including multiple bays in one family, so future ships can add slot capacity through data without UI or runtime branches.
 
 Cosmetics remain presentation-only and are authored in `content/cosmetics/ship_customization.json`. The persistent cosmetic surface supports paint, livery, decal, canopy, body kit, engine FX, trail and beam FX. The Fleet page exposes all of those categories through the same paged, zero-scroll purchase/equip surface; categories with only their stock/default option remain intentionally minimal until approved art is added.
 
