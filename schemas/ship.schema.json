@@ -36,10 +36,10 @@
       "additionalProperties": false,
       "required": ["propulsion", "recovery", "cargo", "utility"],
       "properties": {
-        "propulsion": {"type": "string"},
-        "recovery": {"type": "string"},
-        "cargo": {"type": "string"},
-        "utility": {"type": "string"}
+        "propulsion": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
+        "recovery": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
+        "cargo": {"type": "array", "items": {"type": "string"}, "maxItems": 3},
+        "utility": {"type": "array", "items": {"type": "string"}, "maxItems": 3}
       }
     },
     "visual": {
