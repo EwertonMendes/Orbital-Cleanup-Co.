@@ -750,6 +750,8 @@ func _migrate_legacy_state(persisted: Dictionary) -> Dictionary:
 func _default_state() -> Dictionary:
 	var default_ship_id := String(_fleet_rules.get("default_ship_id", "pioneer_01"))
 	assert(_registry.has_ship(default_ship_id), "Fleet default ship definition is missing: %s" % default_ship_id)
+	var ships: Dictionary = {}
+	ships[default_ship_id] = _default_ship_state(default_ship_id)
 	return {
 		"credits": 0,
 		"company_xp": 0,
@@ -759,9 +761,7 @@ func _default_state() -> Dictionary:
 		"last_contract_result": {},
 		"fleet": {
 			"active_ship_id": default_ship_id,
-			"ships": {
-				default_ship_id: _default_ship_state(default_ship_id),
-			},
+			"ships": ships,
 			"owned_modules": _default_owned_modules(default_ship_id),
 			"owned_cosmetics": _default_owned_cosmetics(),
 		},
