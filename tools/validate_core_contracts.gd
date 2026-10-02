@@ -1201,7 +1201,10 @@ func _validate_player_ship() -> void:
 	var engine_anchor := ship.find_child("EngineAnchor", true, false) as Marker2D
 	_expect(engine_anchor != null, "PlayerShip requires an engine trail anchor.")
 	if engine_anchor != null:
-		_expect(absf(engine_anchor.position.y - 41.0) <= 1.0, "Pioneer-01 engine anchor must remain aligned with the normalized rear engine.")
+		_expect(
+			engine_anchor.position.distance_to(Vector2(-16.1, 36.4)) <= 1.0,
+			"Pioneer-01 primary engine anchor must match the unified fleet artwork."
+		)
 	var trail := ship.find_child("EngineTrail", true, false) as EngineTrail
 	_expect(trail != null, "PlayerShip requires engine trail.")
 	if trail != null:
