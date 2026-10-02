@@ -17,6 +17,7 @@ func _ready() -> void:
 	assert(level_label != null, "HqUpgradeCard requires Level.")
 	assert(effect_label != null, "HqUpgradeCard requires Effect.")
 	assert(purchase_button != null, "HqUpgradeCard requires PurchaseButton.")
+	GamepadUiNavigation.prepare_button(purchase_button)
 	purchase_button.pressed.connect(_on_purchase_pressed)
 
 func configure(
