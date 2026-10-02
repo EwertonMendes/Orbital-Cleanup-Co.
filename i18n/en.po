@@ -1365,3 +1365,33 @@ msgstr "+%d scan · +%d%% recovery"
 
 msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
 msgstr "+%d cargo · -%d%% cargo inertia"
+
+msgid "HQ_SHIP_TAB_LIVERY"
+msgstr "LIVERY"
+
+msgid "HQ_SHIP_TAB_DECAL"
+msgstr "DECAL"
+
+msgid "HQ_SHIP_TAB_CANOPY"
+msgstr "CANOPY"
+
+msgid "HQ_SHIP_TAB_BODY_KIT"
+msgstr "BODY KIT"
+
+msgid "HQ_SHIP_TAB_ENGINE"
+msgstr "ENGINE FX"
+
+msgid "HQ_CUSTOMIZE_LIVERY"
+msgstr "Livery"
+
+msgid "HQ_CUSTOMIZE_DECAL"
+msgstr "Decal"
+
+msgid "HQ_CUSTOMIZE_CANOPY"
+msgstr "Canopy"
+
+msgid "HQ_CUSTOMIZE_BODY_KIT"
+msgstr "Body Kit"
+
+msgid "HQ_CUSTOMIZE_ENGINE"
+msgstr "Engine FX"
