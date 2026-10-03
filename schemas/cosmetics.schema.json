@@ -232,7 +232,12 @@
             "comet",
             "shard",
             "mist",
-            "dual_helix"
+            "dual_helix",
+            "prism_fan",
+            "phase_rails",
+            "gravity_bow",
+            "vortex_coil",
+            "vector_cascade"
           ]
         },
         "width": {
