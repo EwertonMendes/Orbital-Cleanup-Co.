@@ -29,11 +29,11 @@ static func nav_icon(index: int) -> Texture2D:
 static func upgrade_art(upgrade_id: String) -> Texture2D:
 	match upgrade_id:
 		"tractor_range":
-			return preload("res://assets/original/salvage/explorer_core_hd.webp")
+			return preload("res://assets/original/ui/hq/upgrade_recovery.svg")
 		"collection_speed":
-			return preload("res://assets/original/salvage/thruster_nozzle_hd.webp")
+			return preload("res://assets/original/ui/hq/upgrade_maneuver.svg")
 		"cargo_capacity":
-			return preload("res://assets/original/salvage/cargo_canister_hd.webp")
+			return preload("res://assets/original/ui/hq/upgrade_cargo.svg")
 		"pulse_boost":
 			return preload("res://assets/original/ui/hq/upgrade_propulsion.svg")
 		"boost_capacitor":
