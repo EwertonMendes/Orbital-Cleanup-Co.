@@ -167,6 +167,11 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("OverlayScrim", true, false) is ColorRect, "Operations overlay requires a world scrim.")
 	_expect(screen.find_child("FloatingSurface", true, false) is PanelContainer, "Operations requires a centered console surface.")
 	_expect(screen.find_child("DiscoveryList", true, false) is GridContainer, "Discovery catalog must use a responsive card grid.")
+	_expect(screen.find_child("ContractPreview", true, false) is TextureRect, "Contracts must provide a visual sector briefing preview.")
+	_expect(screen.find_child("CareerBadge", true, false) is TextureRect, "Career must present the current certification badge.")
+	_expect(screen.find_child("FleetBay", true, false) is TextureRect, "Fleet must frame the live ship preview with the maintenance-bay identity asset.")
+	_expect(screen.find_child("InputHint", true, false) is Label, "Headquarters must expose adaptive keyboard/gamepad navigation hints.")
+
 	_expect(screen.find_child("SettingsLayer", true, false) is Control, "Operations requires a dedicated settings layer.")
 	_expect(screen.find_child("SettingsModal", true, false) is PanelContainer, "Operations requires a physical settings panel.")
 	_expect(screen.find_child("VolumeDown", true, false) is Button and screen.find_child("VolumeUp", true, false) is Button, "Settings requires audio controls.")
@@ -221,6 +226,10 @@ func _validate_operations_screen() -> void:
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
 	_expect("footer.visible = tab == Tab.CONTRACTS" in operations_source, "Non-contract tabs must use the full fixed content stage without resizing the outer console.")
 	_expect("occ_focus_restore_key" in operations_source and "grab_by_meta" in operations_source, "Dynamic Operations lists must restore gamepad focus after selection-driven refreshes.")
+	_expect("HqVisualAssets.nav_icon" in operations_source and "icon_max_width = 24" in operations_source, "Headquarters navigation must use project-owned semantic icons at a stable optical size.")
+	_expect("_refresh_input_hint" in operations_source, "Headquarters must adapt navigation guidance to the active input device.")
+	_expect(" → " in operations_source, "Upgrade cards must compare the current system effect with the next level.")
+
 	_expect("_suppress_progression_refresh" in operations_source and "_refresh_ship(false, category)" in operations_source, "Cosmetic selection must update in place so controller focus is never destroyed.")
 	_expect("_configure_ship_option_focus_graph" in operations_source, "Ship option lists require explicit controller neighbors after dynamic construction.")
 	_expect("_refresh_visible_upgrade_cards" in operations_source and "_configure_upgrade_focus_graph" in operations_source, "Upgrade purchases must update existing cards in place and preserve controller navigation.")
