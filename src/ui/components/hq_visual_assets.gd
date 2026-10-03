@@ -13,7 +13,7 @@ const META_REWARD: Texture2D = preload("res://assets/original/ui/hq/meta_reward.
 const META_LOCATION: Texture2D = preload("res://assets/original/ui/hq/meta_location.svg")
 const META_COMPLETE: Texture2D = preload("res://assets/original/ui/hq/meta_complete.svg")
 
-const FLEET_BAY: Texture2D = preload("res://assets/original/ui/hq/fleet_bay_frame.svg")
+const FLEET_BAY: Texture2D = preload("res://assets/original/destinations/orbital_factory_ruins_hd.webp")
 const ORBIT_DIVIDER: Texture2D = preload("res://assets/original/ui/hq/orbit_divider.svg")
 const TECHNICAL_PATTERN: Texture2D = preload("res://assets/original/ui/hq/technical_pattern.svg")
 
@@ -31,14 +31,14 @@ static func upgrade_art(upgrade_id: String) -> Texture2D:
 		"propulsion_core":
 			return preload("res://assets/original/ui/hq/upgrade_propulsion.svg")
 		"maneuvering_thrusters":
-			return preload("res://assets/original/ui/hq/upgrade_maneuver.svg")
+			return preload("res://assets/original/salvage/thruster_nozzle_hd.webp")
 		"recovery_array":
-			return preload("res://assets/original/ui/hq/upgrade_recovery.svg")
+			return preload("res://assets/original/salvage/explorer_core_hd.webp")
 		"cargo_frame":
-			return preload("res://assets/original/ui/hq/upgrade_cargo.svg")
+			return preload("res://assets/original/salvage/orbital_battery_hd.webp")
 		"pulse_system":
-			return preload("res://assets/original/ui/hq/upgrade_energy.svg")
-	return preload("res://assets/original/ui/hq/upgrade_energy.svg")
+			return preload("res://assets/original/salvage/navigation_core_hd.webp")
+	return preload("res://assets/original/salvage/navigation_core_hd.webp")
 
 static func rank_badge(rank_id: String) -> Texture2D:
 	match rank_id:
