@@ -487,19 +487,22 @@ func _apply_responsive_layout() -> void:
 
 	header.vertical = portrait
 	main_row.vertical = portrait
+	contracts_board.vertical = portrait
 	contract_hero.vertical = portrait
+	discovery_body.vertical = portrait
 	ship_body.vertical = portrait
 	ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tab_grid.columns = 3 if portrait else 1
 	contract_selector.columns = 3 if portrait else 4
 	upgrade_grid.columns = 1 if portrait else 2
+	career_list.columns = 2 if portrait else 6
 	discovery_list.columns = 1 if portrait else 2
 
 	# Fleet is a fixed workspace, not a document. Keep navigation compact so
 	# preview + editor always fit without requiring a ScrollContainer.
-	%ShipTitle.visible = false
-	%ShipSubtitle.visible = false
-	ship_category_bar.columns = 3 if portrait else 5
+	%ShipTitle.visible = not phone
+	%ShipSubtitle.visible = not phone
+	ship_category_bar.columns = 3 if portrait else (5 if compact else 9)
 	ship_category_bar.add_theme_constant_override("h_separation", 6 if compact else 8)
 	ship_category_bar.add_theme_constant_override("v_separation", 6)
 	var category_height := ResponsiveUiProfile.touch_target_height(profile) if phone else 40.0
@@ -533,24 +536,24 @@ func _apply_responsive_layout() -> void:
 
 	%DeskLabel.visible = not phone
 	contract_ship_card.visible = not portrait
-	%ContractPreviewCard.custom_minimum_size.y = 92.0 if phone else (104.0 if compact else 118.0)
-	career_badge.custom_minimum_size = Vector2(48.0, 48.0) if phone else Vector2(58.0, 58.0)
+	%ContractPreviewCard.custom_minimum_size.y = 96.0 if phone else (126.0 if compact else 150.0)
+	career_badge.custom_minimum_size = Vector2(72.0, 72.0) if phone else Vector2(112.0, 112.0)
 	%WorkshopStatus.visible = false
 	%LoadoutCard.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	%LoadoutLayout.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 	if portrait:
-		ship_preview_card.custom_minimum_size = Vector2(0.0, 138.0)
+		ship_preview_card.custom_minimum_size = Vector2(0.0, 176.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-		ship_preview.custom_minimum_size = Vector2(126.0, 92.0)
+		ship_preview.custom_minimum_size = Vector2(220.0, 138.0)
 	elif compact:
-		ship_preview_card.custom_minimum_size = Vector2(205.0, 0.0)
+		ship_preview_card.custom_minimum_size = Vector2(310.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(165.0, 126.0)
+		ship_preview.custom_minimum_size = Vector2(270.0, 220.0)
 	else:
-		ship_preview_card.custom_minimum_size = Vector2(245.0, 0.0)
+		ship_preview_card.custom_minimum_size = Vector2(475.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(205.0, 160.0)
+		ship_preview.custom_minimum_size = Vector2(420.0, 320.0)
 
 	var fleet_margin := 8 if phone else (10 if compact else 12)
 	for margin_name in ["PreviewMargin", "LoadoutMargin"]:
@@ -564,18 +567,18 @@ func _apply_responsive_layout() -> void:
 	content_shell.custom_minimum_size.y = 0.0
 	content_shell.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
-	var horizontal_margin := 12 if phone else (14 if compact else 22)
-	var vertical_margin := 10 if phone else (12 if compact else 20)
+	var horizontal_margin := 10 if phone else (12 if compact else 14)
+	var vertical_margin := 8 if phone else (10 if compact else 12)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
-	var available_width := maxf(size.x - (16.0 if compact else 80.0), 320.0)
-	var available_height := maxf(size.y - (16.0 if compact else 56.0), 300.0)
-	var console_height := 1180.0 if portrait else 650.0
+	var available_width := maxf(size.x - (12.0 if compact else 24.0), 320.0)
+	var available_height := maxf(size.y - (12.0 if compact else 20.0), 300.0)
+	var console_height := 1180.0 if portrait else 700.0
 	floating_surface.custom_minimum_size = Vector2(
-		available_width if phone else minf(1120.0, available_width),
+		available_width if phone else minf(1248.0, available_width),
 		available_height if phone else minf(console_height, available_height)
 	)
 
@@ -589,7 +592,7 @@ func _apply_responsive_layout() -> void:
 	var footer_spacer := footer.get_node_or_null("FooterSpacer") as Control
 	if footer_spacer != null:
 		footer_spacer.visible = not portrait and not phone
-	primary_action.custom_minimum_size.x = 0.0 if portrait or phone else 260.0
+	primary_action.custom_minimum_size.x = 0.0 if portrait or phone else 320.0
 	primary_action.size_flags_horizontal = (
 		Control.SIZE_EXPAND_FILL if portrait or phone else Control.SIZE_SHRINK_BEGIN
 	)
