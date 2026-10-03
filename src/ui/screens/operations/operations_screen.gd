@@ -1026,7 +1026,19 @@ func _refresh_upgrades() -> void:
 		var level := _progression.get_upgrade_level(id)
 		var max_level := int(definition["max_level"])
 		var cost := _progression.get_upgrade_cost(id)
-		card.configure(id, tr(String(definition["display_name_key"])), tr(String(definition["description_key"])), level, max_level, cost, _upgrade_effect_text(definition, level), _progression.can_purchase_upgrade(id))
+		var current_effect := _upgrade_effect_text(definition, level)
+		var next_effect := _upgrade_effect_text(definition, mini(level + 1, max_level))
+		var effect_copy := current_effect if level >= max_level else "%s  →  %s" % [current_effect, next_effect]
+		card.configure(
+			id,
+			tr(String(definition["display_name_key"])),
+			tr(String(definition["description_key"])),
+			level,
+			max_level,
+			cost,
+			effect_copy,
+			_progression.can_purchase_upgrade(id)
+		)
 		card.purchase_requested.connect(_purchase_upgrade.bind(card))
 
 	_set_pager_state(upgrade_pager, upgrade_previous_page, upgrade_page_label, upgrade_next_page, _upgrade_page, page_count)
