@@ -995,7 +995,7 @@ func _validate_progression_service() -> void:
 
 	var cosmetic_catalog := ContentRegistry.new().get_cosmetic("ship_customization")
 	_expect(((cosmetic_catalog["categories"] as Dictionary)["paint"] as Array).size() == 20, "Paint catalog must expose 20 authored choices.")
-	_expect(((cosmetic_catalog["categories"] as Dictionary)["engine"] as Array).size() == 8, "Propulsion style catalog must expose 8 authored trail behaviors.")
+	_expect(((cosmetic_catalog["categories"] as Dictionary)["engine"] as Array).size() == 13, "Propulsion style catalog must expose 13 authored trail behaviors.")
 	_expect(((cosmetic_catalog["categories"] as Dictionary)["trail"] as Array).size() == 12, "Propulsion color catalog must expose 12 authored palettes.")
 	_expect(((cosmetic_catalog["categories"] as Dictionary)["beam"] as Array).size() == 15, "Tractor Beam catalog must expose 15 authored choices.")
 	var propulsion_modes: Dictionary = {}
@@ -1006,7 +1006,7 @@ func _validate_progression_service() -> void:
 		var mode := String(trail_definition.get("mode", ""))
 		_expect(not propulsion_modes.has(mode), "Every propulsion style needs a unique trail behavior mode: %s" % mode)
 		propulsion_modes[mode] = true
-	_expect(propulsion_modes.size() == 8, "All eight propulsion cosmetics must use distinct renderer behaviors.")
+	_expect(propulsion_modes.size() == 13, "All thirteen propulsion cosmetics must use distinct renderer behaviors.")
 
 	var default_cosmetics := progression.get_equipped_cosmetic_ids()
 	_expect(String(default_cosmetics["hull"]) == "pioneer_01", "Hull compatibility adapter must expose the active ship model.")
