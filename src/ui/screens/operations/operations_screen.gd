@@ -318,7 +318,7 @@ func _setup_tabs() -> void:
 		button.button_group = _tab_group
 		button.icon = HqVisualAssets.nav_icon(index)
 		button.expand_icon = true
-		button.icon_max_width = 24
+		button.icon_max_width = 34
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.pressed.connect(_show_tab.bind(tab))
 	contracts_tab.button_pressed = true
@@ -495,6 +495,14 @@ func _apply_responsive_layout() -> void:
 	var navigation_panel := main_row.get_node_or_null("NavigationPanel") as Control
 	if navigation_panel != null:
 		navigation_panel.custom_minimum_size.x = 0.0 if portrait else (188.0 if compact else 236.0)
+	var sidebar_icon_width := 28 if compact else 34
+	var sidebar_height := 54.0 if compact else 68.0
+	for sidebar_button in [contracts_tab, upgrades_tab, career_tab, ship_tab, discovery_tab]:
+		(sidebar_button as Button).icon_max_width = sidebar_icon_width
+		(sidebar_button as Button).custom_minimum_size.y = sidebar_height
+	var brand_icon := header.get_node_or_null("BrandIcon") as TextureRect
+	if brand_icon != null:
+		brand_icon.custom_minimum_size = Vector2(48.0, 48.0) if compact else Vector2(64.0, 64.0)
 	tab_grid.columns = 3 if portrait else 1
 	contract_selector.columns = 2
 	upgrade_grid.columns = 1 if portrait else 2
@@ -539,8 +547,16 @@ func _apply_responsive_layout() -> void:
 
 	%DeskLabel.visible = not phone
 	contract_ship_card.visible = not portrait and not compact
-	%ContractPreviewCard.custom_minimum_size.y = 96.0 if phone else (126.0 if compact else 150.0)
-	career_badge.custom_minimum_size = Vector2(72.0, 72.0) if phone else Vector2(112.0, 112.0)
+	%ContractPreviewCard.custom_minimum_size.y = 96.0 if phone else (126.0 if compact else 210.0)
+	var contract_list_card := contracts_panel.find_child("ContractListCard", true, false) as Control
+	if contract_list_card != null:
+		contract_list_card.custom_minimum_size.x = 0.0 if portrait else (260.0 if compact else 340.0)
+	contract_ship_card.custom_minimum_size.x = 0.0 if portrait or compact else 310.0
+	var discovery_detail_card := discovery_panel.find_child("DiscoveryDetailCard", true, false) as Control
+	if discovery_detail_card != null:
+		discovery_detail_card.custom_minimum_size.x = 0.0 if portrait else (280.0 if compact else 420.0)
+	%DiscoveryDetailArt.custom_minimum_size = Vector2(190.0, 190.0) if compact else Vector2(300.0, 300.0)
+	career_badge.custom_minimum_size = Vector2(72.0, 72.0) if phone else (Vector2(88.0, 88.0) if compact else Vector2(112.0, 112.0))
 	%WorkshopStatus.visible = false
 	%LoadoutCard.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	%LoadoutLayout.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -554,9 +570,9 @@ func _apply_responsive_layout() -> void:
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		ship_preview.custom_minimum_size = Vector2(270.0, 220.0)
 	else:
-		ship_preview_card.custom_minimum_size = Vector2(475.0, 0.0)
+		ship_preview_card.custom_minimum_size = Vector2(680.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(420.0, 320.0)
+		ship_preview.custom_minimum_size = Vector2(620.0, 430.0)
 
 	var fleet_margin := 8 if phone else (10 if compact else 12)
 	for margin_name in ["PreviewMargin", "LoadoutMargin"]:
