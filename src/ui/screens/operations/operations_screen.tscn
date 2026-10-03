@@ -314,7 +314,7 @@ theme_override_constants/separation = 10
 vertical = false
 
 [node name="ContractListCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard"]
-custom_minimum_size = Vector2(272, 0)
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"CardPanel"
@@ -520,7 +520,7 @@ autowrap_mode = 2
 
 [node name="ContractShipCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard/ContractHero"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(235, 0)
+custom_minimum_size = Vector2(310, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"CardPanel"
@@ -550,7 +550,7 @@ horizontal_alignment = 1
 
 [node name="ShipArt" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard/ContractHero/ContractShipCard/ShipCardMargin/ShipCardLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(185, 205)
+custom_minimum_size = Vector2(240, 250)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -1014,16 +1014,16 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -14.0
-offset_top = -10.0
-offset_right = 14.0
-offset_bottom = 12.0
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
-stretch_mode = 5
-self_modulate = Color(1, 1, 1, 0.82)
+stretch_mode = 6
+self_modulate = Color(1, 1, 1, 0.96)
 
 [node name="ShipDetailsPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
 unique_name_in_owner = true
@@ -1489,10 +1489,10 @@ text = ">"
 
 [node name="DiscoveryDetailCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(310, 0)
+custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.85
+size_flags_stretch_ratio = 0.78
 size_flags_vertical = 3
 theme_type_variation = &"CardPanel"
 
@@ -1527,7 +1527,7 @@ theme_type_variation = &"TelemetryLabel"
 
 [node name="DiscoveryDetailArt" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin/DetailLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(230, 230)
+custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
