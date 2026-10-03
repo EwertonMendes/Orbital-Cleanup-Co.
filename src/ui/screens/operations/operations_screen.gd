@@ -251,8 +251,10 @@ func _ready() -> void:
 	_wire_button_feedback(self)
 	_configure_settings_focus_graph()
 	_show_tab(Tab.CONTRACTS, true)
-	if _input_service != null and _input_service.prefers_gamepad():
-		call_deferred("_focus_default_for_gamepad")
+	if _input_service != null:
+		_refresh_input_hint(_input_service.current_mode)
+		if _input_service.prefers_gamepad():
+			call_deferred("_focus_default_for_gamepad")
 	print("[HQ] READY tab=contracts mode=%s" % ("overlay" if _overlay_mode else "screen"))
 
 func _validate_contracts() -> void:
@@ -307,7 +309,8 @@ func _setup_tabs() -> void:
 		button.button_group = _tab_group
 		button.icon = HqVisualAssets.nav_icon(index)
 		button.expand_icon = true
-		button.add_theme_constant_override("icon_max_width", 24)
+		button.icon_max_width = 24
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.pressed.connect(_show_tab.bind(tab))
 	contracts_tab.button_pressed = true
 
@@ -1042,6 +1045,9 @@ func _refresh_visible_upgrade_cards() -> void:
 		var level := _progression.get_upgrade_level(upgrade_id)
 		var max_level := int(definition["max_level"])
 		var cost := _progression.get_upgrade_cost(upgrade_id)
+		var current_effect := _upgrade_effect_text(definition, level)
+		var next_effect := _upgrade_effect_text(definition, mini(level + 1, max_level))
+		var effect_copy := current_effect if level >= max_level else "%s  →  %s" % [current_effect, next_effect]
 		card.configure(
 			upgrade_id,
 			tr(String(definition["display_name_key"])),
@@ -1049,7 +1055,7 @@ func _refresh_visible_upgrade_cards() -> void:
 			level,
 			max_level,
 			cost,
-			_upgrade_effect_text(definition, level),
+			effect_copy,
 			_progression.can_purchase_upgrade(upgrade_id)
 		)
 
@@ -2227,12 +2233,28 @@ func _on_ui_button_focus_entered(button: BaseButton) -> void:
 	_play_ui_hover()
 
 func _on_input_mode_changed(mode: InputService.InputMode) -> void:
+	_refresh_input_hint(mode)
 	if mode == InputService.InputMode.GAMEPAD:
 		call_deferred("_focus_default_for_gamepad")
 	elif mode == InputService.InputMode.POINTER:
 		var focus_owner := get_viewport().gui_get_focus_owner()
 		if focus_owner != null and (focus_owner == self or is_ancestor_of(focus_owner)):
 			focus_owner.release_focus()
+
+
+func _refresh_input_hint(mode: InputService.InputMode) -> void:
+	var hint := %InputHint as Label
+	if hint == null:
+		return
+	match mode:
+		InputService.InputMode.GAMEPAD:
+			hint.visible = true
+			hint.text = "LB/RB  •  A  •  B"
+		InputService.InputMode.KEYBOARD:
+			hint.visible = true
+			hint.text = "↑ ↓ ← →  •  ENTER  •  ESC"
+		_:
+			hint.visible = false
 
 func _focus_default_for_gamepad() -> void:
 	if not is_inside_tree():
