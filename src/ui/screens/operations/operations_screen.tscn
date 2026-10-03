@@ -306,6 +306,7 @@ theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
 
 [node name="ContractsBoard" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
