@@ -305,12 +305,13 @@ layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
 
-[node name="ContractsBoard" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel"]
+[node name="ContractsBoard" type="BoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 10
+vertical = false
 
 [node name="ContractListCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard"]
 custom_minimum_size = Vector2(272, 0)
@@ -1403,12 +1404,13 @@ layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
 
-[node name="DiscoveryBody" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
+[node name="DiscoveryBody" type="BoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 10
+vertical = false
 
 [node name="CatalogColumn" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody"]
 layout_mode = 2
