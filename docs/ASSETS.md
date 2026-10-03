@@ -41,7 +41,7 @@ The Operations redesign imports the original UI Pack - Sci-Fi files with their u
 
 No runtime recolor is baked into these UI textures. Resizable chrome uses 9-slice geometry with symmetric margins so button height stays stable, text remains centered and decorative details are never duplicated.
 
-The Interface Sounds import contains only three CC0 cues: hover/select, click/activate and back/close. The original blue Kenney player ship is retained as a fallback/reference asset while the current runtime test uses the project-owned HD Pioneer-01. Engine feedback, selected space props and hazards from the other Kenney packs remain as before.
+The Interface Sounds import contains only three CC0 cues: hover/select, click/activate and back/close. The original blue Kenney player ship is retained as a fallback/reference asset while the current runtime test uses the project-owned HD Pioneer-01. Selected space props and hazards from the other Kenney packs remain as before. The legacy Kenney engine sprite is retained only as source-pack provenance/reference and is not used by live propulsion.
 
 Enemies, guns and lasers are intentionally excluded because Orbital Cleanup Co. has no combat. Each source directory records the official Kenney page, CC0 license and transfer provenance.
 
@@ -112,3 +112,7 @@ The professional UI pass adds editable SVG accents under `assets/original/ui/`. 
 ## Project-owned salvage artwork
 
 The salvage pass adds **25 editable SVG silhouettes** under `assets/original/salvage/`, one for every current recoverable item. The art uses a shared OCC material language with category accents while rarity animation remains runtime-driven. This replaces the previous state where most salvage definitions reused the same two satellite sprites and makes each salvage table visually diverse without creating per-item scenes.
+
+## Procedural propulsion presentation
+
+Ship propulsion intentionally has no dedicated plume, ring, cloud or particle artwork. The live system renders reusable procedural trails from the ship's world-space engine-socket history. This avoids contradictory fixed flames during inertial turning and removes unnecessary propulsion-specific texture assets from the runtime.

@@ -1,32 +1,30 @@
 extends Node2D
 class_name ShipVisuals
 
+const PROPULSION_TRAIL_RIG_SCENE := preload("res://src/game/ship/propulsion_trail_rig.tscn")
+
 @onready var steering_visual: Node2D = %SteeringVisual
 @onready var ship_sprite: Sprite2D = %ShipSprite
-@onready var engine_glow: Sprite2D = %EngineGlow
-@onready var engine_trail: EngineTrail = %EngineTrail
-@onready var engine_particles: CPUParticles2D = %EngineParticles
-@onready var engine_anchor: Marker2D = $SteeringVisual/EngineAnchor
+@onready var propulsion_trail_rig: PropulsionTrailRig = %PropulsionTrailRig
 @onready var bump_particles: CPUParticles2D = %BumpParticles
 
 var _impact_tween: Tween
 var _drift_direction := Vector2.ZERO
 var _drift_intensity := 0.0
 var _layer_sprites: Dictionary = {}
-var _extra_engine_nodes: Array[Node] = []
-var _engine_glows: Array[Sprite2D] = []
-var _engine_particles: Array[CPUParticles2D] = []
-var _engine_trails: Array[EngineTrail] = []
+var _propulsion_trail_rigs: Array[PropulsionTrailRig] = []
+var _extra_propulsion_trail_rigs: Array[PropulsionTrailRig] = []
+var _active_visual: Dictionary = {}
+var _active_render_scale := 1.0
 
 func _ready() -> void:
-	_engine_glows = [engine_glow]
-	_engine_particles = [engine_particles]
-	_engine_trails = [engine_trail]
+	_propulsion_trail_rigs = [propulsion_trail_rig]
 
 func apply_ship_build(build: Dictionary) -> void:
 	assert(build.has("visual") and build.has("cosmetics"), "ShipVisuals requires resolved visual and cosmetic data.")
 	var visual := build["visual"] as Dictionary
 	var loadout := build["cosmetics"] as Dictionary
+	_active_visual = visual.duplicate(true)
 
 	var texture_path := String(visual.get("base_texture", ""))
 	assert(not texture_path.is_empty(), "Ship model requires a base texture.")
@@ -35,6 +33,7 @@ func apply_ship_build(build: Dictionary) -> void:
 	ship_sprite.texture = hull_texture
 
 	var render_scale := maxf(float(visual.get("render_scale", 1.0)), 0.001)
+	_active_render_scale = render_scale
 	ship_sprite.scale = Vector2.ONE * render_scale
 
 	_apply_paint(visual, loadout)
@@ -91,19 +90,34 @@ func _apply_model_layers(visual: Dictionary, render_scale: float) -> void:
 	_configure_layer("details", String(visual.get("details_texture", "")), render_scale, 3, Color.WHITE)
 	_configure_layer("emissive", String(visual.get("emissive_texture", "")), render_scale, 7, Color.WHITE)
 
+func apply_cosmetic_update(category: String, loadout: Dictionary) -> void:
+	assert(not _active_visual.is_empty(), "Incremental cosmetics require an initialized ship visual.")
+	match category:
+		"paint":
+			_apply_paint(_active_visual, loadout)
+		"livery":
+			_apply_cosmetic_layer("livery", loadout, _active_render_scale, 4)
+		"decal":
+			_apply_cosmetic_layer("decal", loadout, _active_render_scale, 5)
+		"canopy":
+			_apply_cosmetic_layer("canopy", loadout, _active_render_scale, 6)
+		"body_kit":
+			_apply_cosmetic_layer("body_kit", loadout, _active_render_scale, 8)
+		"engine", "trail":
+			_reconfigure_propulsion(loadout)
+
 func _apply_cosmetic_layers(loadout: Dictionary, render_scale: float) -> void:
-	for entry in [
-		{"category": "livery", "z": 4},
-		{"category": "decal", "z": 5},
-		{"category": "canopy", "z": 6},
-		{"category": "body_kit", "z": 8},
-	]:
-		var category := String(entry["category"])
-		var option := loadout.get(category, {}) as Dictionary
-		var tint := Color.WHITE
-		if category == "canopy":
-			tint = Color.from_string(String(option.get("color", "#FFFFFF")), Color.WHITE)
-		_configure_layer(category, String(option.get("texture", "")), render_scale, int(entry["z"]), tint)
+	_apply_cosmetic_layer("livery", loadout, render_scale, 4)
+	_apply_cosmetic_layer("decal", loadout, render_scale, 5)
+	_apply_cosmetic_layer("canopy", loadout, render_scale, 6)
+	_apply_cosmetic_layer("body_kit", loadout, render_scale, 8)
+
+func _apply_cosmetic_layer(category: String, loadout: Dictionary, render_scale: float, z: int) -> void:
+	var option := loadout.get(category, {}) as Dictionary
+	var tint := Color.WHITE
+	if category == "canopy":
+		tint = Color.from_string(String(option.get("color", "#FFFFFF")), Color.WHITE)
+	_configure_layer(category, String(option.get("texture", "")), render_scale, z, tint)
 
 func _configure_layer(layer_id: String, texture_path: String, render_scale: float, z: int, tint: Color) -> void:
 	var sprite := _layer_sprites.get(layer_id) as Sprite2D
@@ -129,67 +143,56 @@ func _configure_layer(layer_id: String, texture_path: String, render_scale: floa
 
 func _configure_engine_sockets(sockets: Array, loadout: Dictionary) -> void:
 	_clear_extra_engines()
-	_engine_glows = [engine_glow]
-	_engine_particles = [engine_particles]
-	_engine_trails = [engine_trail]
+	_propulsion_trail_rigs = [propulsion_trail_rig]
 
 	var socket_list := sockets
 	if socket_list.is_empty():
 		socket_list = [{"id": "main", "position": [0.0, 41.0]}]
 
-	var trail := loadout.get("trail", {}) as Dictionary
-	var engine_style := loadout.get("engine", trail) as Dictionary
-	var glow_color := Color.from_string(
-		String(engine_style.get("glow_color", trail.get("glow_color", "#55DFFF"))),
-		Color(0.33, 0.87, 1.0, 1.0)
-	)
-	var particle_color := Color.from_string(
-		String(engine_style.get("particle_color", engine_style.get("glow_color", "#55DFFF"))),
-		glow_color
-	)
+	var propulsion_style := loadout.get("engine", {}) as Dictionary
+	var trail_palette := loadout.get("trail", {}) as Dictionary
+	assert(not propulsion_style.is_empty(), "Ship propulsion style cosmetic is required.")
+	assert(not trail_palette.is_empty(), "Ship propulsion palette cosmetic is required.")
 
-	var primary_position := _socket_position(socket_list[0] as Dictionary)
-	engine_anchor.position = primary_position
-	engine_glow.position = primary_position + Vector2(0.0, -2.0)
-	engine_particles.position = primary_position
-	engine_trail.apply_style(trail)
-	engine_glow.modulate = Color(glow_color.r, glow_color.g, glow_color.b, engine_glow.modulate.a)
-	engine_particles.color = Color(particle_color.r, particle_color.g, particle_color.b, 0.72)
-
-	for index in range(1, socket_list.size()):
+	for index in range(socket_list.size()):
 		var socket := socket_list[index] as Dictionary
-		var position := _socket_position(socket)
+		var rig: PropulsionTrailRig
+		if index == 0:
+			rig = propulsion_trail_rig
+		else:
+			rig = PROPULSION_TRAIL_RIG_SCENE.instantiate() as PropulsionTrailRig
+			assert(rig != null, "Propulsion trail rig scene must instantiate.")
+			rig.name = "PropulsionTrailRig_%d" % index
+			steering_visual.add_child(rig)
+			_propulsion_trail_rigs.append(rig)
+			_extra_propulsion_trail_rigs.append(rig)
 
-		var anchor := Marker2D.new()
-		anchor.name = "EngineAnchor_%d" % index
-		anchor.position = position
-		steering_visual.add_child(anchor)
-		_extra_engine_nodes.append(anchor)
+		rig.position = _socket_position(socket)
+		rig.rotation = deg_to_rad(float(socket.get("rotation_degrees", 0.0)))
+		rig.configure(
+			propulsion_style,
+			trail_palette,
+			clampf(float(socket.get("fx_scale", 1.0)), 0.25, 2.5)
+		)
 
-		var glow := engine_glow.duplicate() as Sprite2D
-		glow.unique_name_in_owner = false
-		glow.name = "EngineGlow_%d" % index
-		glow.position = position + Vector2(0.0, -2.0)
-		steering_visual.add_child(glow)
-		_engine_glows.append(glow)
-		_extra_engine_nodes.append(glow)
+func _reconfigure_propulsion(loadout: Dictionary) -> void:
+	var sockets := _active_visual.get("engine_sockets", []) as Array
+	if sockets.is_empty():
+		sockets = [{"id": "main", "position": [0.0, 41.0]}]
+	if _propulsion_trail_rigs.size() != sockets.size():
+		_configure_engine_sockets(sockets, loadout)
+		return
 
-		var particles := engine_particles.duplicate() as CPUParticles2D
-		particles.unique_name_in_owner = false
-		particles.name = "EngineParticles_%d" % index
-		particles.position = position
-		steering_visual.add_child(particles)
-		_engine_particles.append(particles)
-		_extra_engine_nodes.append(particles)
-
-		var trail_copy := engine_trail.duplicate() as EngineTrail
-		trail_copy.unique_name_in_owner = false
-		trail_copy.name = "EngineTrail_%d" % index
-		trail_copy.source_path = anchor.get_path()
-		get_parent().add_child(trail_copy)
-		trail_copy.apply_style(trail)
-		_engine_trails.append(trail_copy)
-		_extra_engine_nodes.append(trail_copy)
+	var propulsion_style := loadout.get("engine", {}) as Dictionary
+	var trail_palette := loadout.get("trail", {}) as Dictionary
+	assert(not propulsion_style.is_empty() and not trail_palette.is_empty(), "Incremental propulsion update requires style and palette.")
+	for index in range(_propulsion_trail_rigs.size()):
+		var socket := sockets[index] as Dictionary
+		_propulsion_trail_rigs[index].configure(
+			propulsion_style,
+			trail_palette,
+			clampf(float(socket.get("fx_scale", 1.0)), 0.25, 2.5)
+		)
 
 func _socket_position(socket: Dictionary) -> Vector2:
 	var values := socket.get("position", [0.0, 41.0]) as Array
@@ -197,10 +200,10 @@ func _socket_position(socket: Dictionary) -> Vector2:
 	return Vector2(float(values[0]), float(values[1]))
 
 func _clear_extra_engines() -> void:
-	for node in _extra_engine_nodes:
-		if is_instance_valid(node):
-			node.queue_free()
-	_extra_engine_nodes.clear()
+	for rig in _extra_propulsion_trail_rigs:
+		if is_instance_valid(rig):
+			rig.queue_free()
+	_extra_propulsion_trail_rigs.clear()
 
 func update_motion(
 	speed_ratio: float,
@@ -219,18 +222,8 @@ func update_motion(
 
 	var boost := clampf(boost_ratio, 0.0, 1.0)
 	var engine_strength := clampf(maxf(thrust_ratio, boost), 0.0, 1.0)
-	for glow in _engine_glows:
-		glow.modulate.a = clampf(lerpf(0.08, 0.76, engine_strength) + boost * 0.18, 0.0, 1.0)
-		glow.scale = Vector2(
-			0.84 + engine_strength * 0.18 + boost * 0.10,
-			0.78 + engine_strength * 0.42 + boost * 0.34
-		)
-	for trail in _engine_trails:
-		trail.set_intensity(maxf(engine_strength, boost))
-	for particles in _engine_particles:
-		particles.emitting = engine_strength > 0.08
-		particles.speed_scale = 0.72 + engine_strength * 0.85 + boost * 0.62
-		particles.modulate.a = clampf(lerpf(0.20, 0.88, engine_strength) + boost * 0.10, 0.0, 1.0)
+	for rig in _propulsion_trail_rigs:
+		rig.set_motion(engine_strength, boost)
 
 	if motion_velocity.length_squared() > 64.0:
 		_drift_direction = motion_velocity.normalized()
@@ -241,10 +234,8 @@ func update_motion(
 	queue_redraw()
 
 func play_boost() -> void:
-	for trail in _engine_trails:
-		trail.set_intensity(1.0)
-	for particles in _engine_particles:
-		particles.restart()
+	for rig in _propulsion_trail_rigs:
+		rig.play_boost()
 
 func play_bump(intensity: float, normal: Vector2) -> void:
 	var strength := clampf(intensity, 0.0, 1.0)

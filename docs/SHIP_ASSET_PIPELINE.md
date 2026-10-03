@@ -133,3 +133,43 @@ Before a ship can be enabled:
 - body-kit overlays do not change the base silhouette used for collision;
 - desktop and mobile Web preview remain readable;
 - content/core contracts are green.
+
+
+## Propulsion trail customization
+
+Ship propulsion presentation is composed from two existing save-facing cosmetic categories:
+
+- `engine` selects the procedural trail behavior/style;
+- `trail` selects the color palette used by that style.
+
+The Fleet UI exposes both under one **Propulsion** editor. Keeping the two internal category IDs preserves existing saves while allowing style and color to combine independently.
+
+Runtime composition is intentionally trail-only:
+
+```
+Ship engine_sockets[]
+  -> PropulsionTrailRig per socket
+     -> one to three world-space EngineTrail strands
+```
+
+`PropulsionTrailRig` contains no nozzle sprite, plume texture or propulsion particle emitter. This is deliberate: the ship can rotate while retaining inertial velocity, so a static nozzle flame can point somewhere different from the actual motion history and create contradictory feedback. The trail is generated from the real world-space socket history, so turning, coasting and boost remain visually truthful.
+
+The thirteen authored styles must be structurally different, not simple width variants:
+
+- Ion Stream — clean tapered core/ribbon;
+- Plasma Bloom — wide animated multi-strand wave;
+- Pulse Wave — repeated width pulses with visible gaps;
+- Spark Jet — short broken jittering strands;
+- Comet Ribbon — long tapered flowing tail;
+- Shard Drive — angular segmented zig-zag;
+- Nebula Mist — broad low-opacity multi-strand drift;
+- Twin Helix — two animated sinusoidal strands in opposite phase;
+- Prism Fan — three rays converge at the nozzle and spread into a geometric fan;
+- Phase Rails — two thin rails snap between opposite lanes with sharp crossovers;
+- Gravity Bow — mirrored strands open into a breathing lens/bow and close again;
+- Vortex Coil — three widening chirped coils tighten toward the fading tail;
+- Vector Cascade — three quantized stair-step strands create a mechanical vector pattern.
+
+Engine sockets may optionally author `fx_scale` and `rotation_degrees` for placement/preview alignment. These values affect presentation only. Propulsion cosmetics never modify collision, physics or ship stats.
+
+Do not bake exhaust artwork into ship textures and do not add separate propulsion raster/SVG assets. New propulsion looks should be implemented through bounded procedural trail parameters and reusable renderer behavior.

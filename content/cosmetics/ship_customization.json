@@ -256,8 +256,377 @@
         "display_name_key": "COSMETIC_ENGINE_ION_CYAN",
         "unlock_rank": "trainee",
         "price": 0,
-        "glow_color": "#55DFFF",
-        "particle_color": "#55DFFF"
+        "trail": {
+          "mode": "ribbon",
+          "width": 9,
+          "lifetime": 0.48,
+          "sample_interval": 0.02,
+          "minimum_sample_distance": 1.1,
+          "max_samples": 60,
+          "opacity": 0.96,
+          "preview_length": 78,
+          "preview_points": 26,
+          "boost_width_bonus": 0.12,
+          "boost_lifetime_bonus": 0.12,
+          "strand_count": 2,
+          "strand_spread": 0,
+          "strand_width_decay": 0.42,
+          "strand_alpha_decay": 0.88,
+          "wave_amplitude": 0,
+          "wave_frequency": 0,
+          "animation_speed": 0,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "plasma_bloom",
+        "display_name_key": "COSMETIC_ENGINE_PLASMA_BLOOM",
+        "unlock_rank": "trainee",
+        "price": 320,
+        "trail": {
+          "mode": "plasma",
+          "width": 14,
+          "lifetime": 0.58,
+          "sample_interval": 0.022,
+          "minimum_sample_distance": 1,
+          "max_samples": 66,
+          "opacity": 0.72,
+          "preview_length": 88,
+          "preview_points": 30,
+          "boost_width_bonus": 0.26,
+          "boost_lifetime_bonus": 0.16,
+          "strand_count": 3,
+          "strand_spread": 3.8,
+          "strand_width_decay": 0.74,
+          "strand_alpha_decay": 0.72,
+          "wave_amplitude": 5.2,
+          "wave_frequency": 1.15,
+          "animation_speed": 1.55,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "pulse_wave",
+        "display_name_key": "COSMETIC_ENGINE_PULSE_WAVE",
+        "unlock_rank": "junior_cleaner",
+        "price": 480,
+        "trail": {
+          "mode": "pulse",
+          "width": 11.5,
+          "lifetime": 0.7,
+          "sample_interval": 0.018,
+          "minimum_sample_distance": 0.9,
+          "max_samples": 78,
+          "opacity": 0.94,
+          "preview_length": 102,
+          "preview_points": 36,
+          "boost_width_bonus": 0.32,
+          "boost_lifetime_bonus": 0.22,
+          "strand_count": 2,
+          "strand_spread": 0,
+          "strand_width_decay": 0.46,
+          "strand_alpha_decay": 0.82,
+          "wave_amplitude": 1.8,
+          "wave_frequency": 1.6,
+          "animation_speed": 3.4,
+          "pulse_count": 5,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "spark_jet",
+        "display_name_key": "COSMETIC_ENGINE_SPARK_JET",
+        "unlock_rank": "junior_cleaner",
+        "price": 520,
+        "trail": {
+          "mode": "spark",
+          "width": 4.4,
+          "lifetime": 0.38,
+          "sample_interval": 0.014,
+          "minimum_sample_distance": 0.75,
+          "max_samples": 58,
+          "opacity": 0.98,
+          "preview_length": 68,
+          "preview_points": 28,
+          "boost_width_bonus": 0.08,
+          "boost_lifetime_bonus": 0.06,
+          "strand_count": 3,
+          "strand_spread": 2,
+          "strand_width_decay": 0.72,
+          "strand_alpha_decay": 0.7,
+          "wave_amplitude": 0,
+          "wave_frequency": 0,
+          "animation_speed": 8.5,
+          "pulse_count": 0,
+          "jitter_amplitude": 5.8,
+          "angularity": 0.72
+        }
+      },
+      {
+        "id": "comet_ribbon",
+        "display_name_key": "COSMETIC_ENGINE_COMET_RIBBON",
+        "unlock_rank": "orbital_cleaner",
+        "price": 680,
+        "trail": {
+          "mode": "comet",
+          "width": 12.5,
+          "lifetime": 1.02,
+          "sample_interval": 0.024,
+          "minimum_sample_distance": 1,
+          "max_samples": 110,
+          "opacity": 0.8,
+          "preview_length": 142,
+          "preview_points": 42,
+          "boost_width_bonus": 0.18,
+          "boost_lifetime_bonus": 0.34,
+          "strand_count": 2,
+          "strand_spread": 2.6,
+          "strand_width_decay": 0.52,
+          "strand_alpha_decay": 0.64,
+          "wave_amplitude": 3.4,
+          "wave_frequency": 0.62,
+          "animation_speed": 0.58,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "shard_drive",
+        "display_name_key": "COSMETIC_ENGINE_SHARD_DRIVE",
+        "unlock_rank": "orbital_cleaner",
+        "price": 740,
+        "trail": {
+          "mode": "shard",
+          "width": 5.8,
+          "lifetime": 0.5,
+          "sample_interval": 0.016,
+          "minimum_sample_distance": 0.8,
+          "max_samples": 68,
+          "opacity": 0.96,
+          "preview_length": 76,
+          "preview_points": 30,
+          "boost_width_bonus": 0.1,
+          "boost_lifetime_bonus": 0.1,
+          "strand_count": 2,
+          "strand_spread": 3.2,
+          "strand_width_decay": 0.78,
+          "strand_alpha_decay": 0.76,
+          "wave_amplitude": 3,
+          "wave_frequency": 1.8,
+          "animation_speed": 5.8,
+          "pulse_count": 0,
+          "jitter_amplitude": 4.4,
+          "angularity": 1
+        }
+      },
+      {
+        "id": "nebula_mist",
+        "display_name_key": "COSMETIC_ENGINE_NEBULA_MIST",
+        "unlock_rank": "senior_cleaner",
+        "price": 920,
+        "trail": {
+          "mode": "mist",
+          "width": 18,
+          "lifetime": 0.92,
+          "sample_interval": 0.03,
+          "minimum_sample_distance": 1.25,
+          "max_samples": 84,
+          "opacity": 0.48,
+          "preview_length": 112,
+          "preview_points": 34,
+          "boost_width_bonus": 0.22,
+          "boost_lifetime_bonus": 0.2,
+          "strand_count": 3,
+          "strand_spread": 6,
+          "strand_width_decay": 0.82,
+          "strand_alpha_decay": 0.58,
+          "wave_amplitude": 7.4,
+          "wave_frequency": 0.76,
+          "animation_speed": 0.68,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "twin_helix",
+        "display_name_key": "COSMETIC_ENGINE_TWIN_HELIX",
+        "unlock_rank": "deep_space_operator",
+        "price": 1260,
+        "trail": {
+          "mode": "dual_helix",
+          "width": 4.2,
+          "lifetime": 0.74,
+          "sample_interval": 0.017,
+          "minimum_sample_distance": 0.75,
+          "max_samples": 88,
+          "opacity": 0.98,
+          "preview_length": 104,
+          "preview_points": 40,
+          "boost_width_bonus": 0.08,
+          "boost_lifetime_bonus": 0.2,
+          "strand_count": 2,
+          "strand_spread": 0,
+          "strand_width_decay": 1,
+          "strand_alpha_decay": 0.9,
+          "wave_amplitude": 7.2,
+          "wave_frequency": 2.2,
+          "animation_speed": 2.8,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "prism_fan",
+        "display_name_key": "COSMETIC_ENGINE_PRISM_FAN",
+        "unlock_rank": "trainee",
+        "price": 380,
+        "trail": {
+          "mode": "prism_fan",
+          "width": 6.2,
+          "lifetime": 0.62,
+          "sample_interval": 0.02,
+          "minimum_sample_distance": 1,
+          "max_samples": 70,
+          "opacity": 0.92,
+          "preview_length": 96,
+          "preview_points": 32,
+          "boost_width_bonus": 0.16,
+          "boost_lifetime_bonus": 0.18,
+          "strand_count": 3,
+          "strand_spread": 13,
+          "strand_width_decay": 0.68,
+          "strand_alpha_decay": 0.72,
+          "wave_amplitude": 1.2,
+          "wave_frequency": 0.55,
+          "animation_speed": 1,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "phase_rails",
+        "display_name_key": "COSMETIC_ENGINE_PHASE_RAILS",
+        "unlock_rank": "junior_cleaner",
+        "price": 620,
+        "trail": {
+          "mode": "phase_rails",
+          "width": 3.6,
+          "lifetime": 0.64,
+          "sample_interval": 0.016,
+          "minimum_sample_distance": 0.75,
+          "max_samples": 82,
+          "opacity": 0.98,
+          "preview_length": 98,
+          "preview_points": 42,
+          "boost_width_bonus": 0.08,
+          "boost_lifetime_bonus": 0.12,
+          "strand_count": 2,
+          "strand_spread": 5,
+          "strand_width_decay": 1,
+          "strand_alpha_decay": 0.92,
+          "wave_amplitude": 7.5,
+          "wave_frequency": 3.4,
+          "animation_speed": 4.6,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "gravity_bow",
+        "display_name_key": "COSMETIC_ENGINE_GRAVITY_BOW",
+        "unlock_rank": "orbital_cleaner",
+        "price": 820,
+        "trail": {
+          "mode": "gravity_bow",
+          "width": 6,
+          "lifetime": 0.72,
+          "sample_interval": 0.02,
+          "minimum_sample_distance": 0.9,
+          "max_samples": 80,
+          "opacity": 0.9,
+          "preview_length": 110,
+          "preview_points": 40,
+          "boost_width_bonus": 0.2,
+          "boost_lifetime_bonus": 0.16,
+          "strand_count": 2,
+          "strand_spread": 10,
+          "strand_width_decay": 1,
+          "strand_alpha_decay": 0.9,
+          "wave_amplitude": 4.8,
+          "wave_frequency": 0,
+          "animation_speed": 1.2,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "vortex_coil",
+        "display_name_key": "COSMETIC_ENGINE_VORTEX_COIL",
+        "unlock_rank": "sector_specialist",
+        "price": 1120,
+        "trail": {
+          "mode": "vortex_coil",
+          "width": 4.6,
+          "lifetime": 0.82,
+          "sample_interval": 0.018,
+          "minimum_sample_distance": 0.8,
+          "max_samples": 96,
+          "opacity": 0.94,
+          "preview_length": 115,
+          "preview_points": 48,
+          "boost_width_bonus": 0.14,
+          "boost_lifetime_bonus": 0.24,
+          "strand_count": 3,
+          "strand_spread": 3,
+          "strand_width_decay": 0.86,
+          "strand_alpha_decay": 0.82,
+          "wave_amplitude": 7,
+          "wave_frequency": 3.6,
+          "animation_speed": 2.3,
+          "pulse_count": 0,
+          "jitter_amplitude": 0,
+          "angularity": 0
+        }
+      },
+      {
+        "id": "vector_cascade",
+        "display_name_key": "COSMETIC_ENGINE_VECTOR_CASCADE",
+        "unlock_rank": "deep_space_operator",
+        "price": 1420,
+        "trail": {
+          "mode": "vector_cascade",
+          "width": 4.8,
+          "lifetime": 0.58,
+          "sample_interval": 0.014,
+          "minimum_sample_distance": 0.7,
+          "max_samples": 76,
+          "opacity": 0.97,
+          "preview_length": 90,
+          "preview_points": 46,
+          "boost_width_bonus": 0.12,
+          "boost_lifetime_bonus": 0.12,
+          "strand_count": 3,
+          "strand_spread": 3.4,
+          "strand_width_decay": 0.78,
+          "strand_alpha_decay": 0.8,
+          "wave_amplitude": 6.2,
+          "wave_frequency": 2.8,
+          "animation_speed": 3.8,
+          "pulse_count": 5,
+          "jitter_amplitude": 0,
+          "angularity": 0.75
+        }
       }
     ],
     "trail": [
@@ -266,33 +635,144 @@
         "display_name_key": "COSMETIC_TRAIL_ION_CYAN",
         "unlock_rank": "trainee",
         "price": 0,
-        "tail_color": "#199FDF",
-        "head_color": "#B0F8FF",
-        "glow_color": "#55DFFF",
-        "width": 11,
-        "lifetime": 0.52
+        "palette": {
+          "trail_tail": "#199FDF",
+          "trail_mid": "#55DFFF",
+          "trail_head": "#B0F8FF",
+          "accent": "#B0F8FF"
+        }
       },
       {
         "id": "mint_stream",
         "display_name_key": "COSMETIC_TRAIL_MINT_STREAM",
         "unlock_rank": "trainee",
         "price": 260,
-        "tail_color": "#35BFA2",
-        "head_color": "#C7FFE8",
-        "glow_color": "#79E6C4",
-        "width": 9,
-        "lifetime": 0.62
+        "palette": {
+          "trail_tail": "#35BFA2",
+          "trail_mid": "#79E6C4",
+          "trail_head": "#C7FFE8",
+          "accent": "#C7FFE8"
+        }
       },
       {
         "id": "amber_comet",
         "display_name_key": "COSMETIC_TRAIL_AMBER_COMET",
         "unlock_rank": "junior_cleaner",
         "price": 440,
-        "tail_color": "#D58A1F",
-        "head_color": "#FFE6A3",
-        "glow_color": "#FFC857",
-        "width": 12,
-        "lifetime": 0.46
+        "palette": {
+          "trail_tail": "#D58A1F",
+          "trail_mid": "#FFC857",
+          "trail_head": "#FFE6A3",
+          "accent": "#FFE6A3"
+        }
+      },
+      {
+        "id": "cobalt_flux",
+        "display_name_key": "COSMETIC_TRAIL_COBALT_FLUX",
+        "unlock_rank": "junior_cleaner",
+        "price": 460,
+        "palette": {
+          "trail_tail": "#3159DB",
+          "trail_mid": "#7198FF",
+          "trail_head": "#D4E0FF",
+          "accent": "#B9CAFF"
+        }
+      },
+      {
+        "id": "violet_pulse",
+        "display_name_key": "COSMETIC_TRAIL_VIOLET_PULSE",
+        "unlock_rank": "junior_cleaner",
+        "price": 480,
+        "palette": {
+          "trail_tail": "#6E45E2",
+          "trail_mid": "#A277FF",
+          "trail_head": "#E7D8FF",
+          "accent": "#D9C3FF"
+        }
+      },
+      {
+        "id": "crimson_drive",
+        "display_name_key": "COSMETIC_TRAIL_CRIMSON_DRIVE",
+        "unlock_rank": "orbital_cleaner",
+        "price": 560,
+        "palette": {
+          "trail_tail": "#C8324C",
+          "trail_mid": "#FF6078",
+          "trail_head": "#FFD5DC",
+          "accent": "#FFC1CB"
+        }
+      },
+      {
+        "id": "emerald_stream",
+        "display_name_key": "COSMETIC_TRAIL_EMERALD_STREAM",
+        "unlock_rank": "orbital_cleaner",
+        "price": 580,
+        "palette": {
+          "trail_tail": "#1CA45C",
+          "trail_mid": "#51E58B",
+          "trail_head": "#D1FFE1",
+          "accent": "#B9FFD1"
+        }
+      },
+      {
+        "id": "magenta_wave",
+        "display_name_key": "COSMETIC_TRAIL_MAGENTA_WAVE",
+        "unlock_rank": "orbital_cleaner",
+        "price": 620,
+        "palette": {
+          "trail_tail": "#C72A96",
+          "trail_mid": "#FF64D1",
+          "trail_head": "#FFD8F4",
+          "accent": "#FFC2EC"
+        }
+      },
+      {
+        "id": "white_prism",
+        "display_name_key": "COSMETIC_TRAIL_WHITE_PRISM",
+        "unlock_rank": "senior_cleaner",
+        "price": 760,
+        "palette": {
+          "trail_tail": "#96B5C9",
+          "trail_mid": "#DDF7FF",
+          "trail_head": "#FFFFFF",
+          "accent": "#FFFFFF"
+        }
+      },
+      {
+        "id": "rose_vector",
+        "display_name_key": "COSMETIC_TRAIL_ROSE_VECTOR",
+        "unlock_rank": "senior_cleaner",
+        "price": 780,
+        "palette": {
+          "trail_tail": "#C85F83",
+          "trail_mid": "#F59AB8",
+          "trail_head": "#FFE1EA",
+          "accent": "#FFD0DF"
+        }
+      },
+      {
+        "id": "golden_flux",
+        "display_name_key": "COSMETIC_TRAIL_GOLDEN_FLUX",
+        "unlock_rank": "sector_specialist",
+        "price": 980,
+        "palette": {
+          "trail_tail": "#C99722",
+          "trail_mid": "#FFD85A",
+          "trail_head": "#FFF3B8",
+          "accent": "#FFF0A6"
+        }
+      },
+      {
+        "id": "ultraviolet",
+        "display_name_key": "COSMETIC_TRAIL_ULTRAVIOLET",
+        "unlock_rank": "deep_space_operator",
+        "price": 1240,
+        "palette": {
+          "trail_tail": "#4B2ACB",
+          "trail_mid": "#8A5BFF",
+          "trail_head": "#D8CAFF",
+          "accent": "#C7B2FF"
+        }
       }
     ],
     "beam": [

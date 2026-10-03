@@ -428,7 +428,7 @@ msgid "HQ_CUSTOMIZE_PAINT"
 msgstr "PAINT"
 
 msgid "HQ_CUSTOMIZE_TRAIL"
-msgstr "ENGINE TRAIL"
+msgstr "TRAIL COLOR"
 
 msgid "HQ_CUSTOMIZE_BEAM"
 msgstr "TRACTOR BEAM"
@@ -440,7 +440,7 @@ msgid "HQ_SHIP_TAB_PAINT"
 msgstr "PAINT"
 
 msgid "HQ_SHIP_TAB_TRAIL"
-msgstr "TRAIL"
+msgstr "TRAIL COLOR"
 
 msgid "HQ_SHIP_TAB_BEAM"
 msgstr "BEAM"
@@ -452,7 +452,7 @@ msgid "HQ_SHIP_PAINT_FMT"
 msgstr "Paint · %s"
 
 msgid "HQ_SHIP_TRAIL_FMT"
-msgstr "Trail · %s"
+msgstr "Trail Color · %s"
 
 msgid "HQ_SHIP_BEAM_FMT"
 msgstr "Beam · %s"
@@ -479,13 +479,13 @@ msgid "COSMETIC_PAINT_SAFETY_AMBER"
 msgstr "Safety Amber"
 
 msgid "COSMETIC_TRAIL_ION_CYAN"
-msgstr "Ion Cyan"
+msgstr "Service Cyan"
 
 msgid "COSMETIC_TRAIL_MINT_STREAM"
-msgstr "Mint Stream"
+msgstr "Mint Flux"
 
 msgid "COSMETIC_TRAIL_AMBER_COMET"
-msgstr "Amber Comet"
+msgstr "Safety Amber"
 
 msgid "COSMETIC_BEAM_STANDARD_CYAN"
 msgstr "Standard Cyan"
@@ -1343,7 +1343,7 @@ msgid "COSMETIC_BODY_KIT_STOCK"
 msgstr "Stock Body"
 
 msgid "COSMETIC_ENGINE_ION_CYAN"
-msgstr "Ion Cyan"
+msgstr "Ion Stream"
 
 msgid "HQ_FLEET_MASTERY_FMT"
 msgstr "Mastery %d/%d · %d XP"
@@ -1394,7 +1394,7 @@ msgid "HQ_CUSTOMIZE_BODY_KIT"
 msgstr "Body Kit"
 
 msgid "HQ_CUSTOMIZE_ENGINE"
-msgstr "Engine FX"
+msgstr "ENGINE EFFECT"
 
 msgid "HQ_FLEET_MODULES"
 msgstr "MODULES"
@@ -1680,3 +1680,84 @@ msgstr "Golden Flux"
 
 msgid "COSMETIC_BEAM_ULTRAVIOLET"
 msgstr "Ultraviolet"
+
+msgid "COSMETIC_ENGINE_PLASMA_BLOOM"
+msgstr "Plasma Bloom"
+
+msgid "COSMETIC_ENGINE_PULSE_WAVE"
+msgstr "Pulse Wave"
+
+msgid "COSMETIC_ENGINE_SPARK_JET"
+msgstr "Spark Jet"
+
+msgid "COSMETIC_ENGINE_COMET_RIBBON"
+msgstr "Comet Ribbon"
+
+msgid "COSMETIC_ENGINE_SHARD_DRIVE"
+msgstr "Shard Drive"
+
+msgid "COSMETIC_ENGINE_NEBULA_MIST"
+msgstr "Nebula Mist"
+
+msgid "COSMETIC_ENGINE_TWIN_HELIX"
+msgstr "Twin Helix"
+
+msgid "COSMETIC_TRAIL_COBALT_FLUX"
+msgstr "Cobalt Flux"
+
+msgid "COSMETIC_TRAIL_VIOLET_PULSE"
+msgstr "Violet Pulse"
+
+msgid "COSMETIC_TRAIL_CRIMSON_DRIVE"
+msgstr "Crimson Drive"
+
+msgid "COSMETIC_TRAIL_EMERALD_STREAM"
+msgstr "Emerald Stream"
+
+msgid "COSMETIC_TRAIL_MAGENTA_WAVE"
+msgstr "Magenta Wave"
+
+msgid "COSMETIC_TRAIL_WHITE_PRISM"
+msgstr "White Prism"
+
+msgid "COSMETIC_TRAIL_ROSE_VECTOR"
+msgstr "Rose Vector"
+
+msgid "COSMETIC_TRAIL_GOLDEN_FLUX"
+msgstr "Golden Flux"
+
+msgid "COSMETIC_TRAIL_ULTRAVIOLET"
+msgstr "Ultraviolet"
+
+msgid "HQ_SHIP_TAB_PROPULSION"
+msgstr "PROPULSION"
+
+msgid "HQ_CUSTOMIZE_PROPULSION"
+msgstr "PROPULSION"
+
+msgid "HQ_PROPULSION_STYLE"
+msgstr "STYLE"
+
+msgid "HQ_PROPULSION_COLOR"
+msgstr "COLOR"
+
+msgid "HQ_SHIP_PROPULSION_STYLE_FMT"
+msgstr "Style · %s"
+
+msgid "HQ_SHIP_PROPULSION_COLOR_FMT"
+msgstr "Color · %s"
+
+msgid "COSMETIC_ENGINE_PRISM_FAN"
+msgstr "Prism Fan"
+
+msgid "COSMETIC_ENGINE_PHASE_RAILS"
+msgstr "Phase Rails"
+
+msgid "COSMETIC_ENGINE_GRAVITY_BOW"
+msgstr "Gravity Bow"
+
+msgid "COSMETIC_ENGINE_VORTEX_COIL"
+msgstr "Vortex Coil"
+
+msgid "COSMETIC_ENGINE_VECTOR_CASCADE"
+msgstr "Vector Cascade"

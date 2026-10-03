@@ -7,6 +7,7 @@ const DEFAULT_ALPHA_THRESHOLD := 0.10
 static var _source_mask_cache: Dictionary = {}
 static var _source_rect_cache: Dictionary = {}
 static var _source_boundary_cache: Dictionary = {}
+static var _dynamic_shape_cache: Dictionary = {}
 
 static func build_static_boundary(
 	body: StaticBody2D,
@@ -52,16 +53,24 @@ static func build_dynamic_solid(
 	assert(not sprite.region_enabled, "Dynamic alpha collision currently expects a full texture, not a Sprite2D region.")
 
 	_clear_generated_shapes(body)
-	var source_rects := _alpha_rectangles(sprite.texture, alpha_threshold)
-	assert(not source_rects.is_empty(), "Visible texture alpha must generate solid collision geometry.")
-
+	var transformed_cache_key := _dynamic_shape_cache_key(sprite, alpha_threshold)
 	var owner_id := body.create_shape_owner(body)
 	body.set_meta(GENERATED_OWNER_META, owner_id)
 
+	if _dynamic_shape_cache.has(transformed_cache_key):
+		var cached := _dynamic_shape_cache[transformed_cache_key] as Dictionary
+		for shape_value in cached["shapes"] as Array:
+			body.shape_owner_add_shape(owner_id, shape_value as Shape2D)
+		assert(generated_part_count(body) > 0, "Cached dynamic alpha collision must register convex shapes.")
+		return float(cached["max_radius"])
+
+	var source_rects := _alpha_rectangles(sprite.texture, alpha_threshold)
+	assert(not source_rects.is_empty(), "Visible texture alpha must generate solid collision geometry.")
 	var mask := _alpha_mask(sprite.texture, alpha_threshold)
 	var source_size := Vector2(float(mask["width"]), float(mask["height"]))
 	var texture_size := sprite.texture.get_size()
 	var max_radius := 0.0
+	var cached_shapes: Array[Shape2D] = []
 
 	for rect_value in source_rects:
 		var rect := rect_value as Rect2i
@@ -79,8 +88,13 @@ static func build_dynamic_solid(
 
 		var shape := ConvexPolygonShape2D.new()
 		shape.points = local_points
+		cached_shapes.append(shape)
 		body.shape_owner_add_shape(owner_id, shape)
 
+	_dynamic_shape_cache[transformed_cache_key] = {
+		"shapes": cached_shapes,
+		"max_radius": max_radius,
+	}
 	assert(generated_part_count(body) > 0, "Dynamic alpha collision must register convex shapes.")
 	return max_radius
 
@@ -308,6 +322,19 @@ static func _cache_key(texture: Texture2D, threshold: float) -> String:
 	var path_key := texture.resource_path
 	var texture_key := path_key if not path_key.is_empty() else str(texture.get_instance_id())
 	return "%s|%.4f" % [texture_key, threshold]
+
+static func _dynamic_shape_cache_key(sprite: Sprite2D, alpha_threshold: float) -> String:
+	var source_key := _cache_key(sprite.texture, clampf(alpha_threshold, 0.0, 1.0))
+	return "%s|scale=%.5f,%.5f|offset=%.3f,%.3f|centered=%s|flip=%s,%s" % [
+		source_key,
+		sprite.scale.x,
+		sprite.scale.y,
+		sprite.offset.x,
+		sprite.offset.y,
+		str(sprite.centered),
+		str(sprite.flip_h),
+		str(sprite.flip_v),
+	]
 
 static func _generated_owner_id(body: CollisionObject2D) -> int:
 	if not body.has_meta(GENERATED_OWNER_META):

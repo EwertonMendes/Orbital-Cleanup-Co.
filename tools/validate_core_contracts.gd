@@ -221,7 +221,7 @@ func _validate_operations_screen() -> void:
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
 	_expect("footer.visible = tab == Tab.CONTRACTS" in operations_source, "Non-contract tabs must use the full fixed content stage without resizing the outer console.")
 	_expect("occ_focus_restore_key" in operations_source and "grab_by_meta" in operations_source, "Dynamic Operations lists must restore gamepad focus after selection-driven refreshes.")
-	_expect("_suppress_progression_refresh" in operations_source and "_refresh_ship(false)" in operations_source, "Cosmetic selection must update in place so controller focus is never destroyed.")
+	_expect("_suppress_progression_refresh" in operations_source and "_refresh_ship(false, category)" in operations_source, "Cosmetic selection must update in place so controller focus is never destroyed.")
 	_expect("_configure_ship_option_focus_graph" in operations_source, "Ship option lists require explicit controller neighbors after dynamic construction.")
 	_expect("_refresh_visible_upgrade_cards" in operations_source and "_configure_upgrade_focus_graph" in operations_source, "Upgrade purchases must update existing cards in place and preserve controller navigation.")
 	_expect("upgrade_grid.columns = 1 if portrait else 2" in operations_source and "return 4" in operations_source, "Desktop upgrades must use a bounded 2x2 page that fits the fixed content stage.")
@@ -233,6 +233,8 @@ func _validate_operations_screen() -> void:
 	var operations_scene_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.tscn")
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	var player_ship_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.gd")
+	var ship_visuals_source := FileAccess.get_file_as_string("res://src/game/ship/ship_visuals.gd")
+	var collision_geometry_source := FileAccess.get_file_as_string("res://src/game/sector/collision_geometry_2d.gd")
 	var app_root_source := FileAccess.get_file_as_string("res://src/core/app/app_root.gd")
 	var progression_source := FileAccess.get_file_as_string("res://src/game/progression/progression_service.gd")
 	_expect("LiveryCategory" in operations_scene_source and "DecalCategory" in operations_scene_source and "CanopyCategory" in operations_scene_source and "BodyKitCategory" in operations_scene_source and "EngineCategory" in operations_scene_source, "Fleet scene must provide selectors for every layered customization category.")
@@ -241,9 +243,19 @@ func _validate_operations_screen() -> void:
 	_expect("columns = 1" in operations_scene_source and "ModulesOptions" in operations_scene_source, "Fleet modules must use a full-width single-column selector.")
 	_expect("modules_options.columns = 1" in operations_source and "ModuleSlotBar" in operations_source and "ModuleChoiceGrid" in operations_source and "OVERRUN_TRIM_ELLIPSIS" in operations_source, "Fleet modules must use a bay-first bounded selector that trims safely on narrow widths.")
 	_expect("%ShipTitle.visible = false" in operations_source and "%ShipSubtitle.visible = false" in operations_source and "ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL" in operations_source, "Fleet must remain a fixed no-scroll workspace with vertical room reserved for preview and editor.")
-	_expect("_ship_category_title_key" in operations_source and "(headings[index] as Control).visible = false" in operations_source, "Fleet editor must use one contextual title instead of duplicate heading rows.")
+	_expect("_ship_category_title_key" in operations_source and "propulsion_mode_bar.visible = true" in operations_source, "Fleet editor must keep one contextual top-level title while allowing Style/Color sections inside Propulsion.")
 	_expect("LIVE_SHIP_SYNC" in flight_source and "apply_ship_build" in player_ship_source, "Free Flight must reapply Fleet changes without redeployment.")
+	_expect("_live_ship_sync_queued" in flight_source and "Collapse them into one end-of-frame ship sync" in flight_source, "Free Flight must coalesce purchase/equip state bursts instead of rebuilding the live ship multiple times per click.")
+	_expect("_hull_collision_geometry_changed" in player_ship_source and "if collision_changed:" in player_ship_source and "_rebuild_hull_collision()" in player_ship_source, "Live ship updates must rebuild alpha collision only when hull geometry changes.")
+	_expect("apply_cosmetic_update" in ship_visuals_source and "_reconfigure_propulsion" in ship_visuals_source, "Live cosmetics must update only the affected visual layer instead of reapplying the whole ship build.")
+	_expect("_dynamic_shape_cache" in collision_geometry_source and "_dynamic_shape_cache_key" in collision_geometry_source, "Alpha-derived dynamic hull shapes must be cached for instant reuse when switching back to a ship.")
+	_expect("_apply_incremental_ship_preview" in operations_source and '_refresh_ship(false, category)' in operations_source, "Fleet cosmetic clicks must update only the changed preview layer.")
+	_expect("_propulsion_preview_rigs.size() != sockets.size()" in operations_source, "Fleet propulsion preview rigs must be reused in place instead of recreated for every style/color click.")
 	_expect("_apply_composed_ship_preview" in operations_source and "contract_ship_art" in operations_source, "Operations previews must share one cosmetic composition path.")
+	_expect("_refresh_propulsion_preview" in operations_source and "_create_engine_palette_icon" in operations_source, "Fleet propulsion customization must provide a live trail-only preview and palette swatches.")
+	_expect('"propulsion"' in operations_source and "PropulsionModeBar" in operations_scene_source and "visible = false" in operations_scene_source, "Fleet must unify propulsion style and color under one top-level category.")
+	_expect("_set_ship_option_page_to_equipped(_active_cosmetic_category())" in operations_source and "_set_ship_option_page_to_equipped(mode)" in operations_source, "Entering Propulsion or switching Style/Color must open on the equipped cosmetic page.")
+	_expect("_progression.get_equipped_cosmetic_id(category)" in operations_source and "_progression.is_cosmetic_unlocked(category, cosmetic_id)" in operations_source, "Equipped-page resolution must use the same unlocked cosmetic ordering as the visible pager.")
 	_expect("unlock_customization" in app_root_source and "debug_unlock_all_customization" in progression_source, "Debug provider must expose persistent save-local customization QA unlock.")
 	_expect("_progression.purchase_module" in operations_source and "_progression.equip_module" in operations_source and "_module_slot_entries" in operations_source and "_module_choices_for_slot" in operations_source, "Fleet UI must purchase and equip compatible reusable modules through a bay-first workflow.")
 	_expect('text = "-"' in operations_scene_source, "Settings volume-down must use an ASCII minus glyph supported by the display font.")
@@ -993,7 +1005,18 @@ func _validate_progression_service() -> void:
 
 	var cosmetic_catalog := ContentRegistry.new().get_cosmetic("ship_customization")
 	_expect(((cosmetic_catalog["categories"] as Dictionary)["paint"] as Array).size() == 20, "Paint catalog must expose 20 authored choices.")
+	_expect(((cosmetic_catalog["categories"] as Dictionary)["engine"] as Array).size() == 13, "Propulsion style catalog must expose 13 authored trail behaviors.")
+	_expect(((cosmetic_catalog["categories"] as Dictionary)["trail"] as Array).size() == 12, "Propulsion color catalog must expose 12 authored palettes.")
 	_expect(((cosmetic_catalog["categories"] as Dictionary)["beam"] as Array).size() == 15, "Tractor Beam catalog must expose 15 authored choices.")
+	var propulsion_modes: Dictionary = {}
+	for engine_value in (cosmetic_catalog["categories"] as Dictionary)["engine"] as Array:
+		var engine_definition := engine_value as Dictionary
+		_expect(engine_definition.keys().size() == 5 and engine_definition.has("trail"), "Propulsion styles must contain trail data only; plume/particle payloads are forbidden.")
+		var trail_definition := engine_definition.get("trail", {}) as Dictionary
+		var mode := String(trail_definition.get("mode", ""))
+		_expect(not propulsion_modes.has(mode), "Every propulsion style needs a unique trail behavior mode: %s" % mode)
+		propulsion_modes[mode] = true
+	_expect(propulsion_modes.size() == 13, "All thirteen propulsion cosmetics must use distinct renderer behaviors.")
 
 	var default_cosmetics := progression.get_equipped_cosmetic_ids()
 	_expect(String(default_cosmetics["hull"]) == "pioneer_01", "Hull compatibility adapter must expose the active ship model.")
@@ -1204,18 +1227,24 @@ func _validate_player_ship() -> void:
 			int(ship_alpha_qa["transparent_covered"]) == 0,
 			"PlayerShip solid alpha collision must not cover confidently transparent sampled pixels."
 		)
-	var engine_anchor := ship.find_child("EngineAnchor", true, false) as Marker2D
-	_expect(engine_anchor != null, "PlayerShip requires an engine trail anchor.")
-	if engine_anchor != null:
+	var propulsion_rig := ship.find_child("PropulsionTrailRig", true, false) as PropulsionTrailRig
+	_expect(propulsion_rig != null, "PlayerShip requires a reusable trail-only propulsion rig.")
+	if propulsion_rig != null:
 		_expect(
-			engine_anchor.position.distance_to(Vector2(-16.1, 36.4)) <= 1.0,
-			"Pioneer-01 primary engine anchor must match the unified fleet artwork."
+			propulsion_rig.position.distance_to(Vector2(-16.1, 36.4)) <= 1.0,
+			"Pioneer-01 primary propulsion trail rig must match the unified fleet artwork socket."
 		)
-	var trail := ship.find_child("EngineTrail", true, false) as EngineTrail
-	_expect(trail != null, "PlayerShip requires engine trail.")
-	if trail != null:
-		_expect(trail.sample_interval <= 0.03, "Engine trail must sample frequently enough to stay continuous.")
-		_expect(trail.minimum_sample_distance <= 2.0, "Engine trail cannot depend on large movement jumps.")
+		var trail := propulsion_rig.find_child("TrailA", true, false) as EngineTrail
+		_expect(trail != null, "Propulsion rig requires a primary world-space trail.")
+		if trail != null:
+			_expect(trail.sample_interval <= 0.03, "Propulsion trail must sample frequently enough to stay continuous.")
+			_expect(trail.minimum_sample_distance <= 2.0, "Propulsion trail cannot depend on large movement jumps.")
+		_expect(propulsion_rig.find_children("*", "CPUParticles2D", true, false).is_empty(), "Propulsion presentation must not reintroduce nozzle particles.")
+		_expect(propulsion_rig.find_children("*", "Sprite2D", true, false).is_empty(), "Propulsion presentation must not reintroduce static nozzle plume sprites.")
+	var propulsion_packed := load("res://src/game/ship/propulsion_trail_rig.tscn") as PackedScene
+	_expect(propulsion_packed != null, "Reusable PropulsionTrailRig scene must load.")
+	var player_scene_source := FileAccess.get_file_as_string("res://src/game/ship/player_ship.tscn")
+	_expect("engine_speed.png" not in player_scene_source and "engine_core_plume" not in player_scene_source, "Player propulsion must remain trail-only with no fixed plume artwork.")
 	var camera := ship.find_child("ShipCamera", true, false) as ShipCamera
 	_expect(camera != null, "PlayerShip requires ship camera.")
 	if camera != null:
@@ -1556,8 +1585,9 @@ func _validate_polish_systems() -> void:
 		_expect(flight.find_child("SpaceEnvironment", true, false) is SpaceEnvironmentLayer, "Flight requires layered procedural atmosphere behind and in front of gameplay.")
 		_expect(flight.find_child("WorldVisualRuntime", true, false) is WorldVisualRuntime, "Flight requires one visual coordinator between environment simulation and rendering.")
 		_expect(flight.find_child("FlightFeedback", true, false) is FlightFeedback, "Flight requires centralized gameplay feedback.")
-		var engine_particles := flight.find_child("EngineParticles", true, false)
-		_expect(engine_particles is CPUParticles2D, "Ship polish requires engine particles.")
+		var propulsion_rig := flight.find_child("PropulsionTrailRig", true, false)
+		_expect(propulsion_rig is PropulsionTrailRig, "Ship polish requires the trail-only propulsion rig.")
+		_expect(flight.find_child("EngineParticles", true, false) == null, "Ship polish must not reintroduce static engine particles.")
 		flight.free()
 
 	var burst_packed := load("res://src/game/visual/world_burst.tscn") as PackedScene

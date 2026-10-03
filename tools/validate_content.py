@@ -779,6 +779,10 @@ def validate_ships(
             position = socket.get("position")
             require(isinstance(position, list) and len(position) == 2, f"{ship_label}.engine_sockets[{socket_index}].position must have two values")
             require(all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in position), f"{ship_label}.engine_sockets[{socket_index}].position must be numeric")
+            if "fx_scale" in socket:
+                require_number(socket["fx_scale"], f"{ship_label}.engine_sockets[{socket_index}].fx_scale", 0.25, 2.5)
+            if "rotation_degrees" in socket:
+                require_number(socket["rotation_degrees"], f"{ship_label}.engine_sockets[{socket_index}].rotation_degrees", -180, 180)
         tractor_socket = visual.get("tractor_socket")
         require(isinstance(tractor_socket, list) and len(tractor_socket) == 2, f"{ship_label}.tractor_socket must have two values")
         require(visual.get("collision_mode") == "base_alpha", f"{ship_label}: collision must come from the base model only")
@@ -837,13 +841,82 @@ def validate_cosmetics(
                 if path:
                     require_asset(path, f"{label}.{category}.{option_id}.texture")
             elif category == "engine":
-                for color_key in ("glow_color", "particle_color"):
-                    require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
+                trail_profile = option.get("trail")
+                require(isinstance(trail_profile, dict), f"{label}.{category}.{option_id}.trail must be an object")
+                expected_trail_fields = {
+                    "mode", "width", "lifetime", "sample_interval", "minimum_sample_distance",
+                    "max_samples", "opacity", "preview_length", "preview_points",
+                    "boost_width_bonus", "boost_lifetime_bonus", "strand_count",
+                    "strand_spread", "strand_width_decay", "strand_alpha_decay",
+                    "wave_amplitude", "wave_frequency", "animation_speed",
+                    "pulse_count", "jitter_amplitude", "angularity",
+                }
+                require(
+                    set(trail_profile) == expected_trail_fields,
+                    f"{label}.{category}.{option_id}.trail must define exactly {sorted(expected_trail_fields)}",
+                )
+                mode = str(trail_profile.get("mode", ""))
+                require(
+                    mode in {"ribbon", "plasma", "pulse", "spark", "comet", "shard", "mist", "dual_helix", "prism_fan", "phase_rails", "gravity_bow", "vortex_coil", "vector_cascade"},
+                    f"{label}.{category}.{option_id}.trail.mode is invalid",
+                )
+                require_number(trail_profile.get("width"), f"{label}.{category}.{option_id}.trail.width", 0.75, 72)
+                require_number(trail_profile.get("lifetime"), f"{label}.{category}.{option_id}.trail.lifetime", 0.1, 2.0)
+                require_number(trail_profile.get("sample_interval"), f"{label}.{category}.{option_id}.trail.sample_interval", 0.005, 0.2)
+                require_number(trail_profile.get("minimum_sample_distance"), f"{label}.{category}.{option_id}.trail.minimum_sample_distance", 0.1, 20)
+                require_number(trail_profile.get("max_samples"), f"{label}.{category}.{option_id}.trail.max_samples", 8, 120)
+                require_number(trail_profile.get("opacity"), f"{label}.{category}.{option_id}.trail.opacity", 0.05, 1)
+                require_number(trail_profile.get("preview_length"), f"{label}.{category}.{option_id}.trail.preview_length", 12, 520)
+                require_number(trail_profile.get("preview_points"), f"{label}.{category}.{option_id}.trail.preview_points", 8, 64)
+                require_number(trail_profile.get("boost_width_bonus"), f"{label}.{category}.{option_id}.trail.boost_width_bonus", 0, 1)
+                require_number(trail_profile.get("boost_lifetime_bonus"), f"{label}.{category}.{option_id}.trail.boost_lifetime_bonus", 0, 1)
+                require_number(trail_profile.get("strand_count"), f"{label}.{category}.{option_id}.trail.strand_count", 1, 3)
+                require_number(trail_profile.get("strand_spread"), f"{label}.{category}.{option_id}.trail.strand_spread", 0, 24)
+                require_number(trail_profile.get("strand_width_decay"), f"{label}.{category}.{option_id}.trail.strand_width_decay", 0.1, 1)
+                require_number(trail_profile.get("strand_alpha_decay"), f"{label}.{category}.{option_id}.trail.strand_alpha_decay", 0.1, 1)
+                require_number(trail_profile.get("wave_amplitude"), f"{label}.{category}.{option_id}.trail.wave_amplitude", 0, 24)
+                require_number(trail_profile.get("wave_frequency"), f"{label}.{category}.{option_id}.trail.wave_frequency", 0, 10)
+                require_number(trail_profile.get("animation_speed"), f"{label}.{category}.{option_id}.trail.animation_speed", 0, 16)
+                require_number(trail_profile.get("pulse_count"), f"{label}.{category}.{option_id}.trail.pulse_count", 0, 10)
+                require_number(trail_profile.get("jitter_amplitude"), f"{label}.{category}.{option_id}.trail.jitter_amplitude", 0, 24)
+                require_number(trail_profile.get("angularity"), f"{label}.{category}.{option_id}.trail.angularity", 0, 1)
+
+                if mode == "ribbon":
+                    require(float(trail_profile["wave_amplitude"]) == 0 and float(trail_profile["jitter_amplitude"]) == 0, f"{label}.{category}.{option_id}: ribbon must stay clean and stable")
+                elif mode == "plasma":
+                    require(int(trail_profile["strand_count"]) >= 3 and float(trail_profile["wave_amplitude"]) >= 4, f"{label}.{category}.{option_id}: plasma must use a multi-strand wave")
+                elif mode == "pulse":
+                    require(int(trail_profile["pulse_count"]) >= 4, f"{label}.{category}.{option_id}: pulse style must expose visible repeated pulses")
+                elif mode == "spark":
+                    require(int(trail_profile["strand_count"]) >= 3 and float(trail_profile["jitter_amplitude"]) >= 4, f"{label}.{category}.{option_id}: spark style must use multiple broken jitter strands")
+                elif mode == "comet":
+                    require(float(trail_profile["lifetime"]) >= 0.9 and float(trail_profile["preview_length"]) >= 120, f"{label}.{category}.{option_id}: comet style must remain intentionally long")
+                elif mode == "shard":
+                    require(float(trail_profile["angularity"]) >= 0.8 and float(trail_profile["jitter_amplitude"]) >= 3, f"{label}.{category}.{option_id}: shard style must remain angular")
+                elif mode == "mist":
+                    require(int(trail_profile["strand_count"]) >= 3 and float(trail_profile["opacity"]) <= 0.6, f"{label}.{category}.{option_id}: mist style must use diffuse multi-strands")
+                elif mode == "dual_helix":
+                    require(int(trail_profile["strand_count"]) == 2 and float(trail_profile["wave_amplitude"]) >= 6, f"{label}.{category}.{option_id}: twin helix must use two clearly separated strands")
+                elif mode == "prism_fan":
+                    require(int(trail_profile["strand_count"]) == 3 and float(trail_profile["strand_spread"]) >= 10, f"{label}.{category}.{option_id}: prism fan must open three clearly separated rays")
+                elif mode == "phase_rails":
+                    require(int(trail_profile["strand_count"]) == 2 and float(trail_profile["wave_amplitude"]) >= 6 and float(trail_profile["wave_frequency"]) >= 3, f"{label}.{category}.{option_id}: phase rails must visibly switch between two lanes")
+                elif mode == "gravity_bow":
+                    require(int(trail_profile["strand_count"]) == 2 and float(trail_profile["strand_spread"]) >= 8 and float(trail_profile["wave_amplitude"]) >= 4, f"{label}.{category}.{option_id}: gravity bow must form two wide mirrored arcs")
+                elif mode == "vortex_coil":
+                    require(int(trail_profile["strand_count"]) == 3 and float(trail_profile["wave_amplitude"]) >= 6 and float(trail_profile["wave_frequency"]) >= 3, f"{label}.{category}.{option_id}: vortex coil must use a widening three-strand chirp")
+                elif mode == "vector_cascade":
+                    require(int(trail_profile["strand_count"]) == 3 and int(trail_profile["pulse_count"]) >= 4 and float(trail_profile["wave_amplitude"]) >= 5, f"{label}.{category}.{option_id}: vector cascade must use quantized multi-strand steps")
             elif category == "trail":
-                for color_key in ("tail_color", "head_color", "glow_color"):
-                    require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
-                require_number(option.get("width"), f"{label}.{category}.{option_id}.width", 2, 24)
-                require_number(option.get("lifetime"), f"{label}.{category}.{option_id}.lifetime", 0.1, 2.0)
+                palette = option.get("palette")
+                require(isinstance(palette, dict), f"{label}.{category}.{option_id}.palette must be an object")
+                expected_palette = {"trail_tail", "trail_mid", "trail_head", "accent"}
+                require(set(palette) == expected_palette, f"{label}.{category}.{option_id}.palette must define exactly {sorted(expected_palette)}")
+                for color_key in sorted(expected_palette):
+                    require(
+                        HEX_COLOR_RE.fullmatch(str(palette.get(color_key, ""))) is not None,
+                        f"{label}.{category}.{option_id}.palette.{color_key}: expected #RRGGBB",
+                    )
             elif category == "beam":
                 for color_key in ("glow_color", "core_color"):
                     require(HEX_COLOR_RE.fullmatch(str(option.get(color_key, ""))) is not None, f"{label}.{category}.{option_id}.{color_key}: expected #RRGGBB")
