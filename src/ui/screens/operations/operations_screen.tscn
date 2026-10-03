@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_screen.gd" id="1"]
 [ext_resource type="Script" path="res://src/ui/screens/operations/operations_backdrop.gd" id="2"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_en.webp" id="11"]
 [ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_br.webp" id="12"]
 [ext_resource type="Texture2D" path="res://assets/original/ui/languages/language_es.webp" id="13"]
+[ext_resource type="Texture2D" path="res://assets/branding/orbital_cleanup_icon.svg" id="14"]
 
 [sub_resource type="ShaderMaterial" id="ShipPaintPreviewMaterial"]
 resource_local_to_scene = true
@@ -63,7 +64,7 @@ mouse_filter = 1
 
 [node name="FloatingSurface" type="PanelContainer" parent="ConsoleCenter"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(1120, 650)
+custom_minimum_size = Vector2(1240, 696)
 layout_mode = 2
 clip_contents = true
 theme_type_variation = &"ConsolePanel"
@@ -85,6 +86,13 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 10
 vertical = false
+
+[node name="BrandIcon" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/Header"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+texture = ExtResource("14")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Brand" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/Header"]
 layout_mode = 2
@@ -138,7 +146,8 @@ text = "CLOSE"
 
 [node name="OrbitDivider" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 14)
+visible = false
+custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
@@ -153,7 +162,7 @@ theme_override_constants/separation = 14
 vertical = false
 
 [node name="NavigationPanel" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow"]
-custom_minimum_size = Vector2(188, 0)
+custom_minimum_size = Vector2(196, 0)
 layout_mode = 2
 theme_type_variation = &"CardPanel"
 
@@ -178,7 +187,7 @@ columns = 1
 
 [node name="ContractsTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 48)
+custom_minimum_size = Vector2(172, 58)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -186,7 +195,7 @@ text = "CONTRACTS"
 
 [node name="UpgradesTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 48)
+custom_minimum_size = Vector2(172, 58)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -194,7 +203,7 @@ text = "UPGRADES"
 
 [node name="CareerTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 48)
+custom_minimum_size = Vector2(172, 58)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -202,7 +211,7 @@ text = "CAREER"
 
 [node name="ShipTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 48)
+custom_minimum_size = Vector2(172, 58)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
@@ -211,7 +220,7 @@ text = "SHIP"
 [node name="DiscoveryTab" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout/TabGrid"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(160, 48)
+custom_minimum_size = Vector2(172, 58)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
