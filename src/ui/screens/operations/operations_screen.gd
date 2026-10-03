@@ -1221,7 +1221,7 @@ func _set_ship_option_page_to_equipped(category: String) -> void:
 		if not _progression.is_cosmetic_unlocked(category, cosmetic_id):
 			continue
 		if cosmetic_id == equipped_id:
-			_ship_option_page = unlocked_index / _ship_option_page_size()
+			_ship_option_page = int(floor(float(unlocked_index) / float(_ship_option_page_size())))
 			return
 		unlocked_index += 1
 	_ship_option_page = 0
