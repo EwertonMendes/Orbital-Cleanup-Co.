@@ -136,6 +136,15 @@ layout_mode = 2
 theme_type_variation = &"DangerButton"
 text = "CLOSE"
 
+[node name="OrbitDivider" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+self_modulate = Color(0.58, 0.82, 0.92, 0.42)
+
 [node name="MainRow" type="BoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -229,6 +238,19 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 clip_contents = true
 
+[node name="ContentPattern" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 1
+self_modulate = Color(0.55, 0.82, 0.94, 0.055)
+
 [node name="ContractsPanel" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell"]
 unique_name_in_owner = true
 layout_mode = 1
@@ -314,6 +336,35 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SecondaryButton"
 text = "ENDLESS"
+
+[node name="ContractPreviewCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 118)
+layout_mode = 2
+clip_contents = true
+theme_type_variation = &"ElevatedPanel"
+
+[node name="ContractPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractPreviewCard"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="ContractPreviewScrim" type="ColorRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractPreviewCard"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.015, 0.03, 0.045, 0.22)
 
 [node name="ContractHero" type="BoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel"]
 unique_name_in_owner = true
@@ -637,6 +688,14 @@ theme_override_constants/separation = 7
 [node name="RankRow" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/CareerPanel/CareerSummaryCard/CareerSummaryMargin/CareerSummary"]
 layout_mode = 2
 
+[node name="CareerBadge" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/CareerPanel/CareerSummaryCard/CareerSummaryMargin/CareerSummary/RankRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="RankLabel" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/CareerPanel/CareerSummaryCard/CareerSummaryMargin/CareerSummary/RankRow"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -858,6 +917,24 @@ texture = ExtResource("4")
 material = SubResource("ShipPaintPreviewMaterial")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="FleetBay" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
+unique_name_in_owner = true
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -14.0
+offset_top = -10.0
+offset_right = 14.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+self_modulate = Color(1, 1, 1, 0.82)
 
 [node name="ShipDetailsPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
 unique_name_in_owner = true

@@ -116,3 +116,10 @@ The salvage pass adds **25 editable SVG silhouettes** under `assets/original/sal
 ## Procedural propulsion presentation
 
 Ship propulsion intentionally has no dedicated plume, ring, cloud or particle artwork. The live system renders reusable procedural trails from the ship's world-space engine-socket history. This avoids contradictory fixed flames during inertial turning and removes unnecessary propulsion-specific texture assets from the runtime.
+
+
+### Headquarters visual system
+
+The Headquarters UX redesign adds editable project-owned vector artwork under `assets/original/ui/hq/` for semantic navigation icons, contract metadata, upgrade systems, career certification badges, orbital dividers, the fleet maintenance-bay frame and a low-opacity technical pattern. These assets are authored for Orbital Cleanup Co.'s navy/cyan/industrial-yellow language and contain no third-party source material.
+
+Large contract previews deliberately reuse the game's project-owned HD planet and destination artwork instead of introducing unrelated cinematic illustrations. This keeps the Headquarters briefing visually grounded in the sectors the player actually visits while allowing the surrounding UI to remain responsive and container-driven.

@@ -35,6 +35,8 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var ship_panel: VBoxContainer = %ShipPanel
 @onready var discovery_panel: VBoxContainer = %DiscoveryPanel
 @onready var contract_hero: BoxContainer = %ContractHero
+@onready var contract_preview: TextureRect = %ContractPreview
+@onready var career_badge: TextureRect = %CareerBadge
 @onready var ship_body: BoxContainer = %ShipBody
 @onready var primary_action: Button = %PrimaryAction
 @onready var footer: Control = %Footer
@@ -203,6 +205,12 @@ func configure(context: Dictionary) -> void:
 
 func _ready() -> void:
 	_base_theme = theme
+	%OrbitDivider.texture = HqVisualAssets.ORBIT_DIVIDER
+	%ContentPattern.texture = HqVisualAssets.TECHNICAL_PATTERN
+	%FleetBay.texture = HqVisualAssets.FLEET_BAY
+	%TargetIcon.texture = HqVisualAssets.META_CLEANUP
+	%PayIcon.texture = HqVisualAssets.META_REWARD
+	risk_icon.texture = HqVisualAssets.META_RISK
 	_validate_contracts()
 	resized.connect(_apply_responsive_layout)
 	primary_action.pressed.connect(_deploy_training)
@@ -291,12 +299,15 @@ func _setup_tabs() -> void:
 		{"button": ship_tab, "tab": Tab.SHIP},
 		{"button": discovery_tab, "tab": Tab.DISCOVERY},
 	]
-	for entry_variant in tabs:
-		var entry := entry_variant as Dictionary
+	for index in range(tabs.size()):
+		var entry := tabs[index] as Dictionary
 		var button := entry["button"] as Button
 		var tab := int(entry["tab"])
 		button.toggle_mode = true
 		button.button_group = _tab_group
+		button.icon = HqVisualAssets.nav_icon(index)
+		button.expand_icon = true
+		button.icon_max_width = 24
 		button.pressed.connect(_show_tab.bind(tab))
 	contracts_tab.button_pressed = true
 
@@ -510,6 +521,8 @@ func _apply_responsive_layout() -> void:
 
 	%DeskLabel.visible = not phone
 	contract_ship_card.visible = not portrait
+	%ContractPreviewCard.custom_minimum_size.y = 92.0 if phone else (104.0 if compact else 118.0)
+	career_badge.custom_minimum_size = Vector2(48.0, 48.0) if phone else Vector2(58.0, 58.0)
 	%WorkshopStatus.visible = false
 	%LoadoutCard.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	%LoadoutLayout.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -854,6 +867,12 @@ func _refresh_tabs() -> void:
 
 func _refresh_contracts() -> void:
 	var sector := _sector_plan["sector"] as Dictionary
+	var preview_sector_id := DEFAULT_SECTOR_ID
+	if not _viewing_endless and not _sector_ids.is_empty():
+		preview_sector_id = String(_sector_ids[_selected_sector_index])
+	elif not _active_sector_definition.is_empty():
+		preview_sector_id = String(_active_sector_definition.get("id", DEFAULT_SECTOR_ID))
+	contract_preview.texture = HqVisualAssets.contract_preview(preview_sector_id)
 	var access := _active_contract_access()
 	var unlocked := bool(access["unlocked"])
 	var contract_ref := sector["contract"] as Dictionary
@@ -892,12 +911,13 @@ func _refresh_contracts() -> void:
 	contract_target.text = _contract_target_text(contract_ref, contract, multiplier)
 	var difficulty := int(sector["difficulty"])
 	contract_risk.text = tr(_risk_key(difficulty))
+	risk_icon.texture = HqVisualAssets.META_RISK
 	if difficulty <= 3:
-		risk_icon.texture = STATUS_GREEN
+		risk_icon.self_modulate = Color(0.56, 0.95, 0.81, 1.0)
 	elif difficulty <= 7:
-		risk_icon.texture = STATUS_YELLOW
+		risk_icon.self_modulate = Color(1.0, 0.82, 0.40, 1.0)
 	else:
-		risk_icon.texture = STATUS_RED
+		risk_icon.self_modulate = Color(1.0, 0.45, 0.50, 1.0)
 	contract_payout.text = tr("HQ_CONTRACT_PAY_FMT") % [base_pay, perfect_bonus]
 	%ContractShipName.text = tr("OPS_SHIP_NAME")
 	%ContractShipStatus.text = tr("HQ_SHIP_READY")
@@ -1123,6 +1143,7 @@ func _refresh_career() -> void:
 	%CareerTitle.text = tr("HQ_CAREER_TITLE")
 	%CareerSubtitle.text = tr("HQ_CAREER_SUBTITLE")
 	career_rank_value.text = tr(_progression.get_rank_display_name_key())
+	career_badge.texture = HqVisualAssets.rank_badge(_progression.get_rank_id())
 
 	var progress := _progression.get_rank_progress()
 	var current_xp := int(progress["current_xp"])
@@ -1155,6 +1176,7 @@ func _refresh_career() -> void:
 		career_list.add_child(row)
 		var min_xp := int(rank["min_xp"])
 		row.configure(
+			String(rank["id"]),
 			tr(String(rank["display_name_key"])),
 			min_xp,
 			current_xp >= min_xp,

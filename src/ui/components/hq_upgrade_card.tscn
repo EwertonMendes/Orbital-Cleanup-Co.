@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://src/ui/components/occ_chrome_button.tscn" id="2"]
 
 [node name="HqUpgradeCard" type="PanelContainer"]
-custom_minimum_size = Vector2(250, 168)
+custom_minimum_size = Vector2(250, 190)
 size_flags_horizontal = 3
 theme_type_variation = &"CardPanel"
 script = ExtResource("1")
@@ -18,28 +18,63 @@ theme_override_constants/margin_bottom = 10
 
 [node name="Layout" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-theme_override_constants/separation = 5
+theme_override_constants/separation = 6
 
-[node name="Top" type="HBoxContainer" parent="Margin/Layout"]
+[node name="ContentRow" type="HBoxContainer" parent="Margin/Layout"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Title" type="Label" parent="Margin/Layout/Top"]
+[node name="ArtWell" type="PanelContainer" parent="Margin/Layout/ContentRow"]
+custom_minimum_size = Vector2(82, 82)
+layout_mode = 2
+theme_type_variation = &"ElevatedPanel"
+
+[node name="Art" type="TextureRect" parent="Margin/Layout/ContentRow/ArtWell"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Copy" type="VBoxContainer" parent="Margin/Layout/ContentRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Top" type="HBoxContainer" parent="Margin/Layout/ContentRow/Copy"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Margin/Layout/ContentRow/Copy/Top"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SectionTitle"
 text = "UPGRADE"
+autowrap_mode = 2
+max_lines_visible = 2
+text_overrun_behavior = 3
 
-[node name="Level" type="Label" parent="Margin/Layout/Top"]
+[node name="Level" type="Label" parent="Margin/Layout/ContentRow/Copy/Top"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 0)
 layout_mode = 2
 theme_type_variation = &"ValueLabel"
-text = "0 / 4"
+text = "0 / 5"
+horizontal_alignment = 2
 
-[node name="Description" type="Label" parent="Margin/Layout"]
+[node name="Description" type="Label" parent="Margin/Layout/ContentRow/Copy"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"UiBodyMuted"
@@ -53,6 +88,47 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TelemetryLabel"
 text = "Effect"
+
+[node name="LevelSegments" type="HBoxContainer" parent="Margin/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 7)
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Segment1" type="ColorRect" parent="Margin/Layout/LevelSegments"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Segment2" type="ColorRect" parent="Margin/Layout/LevelSegments"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Segment3" type="ColorRect" parent="Margin/Layout/LevelSegments"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Segment4" type="ColorRect" parent="Margin/Layout/LevelSegments"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Segment5" type="ColorRect" parent="Margin/Layout/LevelSegments"]
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
 
 [node name="PurchaseButton" parent="Margin/Layout" instance=ExtResource("2")]
 unique_name_in_owner = true
