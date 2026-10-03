@@ -120,6 +120,6 @@ Ship propulsion intentionally has no dedicated plume, ring, cloud or particle ar
 
 ### Headquarters visual system
 
-The Headquarters UX redesign adds editable project-owned vector artwork under `assets/original/ui/hq/` for semantic navigation icons, contract metadata, upgrade systems, career certification badges, orbital dividers, the fleet maintenance-bay frame and a low-opacity technical pattern. These assets are authored for Orbital Cleanup Co.'s navy/cyan/industrial-yellow language and contain no third-party source material.
+The Headquarters UX redesign keeps small semantic navigation/metadata glyphs and decorative accents as editable project-owned SVGs under `assets/original/ui/hq/`. Major illustrative surfaces are **not** represented by hand-drawn placeholder SVGs: contract briefings reuse the project's generated HD destination artwork, Fleet renders the real generated ship assets, Discoveries renders the real generated salvage assets, and the equipment/career surfaces use the approved generated illustration/badge art from the Headquarters visual direction.
 
-Large contract previews deliberately reuse the game's project-owned HD planet and destination artwork instead of introducing unrelated cinematic illustrations. This keeps the Headquarters briefing visually grounded in the sectors the player actually visits while allowing the surrounding UI to remain responsive and container-driven.
+This split is intentional. SVG is reserved for small scalable UI semantics; generated raster artwork is used wherever the mockups call for detailed machinery, ships, salvage, destinations or certification badges. Layout remains responsive and container-driven, with no stretched screenshot used as a fake interface.
