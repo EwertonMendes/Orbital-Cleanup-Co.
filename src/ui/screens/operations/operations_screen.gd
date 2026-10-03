@@ -45,7 +45,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var upgrade_previous_page: Button = %UpgradePreviousPage
 @onready var upgrade_page_label: Label = %UpgradePageLabel
 @onready var upgrade_next_page: Button = %UpgradeNextPage
-@onready var career_list: VBoxContainer = %CareerList
+@onready var career_list: GridContainer = %CareerList
 @onready var credits_label: Label = %CreditsLabel
 @onready var career_rank_value: Label = %CareerRankValue
 @onready var career_xp_label: Label = %CareerXpLabel
@@ -1174,8 +1174,6 @@ func _refresh_career() -> void:
 			current_index = index
 			break
 	for index in range(ranks.size()):
-		if index != current_index and index != current_index + 1:
-			continue
 		var rank := ranks[index] as Dictionary
 		var row := RANK_ROW_SCENE.instantiate() as HqRankRow
 		assert(row != null, "Rank row scene must instantiate.")
