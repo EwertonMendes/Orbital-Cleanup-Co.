@@ -420,6 +420,7 @@ theme_override_constants/v_separation = 8
 columns = 2
 
 [node name="TargetIcon" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractHero/ContractInfoCard/ContractInfoMargin/ContractInfo/ContractMeta"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("8")
@@ -447,6 +448,7 @@ theme_type_variation = &"TelemetryLabel"
 text = "RISK"
 
 [node name="PayIcon" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractHero/ContractInfoCard/ContractInfoMargin/ContractInfo/ContractMeta"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(20, 20)
 layout_mode = 2
 texture = ExtResource("6")
