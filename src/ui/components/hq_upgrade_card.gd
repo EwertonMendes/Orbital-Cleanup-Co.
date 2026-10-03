@@ -10,6 +10,7 @@ signal purchase_requested(upgrade_id: String)
 @onready var current_effect_label: Label = %CurrentEffect
 @onready var next_effect_label: Label = %NextEffect
 @onready var level_segments: HBoxContainer = %LevelSegments
+@onready var cost_label: Label = %CostLabel
 @onready var purchase_button: Button = %PurchaseButton
 
 var _upgrade_id := ""
@@ -23,6 +24,7 @@ func _ready() -> void:
 		and current_effect_label != null
 		and next_effect_label != null
 		and level_segments != null
+		and cost_label != null
 		and purchase_button != null,
 		"HqUpgradeCard nodes are required."
 	)
@@ -50,7 +52,9 @@ func configure(
 	_refresh_level_segments(level, max_level)
 
 	var is_maxed := level >= max_level
-	purchase_button.text = tr("HQ_UPGRADE_MAX") if is_maxed else tr("HQ_UPGRADE_COST_FMT") % cost
+	cost_label.text = tr("HQ_UPGRADE_COST_VALUE_FMT") % cost
+	cost_label.visible = not is_maxed
+	purchase_button.text = tr("HQ_UPGRADE_MAX") if is_maxed else tr("HQ_UPGRADE_ACTION")
 	purchase_button.disabled = is_maxed or not affordable
 	purchase_button.tooltip_text = tr("HQ_UPGRADE_NEED_CREDITS") if not is_maxed and not affordable else ""
 
