@@ -857,7 +857,7 @@ def validate_cosmetics(
                 )
                 mode = str(trail_profile.get("mode", ""))
                 require(
-                    mode in {"ribbon", "plasma", "pulse", "spark", "comet", "shard", "mist", "dual_helix"},
+                    mode in {"ribbon", "plasma", "pulse", "spark", "comet", "shard", "mist", "dual_helix", "prism_fan", "phase_rails", "gravity_bow", "vortex_coil", "vector_cascade"},
                     f"{label}.{category}.{option_id}.trail.mode is invalid",
                 )
                 require_number(trail_profile.get("width"), f"{label}.{category}.{option_id}.trail.width", 0.75, 72)
@@ -897,6 +897,16 @@ def validate_cosmetics(
                     require(int(trail_profile["strand_count"]) >= 3 and float(trail_profile["opacity"]) <= 0.6, f"{label}.{category}.{option_id}: mist style must use diffuse multi-strands")
                 elif mode == "dual_helix":
                     require(int(trail_profile["strand_count"]) == 2 and float(trail_profile["wave_amplitude"]) >= 6, f"{label}.{category}.{option_id}: twin helix must use two clearly separated strands")
+                elif mode == "prism_fan":
+                    require(int(trail_profile["strand_count"]) == 3 and float(trail_profile["strand_spread"]) >= 10, f"{label}.{category}.{option_id}: prism fan must open three clearly separated rays")
+                elif mode == "phase_rails":
+                    require(int(trail_profile["strand_count"]) == 2 and float(trail_profile["wave_amplitude"]) >= 6 and float(trail_profile["wave_frequency"]) >= 3, f"{label}.{category}.{option_id}: phase rails must visibly switch between two lanes")
+                elif mode == "gravity_bow":
+                    require(int(trail_profile["strand_count"]) == 2 and float(trail_profile["strand_spread"]) >= 8 and float(trail_profile["wave_amplitude"]) >= 4, f"{label}.{category}.{option_id}: gravity bow must form two wide mirrored arcs")
+                elif mode == "vortex_coil":
+                    require(int(trail_profile["strand_count"]) == 3 and float(trail_profile["wave_amplitude"]) >= 6 and float(trail_profile["wave_frequency"]) >= 3, f"{label}.{category}.{option_id}: vortex coil must use a widening three-strand chirp")
+                elif mode == "vector_cascade":
+                    require(int(trail_profile["strand_count"]) == 3 and int(trail_profile["pulse_count"]) >= 4 and float(trail_profile["wave_amplitude"]) >= 5, f"{label}.{category}.{option_id}: vector cascade must use quantized multi-strand steps")
             elif category == "trail":
                 palette = option.get("palette")
                 require(isinstance(palette, dict), f"{label}.{category}.{option_id}.palette must be an object")
