@@ -120,9 +120,9 @@ func apply_style(
 		Color(tail.r, tail.g, tail.b, 0.0),
 		Color(tail.r, tail.g, tail.b, 0.36 * _opacity * _alpha_scale),
 		Color(mid.r, mid.g, mid.b, 0.82 * _opacity * _alpha_scale),
-		Color(accent.r if _mode in ["pulse", "spark", "shard"] else head.r,
-			accent.g if _mode in ["pulse", "spark", "shard"] else head.g,
-			accent.b if _mode in ["pulse", "spark", "shard"] else head.b,
+		Color(accent.r if _mode in ["pulse", "spark", "shard", "phase_rails", "vector_cascade"] else head.r,
+			accent.g if _mode in ["pulse", "spark", "shard", "phase_rails", "vector_cascade"] else head.g,
+			accent.b if _mode in ["pulse", "spark", "shard", "phase_rails", "vector_cascade"] else head.b,
 			0.98 * _opacity * _alpha_scale),
 	])
 	gradient = next_gradient
@@ -237,6 +237,31 @@ func _style_offset(progress: float, index: int) -> float:
 			return _strand_offset + sin(wave) * _wave_amplitude + sin(wave * 1.73 + 0.9) * _wave_amplitude * 0.42
 		"dual_helix":
 			return _strand_offset + sin(wave) * _wave_amplitude
+		"prism_fan":
+			# Three rays share one nozzle point and open cleanly toward the tail.
+			var fan_tail: float = 1.0 - progress
+			return _strand_offset * fan_tail + sin(wave) * _wave_amplitude * fan_tail * 0.12
+		"phase_rails":
+			# Two energy rails snap between lanes instead of flowing as a sine wave.
+			var lane: float = 1.0 if sin(wave) >= 0.0 else -1.0
+			return _strand_offset * 0.30 + lane * _wave_amplitude
+		"vortex_coil":
+			# A three-strand chirp: coils become wider and tighter toward the fading tail.
+			var vortex_tail: float = 1.0 - progress
+			var vortex_wave: float = vortex_tail * vortex_tail * TAU * _wave_frequency + _phase + _animation_time * _animation_speed
+			var vortex_envelope: float = 0.18 + vortex_tail * 1.02
+			return _strand_offset * vortex_tail * 0.16 + sin(vortex_wave) * _wave_amplitude * vortex_envelope
+		"gravity_bow":
+			# Mirrored strands leave and rejoin the centerline, creating a breathing bow/lens.
+			var bow_side: float = -1.0 if _strand_offset < 0.0 else 1.0
+			var bow_arch: float = sin(progress * PI)
+			var bow_breathe: float = 0.86 + 0.14 * sin(_animation_time * _animation_speed)
+			return bow_side * bow_arch * (absf(_strand_offset) * 2.0 + _wave_amplitude * bow_breathe)
+		"vector_cascade":
+			# Quantized wave levels produce deliberate stair-step vector changes.
+			var cascade_levels: float = maxf(float(_pulse_count), 3.0)
+			var cascade_step: float = round(sin(wave) * cascade_levels) / cascade_levels
+			return _strand_offset + cascade_step * _wave_amplitude
 		_:
 			return _strand_offset
 
@@ -266,6 +291,16 @@ func _build_width_curve() -> Curve:
 			_add_curve_points(curve, [[0.0, 0.02], [0.18, 0.48], [0.36, 0.82], [0.56, 0.58], [0.76, 0.92], [1.0, 0.64]])
 		"dual_helix":
 			_add_curve_points(curve, [[0.0, 0.0], [0.18, 0.48], [0.62, 0.88], [1.0, 1.0]])
+		"prism_fan":
+			_add_curve_points(curve, [[0.0, 0.04], [0.28, 0.22], [0.58, 0.48], [0.82, 0.76], [1.0, 0.96]])
+		"phase_rails":
+			_add_curve_points(curve, [[0.0, 0.0], [0.10, 0.82], [0.24, 0.44], [0.38, 0.92], [0.52, 0.46], [0.68, 0.90], [0.84, 0.52], [1.0, 0.86]])
+		"vortex_coil":
+			_add_curve_points(curve, [[0.0, 0.02], [0.20, 0.34], [0.42, 0.72], [0.64, 0.90], [0.82, 0.70], [1.0, 0.94]])
+		"gravity_bow":
+			_add_curve_points(curve, [[0.0, 0.0], [0.18, 0.38], [0.48, 0.98], [0.72, 0.78], [1.0, 0.82]])
+		"vector_cascade":
+			_add_curve_points(curve, [[0.0, 0.0], [0.12, 0.74], [0.25, 0.36], [0.38, 0.88], [0.52, 0.40], [0.66, 0.94], [0.80, 0.48], [1.0, 0.90]])
 		_:
 			_add_curve_points(curve, [[0.0, 0.0], [0.14, 0.30], [0.52, 0.72], [1.0, 1.0]])
 	return curve
