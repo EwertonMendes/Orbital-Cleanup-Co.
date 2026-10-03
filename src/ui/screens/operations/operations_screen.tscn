@@ -1360,13 +1360,32 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 7
 
-[node name="DiscoveryTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
+[node name="DiscoveryHeader" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DiscoveryTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryHeader"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"ScreenTitle"
-text = "DISCOVERIES"
+text = "CATÁLOGO DE DESCOBERTAS"
+
+[node name="DiscoveryStats" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryHeader"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="DiscoveryCount" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryHeader/DiscoveryStats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ValueLabel"
+
+[node name="CompletedContracts" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryHeader/DiscoveryStats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
 
 [node name="DiscoverySubtitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
 unique_name_in_owner = true
@@ -1374,61 +1393,58 @@ layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
 
-[node name="DiscoveryStats" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
-layout_mode = 2
-theme_override_constants/separation = 16
-
-[node name="DiscoveryCount" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryStats"]
+[node name="DiscoveryBody" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_type_variation = &"ValueLabel"
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
 
-[node name="CompletedContracts" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryStats"]
-unique_name_in_owner = true
+[node name="CatalogColumn" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody"]
 layout_mode = 2
-theme_type_variation = &"TelemetryLabel"
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.65
+size_flags_vertical = 3
+theme_override_constants/separation = 7
 
-[node name="DiscoveryEmptyCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
+[node name="DiscoveryEmptyCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"CardPanel"
 
-[node name="EmptyMargin" type="MarginContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryEmptyCard"]
+[node name="EmptyMargin" type="MarginContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn/DiscoveryEmptyCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="EmptyCopy" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryEmptyCard/EmptyMargin"]
+[node name="EmptyCopy" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn/DiscoveryEmptyCard/EmptyMargin"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="DiscoveryEmptyTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryEmptyCard/EmptyMargin/EmptyCopy"]
+[node name="DiscoveryEmptyTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn/DiscoveryEmptyCard/EmptyMargin/EmptyCopy"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"SectionTitle"
 
-[node name="DiscoveryEmptyBody" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryEmptyCard/EmptyMargin/EmptyCopy"]
+[node name="DiscoveryEmptyBody" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn/DiscoveryEmptyCard/EmptyMargin/EmptyCopy"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
 
-[node name="DiscoveryList" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
+[node name="DiscoveryList" type="GridContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 2
 
-[node name="DiscoveryPagerSpacer" type="Control" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
-layout_mode = 2
-size_flags_vertical = 3
-mouse_filter = 2
-
-[node name="DiscoveryPager" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
+[node name="DiscoveryPager" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -1436,14 +1452,14 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 8
 alignment = 1
 
-[node name="DiscoveryPreviousPage" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryPager"]
+[node name="DiscoveryPreviousPage" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn/DiscoveryPager"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(72, 48)
+custom_minimum_size = Vector2(72, 44)
 layout_mode = 2
 theme_type_variation = &"SecondaryButton"
 text = "<"
 
-[node name="DiscoveryPageLabel" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryPager"]
+[node name="DiscoveryPageLabel" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn/DiscoveryPager"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
@@ -1452,12 +1468,70 @@ text = "1 / 1"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DiscoveryNextPage" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryPager"]
+[node name="DiscoveryNextPage" type="Button" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/CatalogColumn/DiscoveryPager"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(72, 48)
+custom_minimum_size = Vector2(72, 44)
 layout_mode = 2
 theme_type_variation = &"SecondaryButton"
 text = ">"
+
+[node name="DiscoveryDetailCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(310, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.85
+size_flags_vertical = 3
+theme_type_variation = &"CardPanel"
+
+[node name="DetailMargin" type="MarginContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="DetailLayout" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 7
+
+[node name="DetailEyebrow" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin/DetailLayout"]
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "DETALHES DA DESCOBERTA"
+
+[node name="DiscoveryDetailName" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin/DetailLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"ScreenTitle"
+autowrap_mode = 2
+max_lines_visible = 2
+
+[node name="DiscoveryDetailMeta" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin/DetailLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+
+[node name="DiscoveryDetailArt" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin/DetailLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(230, 230)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DiscoveryDetailData" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin/DetailLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"UiBodyMuted"
+autowrap_mode = 2
+
+[node name="DiscoveryDetailValue" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin/DetailLayout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"RewardValue"
 
 [node name="Footer" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn"]
 unique_name_in_owner = true
