@@ -492,10 +492,13 @@ func _apply_responsive_layout() -> void:
 	discovery_body.vertical = portrait
 	ship_body.vertical = portrait
 	ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var navigation_panel := main_row.get_node_or_null("NavigationPanel") as Control
+	if navigation_panel != null:
+		navigation_panel.custom_minimum_size.x = 0.0 if portrait else (188.0 if compact else 236.0)
 	tab_grid.columns = 3 if portrait else 1
 	contract_selector.columns = 2
 	upgrade_grid.columns = 1 if portrait else 2
-	career_list.columns = 2 if portrait else 6
+	career_list.columns = 2 if portrait else (3 if compact else 6)
 	discovery_list.columns = 1 if portrait else 2
 
 	# Fleet is a fixed workspace, not a document. Keep navigation compact so
@@ -535,7 +538,7 @@ func _apply_responsive_layout() -> void:
 	modules_options.columns = 1
 
 	%DeskLabel.visible = not phone
-	contract_ship_card.visible = not portrait
+	contract_ship_card.visible = not portrait and not compact
 	%ContractPreviewCard.custom_minimum_size.y = 96.0 if phone else (126.0 if compact else 150.0)
 	career_badge.custom_minimum_size = Vector2(72.0, 72.0) if phone else Vector2(112.0, 112.0)
 	%WorkshopStatus.visible = false
@@ -574,12 +577,13 @@ func _apply_responsive_layout() -> void:
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
-	var available_width := maxf(size.x - (12.0 if compact else 24.0), 320.0)
-	var available_height := maxf(size.y - (12.0 if compact else 20.0), 300.0)
-	var console_height := 1180.0 if portrait else 700.0
+	var available_width := maxf(size.x - (12.0 if compact else 20.0), 320.0)
+	var available_height := maxf(size.y - (12.0 if compact else 16.0), 300.0)
+	var desktop_width := minf(1880.0, available_width)
+	var desktop_height := minf(1000.0, available_height)
 	floating_surface.custom_minimum_size = Vector2(
-		available_width if phone else minf(1248.0, available_width),
-		available_height if phone else minf(console_height, available_height)
+		available_width if phone else desktop_width,
+		available_height if phone or portrait else desktop_height
 	)
 
 	var settings_width := 620.0 if portrait else (720.0 if phone else 540.0)
