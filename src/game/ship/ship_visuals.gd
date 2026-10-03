@@ -14,6 +14,8 @@ var _drift_intensity := 0.0
 var _layer_sprites: Dictionary = {}
 var _propulsion_trail_rigs: Array[PropulsionTrailRig] = []
 var _extra_propulsion_trail_rigs: Array[PropulsionTrailRig] = []
+var _active_visual: Dictionary = {}
+var _active_render_scale := 1.0
 
 func _ready() -> void:
 	_propulsion_trail_rigs = [propulsion_trail_rig]
@@ -22,6 +24,7 @@ func apply_ship_build(build: Dictionary) -> void:
 	assert(build.has("visual") and build.has("cosmetics"), "ShipVisuals requires resolved visual and cosmetic data.")
 	var visual := build["visual"] as Dictionary
 	var loadout := build["cosmetics"] as Dictionary
+	_active_visual = visual.duplicate(true)
 
 	var texture_path := String(visual.get("base_texture", ""))
 	assert(not texture_path.is_empty(), "Ship model requires a base texture.")
@@ -30,6 +33,7 @@ func apply_ship_build(build: Dictionary) -> void:
 	ship_sprite.texture = hull_texture
 
 	var render_scale := maxf(float(visual.get("render_scale", 1.0)), 0.001)
+	_active_render_scale = render_scale
 	ship_sprite.scale = Vector2.ONE * render_scale
 
 	_apply_paint(visual, loadout)
@@ -86,19 +90,34 @@ func _apply_model_layers(visual: Dictionary, render_scale: float) -> void:
 	_configure_layer("details", String(visual.get("details_texture", "")), render_scale, 3, Color.WHITE)
 	_configure_layer("emissive", String(visual.get("emissive_texture", "")), render_scale, 7, Color.WHITE)
 
+func apply_cosmetic_update(category: String, loadout: Dictionary) -> void:
+	assert(not _active_visual.is_empty(), "Incremental cosmetics require an initialized ship visual.")
+	match category:
+		"paint":
+			_apply_paint(_active_visual, loadout)
+		"livery":
+			_apply_cosmetic_layer("livery", loadout, _active_render_scale, 4)
+		"decal":
+			_apply_cosmetic_layer("decal", loadout, _active_render_scale, 5)
+		"canopy":
+			_apply_cosmetic_layer("canopy", loadout, _active_render_scale, 6)
+		"body_kit":
+			_apply_cosmetic_layer("body_kit", loadout, _active_render_scale, 8)
+		"engine", "trail":
+			_reconfigure_propulsion(loadout)
+
 func _apply_cosmetic_layers(loadout: Dictionary, render_scale: float) -> void:
-	for entry in [
-		{"category": "livery", "z": 4},
-		{"category": "decal", "z": 5},
-		{"category": "canopy", "z": 6},
-		{"category": "body_kit", "z": 8},
-	]:
-		var category := String(entry["category"])
-		var option := loadout.get(category, {}) as Dictionary
-		var tint := Color.WHITE
-		if category == "canopy":
-			tint = Color.from_string(String(option.get("color", "#FFFFFF")), Color.WHITE)
-		_configure_layer(category, String(option.get("texture", "")), render_scale, int(entry["z"]), tint)
+	_apply_cosmetic_layer("livery", loadout, render_scale, 4)
+	_apply_cosmetic_layer("decal", loadout, render_scale, 5)
+	_apply_cosmetic_layer("canopy", loadout, render_scale, 6)
+	_apply_cosmetic_layer("body_kit", loadout, render_scale, 8)
+
+func _apply_cosmetic_layer(category: String, loadout: Dictionary, render_scale: float, z: int) -> void:
+	var option := loadout.get(category, {}) as Dictionary
+	var tint := Color.WHITE
+	if category == "canopy":
+		tint = Color.from_string(String(option.get("color", "#FFFFFF")), Color.WHITE)
+	_configure_layer(category, String(option.get("texture", "")), render_scale, z, tint)
 
 func _configure_layer(layer_id: String, texture_path: String, render_scale: float, z: int, tint: Color) -> void:
 	var sprite := _layer_sprites.get(layer_id) as Sprite2D
@@ -151,6 +170,25 @@ func _configure_engine_sockets(sockets: Array, loadout: Dictionary) -> void:
 		rig.position = _socket_position(socket)
 		rig.rotation = deg_to_rad(float(socket.get("rotation_degrees", 0.0)))
 		rig.configure(
+			propulsion_style,
+			trail_palette,
+			clampf(float(socket.get("fx_scale", 1.0)), 0.25, 2.5)
+		)
+
+func _reconfigure_propulsion(loadout: Dictionary) -> void:
+	var sockets := _active_visual.get("engine_sockets", []) as Array
+	if sockets.is_empty():
+		sockets = [{"id": "main", "position": [0.0, 41.0]}]
+	if _propulsion_trail_rigs.size() != sockets.size():
+		_configure_engine_sockets(sockets, loadout)
+		return
+
+	var propulsion_style := loadout.get("engine", {}) as Dictionary
+	var trail_palette := loadout.get("trail", {}) as Dictionary
+	assert(not propulsion_style.is_empty() and not trail_palette.is_empty(), "Incremental propulsion update requires style and palette.")
+	for index in range(_propulsion_trail_rigs.size()):
+		var socket := sockets[index] as Dictionary
+		_propulsion_trail_rigs[index].configure(
 			propulsion_style,
 			trail_palette,
 			clampf(float(socket.get("fx_scale", 1.0)), 0.25, 2.5)
