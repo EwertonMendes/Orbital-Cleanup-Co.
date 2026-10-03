@@ -35,6 +35,10 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var ship_panel: VBoxContainer = %ShipPanel
 @onready var discovery_panel: VBoxContainer = %DiscoveryPanel
 @onready var contract_hero: BoxContainer = %ContractHero
+@onready var contract_preview: TextureRect = %ContractPreview
+@onready var contract_list: VBoxContainer = %ContractList
+@onready var contracts_board: BoxContainer = %ContractsBoard
+@onready var career_badge: TextureRect = %CareerBadge
 @onready var ship_body: BoxContainer = %ShipBody
 @onready var primary_action: Button = %PrimaryAction
 @onready var footer: Control = %Footer
@@ -43,7 +47,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var upgrade_previous_page: Button = %UpgradePreviousPage
 @onready var upgrade_page_label: Label = %UpgradePageLabel
 @onready var upgrade_next_page: Button = %UpgradeNextPage
-@onready var career_list: VBoxContainer = %CareerList
+@onready var career_list: GridContainer = %CareerList
 @onready var credits_label: Label = %CreditsLabel
 @onready var career_rank_value: Label = %CareerRankValue
 @onready var career_xp_label: Label = %CareerXpLabel
@@ -113,6 +117,13 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var ship_options_page_label: Label = %ShipOptionsPageLabel
 @onready var ship_options_next_page: Button = %ShipOptionsNextPage
 @onready var discovery_count: Label = %DiscoveryCount
+@onready var discovery_body: BoxContainer = %DiscoveryBody
+@onready var discovery_detail_card: PanelContainer = %DiscoveryDetailCard
+@onready var discovery_detail_name: Label = %DiscoveryDetailName
+@onready var discovery_detail_meta: Label = %DiscoveryDetailMeta
+@onready var discovery_detail_art: TextureRect = %DiscoveryDetailArt
+@onready var discovery_detail_data: Label = %DiscoveryDetailData
+@onready var discovery_detail_value: Label = %DiscoveryDetailValue
 @onready var completed_contracts: Label = %CompletedContracts
 @onready var discovery_empty_card: PanelContainer = %DiscoveryEmptyCard
 @onready var discovery_list: GridContainer = %DiscoveryList
@@ -203,6 +214,12 @@ func configure(context: Dictionary) -> void:
 
 func _ready() -> void:
 	_base_theme = theme
+	%OrbitDivider.texture = HqVisualAssets.ORBIT_DIVIDER
+	%ContentPattern.texture = HqVisualAssets.TECHNICAL_PATTERN
+	%FleetBay.texture = HqVisualAssets.FLEET_BAY
+	%TargetIcon.texture = HqVisualAssets.META_CLEANUP
+	%PayIcon.texture = HqVisualAssets.META_REWARD
+	risk_icon.texture = HqVisualAssets.META_RISK
 	_validate_contracts()
 	resized.connect(_apply_responsive_layout)
 	primary_action.pressed.connect(_deploy_training)
@@ -243,8 +260,10 @@ func _ready() -> void:
 	_wire_button_feedback(self)
 	_configure_settings_focus_graph()
 	_show_tab(Tab.CONTRACTS, true)
-	if _input_service != null and _input_service.prefers_gamepad():
-		call_deferred("_focus_default_for_gamepad")
+	if _input_service != null:
+		_refresh_input_hint(_input_service.current_mode)
+		if _input_service.prefers_gamepad():
+			call_deferred("_focus_default_for_gamepad")
 	print("[HQ] READY tab=contracts mode=%s" % ("overlay" if _overlay_mode else "screen"))
 
 func _validate_contracts() -> void:
@@ -291,12 +310,16 @@ func _setup_tabs() -> void:
 		{"button": ship_tab, "tab": Tab.SHIP},
 		{"button": discovery_tab, "tab": Tab.DISCOVERY},
 	]
-	for entry_variant in tabs:
-		var entry := entry_variant as Dictionary
+	for index in range(tabs.size()):
+		var entry := tabs[index] as Dictionary
 		var button := entry["button"] as Button
 		var tab := int(entry["tab"])
 		button.toggle_mode = true
 		button.button_group = _tab_group
+		button.icon = HqVisualAssets.nav_icon(index)
+		button.expand_icon = true
+		button.icon_max_width = 34
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.pressed.connect(_show_tab.bind(tab))
 	contracts_tab.button_pressed = true
 
@@ -464,19 +487,33 @@ func _apply_responsive_layout() -> void:
 
 	header.vertical = portrait
 	main_row.vertical = portrait
+	contracts_board.vertical = portrait
 	contract_hero.vertical = portrait
+	discovery_body.vertical = portrait
 	ship_body.vertical = portrait
 	ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var navigation_panel := main_row.get_node_or_null("NavigationPanel") as Control
+	if navigation_panel != null:
+		navigation_panel.custom_minimum_size.x = 0.0 if portrait else (188.0 if compact else 236.0)
+	var sidebar_icon_width := 28 if compact else 34
+	var sidebar_height := 54.0 if compact else 68.0
+	for sidebar_button in [contracts_tab, upgrades_tab, career_tab, ship_tab, discovery_tab]:
+		(sidebar_button as Button).icon_max_width = sidebar_icon_width
+		(sidebar_button as Button).custom_minimum_size.y = sidebar_height
+	var brand_icon := header.get_node_or_null("BrandIcon") as TextureRect
+	if brand_icon != null:
+		brand_icon.custom_minimum_size = Vector2(48.0, 48.0) if compact else Vector2(64.0, 64.0)
 	tab_grid.columns = 3 if portrait else 1
-	contract_selector.columns = 3 if portrait else 4
+	contract_selector.columns = 2
 	upgrade_grid.columns = 1 if portrait else 2
+	career_list.columns = 2 if portrait else (3 if compact else 6)
 	discovery_list.columns = 1 if portrait else 2
 
 	# Fleet is a fixed workspace, not a document. Keep navigation compact so
 	# preview + editor always fit without requiring a ScrollContainer.
-	%ShipTitle.visible = false
-	%ShipSubtitle.visible = false
-	ship_category_bar.columns = 3 if portrait else 5
+	%ShipTitle.visible = not phone
+	%ShipSubtitle.visible = not phone
+	ship_category_bar.columns = 3 if portrait else (5 if compact else 9)
 	ship_category_bar.add_theme_constant_override("h_separation", 6 if compact else 8)
 	ship_category_bar.add_theme_constant_override("v_separation", 6)
 	var category_height := ResponsiveUiProfile.touch_target_height(profile) if phone else 40.0
@@ -509,23 +546,33 @@ func _apply_responsive_layout() -> void:
 	modules_options.columns = 1
 
 	%DeskLabel.visible = not phone
-	contract_ship_card.visible = not portrait
+	contract_ship_card.visible = not portrait and not compact
+	%ContractPreviewCard.custom_minimum_size.y = 96.0 if phone else (126.0 if compact else 210.0)
+	var contract_list_card := contracts_panel.find_child("ContractListCard", true, false) as Control
+	if contract_list_card != null:
+		contract_list_card.custom_minimum_size.x = 0.0 if portrait else (260.0 if compact else 340.0)
+	contract_ship_card.custom_minimum_size.x = 0.0 if portrait or compact else 310.0
+	var discovery_detail_card := discovery_panel.find_child("DiscoveryDetailCard", true, false) as Control
+	if discovery_detail_card != null:
+		discovery_detail_card.custom_minimum_size.x = 0.0 if portrait else (280.0 if compact else 420.0)
+	%DiscoveryDetailArt.custom_minimum_size = Vector2(190.0, 190.0) if compact else Vector2(300.0, 300.0)
+	career_badge.custom_minimum_size = Vector2(72.0, 72.0) if phone else (Vector2(88.0, 88.0) if compact else Vector2(112.0, 112.0))
 	%WorkshopStatus.visible = false
 	%LoadoutCard.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	%LoadoutLayout.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 	if portrait:
-		ship_preview_card.custom_minimum_size = Vector2(0.0, 138.0)
+		ship_preview_card.custom_minimum_size = Vector2(0.0, 176.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-		ship_preview.custom_minimum_size = Vector2(126.0, 92.0)
+		ship_preview.custom_minimum_size = Vector2(220.0, 138.0)
 	elif compact:
-		ship_preview_card.custom_minimum_size = Vector2(205.0, 0.0)
+		ship_preview_card.custom_minimum_size = Vector2(310.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(165.0, 126.0)
+		ship_preview.custom_minimum_size = Vector2(270.0, 220.0)
 	else:
-		ship_preview_card.custom_minimum_size = Vector2(245.0, 0.0)
+		ship_preview_card.custom_minimum_size = Vector2(680.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(205.0, 160.0)
+		ship_preview.custom_minimum_size = Vector2(620.0, 430.0)
 
 	var fleet_margin := 8 if phone else (10 if compact else 12)
 	for margin_name in ["PreviewMargin", "LoadoutMargin"]:
@@ -539,19 +586,20 @@ func _apply_responsive_layout() -> void:
 	content_shell.custom_minimum_size.y = 0.0
 	content_shell.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
-	var horizontal_margin := 12 if phone else (14 if compact else 22)
-	var vertical_margin := 10 if phone else (12 if compact else 20)
+	var horizontal_margin := 10 if phone else (12 if compact else 14)
+	var vertical_margin := 8 if phone else (10 if compact else 12)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
-	var available_width := maxf(size.x - (16.0 if compact else 80.0), 320.0)
-	var available_height := maxf(size.y - (16.0 if compact else 56.0), 300.0)
-	var console_height := 1180.0 if portrait else 650.0
+	var available_width := maxf(size.x - (12.0 if compact else 20.0), 320.0)
+	var available_height := maxf(size.y - (12.0 if compact else 16.0), 300.0)
+	var desktop_width := minf(1880.0, available_width)
+	var desktop_height := minf(1000.0, available_height)
 	floating_surface.custom_minimum_size = Vector2(
-		available_width if phone else minf(1120.0, available_width),
-		available_height if phone else minf(console_height, available_height)
+		available_width if phone else desktop_width,
+		available_height if phone or portrait else desktop_height
 	)
 
 	var settings_width := 620.0 if portrait else (720.0 if phone else 540.0)
@@ -564,7 +612,7 @@ func _apply_responsive_layout() -> void:
 	var footer_spacer := footer.get_node_or_null("FooterSpacer") as Control
 	if footer_spacer != null:
 		footer_spacer.visible = not portrait and not phone
-	primary_action.custom_minimum_size.x = 0.0 if portrait or phone else 260.0
+	primary_action.custom_minimum_size.x = 0.0 if portrait or phone else 320.0
 	primary_action.size_flags_horizontal = (
 		Control.SIZE_EXPAND_FILL if portrait or phone else Control.SIZE_SHRINK_BEGIN
 	)
@@ -854,6 +902,12 @@ func _refresh_tabs() -> void:
 
 func _refresh_contracts() -> void:
 	var sector := _sector_plan["sector"] as Dictionary
+	var preview_sector_id := DEFAULT_SECTOR_ID
+	if not _viewing_endless and not _sector_ids.is_empty():
+		preview_sector_id = String(_sector_ids[_selected_sector_index])
+	elif not _active_sector_definition.is_empty():
+		preview_sector_id = String(_active_sector_definition.get("id", DEFAULT_SECTOR_ID))
+	contract_preview.texture = HqVisualAssets.contract_preview(preview_sector_id)
 	var access := _active_contract_access()
 	var unlocked := bool(access["unlocked"])
 	var contract_ref := sector["contract"] as Dictionary
@@ -865,13 +919,14 @@ func _refresh_contracts() -> void:
 
 	%ContractsTitle.text = tr("HQ_CONTRACTS_TITLE")
 	%ContractsSubtitle.text = tr("HQ_CONTRACTS_SUBTITLE")
-	previous_contract.text = "<  %s" % tr("HQ_CONTRACT_PREVIOUS")
-	next_contract.text = "%s  >" % tr("HQ_CONTRACT_NEXT")
+	_refresh_contract_list()
+	previous_contract.text = "<"
+	next_contract.text = ">"
 	endless_contract.visible = _progression.is_endless_unlocked()
 	if _viewing_endless:
 		contract_state.text = tr("HQ_ENDLESS_AVAILABLE") if unlocked else tr("HQ_CONTRACT_LOCKED")
-		contract_position.text = tr("HQ_ENDLESS_INDEX_FMT") % [_endless_number, int(sector["seed"])]
-		endless_contract.text = tr("HQ_AUTHORED_CONTRACTS")
+		contract_position.text = "∞ %d" % _endless_number
+		endless_contract.text = "↩"
 		previous_contract.disabled = not unlocked or _endless_number <= 1
 		next_contract.disabled = not unlocked
 		contract_title.text = tr("SECTOR_ENDLESS_CONTRACT_FMT") % [
@@ -880,8 +935,8 @@ func _refresh_contracts() -> void:
 		]
 	else:
 		contract_state.text = tr("HQ_CONTRACT_AVAILABLE") if unlocked else tr("HQ_CONTRACT_LOCKED")
-		contract_position.text = tr("HQ_CONTRACT_INDEX_FMT") % [_selected_sector_index + 1, _sector_ids.size()]
-		endless_contract.text = tr("HQ_ENDLESS_CONTRACTS")
+		contract_position.text = "%d / %d" % [_selected_sector_index + 1, _sector_ids.size()]
+		endless_contract.text = "∞"
 		previous_contract.disabled = _sector_ids.size() <= 1
 		next_contract.disabled = _sector_ids.size() <= 1
 		contract_title.text = tr(String(sector["display_name_key"]))
@@ -892,12 +947,13 @@ func _refresh_contracts() -> void:
 	contract_target.text = _contract_target_text(contract_ref, contract, multiplier)
 	var difficulty := int(sector["difficulty"])
 	contract_risk.text = tr(_risk_key(difficulty))
+	risk_icon.texture = HqVisualAssets.META_RISK
 	if difficulty <= 3:
-		risk_icon.texture = STATUS_GREEN
+		risk_icon.self_modulate = Color(0.56, 0.95, 0.81, 1.0)
 	elif difficulty <= 7:
-		risk_icon.texture = STATUS_YELLOW
+		risk_icon.self_modulate = Color(1.0, 0.82, 0.40, 1.0)
 	else:
-		risk_icon.texture = STATUS_RED
+		risk_icon.self_modulate = Color(1.0, 0.45, 0.50, 1.0)
 	contract_payout.text = tr("HQ_CONTRACT_PAY_FMT") % [base_pay, perfect_bonus]
 	%ContractShipName.text = tr("OPS_SHIP_NAME")
 	%ContractShipStatus.text = tr("HQ_SHIP_READY")
@@ -923,6 +979,49 @@ func _refresh_contracts() -> void:
 				int(result.get("xp_awarded", 0)),
 			]
 
+
+func _refresh_contract_list() -> void:
+	for child in contract_list.get_children():
+		child.queue_free()
+	if _sector_ids.is_empty():
+		return
+
+	var visible_count := 6
+	var max_start := maxi(_sector_ids.size() - visible_count, 0)
+	var first := clampi(_selected_sector_index - 2, 0, max_start)
+	var last := mini(first + visible_count, _sector_ids.size())
+	for index in range(first, last):
+		var sector_id := String(_sector_ids[index])
+		var sector := _registry.get_sector(sector_id)
+		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
+		assert(button != null, "Contract list row must use OccChromeButton.")
+		button.custom_minimum_size = Vector2(0, 58)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.emphasis = not _viewing_endless and index == _selected_sector_index
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.icon = HqVisualAssets.contract_preview(sector_id)
+		button.expand_icon = true
+		button.icon_max_width = 62
+		button.clip_text = true
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		var title := tr(String(sector["display_name_key"]))
+		var risk := tr(_risk_key(int(sector["difficulty"])))
+		button.text = "%s\n%s" % [title, risk]
+		button.tooltip_text = "%s · %s" % [title, risk]
+		button.set_meta(&"occ_focus_restore_key", "contract:%s" % sector_id)
+		button.pressed.connect(_select_contract_index.bind(index))
+		contract_list.add_child(button)
+		_wire_button_feedback(button)
+
+
+func _select_contract_index(index: int) -> void:
+	if index < 0 or index >= _sector_ids.size():
+		return
+	_selected_sector_index = index
+	_load_selected_sector()
+	_refresh_contracts()
+
+
 func _refresh_upgrades() -> void:
 	%UpgradesTitle.text = tr("HQ_UPGRADES_TITLE")
 	%UpgradesSubtitle.text = tr("HQ_UPGRADES_SUBTITLE")
@@ -947,7 +1046,19 @@ func _refresh_upgrades() -> void:
 		var level := _progression.get_upgrade_level(id)
 		var max_level := int(definition["max_level"])
 		var cost := _progression.get_upgrade_cost(id)
-		card.configure(id, tr(String(definition["display_name_key"])), tr(String(definition["description_key"])), level, max_level, cost, _upgrade_effect_text(definition, level), _progression.can_purchase_upgrade(id))
+		var current_effect := _upgrade_effect_text(definition, level)
+		var next_effect := _upgrade_effect_text(definition, mini(level + 1, max_level))
+		var effect_copy := current_effect if level >= max_level else "%s  →  %s" % [current_effect, next_effect]
+		card.configure(
+			id,
+			tr(String(definition["display_name_key"])),
+			tr(String(definition["description_key"])),
+			level,
+			max_level,
+			cost,
+			effect_copy,
+			_progression.can_purchase_upgrade(id)
+		)
 		card.purchase_requested.connect(_purchase_upgrade.bind(card))
 
 	_set_pager_state(upgrade_pager, upgrade_previous_page, upgrade_page_label, upgrade_next_page, _upgrade_page, page_count)
@@ -1022,6 +1133,9 @@ func _refresh_visible_upgrade_cards() -> void:
 		var level := _progression.get_upgrade_level(upgrade_id)
 		var max_level := int(definition["max_level"])
 		var cost := _progression.get_upgrade_cost(upgrade_id)
+		var current_effect := _upgrade_effect_text(definition, level)
+		var next_effect := _upgrade_effect_text(definition, mini(level + 1, max_level))
+		var effect_copy := current_effect if level >= max_level else "%s  →  %s" % [current_effect, next_effect]
 		card.configure(
 			upgrade_id,
 			tr(String(definition["display_name_key"])),
@@ -1029,7 +1143,7 @@ func _refresh_visible_upgrade_cards() -> void:
 			level,
 			max_level,
 			cost,
-			_upgrade_effect_text(definition, level),
+			effect_copy,
 			_progression.can_purchase_upgrade(upgrade_id)
 		)
 
@@ -1090,39 +1204,37 @@ func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 	var id := String(definition["id"])
 	var effects := definition.get("effects", {}) as Dictionary
 	match id:
-		"propulsion_core":
-			return tr("HQ_UPGRADE_EFFECT_PROPULSION_FMT") % [
-				int(round(float(effects.get("max_speed_add", 0.0)) * float(level))),
-				int(round(float(effects.get("acceleration_add", 0.0)) * float(level))),
-			]
-		"maneuvering_thrusters":
-			return tr("HQ_UPGRADE_EFFECT_MANEUVERING_FMT") % [
-				int(round(float(effects.get("turn_response_add", 0.0)) * 100.0 * float(level))),
-				int(round(absf(float(effects.get("cargo_inertia_factor_add", 0.0))) * 100.0 * float(level))),
-			]
-		"recovery_array":
-			return tr("HQ_UPGRADE_EFFECT_RECOVERY_FMT") % [
-				int(round(float(effects.get("scan_range_add", 0.0)) * float(level))),
-				int(round(float(effects.get("collection_speed_multiplier_add", 0.0)) * 100.0 * float(level))),
-			]
-		"cargo_frame":
-			return tr("HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT") % [
-				int(round(float(effects.get("cargo_capacity_add", 0.0)) * float(level))),
-				int(round(absf(float(effects.get("cargo_inertia_factor_add", 0.0))) * 100.0 * float(level))),
-			]
-		"pulse_system":
+		"tractor_range":
+			return tr("HQ_UPGRADE_EFFECT_RANGE_FMT") % int(round(
+				float(effects.get("scan_range_add", 0.0)) * float(level)
+			))
+		"collection_speed":
+			return tr("HQ_UPGRADE_EFFECT_SPEED_FMT") % int(round(
+				float(effects.get("collection_speed_multiplier_add", 0.0)) * 100.0 * float(level)
+			))
+		"cargo_capacity":
+			return tr("HQ_UPGRADE_EFFECT_CARGO_FMT") % int(round(
+				float(effects.get("cargo_capacity_add", 0.0)) * float(level)
+			))
+		"pulse_boost":
 			var recharge := float(effects.get("boost_recharge_rate_add", 0.0)) * float(level)
 			var duration := float(effects.get("boost_duration_bonus_add", 0.0)) * float(level)
 			return tr("HQ_UPGRADE_EFFECT_BOOST_FMT") % [
 				int(round(recharge * 100.0)),
 				int(round(duration * 1000.0)),
 			]
+		"boost_capacitor":
+			var stored := 1 + int(round(
+				float(effects.get("boost_charge_capacity_add", 0.0)) * float(level)
+			))
+			return tr("HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT") % stored
 	return ""
 
 func _refresh_career() -> void:
 	%CareerTitle.text = tr("HQ_CAREER_TITLE")
 	%CareerSubtitle.text = tr("HQ_CAREER_SUBTITLE")
 	career_rank_value.text = tr(_progression.get_rank_display_name_key())
+	career_badge.texture = HqVisualAssets.rank_badge(_progression.get_rank_id())
 
 	var progress := _progression.get_rank_progress()
 	var current_xp := int(progress["current_xp"])
@@ -1147,14 +1259,13 @@ func _refresh_career() -> void:
 			current_index = index
 			break
 	for index in range(ranks.size()):
-		if index != current_index and index != current_index + 1:
-			continue
 		var rank := ranks[index] as Dictionary
 		var row := RANK_ROW_SCENE.instantiate() as HqRankRow
 		assert(row != null, "Rank row scene must instantiate.")
 		career_list.add_child(row)
 		var min_xp := int(rank["min_xp"])
 		row.configure(
+			String(rank["id"]),
 			tr(String(rank["display_name_key"])),
 			min_xp,
 			current_xp >= min_xp,
@@ -1533,6 +1644,16 @@ func _refresh_ship_category_options() -> void:
 		button.custom_minimum_size = Vector2(0, 46)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
+		if active_category == "hull":
+			button.custom_minimum_size.y = 96.0
+			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			button.expand_icon = true
+			button.icon_max_width = 76
+			var hull_texture_path := String(option.get("texture", ""))
+			if not hull_texture_path.is_empty():
+				var hull_texture := load(hull_texture_path) as Texture2D
+				if hull_texture != null:
+					button.icon = hull_texture
 		button.set_meta(&"occ_focus_restore_key", "ship:%s:%s" % [active_category, cosmetic_id])
 		button.set_meta(&"occ_cosmetic_id", cosmetic_id)
 		button.set_meta(&"occ_cosmetic_name_key", String(option["display_name_key"]))
@@ -2059,6 +2180,9 @@ func _refresh_discovery() -> void:
 	completed_contracts.text = tr("HQ_COMPLETED_CONTRACTS_FMT") % completed_total
 	discovery_empty_card.visible = discoveries.is_empty()
 	discovery_list.visible = not discoveries.is_empty()
+	var viewport := ResponsiveUiProfile.viewport_size()
+	var detail_allowed := viewport.x >= viewport.y and not ResponsiveUiProfile.is_phone(ResponsiveUiProfile.current())
+	discovery_detail_card.visible = not discoveries.is_empty() and detail_allowed
 	for child in discovery_list.get_children():
 		child.queue_free()
 
@@ -2072,11 +2196,15 @@ func _refresh_discovery() -> void:
 	var first := _discovery_page * page_size
 	var last := mini(first + page_size, discoveries.size())
 	var reveal_index := 0
+	var detail_initialized := false
 	for index in range(first, last):
 		var salvage_id := String(discoveries[index])
 		if not _registry.has_salvage(salvage_id):
 			continue
 		var definition := _registry.get_salvage_definition(salvage_id)
+		if not detail_initialized:
+			_refresh_discovery_detail(definition)
+			detail_initialized = true
 		var card := DISCOVERY_CARD_SCENE.instantiate() as HqDiscoveryCard
 		assert(card != null, "Discovery card scene must instantiate.")
 		discovery_list.add_child(card)
@@ -2087,6 +2215,20 @@ func _refresh_discovery() -> void:
 		reveal_index += 1
 
 	_set_pager_state(discovery_pager, discovery_previous_page, discovery_page_label, discovery_next_page, _discovery_page, page_count)
+
+
+func _refresh_discovery_detail(definition: SalvageDefinition) -> void:
+	var rarity_key := _rarity_key(String(definition.rarity))
+	var category_key := _category_key(String(definition.category))
+	discovery_detail_art.texture = definition.sprite
+	discovery_detail_name.text = tr(String(definition.display_name_key))
+	discovery_detail_meta.text = "%s · %s" % [tr(category_key), tr(rarity_key)]
+	discovery_detail_data.text = tr("HQ_DISCOVERY_DETAIL_DATA_FMT") % [
+		float(definition.mass),
+		int(definition.cargo_units),
+	]
+	discovery_detail_value.text = tr("HQ_DISCOVERY_VALUE_FMT") % definition.base_value
+
 
 func _change_discovery_page(delta: int) -> void:
 	var count := _progression.get_discovery_ids().size()
@@ -2205,12 +2347,28 @@ func _on_ui_button_focus_entered(button: BaseButton) -> void:
 	_play_ui_hover()
 
 func _on_input_mode_changed(mode: InputService.InputMode) -> void:
+	_refresh_input_hint(mode)
 	if mode == InputService.InputMode.GAMEPAD:
 		call_deferred("_focus_default_for_gamepad")
 	elif mode == InputService.InputMode.POINTER:
 		var focus_owner := get_viewport().gui_get_focus_owner()
 		if focus_owner != null and (focus_owner == self or is_ancestor_of(focus_owner)):
 			focus_owner.release_focus()
+
+
+func _refresh_input_hint(mode: InputService.InputMode) -> void:
+	var hint := %InputHint as Label
+	if hint == null:
+		return
+	match mode:
+		InputService.InputMode.GAMEPAD:
+			hint.visible = true
+			hint.text = "LB/RB  •  A  •  B"
+		InputService.InputMode.KEYBOARD:
+			hint.visible = true
+			hint.text = "↑ ↓ ← →  •  ENTER  •  ESC"
+		_:
+			hint.visible = false
 
 func _focus_default_for_gamepad() -> void:
 	if not is_inside_tree():

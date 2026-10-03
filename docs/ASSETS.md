@@ -116,3 +116,12 @@ The salvage pass adds **25 editable SVG silhouettes** under `assets/original/sal
 ## Procedural propulsion presentation
 
 Ship propulsion intentionally has no dedicated plume, ring, cloud or particle artwork. The live system renders reusable procedural trails from the ship's world-space engine-socket history. This avoids contradictory fixed flames during inertial turning and removes unnecessary propulsion-specific texture assets from the runtime.
+
+
+### Headquarters visual system
+
+The Headquarters mockup artwork recovered from the design session is stored as project-owned runtime WebP under `assets/original/ui/hq/generated/`. The live Headquarters now uses those generated assets directly for the five main navigation icons, launch-contract cinematic previews, contract metadata symbols and the Fleet hangar backdrop.
+
+Equipment and career artwork also use the previously approved generated illustrations: their existing SVG files are wrappers around embedded generated raster art, not substitute hand-drawn line icons. The older small hand-authored SVG navigation/metadata files remain in Git only as reference/fallback material and are no longer the primary runtime assets.
+
+The UI itself stays native Godot/container driven. Generated images are presentation assets inside real responsive controls rather than screenshots stretched over interactive regions. Desktop uses the wide mockup hierarchy, while compact/phone profiles reduce columns and hide secondary surfaces before content can overflow.

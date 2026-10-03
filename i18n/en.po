@@ -377,7 +377,7 @@ msgid "HQ_RANK_LOCKED"
 msgstr "LOCKED"
 
 msgid "HQ_SHIP_TITLE"
-msgstr "FLEET"
+msgstr "FLEET HANGAR"
 
 msgid "HQ_SHIP_SUBTITLE"
 msgstr "Choose, improve and personalize the active cleanup craft."
@@ -1761,3 +1761,12 @@ msgstr "Vortex Coil"
 
 msgid "COSMETIC_ENGINE_VECTOR_CASCADE"
 msgstr "Vector Cascade"
+
+msgid "HQ_DISCOVERY_DETAIL_DATA_FMT"
+msgstr "Mass %.1f · Cargo %d unit(s)"
+
+msgid "HQ_UPGRADE_COST_VALUE_FMT"
+msgstr "COST · %d cr"
+
+msgid "HQ_UPGRADE_ACTION"
+msgstr "UPGRADE"
