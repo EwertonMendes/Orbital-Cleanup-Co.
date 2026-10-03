@@ -217,6 +217,16 @@ size_flags_horizontal = 3
 theme_type_variation = &"TabButton"
 text = "DISCOVERIES"
 
+[node name="InputHint" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/NavigationPanel/NavMargin/NavLayout"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "LB/RB  •  A  •  B"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="ContentColumn" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow"]
 layout_mode = 2
 size_flags_horizontal = 3
