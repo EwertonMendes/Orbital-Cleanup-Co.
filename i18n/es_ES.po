@@ -1746,3 +1746,18 @@ msgstr "Estilo · %s"
 
 msgid "HQ_SHIP_PROPULSION_COLOR_FMT"
 msgstr "Color · %s"
+
+msgid "COSMETIC_ENGINE_PRISM_FAN"
+msgstr "Abanico Prismático"
+
+msgid "COSMETIC_ENGINE_PHASE_RAILS"
+msgstr "Rieles de Fase"
+
+msgid "COSMETIC_ENGINE_GRAVITY_BOW"
+msgstr "Arco Gravitacional"
+
+msgid "COSMETIC_ENGINE_VORTEX_COIL"
+msgstr "Bobina de Vórtice"
+
+msgid "COSMETIC_ENGINE_VECTOR_CASCADE"
+msgstr "Cascada Vectorial"
