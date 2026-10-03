@@ -80,16 +80,57 @@ func apply_ship_build(ship_build: Dictionary) -> void:
 	assert(not ship_build.is_empty(), "Live ship build cannot be empty.")
 	assert(ship_build.has("stats") and ship_build.has("cosmetics") and ship_build.has("visual"), "Live ship build requires stats, cosmetics and visual data.")
 
+	var previous_build := _pending_ship_build
+	var previous_stats := previous_build.get("stats", {}) as Dictionary
+	var previous_visual := previous_build.get("visual", {}) as Dictionary
+	var previous_cosmetics := previous_build.get("cosmetics", {}) as Dictionary
+
+	var next_stats := ship_build.get("stats", {}) as Dictionary
+	var next_visual := ship_build.get("visual", {}) as Dictionary
+	var next_cosmetics := ship_build.get("cosmetics", {}) as Dictionary
+	var stats_changed := previous_stats != next_stats
+	var visual_changed := (
+		previous_visual != next_visual
+		or String(previous_build.get("ship_id", "")) != String(ship_build.get("ship_id", ""))
+	)
+	var collision_changed := _hull_collision_geometry_changed(previous_visual, next_visual)
+	var cosmetic_changes := _changed_cosmetic_categories(previous_cosmetics, next_cosmetics)
+
 	_pending_ship_build = ship_build.duplicate(true)
-	_pending_cosmetics = (_pending_ship_build.get("cosmetics", {}) as Dictionary).duplicate(true)
-	_apply_resolved_build_state(_pending_ship_build.get("stats", {}) as Dictionary, false)
-	_apply_tractor_socket_from_build(_pending_ship_build)
-	_apply_pending_visual_build()
-	ship_camera.configure(tuning)
-	tuning.validate()
-	velocity = velocity.limit_length(tuning.absolute_speed_limit)
-	cargo_changed.emit(cargo_hold.used_units, cargo_hold.capacity)
-	print("[Ship] LIVE_BUILD_APPLIED ship=%s" % String(_pending_ship_build.get("ship_id", "")))
+	_pending_cosmetics = next_cosmetics.duplicate(true)
+
+	if stats_changed:
+		_apply_resolved_build_state(next_stats, false)
+
+	if visual_changed:
+		_apply_tractor_socket_from_build(_pending_ship_build)
+		visuals.apply_ship_build(_pending_ship_build)
+	elif not cosmetic_changes.is_empty():
+		for category in cosmetic_changes:
+			if category == "hull":
+				continue
+			visuals.apply_cosmetic_update(category, _pending_cosmetics)
+
+	if cosmetic_changes.has("beam"):
+		tractor_beam.apply_style(_pending_cosmetics["beam"] as Dictionary)
+
+	if collision_changed:
+		_rebuild_hull_collision()
+
+	if stats_changed:
+		ship_camera.configure(tuning)
+		tuning.validate()
+		velocity = velocity.limit_length(tuning.absolute_speed_limit)
+		cargo_changed.emit(cargo_hold.used_units, cargo_hold.capacity)
+
+	if stats_changed or visual_changed or not cosmetic_changes.is_empty():
+		print("[Ship] LIVE_BUILD_APPLIED ship=%s stats=%s visual=%s cosmetics=%s collision=%s" % [
+			String(_pending_ship_build.get("ship_id", "")),
+			str(stats_changed),
+			str(visual_changed),
+			",".join(cosmetic_changes),
+			str(collision_changed),
+		])
 
 func _apply_resolved_build_state(resolved_modifiers: Dictionary, initial_configuration: bool) -> void:
 	if not resolved_modifiers.is_empty():
@@ -139,9 +180,30 @@ func _apply_pending_visual_build() -> void:
 	if not _pending_cosmetics.is_empty():
 		tractor_beam.apply_style(_pending_cosmetics["beam"] as Dictionary)
 
+	_rebuild_hull_collision()
+
+func _rebuild_hull_collision() -> void:
 	var hull_collision_radius := CollisionGeometry2D.build_dynamic_solid(self, visuals.ship_sprite)
 	assert(hull_collision_radius > 0.0, "PlayerShip hull alpha must generate collision geometry.")
 	_sync_hull_collision_rotation()
+
+func _hull_collision_geometry_changed(previous_visual: Dictionary, next_visual: Dictionary) -> bool:
+	if previous_visual.is_empty():
+		return true
+	if String(previous_visual.get("base_texture", "")) != String(next_visual.get("base_texture", "")):
+		return true
+	return not is_equal_approx(
+		float(previous_visual.get("render_scale", 1.0)),
+		float(next_visual.get("render_scale", 1.0))
+	)
+
+func _changed_cosmetic_categories(previous: Dictionary, next: Dictionary) -> Array[String]:
+	var changed: Array[String] = []
+	for category_variant in next.keys():
+		var category := String(category_variant)
+		if previous.get(category, {}) != next.get(category, {}):
+			changed.append(category)
+	return changed
 
 func _apply_runtime_tuning(stats: Dictionary) -> void:
 	assert(tuning != null, "PlayerShip requires ShipMovementTuning before build configuration.")
