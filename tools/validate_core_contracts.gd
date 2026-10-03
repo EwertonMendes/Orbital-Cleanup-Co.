@@ -221,7 +221,7 @@ func _validate_operations_screen() -> void:
 	_expect("_open_settings" in operations_source and "_adjust_volume" in operations_source, "Language/audio controls must be routed through Settings.")
 	_expect("footer.visible = tab == Tab.CONTRACTS" in operations_source, "Non-contract tabs must use the full fixed content stage without resizing the outer console.")
 	_expect("occ_focus_restore_key" in operations_source and "grab_by_meta" in operations_source, "Dynamic Operations lists must restore gamepad focus after selection-driven refreshes.")
-	_expect("_suppress_progression_refresh" in operations_source and "_refresh_ship(false)" in operations_source, "Cosmetic selection must update in place so controller focus is never destroyed.")
+	_expect("_suppress_progression_refresh" in operations_source and "_refresh_ship(false, category)" in operations_source, "Cosmetic selection must update in place so controller focus is never destroyed.")
 	_expect("_configure_ship_option_focus_graph" in operations_source, "Ship option lists require explicit controller neighbors after dynamic construction.")
 	_expect("_refresh_visible_upgrade_cards" in operations_source and "_configure_upgrade_focus_graph" in operations_source, "Upgrade purchases must update existing cards in place and preserve controller navigation.")
 	_expect("upgrade_grid.columns = 1 if portrait else 2" in operations_source and "return 4" in operations_source, "Desktop upgrades must use a bounded 2x2 page that fits the fixed content stage.")
