@@ -155,10 +155,9 @@ func _validate_operations_screen() -> void:
 	_expect(screen.find_child("PrimaryAction", true, false) is Button, "Operations requires deployment action.")
 	_expect(screen.find_child("ShipArt", true, false) is TextureRect, "Operations requires contract ship preview.")
 	_expect(screen.find_child("UpgradeGrid", true, false) is GridContainer, "Operations requires upgrade grid.")
-	_expect(screen.find_child("CareerList", true, false) is VBoxContainer, "Operations requires focused career milestones.")
+	_expect(screen.find_child("CareerList", true, false) is GridContainer, "Operations requires the full responsive career rank track.")
 	_expect(screen.find_child("ContentStage", true, false) is MarginContainer, "Operations requires a fixed no-scroll content stage.")
 	_expect(screen.find_child("ContentShell", true, false) is Control and not (screen.find_child("ContentShell", true, false) is Container), "Operations content panels must overlay a fixed stage instead of resizing their parent.")
-	_expect(screen.find_child("DiscoveryPagerSpacer", true, false) is Control, "Discovery pagination requires a flexible spacer that pins controls to the bottom.")
 	_expect(screen.find_children("*", "ScrollContainer", true, false).is_empty(), "Operations must not depend on ScrollContainer at any breakpoint.")
 	_expect(screen.find_child("PreviousContract", true, false) is Button, "Operations requires previous unlocked contract action.")
 	_expect(screen.find_child("NextContract", true, false) is Button, "Operations requires next unlocked contract action.")
@@ -188,12 +187,13 @@ func _validate_operations_screen() -> void:
 	var unique_refs := [
 		"SafeArea", "Header", "MainRow", "TabGrid", "ContentStage", "ContentShell",
 		"ContractsPanel", "UpgradesPanel", "CareerPanel", "ShipPanel", "DiscoveryPanel",
-		"ContractHero", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
+		"ContractHero", "ContractsBoard", "ContractList", "ShipBody", "PrimaryAction", "Footer", "UpgradeGrid", "CareerList",
 		"CreditsLabel", "RankLabel", "XpLabel", "CareerRankValue", "CareerXpLabel", "CareerXpBar",
 		"ContractState", "ContractSelector", "ContractPosition", "PreviousContract", "EndlessContract", "NextContract",
 		"ContractTitle", "ContractDescription", "ContractTarget", "ContractRisk", "ContractPayout", "ContractRequirement",
 		"NextUnlockPanel", "NextUnlockTitle", "NextUnlockLabel", "NextUnlockProgress", "NextUnlockProgressLabel",
-		"LastResult", "ShipStats", "DiscoveryCount", "CompletedContracts",
+		"LastResult", "ShipStats", "DiscoveryCount", "CompletedContracts", "DiscoveryBody", "DiscoveryDetailCard",
+		"DiscoveryDetailName", "DiscoveryDetailMeta", "DiscoveryDetailArt", "DiscoveryDetailData", "DiscoveryDetailValue",
 		"EnglishButton", "PortugueseButton", "SpanishButton", "ContractsTab", "UpgradesTab",
 		"CareerTab", "ShipTab", "DiscoveryTab", "CompanyLabel", "DeskLabel", "LanguageLabel",
 		"ContractsTitle", "ContractsSubtitle", "ContractShipName", "ContractShipStatus",
@@ -227,6 +227,9 @@ func _validate_operations_screen() -> void:
 	_expect("footer.visible = tab == Tab.CONTRACTS" in operations_source, "Non-contract tabs must use the full fixed content stage without resizing the outer console.")
 	_expect("occ_focus_restore_key" in operations_source and "grab_by_meta" in operations_source, "Dynamic Operations lists must restore gamepad focus after selection-driven refreshes.")
 	_expect("HqVisualAssets.nav_icon" in operations_source and "icon_max_width = 24" in operations_source, "Headquarters navigation must use project-owned semantic icons at a stable optical size.")
+	_expect("_refresh_contract_list" in operations_source and "HqVisualAssets.contract_preview" in operations_source, "Contracts board must use real destination artwork in its selectable mission list.")
+	_expect('active_category == "hull"' in operations_source and "hull_texture_path" in operations_source, "Fleet model selector must render the real generated ship assets.")
+	_expect("_refresh_discovery_detail" in operations_source, "Discovery catalog must populate the fixed detail pane from the selected page.")
 	_expect("_refresh_input_hint" in operations_source, "Headquarters must adapt navigation guidance to the active input device.")
 	_expect(" → " in operations_source, "Upgrade cards must compare the current system effect with the next level.")
 
@@ -234,7 +237,7 @@ func _validate_operations_screen() -> void:
 	_expect("_configure_ship_option_focus_graph" in operations_source, "Ship option lists require explicit controller neighbors after dynamic construction.")
 	_expect("_refresh_visible_upgrade_cards" in operations_source and "_configure_upgrade_focus_graph" in operations_source, "Upgrade purchases must update existing cards in place and preserve controller navigation.")
 	_expect("upgrade_grid.columns = 1 if portrait else 2" in operations_source and "return 4" in operations_source, "Desktop upgrades must use a bounded 2x2 page that fits the fixed content stage.")
-	_expect("ResponsiveUiProfile.viewport_size()" in operations_source and "console_height := 1180.0 if portrait else 650.0" in operations_source, "Operations must use the shared real viewport source and a tall portrait console to prevent clipping.")
+	_expect("ResponsiveUiProfile.viewport_size()" in operations_source and "console_height := 1180.0 if portrait else 700.0" in operations_source, "Operations must use the shared real viewport source and a tall portrait console to prevent clipping.")
 	_expect("settings_modal.custom_minimum_size" in operations_source and "footer_spacer.visible = not portrait" in operations_source, "Operations must protect compact Settings and portrait deployment layouts from overflow.")
 	_expect('"modulate:a"' in operations_source and "position:x" not in operations_source and "_update_tab_visuals" in operations_source, "Operations tab transitions must animate opacity without mutating fixed page geometry.")
 	_expect("menu_warp_fx" not in operations_source, "Operations tab changes must not use the removed blue warp-particle overlay.")
@@ -251,7 +254,7 @@ func _validate_operations_screen() -> void:
 	_expect("ContractShipLiveryPreview" in operations_scene_source and "ContractShipBodyKitPreview" in operations_scene_source, "Contract ship card must render the same layered cosmetics as Fleet preview.")
 	_expect("columns = 1" in operations_scene_source and "ModulesOptions" in operations_scene_source, "Fleet modules must use a full-width single-column selector.")
 	_expect("modules_options.columns = 1" in operations_source and "ModuleSlotBar" in operations_source and "ModuleChoiceGrid" in operations_source and "OVERRUN_TRIM_ELLIPSIS" in operations_source, "Fleet modules must use a bay-first bounded selector that trims safely on narrow widths.")
-	_expect("%ShipTitle.visible = false" in operations_source and "%ShipSubtitle.visible = false" in operations_source and "ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL" in operations_source, "Fleet must remain a fixed no-scroll workspace with vertical room reserved for preview and editor.")
+	_expect("%ShipTitle.visible = not phone" in operations_source and "%ShipSubtitle.visible = not phone" in operations_source and "ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL" in operations_source, "Fleet must preserve the mockup heading on desktop while remaining a fixed no-scroll workspace.")
 	_expect("_ship_category_title_key" in operations_source and "propulsion_mode_bar.visible = true" in operations_source, "Fleet editor must keep one contextual top-level title while allowing Style/Color sections inside Propulsion.")
 	_expect("LIVE_SHIP_SYNC" in flight_source and "apply_ship_build" in player_ship_source, "Free Flight must reapply Fleet changes without redeployment.")
 	_expect("_live_ship_sync_queued" in flight_source and "Collapse them into one end-of-frame ship sync" in flight_source, "Free Flight must coalesce purchase/equip state bursts instead of rebuilding the live ship multiple times per click.")
@@ -271,9 +274,9 @@ func _validate_operations_screen() -> void:
 
 	_expect("theme_override_constants/separation = 4" in operations_scene_source and "UpgradePagerSpacer" in operations_scene_source, "Upgrades page must reserve enough vertical room to keep pagination fully inside the fixed stage.")
 	var upgrade_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_upgrade_card.tscn")
-	_expect("Vector2(250, 168)" in upgrade_card_scene_source and "max_lines_visible = 2" in upgrade_card_scene_source, "Upgrade cards must use compact bounded geometry for zero-scroll pages.")
+	_expect("Vector2(330, 216)" in upgrade_card_scene_source and "CurrentEffect" in upgrade_card_scene_source and "NextEffect" in upgrade_card_scene_source, "Upgrade cards must use the large illustrated current-vs-next mockup layout.")
 	var discovery_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_discovery_card.tscn")
-	_expect("Vector2(286, 132)" in discovery_card_scene_source and "Vector2(102, 102)" in discovery_card_scene_source, "Discovery cards must use compact geometry that keeps a 2x2 page inside the fixed stage.")
+	_expect("Vector2(286, 132)" in discovery_card_scene_source and "Vector2(102, 102)" in discovery_card_scene_source and "DiscoveryDetailCard" in operations_scene_source, "Discovery catalog must pair compact cards with a dedicated detail pane.")
 
 	var paint_shader_source := FileAccess.get_file_as_string("res://src/game/customization/ship_paint.gdshader")
 	_expect("protected_non_hull_factor" in paint_shader_source and "hull_material" in paint_shader_source, "Fleet painting must protect canopy glass and emissive cyan materials even if an RGB mask contains stray pixels.")
