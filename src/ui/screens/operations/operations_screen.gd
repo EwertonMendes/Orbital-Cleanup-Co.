@@ -1418,8 +1418,8 @@ func _set_ship_preview_layer(target: TextureRect, texture_path: String, tint: Co
 	target.visible = true
 
 func _refresh_propulsion_preview(propulsion_style: Dictionary, trail_palette: Dictionary, visual: Dictionary) -> void:
-	_clear_propulsion_preview()
 	if _ship_category != "propulsion":
+		_clear_propulsion_preview()
 		return
 	if ship_preview.texture == null:
 		return
@@ -1427,6 +1427,16 @@ func _refresh_propulsion_preview(propulsion_style: Dictionary, trail_palette: Di
 	var sockets := visual.get("engine_sockets", []) as Array
 	if sockets.is_empty():
 		sockets = [{"id": "main", "position": [0.0, 41.0]}]
+
+	if _propulsion_preview_rigs.size() != sockets.size():
+		_clear_propulsion_preview()
+		for index in range(sockets.size()):
+			var rig := PROPULSION_TRAIL_RIG_SCENE.instantiate() as PropulsionTrailRig
+			assert(rig != null, "Fleet propulsion trail preview must instantiate.")
+			rig.name = "PropulsionTrailPreview_%d" % index
+			rig.show_behind_parent = true
+			ship_preview.add_child(rig)
+			_propulsion_preview_rigs.append(rig)
 
 	var native_size := ship_preview.texture.get_size()
 	if native_size.x <= 0.0 or native_size.y <= 0.0:
@@ -1445,21 +1455,15 @@ func _refresh_propulsion_preview(propulsion_style: Dictionary, trail_palette: Di
 			continue
 		var runtime_position := Vector2(float(values[0]), float(values[1]))
 		var source_offset := runtime_position / runtime_scale
-
-		var rig := PROPULSION_TRAIL_RIG_SCENE.instantiate() as PropulsionTrailRig
-		assert(rig != null, "Fleet propulsion trail preview must instantiate.")
-		rig.name = "PropulsionTrailPreview_%d" % index
-		rig.show_behind_parent = true
+		var rig := _propulsion_preview_rigs[index]
 		rig.position = ship_preview.size * 0.5 + source_offset * display_scale
 		rig.rotation = deg_to_rad(float(socket.get("rotation_degrees", 0.0)))
-		ship_preview.add_child(rig)
 		rig.configure(
 			propulsion_style,
 			trail_palette,
 			clampf(float(socket.get("fx_scale", 1.0)) * preview_runtime_ratio, 0.25, 4.0)
 		)
 		rig.set_preview_mode(true)
-		_propulsion_preview_rigs.append(rig)
 
 func _clear_propulsion_preview() -> void:
 	for rig in _propulsion_preview_rigs:
