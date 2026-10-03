@@ -899,6 +899,7 @@ func _refresh_contracts() -> void:
 
 	%ContractsTitle.text = tr("HQ_CONTRACTS_TITLE")
 	%ContractsSubtitle.text = tr("HQ_CONTRACTS_SUBTITLE")
+	_refresh_contract_list()
 	previous_contract.text = "<  %s" % tr("HQ_CONTRACT_PREVIOUS")
 	next_contract.text = "%s  >" % tr("HQ_CONTRACT_NEXT")
 	endless_contract.visible = _progression.is_endless_unlocked()
@@ -957,6 +958,49 @@ func _refresh_contracts() -> void:
 				int(result.get("credits_awarded", 0)),
 				int(result.get("xp_awarded", 0)),
 			]
+
+
+func _refresh_contract_list() -> void:
+	for child in contract_list.get_children():
+		child.queue_free()
+	if _sector_ids.is_empty():
+		return
+
+	var visible_count := 6
+	var max_start := maxi(_sector_ids.size() - visible_count, 0)
+	var first := clampi(_selected_sector_index - 2, 0, max_start)
+	var last := mini(first + visible_count, _sector_ids.size())
+	for index in range(first, last):
+		var sector_id := String(_sector_ids[index])
+		var sector := _registry.get_sector(sector_id)
+		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
+		assert(button != null, "Contract list row must use OccChromeButton.")
+		button.custom_minimum_size = Vector2(0, 58)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.emphasis = not _viewing_endless and index == _selected_sector_index
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.icon = HqVisualAssets.contract_preview(sector_id)
+		button.expand_icon = true
+		button.icon_max_width = 62
+		button.clip_text = true
+		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		var title := tr(String(sector["display_name_key"]))
+		var risk := tr(_risk_key(int(sector["difficulty"])))
+		button.text = "%s\n%s" % [title, risk]
+		button.tooltip_text = "%s · %s" % [title, risk]
+		button.set_meta(&"occ_focus_restore_key", "contract:%s" % sector_id)
+		button.pressed.connect(_select_contract_index.bind(index))
+		contract_list.add_child(button)
+		_wire_button_feedback(button)
+
+
+func _select_contract_index(index: int) -> void:
+	if index < 0 or index >= _sector_ids.size():
+		return
+	_selected_sector_index = index
+	_load_selected_sector()
+	_refresh_contracts()
+
 
 func _refresh_upgrades() -> void:
 	%UpgradesTitle.text = tr("HQ_UPGRADES_TITLE")
