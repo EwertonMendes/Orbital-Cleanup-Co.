@@ -1197,17 +1197,34 @@ func _setup_propulsion_modes() -> void:
 
 func _select_ship_category(category: String) -> void:
 	_ship_category = category
-	_ship_option_page = 0
+	if category == "propulsion":
+		_set_ship_option_page_to_equipped(_active_cosmetic_category())
+	else:
+		_ship_option_page = 0
 	_refresh_ship()
 
 func _select_propulsion_mode(mode: String) -> void:
 	assert(mode in ["engine", "trail"], "Propulsion editor mode must be engine or trail.")
 	_propulsion_mode = mode
-	_ship_option_page = 0
+	_set_ship_option_page_to_equipped(mode)
 	_refresh_ship()
 
 func _active_cosmetic_category() -> String:
 	return _propulsion_mode if _ship_category == "propulsion" else _ship_category
+
+func _set_ship_option_page_to_equipped(category: String) -> void:
+	var equipped_id := _progression.get_equipped_cosmetic_id(category)
+	var unlocked_index := 0
+	for option_variant in _progression.get_cosmetic_options(category):
+		var option := option_variant as Dictionary
+		var cosmetic_id := String(option["id"])
+		if not _progression.is_cosmetic_unlocked(category, cosmetic_id):
+			continue
+		if cosmetic_id == equipped_id:
+			_ship_option_page = unlocked_index / _ship_option_page_size()
+			return
+		unlocked_index += 1
+	_ship_option_page = 0
 
 func _refresh_ship(rebuild_options: bool = true) -> void:
 	%ShipTitle.text = tr("HQ_SHIP_TITLE")
