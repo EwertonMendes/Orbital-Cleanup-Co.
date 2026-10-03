@@ -377,7 +377,7 @@ msgid "HQ_RANK_LOCKED"
 msgstr "BLOQUEADO"
 
 msgid "HQ_SHIP_TITLE"
-msgstr "FROTA"
+msgstr "HANGAR DA FROTA"
 
 msgid "HQ_SHIP_SUBTITLE"
 msgstr "Escolha, evolua e personalize a nave de limpeza ativa."
@@ -1761,3 +1761,6 @@ msgstr "Bobina de Vórtice"
 
 msgid "COSMETIC_ENGINE_VECTOR_CASCADE"
 msgstr "Cascata Vetorial"
+
+msgid "HQ_DISCOVERY_DETAIL_DATA_FMT"
+msgstr "Massa %.1f · Carga %d unidade(s)"
