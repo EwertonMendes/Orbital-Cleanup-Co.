@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://src/ui/components/occ_chrome_button.tscn" id="2"]
 
 [node name="HqUpgradeCard" type="PanelContainer"]
-custom_minimum_size = Vector2(250, 190)
+custom_minimum_size = Vector2(250, 168)
 size_flags_horizontal = 3
 theme_type_variation = &"CardPanel"
 script = ExtResource("1")
@@ -25,7 +25,7 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="ArtWell" type="PanelContainer" parent="Margin/Layout/ContentRow"]
-custom_minimum_size = Vector2(82, 82)
+custom_minimum_size = Vector2(58, 58)
 layout_mode = 2
 theme_type_variation = &"ElevatedPanel"
 
@@ -74,7 +74,7 @@ horizontal_alignment = 2
 
 [node name="Description" type="Label" parent="Margin/Layout/ContentRow/Copy"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 35)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"UiBodyMuted"
