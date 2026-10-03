@@ -1615,6 +1615,16 @@ func _refresh_ship_category_options() -> void:
 		button.custom_minimum_size = Vector2(0, 46)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = selected
+		if active_category == "hull":
+			button.custom_minimum_size.y = 96.0
+			button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			button.expand_icon = true
+			button.icon_max_width = 76
+			var hull_texture_path := String(option.get("texture", ""))
+			if not hull_texture_path.is_empty():
+				var hull_texture := load(hull_texture_path) as Texture2D
+				if hull_texture != null:
+					button.icon = hull_texture
 		button.set_meta(&"occ_focus_restore_key", "ship:%s:%s" % [active_category, cosmetic_id])
 		button.set_meta(&"occ_cosmetic_id", cosmetic_id)
 		button.set_meta(&"occ_cosmetic_name_key", String(option["display_name_key"]))
@@ -2141,6 +2151,7 @@ func _refresh_discovery() -> void:
 	completed_contracts.text = tr("HQ_COMPLETED_CONTRACTS_FMT") % completed_total
 	discovery_empty_card.visible = discoveries.is_empty()
 	discovery_list.visible = not discoveries.is_empty()
+	discovery_detail_card.visible = not discoveries.is_empty()
 	for child in discovery_list.get_children():
 		child.queue_free()
 
@@ -2154,11 +2165,15 @@ func _refresh_discovery() -> void:
 	var first := _discovery_page * page_size
 	var last := mini(first + page_size, discoveries.size())
 	var reveal_index := 0
+	var detail_initialized := false
 	for index in range(first, last):
 		var salvage_id := String(discoveries[index])
 		if not _registry.has_salvage(salvage_id):
 			continue
 		var definition := _registry.get_salvage_definition(salvage_id)
+		if not detail_initialized:
+			_refresh_discovery_detail(definition)
+			detail_initialized = true
 		var card := DISCOVERY_CARD_SCENE.instantiate() as HqDiscoveryCard
 		assert(card != null, "Discovery card scene must instantiate.")
 		discovery_list.add_child(card)
@@ -2169,6 +2184,20 @@ func _refresh_discovery() -> void:
 		reveal_index += 1
 
 	_set_pager_state(discovery_pager, discovery_previous_page, discovery_page_label, discovery_next_page, _discovery_page, page_count)
+
+
+func _refresh_discovery_detail(definition: SalvageDefinition) -> void:
+	var rarity_key := _rarity_key(String(definition.rarity))
+	var category_key := _category_key(String(definition.category))
+	discovery_detail_art.texture = definition.sprite
+	discovery_detail_name.text = tr(String(definition.display_name_key))
+	discovery_detail_meta.text = "%s · %s" % [tr(category_key), tr(rarity_key)]
+	discovery_detail_data.text = tr("HQ_DISCOVERY_DETAIL_DATA_FMT") % [
+		float(definition.mass),
+		int(definition.cargo_units),
+	]
+	discovery_detail_value.text = tr("HQ_DISCOVERY_VALUE_FMT") % definition.base_value
+
 
 func _change_discovery_page(delta: int) -> void:
 	var count := _progression.get_discovery_ids().size()
