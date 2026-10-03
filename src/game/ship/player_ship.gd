@@ -128,7 +128,7 @@ func apply_ship_build(ship_build: Dictionary) -> void:
 			String(_pending_ship_build.get("ship_id", "")),
 			str(stats_changed),
 			str(visual_changed),
-			",".join(cosmetic_changes),
+			",".join(PackedStringArray(cosmetic_changes)),
 			str(collision_changed),
 		])
 
