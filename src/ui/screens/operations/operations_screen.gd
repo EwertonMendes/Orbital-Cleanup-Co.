@@ -900,13 +900,13 @@ func _refresh_contracts() -> void:
 	%ContractsTitle.text = tr("HQ_CONTRACTS_TITLE")
 	%ContractsSubtitle.text = tr("HQ_CONTRACTS_SUBTITLE")
 	_refresh_contract_list()
-	previous_contract.text = "<  %s" % tr("HQ_CONTRACT_PREVIOUS")
-	next_contract.text = "%s  >" % tr("HQ_CONTRACT_NEXT")
+	previous_contract.text = "<"
+	next_contract.text = ">"
 	endless_contract.visible = _progression.is_endless_unlocked()
 	if _viewing_endless:
 		contract_state.text = tr("HQ_ENDLESS_AVAILABLE") if unlocked else tr("HQ_CONTRACT_LOCKED")
-		contract_position.text = tr("HQ_ENDLESS_INDEX_FMT") % [_endless_number, int(sector["seed"])]
-		endless_contract.text = tr("HQ_AUTHORED_CONTRACTS")
+		contract_position.text = "∞ %d" % _endless_number
+		endless_contract.text = "↩"
 		previous_contract.disabled = not unlocked or _endless_number <= 1
 		next_contract.disabled = not unlocked
 		contract_title.text = tr("SECTOR_ENDLESS_CONTRACT_FMT") % [
@@ -915,8 +915,8 @@ func _refresh_contracts() -> void:
 		]
 	else:
 		contract_state.text = tr("HQ_CONTRACT_AVAILABLE") if unlocked else tr("HQ_CONTRACT_LOCKED")
-		contract_position.text = tr("HQ_CONTRACT_INDEX_FMT") % [_selected_sector_index + 1, _sector_ids.size()]
-		endless_contract.text = tr("HQ_ENDLESS_CONTRACTS")
+		contract_position.text = "%d / %d" % [_selected_sector_index + 1, _sector_ids.size()]
+		endless_contract.text = "∞"
 		previous_contract.disabled = _sector_ids.size() <= 1
 		next_contract.disabled = _sector_ids.size() <= 1
 		contract_title.text = tr(String(sector["display_name_key"]))
