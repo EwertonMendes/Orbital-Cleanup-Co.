@@ -28,16 +28,16 @@ static func nav_icon(index: int) -> Texture2D:
 
 static func upgrade_art(upgrade_id: String) -> Texture2D:
 	match upgrade_id:
-		"propulsion_core":
-			return preload("res://assets/original/ui/hq/upgrade_propulsion.svg")
-		"maneuvering_thrusters":
-			return preload("res://assets/original/salvage/thruster_nozzle_hd.webp")
-		"recovery_array":
+		"tractor_range":
 			return preload("res://assets/original/salvage/explorer_core_hd.webp")
-		"cargo_frame":
+		"collection_speed":
+			return preload("res://assets/original/salvage/thruster_nozzle_hd.webp")
+		"cargo_capacity":
+			return preload("res://assets/original/salvage/cargo_canister_hd.webp")
+		"pulse_boost":
+			return preload("res://assets/original/ui/hq/upgrade_propulsion.svg")
+		"boost_capacitor":
 			return preload("res://assets/original/salvage/orbital_battery_hd.webp")
-		"pulse_system":
-			return preload("res://assets/original/salvage/navigation_core_hd.webp")
 	return preload("res://assets/original/salvage/navigation_core_hd.webp")
 
 static func rank_badge(rank_id: String) -> Texture2D:
