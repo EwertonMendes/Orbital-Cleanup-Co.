@@ -1764,3 +1764,9 @@ msgstr "Cascata Vetorial"
 
 msgid "HQ_DISCOVERY_DETAIL_DATA_FMT"
 msgstr "Massa %.1f · Carga %d unidade(s)"
+
+msgid "HQ_UPGRADE_COST_VALUE_FMT"
+msgstr "CUSTO · %d cr"
+
+msgid "HQ_UPGRADE_ACTION"
+msgstr "MELHORAR"
