@@ -120,6 +120,8 @@ Ship propulsion intentionally has no dedicated plume, ring, cloud or particle ar
 
 ### Headquarters visual system
 
-The Headquarters UX redesign keeps small semantic navigation/metadata glyphs and decorative accents as editable project-owned SVGs under `assets/original/ui/hq/`. Major illustrative surfaces are **not** represented by hand-drawn placeholder SVGs: contract briefings reuse the project's generated HD destination artwork, Fleet renders the real generated ship assets, Discoveries renders the real generated salvage assets, and the equipment/career surfaces use the approved generated illustration/badge art from the Headquarters visual direction.
+The Headquarters mockup artwork recovered from the design session is stored as project-owned runtime WebP under `assets/original/ui/hq/generated/`. The live Headquarters now uses those generated assets directly for the five main navigation icons, launch-contract cinematic previews, contract metadata symbols and the Fleet hangar backdrop.
 
-This split is intentional. SVG is reserved for small scalable UI semantics; generated raster artwork is used wherever the mockups call for detailed machinery, ships, salvage, destinations or certification badges. Layout remains responsive and container-driven, with no stretched screenshot used as a fake interface.
+Equipment and career artwork also use the previously approved generated illustrations: their existing SVG files are wrappers around embedded generated raster art, not substitute hand-drawn line icons. The older small hand-authored SVG navigation/metadata files remain in Git only as reference/fallback material and are no longer the primary runtime assets.
+
+The UI itself stays native Godot/container driven. Generated images are presentation assets inside real responsive controls rather than screenshots stretched over interactive regions. Desktop uses the wide mockup hierarchy, while compact/phone profiles reduce columns and hide secondary surfaces before content can overflow.
