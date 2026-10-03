@@ -1764,3 +1764,9 @@ msgstr "Vector Cascade"
 
 msgid "HQ_DISCOVERY_DETAIL_DATA_FMT"
 msgstr "Mass %.1f · Cargo %d unit(s)"
+
+msgid "HQ_UPGRADE_COST_VALUE_FMT"
+msgstr "COST · %d cr"
+
+msgid "HQ_UPGRADE_ACTION"
+msgstr "UPGRADE"
