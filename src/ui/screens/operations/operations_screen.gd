@@ -493,7 +493,7 @@ func _apply_responsive_layout() -> void:
 	ship_body.vertical = portrait
 	ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tab_grid.columns = 3 if portrait else 1
-	contract_selector.columns = 3 if portrait else 4
+	contract_selector.columns = 2
 	upgrade_grid.columns = 1 if portrait else 2
 	career_list.columns = 2 if portrait else 6
 	discovery_list.columns = 1 if portrait else 2
@@ -2151,7 +2151,9 @@ func _refresh_discovery() -> void:
 	completed_contracts.text = tr("HQ_COMPLETED_CONTRACTS_FMT") % completed_total
 	discovery_empty_card.visible = discoveries.is_empty()
 	discovery_list.visible = not discoveries.is_empty()
-	discovery_detail_card.visible = not discoveries.is_empty()
+	var viewport := ResponsiveUiProfile.viewport_size()
+	var detail_allowed := viewport.x >= viewport.y and not ResponsiveUiProfile.is_phone(ResponsiveUiProfile.current())
+	discovery_detail_card.visible = not discoveries.is_empty() and detail_allowed
 	for child in discovery_list.get_children():
 		child.queue_free()
 
