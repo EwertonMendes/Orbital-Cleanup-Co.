@@ -1172,33 +1172,30 @@ func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 	var id := String(definition["id"])
 	var effects := definition.get("effects", {}) as Dictionary
 	match id:
-		"propulsion_core":
-			return tr("HQ_UPGRADE_EFFECT_PROPULSION_FMT") % [
-				int(round(float(effects.get("max_speed_add", 0.0)) * float(level))),
-				int(round(float(effects.get("acceleration_add", 0.0)) * float(level))),
-			]
-		"maneuvering_thrusters":
-			return tr("HQ_UPGRADE_EFFECT_MANEUVERING_FMT") % [
-				int(round(float(effects.get("turn_response_add", 0.0)) * 100.0 * float(level))),
-				int(round(absf(float(effects.get("cargo_inertia_factor_add", 0.0))) * 100.0 * float(level))),
-			]
-		"recovery_array":
-			return tr("HQ_UPGRADE_EFFECT_RECOVERY_FMT") % [
-				int(round(float(effects.get("scan_range_add", 0.0)) * float(level))),
-				int(round(float(effects.get("collection_speed_multiplier_add", 0.0)) * 100.0 * float(level))),
-			]
-		"cargo_frame":
-			return tr("HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT") % [
-				int(round(float(effects.get("cargo_capacity_add", 0.0)) * float(level))),
-				int(round(absf(float(effects.get("cargo_inertia_factor_add", 0.0))) * 100.0 * float(level))),
-			]
-		"pulse_system":
+		"tractor_range":
+			return tr("HQ_UPGRADE_EFFECT_RANGE_FMT") % int(round(
+				float(effects.get("scan_range_add", 0.0)) * float(level)
+			))
+		"collection_speed":
+			return tr("HQ_UPGRADE_EFFECT_SPEED_FMT") % int(round(
+				float(effects.get("collection_speed_multiplier_add", 0.0)) * 100.0 * float(level)
+			))
+		"cargo_capacity":
+			return tr("HQ_UPGRADE_EFFECT_CARGO_FMT") % int(round(
+				float(effects.get("cargo_capacity_add", 0.0)) * float(level)
+			))
+		"pulse_boost":
 			var recharge := float(effects.get("boost_recharge_rate_add", 0.0)) * float(level)
 			var duration := float(effects.get("boost_duration_bonus_add", 0.0)) * float(level)
 			return tr("HQ_UPGRADE_EFFECT_BOOST_FMT") % [
 				int(round(recharge * 100.0)),
 				int(round(duration * 1000.0)),
 			]
+		"boost_capacitor":
+			var stored := 1 + int(round(
+				float(effects.get("boost_charge_capacity_add", 0.0)) * float(level)
+			))
+			return tr("HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT") % stored
 	return ""
 
 func _refresh_career() -> void:
