@@ -96,6 +96,9 @@ func apply_ship_build(ship_build: Dictionary) -> void:
 	var collision_changed := _hull_collision_geometry_changed(previous_visual, next_visual)
 	var cosmetic_changes := _changed_cosmetic_categories(previous_cosmetics, next_cosmetics)
 
+	if not stats_changed and not visual_changed and cosmetic_changes.is_empty():
+		return
+
 	_pending_ship_build = ship_build.duplicate(true)
 	_pending_cosmetics = next_cosmetics.duplicate(true)
 
