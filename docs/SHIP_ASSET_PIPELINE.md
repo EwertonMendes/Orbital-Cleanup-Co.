@@ -154,7 +154,7 @@ Ship engine_sockets[]
 
 `PropulsionTrailRig` contains no nozzle sprite, plume texture or propulsion particle emitter. This is deliberate: the ship can rotate while retaining inertial velocity, so a static nozzle flame can point somewhere different from the actual motion history and create contradictory feedback. The trail is generated from the real world-space socket history, so turning, coasting and boost remain visually truthful.
 
-The eight authored styles must be structurally different, not simple width variants:
+The thirteen authored styles must be structurally different, not simple width variants:
 
 - Ion Stream — clean tapered core/ribbon;
 - Plasma Bloom — wide animated multi-strand wave;
@@ -163,7 +163,12 @@ The eight authored styles must be structurally different, not simple width varia
 - Comet Ribbon — long tapered flowing tail;
 - Shard Drive — angular segmented zig-zag;
 - Nebula Mist — broad low-opacity multi-strand drift;
-- Twin Helix — two animated sinusoidal strands in opposite phase.
+- Twin Helix — two animated sinusoidal strands in opposite phase;
+- Prism Fan — three rays converge at the nozzle and spread into a geometric fan;
+- Phase Rails — two thin rails snap between opposite lanes with sharp crossovers;
+- Gravity Bow — mirrored strands open into a breathing lens/bow and close again;
+- Vortex Coil — three widening chirped coils tighten toward the fading tail;
+- Vector Cascade — three quantized stair-step strands create a mechanical vector pattern.
 
 Engine sockets may optionally author `fx_scale` and `rotation_degrees` for placement/preview alignment. These values affect presentation only. Propulsion cosmetics never modify collision, physics or ship stats.
 
