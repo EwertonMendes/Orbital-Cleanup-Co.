@@ -1,26 +1,26 @@
 extends RefCounted
 class_name HqVisualAssets
 
-const NAV_CONTRACTS: Texture2D = preload("res://assets/original/ui/hq/nav_contracts.svg")
-const NAV_UPGRADES: Texture2D = preload("res://assets/original/ui/hq/nav_upgrades.svg")
-const NAV_CAREER: Texture2D = preload("res://assets/original/ui/hq/nav_career.svg")
-const NAV_FLEET: Texture2D = preload("res://assets/original/ui/hq/nav_fleet.svg")
-const NAV_DISCOVERIES: Texture2D = preload("res://assets/original/ui/hq/nav_discoveries.svg")
+const NAV_CONTRACTS: Texture2D = preload("res://assets/original/ui/hq/generated/nav_contracts.webp")
+const NAV_UPGRADES: Texture2D = preload("res://assets/original/ui/hq/generated/nav_upgrades.webp")
+const NAV_CAREER: Texture2D = preload("res://assets/original/ui/hq/generated/nav_career.webp")
+const NAV_FLEET: Texture2D = preload("res://assets/original/ui/hq/generated/nav_fleet.webp")
+const NAV_DISCOVERIES: Texture2D = preload("res://assets/original/ui/hq/generated/nav_discoveries.webp")
 
-const META_CLEANUP: Texture2D = preload("res://assets/original/ui/hq/meta_cleanup.svg")
-const META_RISK: Texture2D = preload("res://assets/original/ui/hq/meta_risk.svg")
-const META_REWARD: Texture2D = preload("res://assets/original/ui/hq/meta_reward.svg")
-const META_LOCATION: Texture2D = preload("res://assets/original/ui/hq/meta_location.svg")
-const META_COMPLETE: Texture2D = preload("res://assets/original/ui/hq/meta_complete.svg")
+const META_CLEANUP: Texture2D = preload("res://assets/original/ui/hq/generated/meta_cleanup.webp")
+const META_RISK: Texture2D = preload("res://assets/original/ui/hq/generated/meta_risk.webp")
+const META_REWARD: Texture2D = preload("res://assets/original/ui/hq/generated/meta_reward.webp")
+const META_LOCATION: Texture2D = preload("res://assets/original/ui/hq/generated/meta_location.webp")
+const META_COMPLETE: Texture2D = preload("res://assets/original/ui/hq/generated/meta_complete.webp")
 
-const FLEET_BAY: Texture2D = preload("res://assets/original/destinations/orbital_factory_ruins_hd.webp")
+const FLEET_BAY: Texture2D = preload("res://assets/original/ui/hq/generated/fleet_hangar.webp")
 const ORBIT_DIVIDER: Texture2D = preload("res://assets/original/ui/hq/orbit_divider.svg")
 const TECHNICAL_PATTERN: Texture2D = preload("res://assets/original/ui/hq/technical_pattern.svg")
 
-const EARTH_PREVIEW: Texture2D = preload("res://assets/original/planets/earth_orbit_hd.webp")
-const LUNAR_PREVIEW: Texture2D = preload("res://assets/original/planets/lunar_belt_hd.webp")
-const MARS_PREVIEW: Texture2D = preload("res://assets/original/planets/mars_freight_hd.webp")
-const NEBULA_PREVIEW: Texture2D = preload("res://assets/original/planets/blue_giant_hd.webp")
+const EARTH_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_earth.webp")
+const LUNAR_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_lunar.webp")
+const MARS_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_mars.webp")
+const NEBULA_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_nebula.webp")
 
 static func nav_icon(index: int) -> Texture2D:
 	var icons: Array[Texture2D] = [NAV_CONTRACTS, NAV_UPGRADES, NAV_CAREER, NAV_FLEET, NAV_DISCOVERIES]
