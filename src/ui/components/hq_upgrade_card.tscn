@@ -167,9 +167,20 @@ text = "—"
 autowrap_mode = 2
 max_lines_visible = 2
 
-[node name="PurchaseButton" parent="Margin/Layout" instance=ExtResource("2")]
+[node name="PurchaseRow" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CostLabel" type="Label" parent="Margin/Layout/PurchaseRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"RewardValue"
+text = "CUSTO · 0 cr"
+vertical_alignment = 1
+
+[node name="PurchaseButton" parent="Margin/Layout/PurchaseRow" instance=ExtResource("2")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 46)
+layout_mode = 2
 text = "MELHORAR"
