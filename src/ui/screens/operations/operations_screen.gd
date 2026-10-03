@@ -1226,7 +1226,7 @@ func _set_ship_option_page_to_equipped(category: String) -> void:
 		unlocked_index += 1
 	_ship_option_page = 0
 
-func _refresh_ship(rebuild_options: bool = true) -> void:
+func _refresh_ship(rebuild_options: bool = true, changed_category: String = "") -> void:
 	%ShipTitle.text = tr("HQ_SHIP_TITLE")
 	%ShipSubtitle.text = tr("HQ_SHIP_SUBTITLE")
 	%LoadoutTitle.text = tr(_ship_category_title_key(_ship_category))
@@ -1284,31 +1284,44 @@ func _refresh_ship(rebuild_options: bool = true) -> void:
 
 	var active_definition := _progression.get_active_ship_definition()
 	var active_visual := active_definition.get("visual", {}) as Dictionary
-	_apply_composed_ship_preview(
-		ship_preview,
-		{
-			"details": ship_details_preview,
-			"livery": ship_livery_preview,
-			"decal": ship_decal_preview,
-			"canopy": ship_canopy_preview,
-			"emissive": ship_emissive_preview,
-			"body_kit": ship_body_kit_preview,
-		},
-		hull, paint, livery, decal, canopy, body_kit, active_visual
-	)
-	_apply_composed_ship_preview(
-		contract_ship_art,
-		{
-			"details": contract_ship_details_preview,
-			"livery": contract_ship_livery_preview,
-			"decal": contract_ship_decal_preview,
-			"canopy": contract_ship_canopy_preview,
-			"emissive": contract_ship_emissive_preview,
-			"body_kit": contract_ship_body_kit_preview,
-		},
-		hull, paint, livery, decal, canopy, body_kit, active_visual
-	)
-	_refresh_propulsion_preview(engine, trail, active_visual)
+	var fleet_layers := {
+		"details": ship_details_preview,
+		"livery": ship_livery_preview,
+		"decal": ship_decal_preview,
+		"canopy": ship_canopy_preview,
+		"emissive": ship_emissive_preview,
+		"body_kit": ship_body_kit_preview,
+	}
+	var contract_layers := {
+		"details": contract_ship_details_preview,
+		"livery": contract_ship_livery_preview,
+		"decal": contract_ship_decal_preview,
+		"canopy": contract_ship_canopy_preview,
+		"emissive": contract_ship_emissive_preview,
+		"body_kit": contract_ship_body_kit_preview,
+	}
+
+	if changed_category.is_empty() or changed_category == "hull":
+		_apply_composed_ship_preview(
+			ship_preview, fleet_layers,
+			hull, paint, livery, decal, canopy, body_kit, active_visual
+		)
+		_apply_composed_ship_preview(
+			contract_ship_art, contract_layers,
+			hull, paint, livery, decal, canopy, body_kit, active_visual
+		)
+	elif changed_category in ["paint", "livery", "decal", "canopy", "body_kit"]:
+		_apply_incremental_ship_preview(
+			ship_preview, fleet_layers, changed_category,
+			paint, livery, decal, canopy, body_kit, active_visual
+		)
+		_apply_incremental_ship_preview(
+			contract_ship_art, contract_layers, changed_category,
+			paint, livery, decal, canopy, body_kit, active_visual
+		)
+
+	if changed_category.is_empty() or changed_category in ["hull", "engine", "trail"]:
+		_refresh_propulsion_preview(engine, trail, active_visual)
 
 	var ship := _progression.get_ship_modifiers()
 	var recovery_percent := int(round((float(ship["collection_speed_multiplier"]) - 1.0) * 100.0))
@@ -1338,6 +1351,20 @@ func _apply_composed_ship_preview(
 	assert(texture != null, "HQ hull preview texture must load.")
 	base_target.texture = texture
 
+	_apply_ship_preview_paint(base_target, paint, visual)
+
+	_set_ship_preview_layer(layers["details"] as TextureRect, String(visual.get("details_texture", "")))
+	_set_ship_preview_layer(layers["livery"] as TextureRect, String(livery.get("texture", "")))
+	_set_ship_preview_layer(layers["decal"] as TextureRect, String(decal.get("texture", "")))
+	_set_ship_preview_layer(
+		layers["canopy"] as TextureRect,
+		String(canopy.get("texture", "")),
+		Color.from_string(String(canopy.get("color", "#FFFFFF")), Color.WHITE)
+	)
+	_set_ship_preview_layer(layers["emissive"] as TextureRect, String(visual.get("emissive_texture", "")))
+	_set_ship_preview_layer(layers["body_kit"] as TextureRect, String(body_kit.get("texture", "")))
+
+func _apply_ship_preview_paint(base_target: TextureRect, paint: Dictionary, visual: Dictionary) -> void:
 	var preview_material := base_target.material as ShaderMaterial
 	assert(preview_material != null, "Every HQ ship preview requires the paint ShaderMaterial.")
 	preview_material.set_shader_parameter("paint_color", Color.from_string(String(paint["color"]), Color(0.224, 0.714, 0.91, 1.0)))
@@ -1352,16 +1379,32 @@ func _apply_composed_ship_preview(
 		assert(mask != null, "HQ ship paint mask must load: %s" % mask_path)
 		preview_material.set_shader_parameter("paint_mask", mask)
 
-	_set_ship_preview_layer(layers["details"] as TextureRect, String(visual.get("details_texture", "")))
-	_set_ship_preview_layer(layers["livery"] as TextureRect, String(livery.get("texture", "")))
-	_set_ship_preview_layer(layers["decal"] as TextureRect, String(decal.get("texture", "")))
-	_set_ship_preview_layer(
-		layers["canopy"] as TextureRect,
-		String(canopy.get("texture", "")),
-		Color.from_string(String(canopy.get("color", "#FFFFFF")), Color.WHITE)
-	)
-	_set_ship_preview_layer(layers["emissive"] as TextureRect, String(visual.get("emissive_texture", "")))
-	_set_ship_preview_layer(layers["body_kit"] as TextureRect, String(body_kit.get("texture", "")))
+func _apply_incremental_ship_preview(
+	base_target: TextureRect,
+	layers: Dictionary,
+	category: String,
+	paint: Dictionary,
+	livery: Dictionary,
+	decal: Dictionary,
+	canopy: Dictionary,
+	body_kit: Dictionary,
+	visual: Dictionary
+) -> void:
+	match category:
+		"paint":
+			_apply_ship_preview_paint(base_target, paint, visual)
+		"livery":
+			_set_ship_preview_layer(layers["livery"] as TextureRect, String(livery.get("texture", "")))
+		"decal":
+			_set_ship_preview_layer(layers["decal"] as TextureRect, String(decal.get("texture", "")))
+		"canopy":
+			_set_ship_preview_layer(
+				layers["canopy"] as TextureRect,
+				String(canopy.get("texture", "")),
+				Color.from_string(String(canopy.get("color", "#FFFFFF")), Color.WHITE)
+			)
+		"body_kit":
+			_set_ship_preview_layer(layers["body_kit"] as TextureRect, String(body_kit.get("texture", "")))
 
 func _set_ship_preview_layer(target: TextureRect, texture_path: String, tint: Color = Color.WHITE) -> void:
 	target.modulate = tint
@@ -1822,7 +1865,7 @@ func _equip_module(slot: String, slot_index: int, module_id: String) -> void:
 		return
 
 	_refresh_header()
-	_refresh_ship(false)
+	_refresh_ship(false, "modules")
 	if focus_owner != null and is_instance_valid(focus_owner) and focus_owner.is_inside_tree():
 		if _input_service != null and _input_service.prefers_gamepad():
 			focus_owner.call_deferred("grab_focus")
@@ -1856,7 +1899,8 @@ func _equip_cosmetic(category: String, cosmetic_id: String) -> void:
 	if not equipped_ok:
 		return
 
-	_refresh_ship(false)
+	_refresh_header()
+	_refresh_ship(false, category)
 	if focus_owner != null and is_instance_valid(focus_owner) and focus_owner.is_inside_tree():
 		if _input_service != null and _input_service.prefers_gamepad():
 			focus_owner.call_deferred("grab_focus")
