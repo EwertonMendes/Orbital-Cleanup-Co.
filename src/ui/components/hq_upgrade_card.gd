@@ -7,7 +7,8 @@ signal purchase_requested(upgrade_id: String)
 @onready var title_label: Label = %Title
 @onready var description_label: Label = %Description
 @onready var level_label: Label = %Level
-@onready var effect_label: Label = %Effect
+@onready var current_effect_label: Label = %CurrentEffect
+@onready var next_effect_label: Label = %NextEffect
 @onready var level_segments: HBoxContainer = %LevelSegments
 @onready var purchase_button: Button = %PurchaseButton
 
@@ -19,7 +20,8 @@ func _ready() -> void:
 		and title_label != null
 		and description_label != null
 		and level_label != null
-		and effect_label != null
+		and current_effect_label != null
+		and next_effect_label != null
 		and level_segments != null
 		and purchase_button != null,
 		"HqUpgradeCard nodes are required."
@@ -42,7 +44,9 @@ func configure(
 	title_label.text = title
 	description_label.text = description
 	level_label.text = "%d / %d" % [level, max_level]
-	effect_label.text = effect_text
+	var split := effect_text.split("→", false, 1)
+	current_effect_label.text = String(split[0]).strip_edges() if not split.is_empty() else "—"
+	next_effect_label.text = String(split[1]).strip_edges() if split.size() > 1 else tr("HQ_UPGRADE_MAX")
 	_refresh_level_segments(level, max_level)
 
 	var is_maxed := level >= max_level
