@@ -24,6 +24,7 @@ func _ready() -> void:
 		and purchase_button != null,
 		"HqUpgradeCard nodes are required."
 	)
+	GamepadUiNavigation.prepare_button(purchase_button)
 	purchase_button.pressed.connect(_on_purchase_pressed)
 
 func configure(
@@ -45,8 +46,9 @@ func configure(
 	_refresh_level_segments(level, max_level)
 
 	var is_maxed := level >= max_level
-	purchase_button.text = tr("HQ_UPGRADE_MAXED") if is_maxed else tr("HQ_UPGRADE_BUY_FMT") % cost
+	purchase_button.text = tr("HQ_UPGRADE_MAX") if is_maxed else tr("HQ_UPGRADE_COST_FMT") % cost
 	purchase_button.disabled = is_maxed or not affordable
+	purchase_button.tooltip_text = tr("HQ_UPGRADE_NEED_CREDITS") if not is_maxed and not affordable else ""
 
 func get_upgrade_id() -> String:
 	return _upgrade_id

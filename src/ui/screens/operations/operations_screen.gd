@@ -307,7 +307,7 @@ func _setup_tabs() -> void:
 		button.button_group = _tab_group
 		button.icon = HqVisualAssets.nav_icon(index)
 		button.expand_icon = true
-		button.icon_max_width = 24
+		button.add_theme_constant_override("icon_max_width", 24)
 		button.pressed.connect(_show_tab.bind(tab))
 	contracts_tab.button_pressed = true
 
