@@ -58,6 +58,7 @@ var _operations_overlay: Control
 var _travel_in_progress := false
 var _base_hud_theme: Theme
 var _ui_density_key := -1
+var _live_ship_sync_queued := false
 
 func configure(context: Dictionary) -> void:
 	_context = context
@@ -624,13 +625,15 @@ func _play_hud_click() -> void:
 		_audio.play_ui_click()
 
 func _on_progression_state_changed(_snapshot: Dictionary) -> void:
-	# Contract deployments keep their immutable build snapshot. Free Flight is
-	# the service context where Fleet changes are allowed to update the live ship.
-	if _contract_active or _travel_in_progress:
+	# Multiple economy/customization signals can happen inside one UI click
+	# (purchase + equip). Collapse them into one end-of-frame ship sync.
+	if _contract_active or _travel_in_progress or _live_ship_sync_queued:
 		return
+	_live_ship_sync_queued = true
 	call_deferred("_sync_live_ship_build")
 
 func _sync_live_ship_build() -> void:
+	_live_ship_sync_queued = false
 	if _contract_active or _travel_in_progress:
 		return
 	if _progression == null or player_ship == null or not player_ship.is_node_ready():
