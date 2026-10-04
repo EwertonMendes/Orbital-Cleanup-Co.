@@ -18,7 +18,7 @@ const ORBIT_DIVIDER: Texture2D = preload("res://assets/original/ui/hq/orbit_divi
 const TECHNICAL_PATTERN: Texture2D = preload("res://assets/original/ui/hq/technical_pattern.svg")
 
 const EARTH_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_earth.webp")
-const LUNAR_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_lunar.webp")
+const LUNAR_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_lunar_fixed.svg")
 const MARS_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_mars.webp")
 const NEBULA_PREVIEW: Texture2D = preload("res://assets/original/ui/hq/generated/contract_nebula.webp")
 
