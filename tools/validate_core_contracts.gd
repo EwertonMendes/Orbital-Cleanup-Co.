@@ -234,7 +234,7 @@ func _validate_operations_screen() -> void:
 	_expect("HqVisualAssets.nav_icon" in operations_source and "icon_max_width = 34" in operations_source, "Headquarters navigation must use project-owned semantic icons at a stable optical size.")
 	var hq_assets_source := FileAccess.get_file_as_string("res://src/ui/components/hq_visual_assets.gd")
 	_expect("ui/hq/generated/nav_contracts.webp" in hq_assets_source and "ui/hq/generated/meta_cleanup.webp" in hq_assets_source, "Headquarters runtime must use the approved generated navigation and metadata artwork instead of hand-drawn placeholder SVGs.")
-	_expect("ui/hq/generated/contract_earth.webp" in hq_assets_source and "ui/hq/generated/contract_lunar.webp" in hq_assets_source and "ui/hq/generated/contract_mars.webp" in hq_assets_source and "ui/hq/generated/contract_nebula.webp" in hq_assets_source, "Contract briefing previews must use the approved generated HQ illustrations.")
+	_expect("ui/hq/generated/contract_earth.webp" in hq_assets_source and "ui/hq/generated/contract_lunar_fixed.svg" in hq_assets_source and "ui/hq/generated/contract_mars.webp" in hq_assets_source and "ui/hq/generated/contract_nebula.webp" in hq_assets_source, "Contract briefing previews must use the approved generated HQ illustrations.")
 	_expect("ui/hq/generated/fleet_hangar.webp" in hq_assets_source, "Fleet preview must use the approved generated hangar artwork.")
 	_expect("_refresh_contract_list" in operations_source and "HqVisualAssets.contract_preview" in operations_source, "Contracts board must use real destination artwork in its selectable mission list.")
 	_expect('active_category == "hull"' in operations_source and "hull_texture_path" in operations_source, "Fleet model selector must render the real generated ship assets.")
