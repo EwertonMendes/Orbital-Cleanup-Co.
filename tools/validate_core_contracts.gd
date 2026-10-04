@@ -113,7 +113,7 @@ func _validate_responsive_ui() -> void:
 	var flight_source := FileAccess.get_file_as_string("res://src/ui/screens/flight/flight_screen.gd")
 	var hq_visual_source := FileAccess.get_file_as_string("res://src/ui/components/hq_visual_assets.gd")
 	_expect("generated/nav_contracts.webp" in hq_visual_source and "generated/nav_upgrades.webp" in hq_visual_source and "generated/nav_career.webp" in hq_visual_source and "generated/nav_fleet.webp" in hq_visual_source and "generated/nav_discoveries.webp" in hq_visual_source, "Headquarters navigation must use the approved generated icon artwork.")
-	_expect("generated/contract_earth.webp" in hq_visual_source and "generated/contract_lunar.webp" in hq_visual_source and "generated/contract_mars.webp" in hq_visual_source and "generated/contract_nebula.webp" in hq_visual_source, "Launch contract briefings must use the approved generated cinematic previews.")
+	_expect("generated/contract_earth.webp" in hq_visual_source and "generated/contract_lunar_fixed.svg" in hq_visual_source and "generated/contract_mars.webp" in hq_visual_source and "generated/contract_nebula.webp" in hq_visual_source, "Launch contract briefings must use the approved generated cinematic previews.")
 	_expect("generated/fleet_hangar.webp" in hq_visual_source, "Fleet preview must use the approved generated hangar artwork.")
 	_expect("generated/meta_cleanup.webp" in hq_visual_source and "generated/meta_risk.webp" in hq_visual_source and "generated/meta_reward.webp" in hq_visual_source, "Contract metadata must use the approved generated semantic artwork.")
 	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
