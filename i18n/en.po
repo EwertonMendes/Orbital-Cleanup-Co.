@@ -226,22 +226,22 @@ msgid "OPS_CARGO_FMT"
 msgstr "Cargo · %d"
 
 msgid "RANK_TRAINEE"
-msgstr "Trainee"
+msgstr "Entry Operator"
 
 msgid "RANK_JUNIOR_CLEANER"
-msgstr "Junior Cleaner"
+msgstr "Orbital Technician"
 
 msgid "RANK_ORBITAL_CLEANER"
-msgstr "Orbital Cleaner"
+msgstr "Deep Space Operator"
 
 msgid "RANK_SENIOR_CLEANER"
-msgstr "Senior Cleaner"
+msgstr "Debris Specialist"
 
 msgid "RANK_SECTOR_SPECIALIST"
-msgstr "Sector Specialist"
+msgstr "Fleet Coordinator"
 
 msgid "RANK_DEEP_SPACE_OPERATOR"
-msgstr "Deep Space Operator"
+msgstr "Planetary Veteran"
 
 msgid "UPGRADE_TRACTOR_RANGE"
 msgstr "Beam Range"
