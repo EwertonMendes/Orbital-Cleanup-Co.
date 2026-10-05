@@ -1203,33 +1203,34 @@ func _configure_upgrade_focus_graph() -> void:
 func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 	var id := String(definition["id"])
 	var effects := definition.get("effects", {}) as Dictionary
+	var applied_level := maxi(level, 0)
 	match id:
-		"tractor_range":
-			return tr("HQ_UPGRADE_EFFECT_RANGE_FMT") % int(round(
-				float(effects.get("scan_range_add", 0.0)) * float(level)
-			))
-		"collection_speed":
-			return tr("HQ_UPGRADE_EFFECT_SPEED_FMT") % int(round(
-				float(effects.get("collection_speed_multiplier_add", 0.0)) * 100.0 * float(level)
-			))
-		"cargo_capacity":
-			return tr("HQ_UPGRADE_EFFECT_CARGO_FMT") % int(round(
-				float(effects.get("cargo_capacity_add", 0.0)) * float(level)
-			))
-		"pulse_boost":
-			var recharge := float(effects.get("boost_recharge_rate_add", 0.0)) * float(level)
-			var duration := float(effects.get("boost_duration_bonus_add", 0.0)) * float(level)
-			return tr("HQ_UPGRADE_EFFECT_BOOST_FMT") % [
-				int(round(recharge * 100.0)),
-				int(round(duration * 1000.0)),
+		"propulsion_core":
+			return tr("HQ_UPGRADE_EFFECT_PROPULSION_FMT") % [
+				int(round(float(effects.get("max_speed_add", 0.0)) * applied_level)),
+				int(round(float(effects.get("acceleration_add", 0.0)) * applied_level)),
 			]
-		"boost_capacitor":
-			var stored := 1 + int(round(
-				float(effects.get("boost_charge_capacity_add", 0.0)) * float(level)
-			))
-			return tr("HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT") % stored
-	return ""
-
+		"maneuvering_thrusters":
+			return tr("HQ_UPGRADE_EFFECT_MANEUVER_FMT") % [
+				float(effects.get("turn_response_add", 0.0)) * applied_level,
+				absf(float(effects.get("cargo_inertia_factor_add", 0.0)) * 100.0 * applied_level),
+			]
+		"recovery_array":
+			return tr("HQ_UPGRADE_EFFECT_RECOVERY_FMT") % [
+				int(round(float(effects.get("scan_range_add", 0.0)) * applied_level)),
+				int(round(float(effects.get("collection_speed_multiplier_add", 0.0)) * 100.0 * applied_level)),
+			]
+		"cargo_frame":
+			return tr("HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT") % [
+				int(round(float(effects.get("cargo_capacity_add", 0.0)) * applied_level)),
+				absf(float(effects.get("cargo_inertia_factor_add", 0.0)) * 100.0 * applied_level),
+			]
+		"pulse_system":
+			return tr("HQ_UPGRADE_EFFECT_PULSE_FMT") % [
+				int(round(float(effects.get("boost_recharge_rate_add", 0.0)) * 100.0 * applied_level)),
+				int(round(float(effects.get("boost_duration_bonus_add", 0.0)) * 1000.0 * applied_level)),
+			]
+	return tr("HQ_UPGRADE_EFFECT_NONE")
 func _refresh_career() -> void:
 	%CareerTitle.text = tr("HQ_CAREER_TITLE")
 	%CareerSubtitle.text = tr("HQ_CAREER_SUBTITLE")
