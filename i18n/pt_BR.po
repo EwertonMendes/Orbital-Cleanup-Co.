@@ -1352,13 +1352,13 @@ msgid "HQ_UPGRADE_EFFECT_PROPULSION_FMT"
 msgstr "+%d cruzeiro · +%d impulso"
 
 msgid "HQ_UPGRADE_EFFECT_MANEUVERING_FMT"
-msgstr "+%d controle · -%d%% inércia de carga"
+msgstr "+%d%% controle · -%.1f%% inércia de carga"
 
 msgid "HQ_UPGRADE_EFFECT_RECOVERY_FMT"
 msgstr "+%d scanner · +%d%% coleta"
 
 msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
-msgstr "+%d carga · -%d%% inércia de carga"
+msgstr "+%d carga · -%.1f%% inércia de carga"
 
 msgid "HQ_SHIP_TAB_LIVERY"
 msgstr "GRAFISMO"
