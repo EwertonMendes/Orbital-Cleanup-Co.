@@ -39,6 +39,7 @@ const STATUS_RED := preload("res://assets/third_party/kenney_ui_sci_fi/ui/square
 @onready var contract_list: VBoxContainer = %ContractList
 @onready var contracts_board: BoxContainer = %ContractsBoard
 @onready var career_badge: TextureRect = %CareerBadge
+@onready var next_rank_badge: TextureRect = %NextRankBadge
 @onready var ship_body: BoxContainer = %ShipBody
 @onready var primary_action: Button = %PrimaryAction
 @onready var footer: Control = %Footer
@@ -561,7 +562,7 @@ func _apply_responsive_layout() -> void:
 	if discovery_detail_card != null:
 		discovery_detail_card.custom_minimum_size.x = 0.0 if portrait else (310.0 if dense_desktop else 350.0)
 		discovery_detail_card.clip_contents = true
-	%DiscoveryDetailArt.custom_minimum_size = Vector2(184.0, 184.0) if phone else (Vector2(214.0, 214.0) if dense_desktop else Vector2(250.0, 250.0))
+	%DiscoveryDetailArt.custom_minimum_size = Vector2(148.0, 148.0) if phone else (Vector2(176.0, 176.0) if dense_desktop else Vector2(220.0, 220.0))
 	career_badge.custom_minimum_size = Vector2(72.0, 72.0) if phone else (Vector2(92.0, 92.0) if dense_desktop else Vector2(112.0, 112.0))
 	%WorkshopStatus.visible = false
 	%LoadoutCard.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -572,13 +573,13 @@ func _apply_responsive_layout() -> void:
 		ship_preview_card.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 		ship_preview.custom_minimum_size = Vector2(220.0, 138.0)
 	elif dense_desktop:
-		ship_preview_card.custom_minimum_size = Vector2(480.0, 0.0)
+		ship_preview_card.custom_minimum_size = Vector2(440.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(430.0, 300.0)
+		ship_preview.custom_minimum_size = Vector2(390.0, 250.0)
 	else:
-		ship_preview_card.custom_minimum_size = Vector2(560.0, 0.0)
+		ship_preview_card.custom_minimum_size = Vector2(520.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(510.0, 350.0)
+		ship_preview.custom_minimum_size = Vector2(470.0, 300.0)
 
 	var fleet_margin := 8 if phone else (9 if dense_desktop else 12)
 	for margin_name in ["PreviewMargin", "LoadoutMargin"]:
@@ -992,7 +993,7 @@ func _refresh_contract_list() -> void:
 	if _sector_ids.is_empty():
 		return
 
-	var visible_count := 6
+	var visible_count := 5 if ResponsiveUiProfile.viewport_size().y < 920.0 else 6
 	var max_start := maxi(_sector_ids.size() - visible_count, 0)
 	var first := clampi(_selected_sector_index - 2, 0, max_start)
 	var last := mini(first + visible_count, _sector_ids.size())
@@ -1001,7 +1002,7 @@ func _refresh_contract_list() -> void:
 		var sector := _registry.get_sector(sector_id)
 		var button := CHROME_BUTTON_SCENE.instantiate() as OccChromeButton
 		assert(button != null, "Contract list row must use OccChromeButton.")
-		button.custom_minimum_size = Vector2(0, 58)
+		button.custom_minimum_size = Vector2(0, 52 if ResponsiveUiProfile.viewport_size().y < 920.0 else 58)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.emphasis = not _viewing_endless and index == _selected_sector_index
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -1240,31 +1241,41 @@ func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 func _refresh_career() -> void:
 	%CareerTitle.text = tr("HQ_CAREER_TITLE")
 	%CareerSubtitle.text = tr("HQ_CAREER_SUBTITLE")
+	var current_rank := _progression.get_rank_id()
 	career_rank_value.text = tr(_progression.get_rank_display_name_key())
-	career_badge.texture = HqVisualAssets.rank_badge(_progression.get_rank_id())
+	career_badge.texture = HqVisualAssets.rank_badge(current_rank)
 
 	var progress := _progression.get_rank_progress()
 	var current_xp := int(progress["current_xp"])
-	if bool(progress["is_max_rank"]):
-		career_xp_label.text = tr("HQ_XP_MAX_FMT") % current_xp
-		career_xp_bar.value = 100.0
-	else:
-		var current_min := int(progress["current_min_xp"])
-		var next_min := int(progress["next_min_xp"])
-		var span := maxi(next_min - current_min, 1)
-		career_xp_bar.value = clampf(float(current_xp - current_min) / float(span) * 100.0, 0.0, 100.0)
-		career_xp_label.text = tr("HQ_CAREER_PROGRESS_FMT") % [current_xp, next_min]
-
-	for child in career_list.get_children():
-		child.queue_free()
-
 	var ranks := _registry.get_progression("career_ranks").get("ranks", []) as Array
-	var current_rank := _progression.get_rank_id()
 	var current_index := 0
 	for index in range(ranks.size()):
 		if String((ranks[index] as Dictionary)["id"]) == current_rank:
 			current_index = index
 			break
+
+	if bool(progress["is_max_rank"]):
+		career_xp_label.text = tr("HQ_XP_MAX_FMT") % current_xp
+		career_xp_bar.value = 100.0
+		next_unlock_panel.visible = false
+	else:
+		var current_min := int(progress["current_min_xp"])
+		var next_min := int(progress["next_min_xp"])
+		var span := maxi(next_min - current_min, 1)
+		var percent := clampf(float(current_xp - current_min) / float(span) * 100.0, 0.0, 100.0)
+		career_xp_bar.value = percent
+		career_xp_label.text = tr("HQ_CAREER_PROGRESS_FMT") % [current_xp, next_min]
+		next_unlock_panel.visible = true
+		var next_rank := ranks[current_index + 1] as Dictionary
+		next_rank_badge.texture = HqVisualAssets.rank_badge(String(next_rank["id"]))
+		next_unlock_title.text = tr("HQ_NEXT_RANK")
+		next_unlock_label.text = tr(String(next_rank["display_name_key"]))
+		next_unlock_progress.value = percent
+		next_unlock_progress_label.text = "%d / %d XP" % [current_xp, next_min]
+
+	for child in career_list.get_children():
+		child.queue_free()
+
 	for index in range(ranks.size()):
 		var rank := ranks[index] as Dictionary
 		var row := RANK_ROW_SCENE.instantiate() as HqRankRow
