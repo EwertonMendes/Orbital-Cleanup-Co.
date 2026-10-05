@@ -472,6 +472,8 @@ func _apply_responsive_layout() -> void:
 	var profile := ResponsiveUiProfile.current()
 	var phone := ResponsiveUiProfile.is_phone(profile)
 	var compact := ResponsiveUiProfile.is_compact(profile)
+	var short_landscape := not portrait and window_size.y < 920.0
+	var dense_desktop := compact or short_landscape
 
 	var density_key := ResponsiveUiProfile.density_key(profile)
 	if _ui_density_key != density_key:
@@ -494,9 +496,9 @@ func _apply_responsive_layout() -> void:
 	ship_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var navigation_panel := main_row.get_node_or_null("NavigationPanel") as Control
 	if navigation_panel != null:
-		navigation_panel.custom_minimum_size.x = 0.0 if portrait else (188.0 if compact else 236.0)
-	var sidebar_icon_width := 28 if compact else 34
-	var sidebar_height := 54.0 if compact else 68.0
+		navigation_panel.custom_minimum_size.x = 0.0 if portrait else (184.0 if dense_desktop else 220.0)
+	var sidebar_icon_width := 28 if dense_desktop else 32
+	var sidebar_height := 52.0 if dense_desktop else 62.0
 	for sidebar_button in [contracts_tab, upgrades_tab, career_tab, ship_tab, discovery_tab]:
 		(sidebar_button as Button).icon_max_width = sidebar_icon_width
 		(sidebar_button as Button).custom_minimum_size.y = sidebar_height
@@ -506,7 +508,7 @@ func _apply_responsive_layout() -> void:
 	tab_grid.columns = 3 if portrait else 1
 	contract_selector.columns = 2
 	upgrade_grid.columns = 1 if portrait else 2
-	career_list.columns = 2 if portrait else (3 if compact else 6)
+	career_list.columns = 2 if portrait else (3 if window_size.x < 1320.0 else 6)
 	discovery_list.columns = 1 if portrait else 2
 
 	# Fleet is a fixed workspace, not a document. Keep navigation compact so
@@ -547,16 +549,20 @@ func _apply_responsive_layout() -> void:
 
 	%DeskLabel.visible = not phone
 	contract_ship_card.visible = not portrait and not compact
-	%ContractPreviewCard.custom_minimum_size.y = 96.0 if phone else (126.0 if compact else 210.0)
+	%ContractPreviewCard.custom_minimum_size.y = 92.0 if phone else (138.0 if dense_desktop else 190.0)
 	var contract_list_card := contracts_panel.find_child("ContractListCard", true, false) as Control
 	if contract_list_card != null:
-		contract_list_card.custom_minimum_size.x = 0.0 if portrait else (260.0 if compact else 340.0)
-	contract_ship_card.custom_minimum_size.x = 0.0 if portrait or compact else 310.0
+		contract_list_card.custom_minimum_size.x = 0.0 if portrait else (286.0 if dense_desktop else 320.0)
+	contract_ship_card.custom_minimum_size.x = 0.0 if portrait or compact else (260.0 if short_landscape else 290.0)
+	var contract_ship_art := contracts_panel.find_child("ShipArt", true, false) as Control
+	if contract_ship_art != null:
+		contract_ship_art.custom_minimum_size = Vector2(178.0, 182.0) if dense_desktop else Vector2(220.0, 228.0)
 	var discovery_detail_card := discovery_panel.find_child("DiscoveryDetailCard", true, false) as Control
 	if discovery_detail_card != null:
-		discovery_detail_card.custom_minimum_size.x = 0.0 if portrait else (280.0 if compact else 420.0)
-	%DiscoveryDetailArt.custom_minimum_size = Vector2(190.0, 190.0) if compact else Vector2(300.0, 300.0)
-	career_badge.custom_minimum_size = Vector2(72.0, 72.0) if phone else (Vector2(88.0, 88.0) if compact else Vector2(112.0, 112.0))
+		discovery_detail_card.custom_minimum_size.x = 0.0 if portrait else (310.0 if dense_desktop else 350.0)
+		discovery_detail_card.clip_contents = true
+	%DiscoveryDetailArt.custom_minimum_size = Vector2(184.0, 184.0) if phone else (Vector2(214.0, 214.0) if dense_desktop else Vector2(250.0, 250.0))
+	career_badge.custom_minimum_size = Vector2(72.0, 72.0) if phone else (Vector2(92.0, 92.0) if dense_desktop else Vector2(112.0, 112.0))
 	%WorkshopStatus.visible = false
 	%LoadoutCard.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	%LoadoutLayout.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -565,16 +571,16 @@ func _apply_responsive_layout() -> void:
 		ship_preview_card.custom_minimum_size = Vector2(0.0, 176.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 		ship_preview.custom_minimum_size = Vector2(220.0, 138.0)
-	elif compact:
-		ship_preview_card.custom_minimum_size = Vector2(310.0, 0.0)
+	elif dense_desktop:
+		ship_preview_card.custom_minimum_size = Vector2(480.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(270.0, 220.0)
+		ship_preview.custom_minimum_size = Vector2(430.0, 300.0)
 	else:
-		ship_preview_card.custom_minimum_size = Vector2(680.0, 0.0)
+		ship_preview_card.custom_minimum_size = Vector2(560.0, 0.0)
 		ship_preview_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		ship_preview.custom_minimum_size = Vector2(620.0, 430.0)
+		ship_preview.custom_minimum_size = Vector2(510.0, 350.0)
 
-	var fleet_margin := 8 if phone else (10 if compact else 12)
+	var fleet_margin := 8 if phone else (9 if dense_desktop else 12)
 	for margin_name in ["PreviewMargin", "LoadoutMargin"]:
 		var fleet_margin_container := ship_panel.find_child(margin_name, true, false) as MarginContainer
 		if fleet_margin_container != null:
@@ -586,15 +592,15 @@ func _apply_responsive_layout() -> void:
 	content_shell.custom_minimum_size.y = 0.0
 	content_shell.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
-	var horizontal_margin := 10 if phone else (12 if compact else 14)
-	var vertical_margin := 8 if phone else (10 if compact else 12)
+	var horizontal_margin := 10 if phone else (10 if dense_desktop else 14)
+	var vertical_margin := 8 if phone else (8 if dense_desktop else 12)
 	safe_area.add_theme_constant_override("margin_left", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_right", horizontal_margin)
 	safe_area.add_theme_constant_override("margin_top", vertical_margin)
 	safe_area.add_theme_constant_override("margin_bottom", vertical_margin)
 
-	var available_width := maxf(size.x - (12.0 if compact else 20.0), 320.0)
-	var available_height := maxf(size.y - (12.0 if compact else 16.0), 300.0)
+	var available_width := maxf(size.x - (10.0 if dense_desktop else 20.0), 320.0)
+	var available_height := maxf(size.y - (10.0 if dense_desktop else 16.0), 300.0)
 	var desktop_width := minf(1880.0, available_width)
 	var desktop_height := minf(1000.0, available_height)
 	floating_surface.custom_minimum_size = Vector2(
