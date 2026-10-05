@@ -4,8 +4,9 @@
 [ext_resource type="PackedScene" path="res://src/ui/components/occ_chrome_button.tscn" id="2"]
 
 [node name="HqUpgradeCard" type="PanelContainer"]
-custom_minimum_size = Vector2(250, 168)
+custom_minimum_size = Vector2(330, 226)
 size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_type_variation = &"CardPanel"
 script = ExtResource("1")
 
@@ -18,45 +19,170 @@ theme_override_constants/margin_bottom = 10
 
 [node name="Layout" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 7
+
+[node name="ContentRow" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="ArtWell" type="PanelContainer" parent="Margin/Layout/ContentRow"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+theme_type_variation = &"ElevatedPanel"
+
+[node name="Art" type="TextureRect" parent="Margin/Layout/ContentRow/ArtWell"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Copy" type="VBoxContainer" parent="Margin/Layout/ContentRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 5
 
-[node name="Top" type="HBoxContainer" parent="Margin/Layout"]
+[node name="Top" type="HBoxContainer" parent="Margin/Layout/ContentRow/Copy"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
-[node name="Title" type="Label" parent="Margin/Layout/Top"]
+[node name="Title" type="Label" parent="Margin/Layout/ContentRow/Copy/Top"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"SectionTitle"
 text = "UPGRADE"
+autowrap_mode = 2
+max_lines_visible = 2
+text_overrun_behavior = 3
 
-[node name="Level" type="Label" parent="Margin/Layout/Top"]
+[node name="Level" type="Label" parent="Margin/Layout/ContentRow/Copy/Top"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(54, 0)
 layout_mode = 2
 theme_type_variation = &"ValueLabel"
-text = "0 / 4"
+text = "0 / 5"
+horizontal_alignment = 2
 
-[node name="Description" type="Label" parent="Margin/Layout"]
+[node name="Description" type="Label" parent="Margin/Layout/ContentRow/Copy"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"UiBodyMuted"
 text = "Description"
 autowrap_mode = 2
-max_lines_visible = 2
+max_lines_visible = 3
 text_overrun_behavior = 3
 
-[node name="Effect" type="Label" parent="Margin/Layout"]
+[node name="LevelSegments" type="HBoxContainer" parent="Margin/Layout/ContentRow/Copy"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 9)
 layout_mode = 2
-theme_type_variation = &"TelemetryLabel"
-text = "Effect"
+theme_override_constants/separation = 5
 
-[node name="PurchaseButton" parent="Margin/Layout" instance=ExtResource("2")]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
+[node name="Segment1" type="ColorRect" parent="Margin/Layout/ContentRow/Copy/LevelSegments"]
+custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "BUY"
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Segment2" type="ColorRect" parent="Margin/Layout/ContentRow/Copy/LevelSegments"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Segment3" type="ColorRect" parent="Margin/Layout/ContentRow/Copy/LevelSegments"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Segment4" type="ColorRect" parent="Margin/Layout/ContentRow/Copy/LevelSegments"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Segment5" type="ColorRect" parent="Margin/Layout/ContentRow/Copy/LevelSegments"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+color = Color(0.20, 0.29, 0.34, 0.72)
+
+[node name="Effects" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Current" type="VBoxContainer" parent="Margin/Layout/Effects"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+
+[node name="CurrentLabel" type="Label" parent="Margin/Layout/Effects/Current"]
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "BÔNUS ATUAL"
+
+[node name="CurrentEffect" type="Label" parent="Margin/Layout/Effects/Current"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_type_variation = &"ValueLabel"
+text = "—"
+autowrap_mode = 2
+max_lines_visible = 2
+
+[node name="Next" type="VBoxContainer" parent="Margin/Layout/Effects"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+
+[node name="NextLabel" type="Label" parent="Margin/Layout/Effects/Next"]
+layout_mode = 2
+theme_type_variation = &"TelemetryLabel"
+text = "PRÓXIMO NÍVEL"
+
+[node name="NextEffect" type="Label" parent="Margin/Layout/Effects/Next"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_type_variation = &"SuccessValue"
+text = "—"
+autowrap_mode = 2
+max_lines_visible = 2
+
+[node name="PurchaseRow" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CostLabel" type="Label" parent="Margin/Layout/PurchaseRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"RewardValue"
+text = "CUSTO · 0 cr"
+vertical_alignment = 1
+
+[node name="PurchaseButton" parent="Margin/Layout/PurchaseRow" instance=ExtResource("2")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 46)
+layout_mode = 2
+text = "MELHORAR"

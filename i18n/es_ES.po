@@ -226,22 +226,22 @@ msgid "OPS_CARGO_FMT"
 msgstr "Carga · %d"
 
 msgid "RANK_TRAINEE"
-msgstr "Aprendiz"
+msgstr "Operador Inicial"
 
 msgid "RANK_JUNIOR_CLEANER"
-msgstr "Limpiador Júnior"
+msgstr "Técnico Orbital"
 
 msgid "RANK_ORBITAL_CLEANER"
-msgstr "Limpiador Orbital"
+msgstr "Operador de Espacio Profundo"
 
 msgid "RANK_SENIOR_CLEANER"
-msgstr "Limpiador Sénior"
+msgstr "Especialista en Desechos"
 
 msgid "RANK_SECTOR_SPECIALIST"
-msgstr "Especialista de Sector"
+msgstr "Coordinador de Flota"
 
 msgid "RANK_DEEP_SPACE_OPERATOR"
-msgstr "Operador de Espacio Profundo"
+msgstr "Veterano Planetario"
 
 msgid "UPGRADE_TRACTOR_RANGE"
 msgstr "Alcance del Haz"
@@ -355,6 +355,9 @@ msgstr "Recarga del boost +%d%% · impulso +%d ms"
 
 msgid "HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT"
 msgstr "Capacidad de boosts almacenados · %d"
+msgid "HQ_NEXT_RANK"
+msgstr "SIGUIENTE RANGO"
+
 msgid "HQ_CAREER_TITLE"
 msgstr "CARRERA"
 
@@ -377,7 +380,7 @@ msgid "HQ_RANK_LOCKED"
 msgstr "BLOQUEADO"
 
 msgid "HQ_SHIP_TITLE"
-msgstr "FLOTA"
+msgstr "HANGAR DE FLOTA"
 
 msgid "HQ_SHIP_SUBTITLE"
 msgstr "Elige, mejora y personaliza la nave de limpieza activa."
@@ -1358,13 +1361,13 @@ msgid "HQ_UPGRADE_EFFECT_PROPULSION_FMT"
 msgstr "+%d crucero · +%d empuje"
 
 msgid "HQ_UPGRADE_EFFECT_MANEUVERING_FMT"
-msgstr "+%d control · -%d%% inercia de carga"
+msgstr "+%d%% control · -%.1f%% inercia de carga"
 
 msgid "HQ_UPGRADE_EFFECT_RECOVERY_FMT"
 msgstr "+%d escáner · +%d%% recuperación"
 
 msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
-msgstr "+%d carga · -%d%% inercia de carga"
+msgstr "+%d carga · -%.1f%% inercia de carga"
 
 msgid "HQ_SHIP_TAB_LIVERY"
 msgstr "LIBREA"
@@ -1761,3 +1764,12 @@ msgstr "Bobina de Vórtice"
 
 msgid "COSMETIC_ENGINE_VECTOR_CASCADE"
 msgstr "Cascada Vectorial"
+
+msgid "HQ_DISCOVERY_DETAIL_DATA_FMT"
+msgstr "Masa %.1f · Carga %d unidad(es)"
+
+msgid "HQ_UPGRADE_COST_VALUE_FMT"
+msgstr "COSTE · %d cr"
+
+msgid "HQ_UPGRADE_ACTION"
+msgstr "MEJORAR"

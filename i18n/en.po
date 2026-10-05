@@ -226,22 +226,22 @@ msgid "OPS_CARGO_FMT"
 msgstr "Cargo · %d"
 
 msgid "RANK_TRAINEE"
-msgstr "Trainee"
+msgstr "Entry Operator"
 
 msgid "RANK_JUNIOR_CLEANER"
-msgstr "Junior Cleaner"
+msgstr "Orbital Technician"
 
 msgid "RANK_ORBITAL_CLEANER"
-msgstr "Orbital Cleaner"
+msgstr "Deep Space Operator"
 
 msgid "RANK_SENIOR_CLEANER"
-msgstr "Senior Cleaner"
+msgstr "Debris Specialist"
 
 msgid "RANK_SECTOR_SPECIALIST"
-msgstr "Sector Specialist"
+msgstr "Fleet Coordinator"
 
 msgid "RANK_DEEP_SPACE_OPERATOR"
-msgstr "Deep Space Operator"
+msgstr "Planetary Veteran"
 
 msgid "UPGRADE_TRACTOR_RANGE"
 msgstr "Beam Range"
@@ -355,6 +355,9 @@ msgstr "Boost recharge +%d%% · pulse +%d ms"
 
 msgid "HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT"
 msgstr "Stored boost capacity · %d"
+msgid "HQ_NEXT_RANK"
+msgstr "NEXT RANK"
+
 msgid "HQ_CAREER_TITLE"
 msgstr "CAREER"
 
@@ -377,7 +380,7 @@ msgid "HQ_RANK_LOCKED"
 msgstr "LOCKED"
 
 msgid "HQ_SHIP_TITLE"
-msgstr "FLEET"
+msgstr "FLEET HANGAR"
 
 msgid "HQ_SHIP_SUBTITLE"
 msgstr "Choose, improve and personalize the active cleanup craft."
@@ -1358,13 +1361,13 @@ msgid "HQ_UPGRADE_EFFECT_PROPULSION_FMT"
 msgstr "+%d cruise · +%d thrust"
 
 msgid "HQ_UPGRADE_EFFECT_MANEUVERING_FMT"
-msgstr "+%d handling · -%d%% cargo inertia"
+msgstr "+%d%% handling · -%.1f%% cargo inertia"
 
 msgid "HQ_UPGRADE_EFFECT_RECOVERY_FMT"
 msgstr "+%d scan · +%d%% recovery"
 
 msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
-msgstr "+%d cargo · -%d%% cargo inertia"
+msgstr "+%d cargo · -%.1f%% cargo inertia"
 
 msgid "HQ_SHIP_TAB_LIVERY"
 msgstr "LIVERY"
@@ -1761,3 +1764,12 @@ msgstr "Vortex Coil"
 
 msgid "COSMETIC_ENGINE_VECTOR_CASCADE"
 msgstr "Vector Cascade"
+
+msgid "HQ_DISCOVERY_DETAIL_DATA_FMT"
+msgstr "Mass %.1f · Cargo %d unit(s)"
+
+msgid "HQ_UPGRADE_COST_VALUE_FMT"
+msgstr "COST · %d cr"
+
+msgid "HQ_UPGRADE_ACTION"
+msgstr "UPGRADE"
