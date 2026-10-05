@@ -1361,13 +1361,13 @@ msgid "HQ_UPGRADE_EFFECT_PROPULSION_FMT"
 msgstr "+%d cruise · +%d thrust"
 
 msgid "HQ_UPGRADE_EFFECT_MANEUVERING_FMT"
-msgstr "+%d handling · -%d%% cargo inertia"
+msgstr "+%d%% handling · -%.1f%% cargo inertia"
 
 msgid "HQ_UPGRADE_EFFECT_RECOVERY_FMT"
 msgstr "+%d scan · +%d%% recovery"
 
 msgid "HQ_UPGRADE_EFFECT_CARGO_FRAME_FMT"
-msgstr "+%d cargo · -%d%% cargo inertia"
+msgstr "+%d cargo · -%.1f%% cargo inertia"
 
 msgid "HQ_SHIP_TAB_LIVERY"
 msgstr "LIVERY"
