@@ -1218,8 +1218,8 @@ func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 				int(round(float(effects.get("acceleration_add", 0.0)) * applied_level)),
 			]
 		"maneuvering_thrusters":
-			return tr("HQ_UPGRADE_EFFECT_MANEUVER_FMT") % [
-				float(effects.get("turn_response_add", 0.0)) * applied_level,
+			return tr("HQ_UPGRADE_EFFECT_MANEUVERING_FMT") % [
+				int(round(float(effects.get("turn_response_add", 0.0)) * 100.0 * applied_level)),
 				absf(float(effects.get("cargo_inertia_factor_add", 0.0)) * 100.0 * applied_level),
 			]
 		"recovery_array":
@@ -1233,11 +1233,11 @@ func _upgrade_effect_text(definition: Dictionary, level: int) -> String:
 				absf(float(effects.get("cargo_inertia_factor_add", 0.0)) * 100.0 * applied_level),
 			]
 		"pulse_system":
-			return tr("HQ_UPGRADE_EFFECT_PULSE_FMT") % [
+			return tr("HQ_UPGRADE_EFFECT_BOOST_FMT") % [
 				int(round(float(effects.get("boost_recharge_rate_add", 0.0)) * 100.0 * applied_level)),
 				int(round(float(effects.get("boost_duration_bonus_add", 0.0)) * 1000.0 * applied_level)),
 			]
-	return tr("HQ_UPGRADE_EFFECT_NONE")
+	return "—"
 func _refresh_career() -> void:
 	%CareerTitle.text = tr("HQ_CAREER_TITLE")
 	%CareerSubtitle.text = tr("HQ_CAREER_SUBTITLE")
