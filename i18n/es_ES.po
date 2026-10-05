@@ -355,6 +355,9 @@ msgstr "Recarga del boost +%d%% · impulso +%d ms"
 
 msgid "HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT"
 msgstr "Capacidad de boosts almacenados · %d"
+msgid "HQ_NEXT_RANK"
+msgstr "SIGUIENTE RANGO"
+
 msgid "HQ_CAREER_TITLE"
 msgstr "CARRERA"
 
