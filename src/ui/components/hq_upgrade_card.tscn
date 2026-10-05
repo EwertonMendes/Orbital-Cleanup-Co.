@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://src/ui/components/occ_chrome_button.tscn" id="2"]
 
 [node name="HqUpgradeCard" type="PanelContainer"]
-custom_minimum_size = Vector2(330, 216)
+custom_minimum_size = Vector2(330, 226)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_type_variation = &"CardPanel"
@@ -143,6 +143,7 @@ text = "BÔNUS ATUAL"
 
 [node name="CurrentEffect" type="Label" parent="Margin/Layout/Effects/Current"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 theme_type_variation = &"ValueLabel"
 text = "—"
@@ -161,6 +162,7 @@ text = "PRÓXIMO NÍVEL"
 
 [node name="NextEffect" type="Label" parent="Margin/Layout/Effects/Next"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 theme_type_variation = &"SuccessValue"
 text = "—"
