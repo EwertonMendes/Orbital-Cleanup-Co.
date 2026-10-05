@@ -13,7 +13,7 @@ const META_REWARD: Texture2D = preload("res://assets/original/ui/hq/generated/me
 const META_LOCATION: Texture2D = preload("res://assets/original/ui/hq/generated/meta_location.webp")
 const META_COMPLETE: Texture2D = preload("res://assets/original/ui/hq/generated/meta_complete.webp")
 
-const FLEET_BAY: Texture2D = preload("res://assets/original/ui/hq/generated/fleet_hangar.webp")
+const FLEET_BAY: Texture2D = preload("res://assets/original/ui/hq/generated/fleet_hangar_hq.webp")
 const ORBIT_DIVIDER: Texture2D = preload("res://assets/original/ui/hq/orbit_divider.svg")
 const TECHNICAL_PATTERN: Texture2D = preload("res://assets/original/ui/hq/technical_pattern.svg")
 
@@ -28,32 +28,32 @@ static func nav_icon(index: int) -> Texture2D:
 
 static func upgrade_art(upgrade_id: String) -> Texture2D:
 	match upgrade_id:
-		"tractor_range":
-			return preload("res://assets/original/ui/hq/upgrade_recovery.svg")
-		"collection_speed":
-			return preload("res://assets/original/ui/hq/upgrade_maneuver.svg")
-		"cargo_capacity":
-			return preload("res://assets/original/ui/hq/upgrade_cargo.svg")
-		"pulse_boost":
+		"propulsion_core":
 			return preload("res://assets/original/ui/hq/upgrade_propulsion.svg")
-		"boost_capacitor":
-			return preload("res://assets/original/salvage/orbital_battery_hd.webp")
-	return preload("res://assets/original/salvage/navigation_core_hd.webp")
+		"maneuvering_thrusters":
+			return preload("res://assets/original/ui/hq/upgrade_maneuver.svg")
+		"recovery_array":
+			return preload("res://assets/original/ui/hq/upgrade_recovery.svg")
+		"cargo_frame":
+			return preload("res://assets/original/ui/hq/upgrade_cargo.svg")
+		"pulse_system":
+			return preload("res://assets/original/ui/hq/upgrade_energy.svg")
+	return preload("res://assets/original/ui/hq/upgrade_recovery.svg")
 
 static func rank_badge(rank_id: String) -> Texture2D:
 	match rank_id:
 		"trainee":
-			return preload("res://assets/original/ui/hq/rank_trainee.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_trainee.webp")
 		"junior_cleaner":
-			return preload("res://assets/original/ui/hq/rank_junior_cleaner.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_junior_cleaner.webp")
 		"orbital_cleaner":
-			return preload("res://assets/original/ui/hq/rank_orbital_cleaner.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_orbital_cleaner.webp")
 		"senior_cleaner":
-			return preload("res://assets/original/ui/hq/rank_senior_cleaner.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_senior_cleaner.webp")
 		"sector_specialist":
-			return preload("res://assets/original/ui/hq/rank_sector_specialist.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_sector_specialist.webp")
 		_:
-			return preload("res://assets/original/ui/hq/rank_deep_space_operator.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_deep_space_operator.webp")
 
 static func contract_preview(sector_id: String) -> Texture2D:
 	if sector_id.begins_with("earth_"):
