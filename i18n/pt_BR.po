@@ -225,23 +225,17 @@ msgstr "Feixe · %d"
 msgid "OPS_CARGO_FMT"
 msgstr "Carga · %d"
 
-msgid "RANK_TRAINEE"
-msgstr "Operador Iniciante"
+msgid "RANK_TRAINEE"\nmsgstr "Operador Iniciante"
 
-msgid "RANK_JUNIOR_CLEANER"
-msgstr "Técnico Orbital"
+msgid "RANK_JUNIOR_CLEANER"\nmsgstr "Técnico Orbital"
 
-msgid "RANK_ORBITAL_CLEANER"
-msgstr "Operador de Espaço Profundo"
+msgid "RANK_ORBITAL_CLEANER"\nmsgstr "Operador de Espaço Profundo"
 
-msgid "RANK_SENIOR_CLEANER"
-msgstr "Especialista de Detritos"
+msgid "RANK_SENIOR_CLEANER"\nmsgstr "Especialista de Detritos"
 
-msgid "RANK_SECTOR_SPECIALIST"
-msgstr "Coordenador de Frota"
+msgid "RANK_SECTOR_SPECIALIST"\nmsgstr "Coordenador de Frota"
 
-msgid "RANK_DEEP_SPACE_OPERATOR"
-msgstr "Veterano Planetário"
+msgid "RANK_DEEP_SPACE_OPERATOR"\nmsgstr "Veterano Planetário"
 
 msgid "UPGRADE_TRACTOR_RANGE"
 msgstr "Alcance do Feixe"
@@ -1770,3 +1764,4 @@ msgstr "CUSTO · %d cr"
 
 msgid "HQ_UPGRADE_ACTION"
 msgstr "MELHORAR"
+\nmsgid "HQ_NEXT_RANK"\nmsgstr "PRÓXIMO RANK"\n
