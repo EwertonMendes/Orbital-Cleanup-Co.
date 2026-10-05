@@ -114,7 +114,7 @@ func _validate_responsive_ui() -> void:
 	var hq_visual_source := FileAccess.get_file_as_string("res://src/ui/components/hq_visual_assets.gd")
 	_expect("generated/nav_contracts.webp" in hq_visual_source and "generated/nav_upgrades.webp" in hq_visual_source and "generated/nav_career.webp" in hq_visual_source and "generated/nav_fleet.webp" in hq_visual_source and "generated/nav_discoveries.webp" in hq_visual_source, "Headquarters navigation must use the approved generated icon artwork.")
 	_expect("generated/contract_earth.webp" in hq_visual_source and "generated/contract_lunar_fixed.svg" in hq_visual_source and "generated/contract_mars.webp" in hq_visual_source and "generated/contract_nebula.webp" in hq_visual_source, "Launch contract briefings must use the approved generated cinematic previews.")
-	_expect("generated/fleet_hangar.webp" in hq_visual_source, "Fleet preview must use the approved generated hangar artwork.")
+	_expect("generated/fleet_hangar_hq.svg" in hq_visual_source, "Fleet preview must use the approved generated hangar artwork.")
 	_expect("generated/meta_cleanup.webp" in hq_visual_source and "generated/meta_risk.webp" in hq_visual_source and "generated/meta_reward.webp" in hq_visual_source, "Contract metadata must use the approved generated semantic artwork.")
 	var operations_source := FileAccess.get_file_as_string("res://src/ui/screens/operations/operations_screen.gd")
 	var gamepad_navigation_source := FileAccess.get_file_as_string("res://src/ui/navigation/gamepad_ui_navigation.gd")
@@ -235,7 +235,7 @@ func _validate_operations_screen() -> void:
 	var hq_assets_source := FileAccess.get_file_as_string("res://src/ui/components/hq_visual_assets.gd")
 	_expect("ui/hq/generated/nav_contracts.webp" in hq_assets_source and "ui/hq/generated/meta_cleanup.webp" in hq_assets_source, "Headquarters runtime must use the approved generated navigation and metadata artwork instead of hand-drawn placeholder SVGs.")
 	_expect("ui/hq/generated/contract_earth.webp" in hq_assets_source and "ui/hq/generated/contract_lunar_fixed.svg" in hq_assets_source and "ui/hq/generated/contract_mars.webp" in hq_assets_source and "ui/hq/generated/contract_nebula.webp" in hq_assets_source, "Contract briefing previews must use the approved generated HQ illustrations.")
-	_expect("ui/hq/generated/fleet_hangar.webp" in hq_assets_source, "Fleet preview must use the approved generated hangar artwork.")
+	_expect("ui/hq/generated/fleet_hangar_hq.svg" in hq_assets_source, "Fleet preview must use the approved generated hangar artwork.")
 	_expect("_refresh_contract_list" in operations_source and "HqVisualAssets.contract_preview" in operations_source, "Contracts board must use real destination artwork in its selectable mission list.")
 	_expect('active_category == "hull"' in operations_source and "hull_texture_path" in operations_source, "Fleet model selector must render the real generated ship assets.")
 	_expect("_refresh_discovery_detail" in operations_source, "Discovery catalog must populate the fixed detail pane from the selected page.")
@@ -283,9 +283,9 @@ func _validate_operations_screen() -> void:
 
 	_expect("theme_override_constants/separation = 4" in operations_scene_source and "UpgradePagerSpacer" in operations_scene_source, "Upgrades page must reserve enough vertical room to keep pagination fully inside the fixed stage.")
 	var upgrade_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_upgrade_card.tscn")
-	_expect("Vector2(330, 216)" in upgrade_card_scene_source and "CurrentEffect" in upgrade_card_scene_source and "NextEffect" in upgrade_card_scene_source, "Upgrade cards must use the large illustrated current-vs-next mockup layout.")
+	_expect("Vector2(330, 226)" in upgrade_card_scene_source and "CurrentEffect" in upgrade_card_scene_source and "NextEffect" in upgrade_card_scene_source, "Upgrade cards must use the large illustrated current-vs-next mockup layout.")
 	var discovery_card_scene_source := FileAccess.get_file_as_string("res://src/ui/components/hq_discovery_card.tscn")
-	_expect("Vector2(286, 132)" in discovery_card_scene_source and "Vector2(102, 102)" in discovery_card_scene_source and "DiscoveryDetailCard" in operations_scene_source, "Discovery catalog must pair compact cards with a dedicated detail pane.")
+	_expect("Vector2(270, 124)" in discovery_card_scene_source and "Vector2(92, 92)" in discovery_card_scene_source and "DiscoveryDetailCard" in operations_scene_source, "Discovery catalog must pair compact cards with a dedicated detail pane.")
 
 	var paint_shader_source := FileAccess.get_file_as_string("res://src/game/customization/ship_paint.gdshader")
 	_expect("protected_non_hull_factor" in paint_shader_source and "hull_material" in paint_shader_source, "Fleet painting must protect canopy glass and emissive cyan materials even if an RGB mask contains stray pixels.")
@@ -1009,7 +1009,7 @@ func _validate_progression_service() -> void:
 
 	var first_unlock := progression.get_next_content_unlock()
 	_expect(String(first_unlock["sector_id"]) == "earth_orbit_03", "First career unlock must remain Earth Orbit 03.")
-	_expect(int(first_unlock["min_xp"]) == 300, "Junior Cleaner unlock threshold must match balanced career pacing.")
+	_expect(int(first_unlock["min_xp"]) == 500, "Junior Cleaner unlock threshold must match balanced career pacing.")
 
 	var base_ship := progression.get_ship_modifiers()
 	_expect(is_equal_approx(float(base_ship["max_speed"]), 300.0), "Pioneer cruise speed must come from ship content.")
@@ -1070,7 +1070,7 @@ func _validate_progression_service() -> void:
 		"sector_id": "qa_sector",
 		"perfect_cleanup": false,
 		"credits_awarded": 500,
-		"xp_awarded": 450,
+		"xp_awarded": 500,
 	})
 	_expect(int(payout_transition["credits_before"]) == 0, "Debrief transition must preserve pre-payout Credits.")
 	_expect(int(payout_transition["credits_after"]) == 500, "Debrief transition must preserve post-payout Credits.")
