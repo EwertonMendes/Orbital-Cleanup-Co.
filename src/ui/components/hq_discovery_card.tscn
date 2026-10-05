@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://src/ui/components/hq_discovery_card.gd" id="1"]
 
 [node name="HqDiscoveryCard" type="PanelContainer"]
-custom_minimum_size = Vector2(286, 132)
+custom_minimum_size = Vector2(270, 124)
 size_flags_horizontal = 3
 theme_type_variation = &"CardPanel"
 script = ExtResource("1")
@@ -21,7 +21,7 @@ theme_override_constants/separation = 12
 
 [node name="ArtWell" type="PanelContainer" parent="Margin/Row"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(102, 102)
+custom_minimum_size = Vector2(92, 92)
 layout_mode = 2
 theme_type_variation = &"ElevatedPanel"
 
