@@ -288,6 +288,7 @@ theme_override_constants/separation = 10
 
 [node name="ContractsTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsHeading"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"ScreenTitle"
@@ -301,6 +302,7 @@ theme_type_variation = &"TelemetryLabel"
 
 [node name="ContractsSubtitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
@@ -314,7 +316,7 @@ theme_override_constants/separation = 10
 vertical = false
 
 [node name="ContractListCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard"]
-custom_minimum_size = Vector2(340, 0)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"CardPanel"
@@ -502,8 +504,10 @@ stretch_mode = 5
 [node name="ContractPayout" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard/ContractHero/ContractInfoCard/ContractInfoMargin/ContractInfo/ContractMeta"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"ValueLabel"
-autowrap_mode = 2
+autowrap_mode = 0
+text_overrun_behavior = 3
 
 [node name="ContractRequirement" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard/ContractHero/ContractInfoCard/ContractInfoMargin/ContractInfo"]
 unique_name_in_owner = true
@@ -520,7 +524,7 @@ autowrap_mode = 2
 
 [node name="ContractShipCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard/ContractHero"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(310, 0)
+custom_minimum_size = Vector2(270, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"CardPanel"
@@ -550,7 +554,7 @@ horizontal_alignment = 1
 
 [node name="ShipArt" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ContractsPanel/ContractsBoard/ContractHero/ContractShipCard/ShipCardMargin/ShipCardLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 250)
+custom_minimum_size = Vector2(210, 218)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -653,12 +657,14 @@ theme_override_constants/separation = 4
 
 [node name="UpgradesTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/UpgradesPanel"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_type_variation = &"ScreenTitle"
 text = "UPGRADES"
 
 [node name="UpgradesSubtitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/UpgradesPanel"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
@@ -667,6 +673,7 @@ autowrap_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 3
@@ -722,12 +729,14 @@ theme_override_constants/separation = 8
 
 [node name="CareerTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/CareerPanel"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 theme_type_variation = &"ScreenTitle"
 text = "CARREIRA"
 
 [node name="CareerSubtitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/CareerPanel"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 22)
 layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
@@ -825,6 +834,15 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 7
 
+[node name="NextRankBadge" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/CareerPanel/CareerSummaryCard/CareerSummaryMargin/CareerSummary/NextUnlockPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
 [node name="NextUnlockTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/CareerPanel/CareerSummaryCard/CareerSummaryMargin/CareerSummary/NextUnlockPanel"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -864,14 +882,12 @@ theme_override_constants/separation = 8
 
 [node name="ShipTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 theme_type_variation = &"ScreenTitle"
 text = "SHIP"
 
 [node name="ShipSubtitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 theme_type_variation = &"UiBodyMuted"
 autowrap_mode = 2
@@ -1000,7 +1016,7 @@ horizontal_alignment = 1
 
 [node name="ShipPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(205, 160)
+custom_minimum_size = Vector2(360, 250)
 layout_mode = 2
 texture = ExtResource("4")
 material = SubResource("ShipPaintPreviewMaterial")
@@ -1023,7 +1039,7 @@ grow_vertical = 2
 mouse_filter = 2
 expand_mode = 1
 stretch_mode = 6
-self_modulate = Color(1, 1, 1, 0.96)
+self_modulate = Color(1, 1, 1, 1)
 
 [node name="ShipDetailsPreview" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/ShipPanel/ShipBody/ShipPreviewCard/PreviewMargin/PreviewLayout/ShipPreview"]
 unique_name_in_owner = true
@@ -1373,12 +1389,13 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 7
 
-[node name="DiscoveryHeader" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
+[node name="DiscoveryHeader" type="VBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
 [node name="DiscoveryTitle" type="Label" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryHeader"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"ScreenTitle"
@@ -1489,7 +1506,7 @@ text = ">"
 
 [node name="DiscoveryDetailCard" type="PanelContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(420, 0)
+custom_minimum_size = Vector2(330, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.78
@@ -1527,10 +1544,10 @@ theme_type_variation = &"TelemetryLabel"
 
 [node name="DiscoveryDetailArt" type="TextureRect" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn/ContentStage/ContentShell/DiscoveryPanel/DiscoveryBody/DiscoveryDetailCard/DetailMargin/DetailLayout"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 300)
+custom_minimum_size = Vector2(210, 210)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+size_flags_vertical = 0
 expand_mode = 1
 stretch_mode = 5
 
@@ -1544,6 +1561,9 @@ autowrap_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"RewardValue"
+autowrap_mode = 2
+max_lines_visible = 2
+text_overrun_behavior = 3
 
 [node name="Footer" type="HBoxContainer" parent="ConsoleCenter/FloatingSurface/SafeArea/Layout/MainRow/ContentColumn"]
 unique_name_in_owner = true
