@@ -355,6 +355,9 @@ msgstr "Boost recharge +%d%% · pulse +%d ms"
 
 msgid "HQ_UPGRADE_EFFECT_BOOST_CAPACITY_FMT"
 msgstr "Stored boost capacity · %d"
+msgid "HQ_NEXT_RANK"
+msgstr "NEXT RANK"
+
 msgid "HQ_CAREER_TITLE"
 msgstr "CAREER"
 
