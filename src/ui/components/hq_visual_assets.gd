@@ -29,31 +29,31 @@ static func nav_icon(index: int) -> Texture2D:
 static func upgrade_art(upgrade_id: String) -> Texture2D:
 	match upgrade_id:
 		"propulsion_core":
-			return preload("res://assets/original/ui/hq/upgrade_propulsion.svg")
+			return preload("res://assets/original/ui/hq/generated/upgrade_propulsion.png")
 		"maneuvering_thrusters":
-			return preload("res://assets/original/ui/hq/upgrade_maneuver.svg")
+			return preload("res://assets/original/ui/hq/generated/upgrade_maneuver.png")
 		"recovery_array":
-			return preload("res://assets/original/ui/hq/upgrade_recovery.svg")
+			return preload("res://assets/original/ui/hq/generated/upgrade_recovery.png")
 		"cargo_frame":
-			return preload("res://assets/original/ui/hq/upgrade_cargo.svg")
+			return preload("res://assets/original/ui/hq/generated/upgrade_cargo.png")
 		"pulse_system":
-			return preload("res://assets/original/ui/hq/upgrade_energy.svg")
+			return preload("res://assets/original/ui/hq/generated/upgrade_energy.png")
 	return preload("res://assets/original/ui/hq/upgrade_recovery.svg")
 
 static func rank_badge(rank_id: String) -> Texture2D:
 	match rank_id:
 		"trainee":
-			return preload("res://assets/original/ui/hq/rank_trainee.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_trainee.png")
 		"junior_cleaner":
-			return preload("res://assets/original/ui/hq/rank_junior_cleaner.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_junior_cleaner.png")
 		"orbital_cleaner":
-			return preload("res://assets/original/ui/hq/rank_orbital_cleaner.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_orbital_cleaner.png")
 		"senior_cleaner":
-			return preload("res://assets/original/ui/hq/rank_senior_cleaner.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_senior_cleaner.png")
 		"sector_specialist":
-			return preload("res://assets/original/ui/hq/rank_sector_specialist.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_sector_specialist.png")
 		_:
-			return preload("res://assets/original/ui/hq/rank_deep_space_operator.svg")
+			return preload("res://assets/original/ui/hq/generated/rank_deep_space_operator.png")
 
 static func contract_preview(sector_id: String) -> Texture2D:
 	if sector_id.begins_with("earth_"):
