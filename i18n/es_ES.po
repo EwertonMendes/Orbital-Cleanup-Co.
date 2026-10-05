@@ -226,22 +226,22 @@ msgid "OPS_CARGO_FMT"
 msgstr "Carga · %d"
 
 msgid "RANK_TRAINEE"
-msgstr "Aprendiz"
+msgstr "Operador Inicial"
 
 msgid "RANK_JUNIOR_CLEANER"
-msgstr "Limpiador Júnior"
+msgstr "Técnico Orbital"
 
 msgid "RANK_ORBITAL_CLEANER"
-msgstr "Limpiador Orbital"
+msgstr "Operador de Espacio Profundo"
 
 msgid "RANK_SENIOR_CLEANER"
-msgstr "Limpiador Sénior"
+msgstr "Especialista en Desechos"
 
 msgid "RANK_SECTOR_SPECIALIST"
-msgstr "Especialista de Sector"
+msgstr "Coordinador de Flota"
 
 msgid "RANK_DEEP_SPACE_OPERATOR"
-msgstr "Operador de Espacio Profundo"
+msgstr "Veterano Planetario"
 
 msgid "UPGRADE_TRACTOR_RANGE"
 msgstr "Alcance del Haz"
