@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://src/ui/components/hq_rank_row.gd" id="1"]
 
 [node name="HqRankRow" type="PanelContainer"]
-custom_minimum_size = Vector2(128, 142)
+custom_minimum_size = Vector2(138, 154)
 size_flags_horizontal = 3
 theme_type_variation = &"CardPanel"
 script = ExtResource("1")
@@ -33,7 +33,7 @@ max_lines_visible = 2
 
 [node name="Badge" type="TextureRect" parent="Margin/Column"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 68)
+custom_minimum_size = Vector2(78, 78)
 layout_mode = 2
 size_flags_horizontal = 4
 mouse_filter = 2
